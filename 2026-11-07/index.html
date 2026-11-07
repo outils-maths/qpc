@@ -231,6 +231,13 @@ table.pv{border-collapse:collapse;font-variant-numeric:tabular-nums}
 .gr.suf{font-size:.6em;margin-top:.3em}.phrd.suf{max-width:17em}
 /* traduire une phrase (02.11.2026) : la phrase en gras, sur plusieurs lignes s'il le faut ; détail : une ligne par opération */
 .dat .trp{display:inline-block;white-space:normal;max-width:20em;font-size:1.3em;font-weight:700;line-height:1.3}
+.vlb{display:inline-flex;flex-direction:column;align-items:center;vertical-align:baseline}.vll{font-size:.4em;font-weight:400;color:#8a929c;line-height:1.1;margin-top:.15em;white-space:nowrap}   /* vocabulaire du calcul littéral : étiquettes sous le coefficient, la partie littérale, les termes (07.11.2026) */
+.vrow{line-height:1.25}.gr.vwhy{font-size:.62em;margin-top:.35em}.phrd.vwhy{max-width:24em}.vsm{font-size:.8em;margin-top:.3em}.vgr{color:#9aa1a9}
+.vop{border-collapse:collapse;margin:0 auto .15em}.vop td{padding:.04em .28em;text-align:left;font-weight:700;white-space:nowrap}   /* polynômes opposés ? : terme sous terme */
+@media (max-height:800px) and (min-width:701px){ .bb .opts label{line-height:1} }   /* 1366 × 768 : Fonctions et algèbre sans défilement avec les deux cases « vocabulaire » (07.11.2026 ; 17 px de trop avant) */
+.c2{display:grid;grid-template-columns:auto auto;column-gap:1.4em;justify-content:start;align-items:start;margin-top:.06em}   /* Calcul littéral : monômes à gauche, polynômes à droite (07.11.2026) */
+.c2 .opts.colv{flex-direction:column;align-items:flex-start;row-gap:.05em}.c2 .opts + .opts{margin-top:0}
+@media (max-width:700px){ .c2{display:block} .c2 .opts + .opts{margin-top:.25em} }
 .trd{border-collapse:collapse;margin:0 auto}.trd td{padding:.14em .25em;vertical-align:middle}
 .trd .trf{font-size:.7em;color:var(--muted);text-align:right;white-space:normal;max-width:15em;line-height:1.25}
 .trd .tra{color:var(--muted);font-size:.8em}.trd .trx{text-align:left;white-space:nowrap;font-weight:700}
@@ -4073,134 +4080,8 @@ function litQ(qh, R, det, extra){ return Object.assign({q: '<span>' + qh + '</sp
 const LITC = {mono: 'Réduis', red: 'Réduis', dev: 'Développe et réduis', fac: 'Factorise'};
 const NKIND = T => new Set(T.map(([, m]) => mKey(m))).size;           // nombre de sortes de termes (au plus quatre : quatre couleurs)
 
-// produit de facteurs (réduire un monôme, multiplier des monômes) : les nombres en bleu, puis les lettres en rose, regroupées lettre par lettre ;
-// si une lettre revient, la somme des exposants (x² ∙ x = x²⁺¹), puis la réponse
+// un nombre dans un produit : entre parenthèses s'il est négatif (sauf au début)
 const fN = (n, i) => n < 0 && i ? '(' + fmtInt(n) + ')' : fmtInt(n);
-function prodRows(nums, lets){ // nums : coefficients dans l'ordre ; lets : [[lettre, exposant]] dans l'ordre d'apparition
-  const LT = [...new Set(lets.map(l => l[0]))].sort(), c = nums.reduce((p, n) => p * n, 1), M = {};
-  lets.forEach(([x, e]) => M[x] = (M[x] || 0) + e);
-  const lh = (x, e) => '<i>' + x + '</i>' + (e > 1 ? '<sup>' + e + '</sup>' : '');
-  const rows = [(nums.length ? H('cA', nums.map(fN).join(' ∙ ')) + ' ∙ ' : '') + H('cD', LT.flatMap(x => lets.filter(l => l[0] === x).map(([, e]) => lh(x, e))).join(' ∙ '))];
-  if (LT.some(x => lets.filter(l => l[0] === x).length > 1))
-    rows.push((nums.length ? H('cA', fmtInt(c)) + ' ∙ ' : '') + H('cD', LT.map(x => { const es = lets.filter(l => l[0] === x).map(l => l[1]);
-      return es.length > 1 ? powH('<i>' + x + '</i>', es.join(' + ')) : lh(x, es[0]); }).join(' ∙ ')));
-  return {rows, R: [[c, M]]};
-}
-// réduire un monôme (25.10.2026 : plus de facteurs avec les étoiles, et des nombres plus petits) : ★ trois ou quatre facteurs, une lettre (3 ∙ x ∙ 4,
-// 2 ∙ x ∙ 5 ∙ x) ; ★★ quatre à six, deux lettres ; ★★★ cinq à sept, deux lettres et un exposant ; ★★★★ six ou sept, trois lettres ou deux exposants ;
-// avec les relatifs, des facteurs négatifs dès ★★ (deux ou trois à ★★★★) ; degré 6 au plus (10e N3)
-GL('l_mono', [1, 2, 3, 4], lv => {
-  for (let t = 0; t < 300; t++){
-    const v = V1(), [w, z] = shuffle(['x', 'y', 'a', 'b', 'n'].filter(q => q !== v)), nN = lv === 1 ? 2 : ri(2, 3), cmax = [0, 9, 5, 5, 4][lv];
-    const fs = [];
-    for (let i = 0; i < nN; i++) fs.push({n: ri(2, cmax)});
-    fs.push(...(lv === 1 ? [{l: v}].concat(chance(.5) ? [{l: v}] : []) : lv === 2 ? [{l: v}, {l: w}].concat(chance(.6) ? [{l: v}] : [])
-      : lv === 3 ? [{l: v, e: 2}, {l: w}, {l: v}].concat(chance(.5) ? [{l: w}] : []) : chance(.5) ? [{l: v, e: 2}, {l: w}, {l: z}, {l: v}] : [{l: v, e: 2}, {l: w, e: 2}, {l: v}, {l: w}]));
-    shuffle(fs);
-    const M = {}; fs.forEach(f => { if (f.l) M[f.l] = (M[f.l] || 0) + (f.e || 1); });
-    if (mDeg(M) > 6) continue;
-    if (NEG && lv >= 2 && chance(lv === 2 ? .45 : .7)){ const nf = fs.filter(f => f.n !== undefined); shuffle(nf).slice(0, lv === 4 ? ri(2, nf.length) : lv === 3 ? ri(1, 2) : 1).forEach(f => f.n *= -1); }
-    const nums = fs.filter(f => f.n !== undefined).map(f => f.n), c = nums.reduce((p, n) => p * n, 1);
-    if (Math.abs(c) > 300) continue;
-    const fH = (f, i) => f.n !== undefined ? fN(f.n, i) : '<i>' + f.l + '</i>' + (f.e ? '<sup>' + f.e + '</sup>' : '');
-    const qh = fs.map(fH).join(' ∙ '), P = prodRows(nums, fs.filter(f => f.l).map(f => [f.l, f.e || 1]));
-    return litQ(qh, P.R, () => steps(qh, P.rows.concat([ANS(polyH(P.R))])), {con: LITC.mono, qe: e => fs.reduce((p, f) => p * (f.n !== undefined ? f.n : e[f.l] ** (f.e || 1)), 1)});
-  }
-  return null;
-});
-// multiplication de monômes (l'enseignant, 25.10.2026 : « trop modeste », plus de monômes plus vite) : ★ deux monômes (5 ∙ 3x, 2x ∙ 4x) ; ★★ trois (2x ∙ 3 ∙ 5x) ;
-// ★★★ trois ou quatre, deux lettres, des carrés (3x² ∙ 2xy ∙ 4y) ; ★★★★ quatre ou cinq, ou trois dont une puissance d'un monôme ((2x)² ∙ 3xy ∙ y, comme 2a(3a)³
-// dans les indications pédagogiques) ; degré 6 au plus, nombres plus petits quand il y a plus de facteurs ; avec les relatifs, des facteurs négatifs dès ★★
-GL('l_mulm', [1, 2, 3, 4], lv => {
-  const v = V1(), w = other(v), pw = lv === 4 && chance(.4), nF = [0, 2, 3, ri(3, 4), pw ? 3 : ri(4, 5)][lv], cmax = [0, 9, 6, 5, 4][lv], pmax = [0, 81, 180, 300, 400][lv], dmax = [0, 2, 3, 6, 6][lv];
-  for (let t = 0; t < 400; t++){
-    const F_ = [];
-    for (let i = 0; i < nF; i++){
-      const m = {};
-      if (lv === 1){ if (i === 0 || chance(.5)) m[v] = 1; }
-      else if (lv === 2){ if (chance(.8)) m[v] = 1; }
-      else [v, w].forEach(x => { if (chance(.6)) m[x] = pick(lv === 3 ? [1, 1, 2] : [1, 1, 2, 3]); });
-      F_.push([mDeg(m) && lv >= 2 && chance(.25) ? 1 : ri(2, cmax), m, 1]);
-    }
-    if (pw){ const p = pick([2, 2, 3]), k = p === 3 ? 2 : ri(2, 3), x = pick([v, w]); F_[0] = [k, {[x]: 1}, p]; }     // (2x)³, (3y)²
-    shuffle(F_);
-    const ex = F_.flatMap(([k, m, p]) => Array(p).fill([k, m])), nCst = ex.filter(([, m]) => !mDeg(m)).length, M = {};
-    ex.forEach(([, m]) => Object.keys(m).forEach(x => M[x] = (M[x] || 0) + m[x]));
-    if (F_.filter(([, m]) => !mDeg(m)).length > 1 || (lv >= 2 && F_.length - F_.filter(([, m]) => !mDeg(m)).length < 2) || (lv >= 3 && Object.keys(M).length < 2) || mDeg(M) > dmax) continue;
-    if (lv >= 3 && !Object.keys(M).some(x => ex.filter(([, m]) => m[x]).length > 1)) continue;      // au moins une lettre à regrouper
-    if (NEG && lv >= 2 && chance(.6)){ const kk = lv === 2 ? 1 : lv === 3 ? ri(1, 2) : ri(2, 3), idx = shuffle([...F_.keys()].filter(i => F_[i][2] === 1)).slice(0, kk); idx.forEach(i => F_[i][0] *= -1); }
-    const ex2 = F_.flatMap(([k, m, p]) => Array(p).fill([k, m])), c = ex2.reduce((q, [k]) => q * k, 1);
-    if (Math.abs(c) < 2 || Math.abs(c) > pmax) continue;
-    const facH = ([k, m, p], i) => { const h = polyH([[k, m]]); return p > 1 ? '<span class="pw">(' + h + ')<sup>' + p + '</sup></span>' : i && k < 0 ? '(' + h + ')' : h; };
-    const qh = F_.map(facH).join(' ∙ '), nl = ex2.map(([k]) => k).filter(k => k !== 1);
-    const P = prodRows(nl.length ? nl : [1], ex2.flatMap(([, m]) => Object.keys(m).sort().map(x => [x, m[x]])));
-    const pre = pw ? [F_.flatMap(([k, m, p], i) => p > 1 ? Array(p).fill(polyH([[k, m]])) : [facH([k, m, p], i)]).join(' ∙ ')] : [];    // (2x)² = 2x ∙ 2x
-    return litQ(qh, P.R, () => steps(qh, pre.concat(P.rows, [ANS(polyH(P.R))])), {con: LITC.red, qe: e => F_.reduce((q, [k, m, p]) => q * pEval([[k, m]], e) ** p, 1)});
-  }
-  return null;
-});
-// additions et soustractions de monômes (25.10.2026 : plus de termes et plus de sortes de termes avec les étoiles) : ★ deux ou trois termes semblables ;
-// ★★ trois ou quatre termes, deux sortes (x et nombres, x et y) ; ★★★ quatre ou cinq termes, deux ou trois sortes (x², x, nombres) ; ★★★★ cinq ou six termes,
-// trois ou quatre sortes (x², xy, x, nombres…) ; avec les relatifs, des coefficients négatifs dès ★★ : + (−3x), − (−3x)
-function monoSet(lv, op){
-  const v = V1(), w = other(v), K = {x: {[v]: 1}, y: {[w]: 1}, x2: {[v]: 2}, xy: {[v]: 1, [w]: 1}, c: {}};
-  const kinds = lv === 1 ? ['x'] : lv === 2 ? pick([['x', 'c'], ['x', 'c'], ['x', 'y']]) : lv === 3 ? pick([['x2', 'x', 'c'], ['x', 'y', 'c'], ['x2', 'x']])
-    : pick([['x2', 'x', 'y', 'c'], ['x2', 'xy', 'x', 'c'], ['x2', 'x', 'c'], ['xy', 'x', 'y', 'c']]);
-  const n = [0, ri(2, 3), ri(3, 4), ri(4, 5), ri(5, 6)][lv], cnt = kinds.map(() => 1);
-  while (cnt.reduce((a, b) => a + b, 0) < n){ const i = ri(0, kinds.length - 1); if (cnt[i] < 3) cnt[i]++; }
-  if (!cnt.some(x => x > 1)) cnt[0]++;
-  const T = []; kinds.forEach((k, i) => { for (let j = 0; j < cnt[i]; j++) T.push([ri(1, 9), K[k]]); });
-  shuffle(T);
-  const np = [0, 0, .25, .35, .4][lv]; for (let i = 1; i < T.length; i++) if (NEG && chance(np)) T[i][0] *= -1;
-  return T;
-}
-const halfSet = (T, lv) => DEC && lv >= 3 && chance(.3) ? T.map(([c, m]) => [rnd(c / 2), m]) : T;      // avec les décimaux : coefficients 0,5 ; 1,5…
-function sumMonoQ(T, op, lv){ // op '+' : a + b + c ; op '−' : a − b − c (les termes après le 1er sont soustraits)
-  const sg = T.map((_, i) => i === 0 ? 1 : op === '−' ? -1 : 1), E = T.map(([c, m], i) => [sg[i] * c, m]), R = polyNorm(E);
-  if (!R.length || R.length < NKIND(E) || E[0][0] < 0) return null;                    // pas de sorte de termes qui s'annule
-  if (!NEG && (R[0][0] < 0 || (op === '+' && E.some(([c]) => c < 0)))) return null;
-  const qT = (color) => T.map(([c, m], i) => i === 0 ? polyH([[c, m]], color) : ' ' + op + ' ' + (c < 0 ? '(' + polyH([[c, m]], color) + ')' : termH(c, m, color))).join('');
-  const qh = qT(false);
-  return litQ(qh, R, () => { const rows = [], qhC = qT(true);
-      if (T.some(([c], i) => i && c < 0)) rows.push(polyH(E, true));       // signes : + (−5x) → − 5x
-      const G2 = grouped(E); if (polyH(G2) !== polyH(E)) rows.push(polyH(G2, true));
-      rows.push(ANS(polyH(R))); return steps(qhC, rows); },
-    {con: LITC.red, qe: e => pEval(E, e), key: op + qh});
-}
-const retry = f => { for (let t = 0; t < 80; t++){ const q = f(); if (q) return q; } return null; };
-GL('l_addm', [1, 2, 3, 4], lv => retry(() => sumMonoQ(halfSet(monoSet(lv, '+'), lv), '+', lv)));
-GL('l_subm', [1, 2, 3, 4], lv => retry(() => sumMonoQ(halfSet(monoSet(lv, '−'), lv), '−', lv)));
-// addition et soustraction de polynômes (25.10.2026) : ★ deux polynômes du 1er degré ; ★★ termes dans un autre ordre, un seul terme ou une soustraction dans
-// la parenthèse ((3x + 5) + (2 − x)) ; ★★★ 2e degré, trois termes chacun, dans le désordre ; ★★★★ trois polynômes, ou deux lettres ; soustraction : chaque
-// terme de la parenthèse change de signe (sans les relatifs : jamais − (… − …), qui demande la règle des signes)
-function polySet(lv, op){
-  const v = V1(), w = other(v), K = {x: {[v]: 1}, y: {[w]: 1}, x2: {[v]: 2}, c: {}}, sub = op === '−';
-  const mk = (kinds, negp, ord) => { let P = kinds.map(k => [ri(1, 9), K[k]]); if (ord) shuffle(P); P = P.map(([c, m], i) => [i && chance(negp) ? -c : c, m]); return P; };
-  const posOnly = !NEG;
-  if (lv === 1) return {Ps: [mk(['x', 'c'], 0), mk(['x', 'c'], 0)], sg: [1, sub ? -1 : 1]};
-  if (lv === 2){ const P1 = mk(['x', 'c'], NEG ? .3 : sub ? 0 : .3, chance(.3)), P2 = mk(['x', 'c'], sub && posOnly ? 0 : .4, chance(.5));
-    return {Ps: [P1, P2], sg: [1, sub ? -1 : 1]}; }
-  if (lv === 3){ const P1 = mk(['x2', 'x', 'c'], NEG ? .35 : .25, chance(.5)), P2 = mk(chance(.4) ? shuffle(['x2', 'x', 'c']).slice(0, 2) : ['x2', 'x', 'c'], sub && posOnly ? 0 : .35, true);
-    return {Ps: [P1, P2], sg: [1, sub ? -1 : 1]}; }
-  if (chance(.4)){ const P1 = mk(['x', 'y', 'c'], .3, chance(.5)), P2 = mk(shuffle(['x', 'y', 'c']).slice(0, ri(2, 3)), sub && posOnly ? 0 : .35, true);    // deux lettres
-    return {Ps: [P1, P2], sg: [NEG && sub && chance(.3) ? -1 : 1, sub ? -1 : 1]}; }
-  const ks = () => shuffle(['x2', 'x', 'c']).slice(0, 2), Ps = [mk(ks(), .3, false), mk(ks(), sub && posOnly ? 0 : .35, true), mk(ks(), .35, true)];
-  const sg = sub ? (NEG ? pick([[1, -1, -1], [-1, 1, -1], [1, -1, 1]]) : [1, -1, 1]) : [1, 1, 1];
-  if (sub && posOnly) Ps[2] = Ps[2].map(([c, m]) => [Math.abs(c), m]);
-  return {Ps, sg};
-}
-function polyOpQ(S_, lv){
-  const {Ps, sg} = S_, E = Ps.flatMap((P, i) => P.map(([c, m]) => [sg[i] * c, m])), R = polyNorm(E);
-  if (!R.length || R.length < 2 || NKIND(E) > 4) return null;
-  if (!NEG && (R[0][0] < 0 || Ps.some(P => P[0][0] < 0) || Ps.some((P, i) => sg[i] < 0 && P.some(([c]) => c < 0)) || sg[0] < 0)) return null;
-  if (!NEG && R.some(([c]) => c < 0) && chance(.5)) return null;
-  const qh = Ps.map((P, i) => (i ? (sg[i] < 0 ? ' − ' : ' + ') : sg[i] < 0 ? '−' : '') + '(' + polyH(P) + ')').join('');
-  return litQ(qh, R, () => { const rows = [polyH(E, true), polyH(grouped(E), true)].filter((r, i, a) => !i || r !== a[i - 1]);
-      return steps(qh, rows.concat([ANS(polyH(R))])); },
-    {con: LITC.red, qe: e => Ps.reduce((s, P, i) => s + sg[i] * pEval(P, e), 0), key: (sg.some(s => s < 0) ? '−' : '+') + qh});
-}
-GL('l_addp', [1, 2, 3, 4], lv => retry(() => polyOpQ(polySet(lv, '+'), lv)));
-GL('l_subp', [1, 2, 3, 4], lv => retry(() => { const S_ = polySet(lv, '−'); if (NEG && lv >= 2 && lv < 4 && chance(.3)) S_.sg[0] = -1; return polyOpQ(S_, lv); }));    // −(3x − 4) + (2x + 1)
 // développement : k(ax + b), avec des arcs
 const tokPoly = (T, col) => T.flatMap(([c, m], i) => { const t = []; if (i) t.push({t: c < 0 ? ' − ' : ' + '}); else if (c < 0) t.push({t: '−'});
   const a = Math.abs(c), lets = Object.keys(m).filter(v => m[v]).sort();
@@ -4221,69 +4102,582 @@ function devArcs(kT, T, col){ // k (monôme) devant (polynôme) ; k = −1 : le 
 const mulT = (A, B) => { const M = Object.assign({}, A[1]); Object.keys(B[1]).forEach(v => M[v] = (M[v] || 0) + B[1][v]); return [rnd(A[0] * B[0]), M]; };
 const facPar = ([c, m], i) => { const h = polyH([[c, m]]); return c < 0 ? '(' + h + ')' : h; };
 const kH = k => k[0] === 1 && mDeg(k[1]) ? mH(k[1]) : k[0] === -1 ? '−' + (mDeg(k[1]) ? mH(k[1]) : '') : polyH([k]);
-// développement (distributivité simple, 25.10.2026 : plus à gérer avec les étoiles) : ★ k(x + b) ; ★★ k(ax + b) avec une soustraction, x(x + b), −(…) avec les
-// relatifs ; ★★★ trois termes k(ax² + bx + c), un monôme kx(ax + b) ou un terme de plus à réduire ; ★★★★ deux développements à réduire ensemble,
-// 3(x + 2) + 2(4x − 1) (avec les relatifs aussi 3(x + 2) − 2(x − 5)), ou kx(ax² + bx + c) ; flèches du 1er facteur en marron, du 2e en turquoise
-GL('l_dev', [1, 2, 3, 4], lv => {
-  const v = V1(), m = {[v]: 1}, m2 = {[v]: 2};
-  for (let t = 0; t < 300; t++){
-    let D = [], extra = null;                                    // D : [[k, T]] ; extra : terme en plus
-    const s = () => NEG || chance(.5) ? sgn() : 1;
-    if (lv === 1) D = [[[ri(2, 9), {}], [[1, m], [ri(1, 9), {}]]]];
-    else if (lv === 2){ const f = pick(['k', 'k', 'x', NEG ? 'neg' : 'k']);
-      D = [f === 'x' ? [[1, m], [[1, m], [ri(1, 9) * (chance(.4) ? -1 : 1), {}]]] : f === 'neg' ? [[pick([-1, -1, -ri(2, 6)]), {}], [[ri(2, 6), m], [sgn() * ri(1, 9), {}]]]
-        : [[ri(2, 7), {}], [[ri(2, 6), m], [s() * ri(1, 9), {}]]]]; }
-    else if (lv === 3){ const f = pick(['tri', 'kx', 'ext']);
-      if (f === 'tri') D = [[[cf(2, 5, .3), {}], [[ri(1, 4), m2], [s() * ri(1, 6), m], [s() * ri(1, 9), {}]]]];
-      else if (f === 'kx') D = [[[cf(1, 5, .3), m], [[ri(1, 5), m], [s() * ri(1, 9), {}]]]];
-      else { D = [[[NEG && chance(.4) ? -1 : ri(2, 5), {}], [[ri(1, 5), m], [s() * ri(1, 9), {}]]]]; extra = [s() * ri(2, 9), m]; } }      // −(2x − 7) + 5x
-    else { const f = pick(['two', 'two', 'kx3']);
-      if (f === 'kx3') D = [[[cf(2, 4, .3), m], [[ri(1, 3), m2], [s() * ri(1, 6), m], [s() * ri(1, 9), {}]]]];
-      else D = [[[ri(2, 6), {}], [[ri(1, 4), m], [s() * ri(1, 9), {}]]], [[NEG && chance(.5) ? -ri(2, 6) : ri(2, 6), {}], [[ri(1, 4), m], [s() * ri(1, 9), {}]]]]; }
-    if (!NEG && D.some(([k, T]) => k[0] < 0 || T[0][0] < 0)) continue;
-    const E = D.flatMap(([k, T]) => T.map(x => mulT(k, x))).concat(extra ? [extra] : []), R = polyNorm(E);
-    if (!R.length || (!NEG && R[0][0] < 0) || NKIND(E) > 4) continue;
-    if (!NEG && E.some(([c]) => c < 0) && lv <= 2 && chance(.3)) continue;
-    const exH = extra ? (extra[0] < 0 ? ' − ' : ' + ') + polyH([[Math.abs(extra[0]), extra[1]]]) : '';
-    const qh = D.map(([k, T], i) => (i ? (k[0] < 0 ? ' − ' + kH([-k[0], k[1]]) : ' + ' + kH(k)) : kH(k)) + '(' + polyH(T) + ')').join('') + exH;
-    const prod = D.map(([k, T], i) => T.map((x, j) => (i || j ? ' + ' : '') + H(i ? 'cM' : 'cK', facPar(k, 1)) + ' ∙ ' + facPar(x, 1)).join('')).join('');
-    return litQ(qh, R, () => '<div class="frow">' + D.map(([k, T], i) => devArcs([k], T, i ? TEAL : BROWN)).join('') + '</div>' +
-        steps(qh, [prod + exH].concat(D.length > 1 || extra ? [polyH(E, true), polyH(grouped(E), true)].filter((r, i, a) => !i || r !== a[i - 1]) : []).concat([ANS(polyH(R))])),
-      {con: LITC.dev, qe: e => D.reduce((q, [k, T]) => q + pEval([k], e) * pEval(T, e), 0) + (extra ? pEval([extra], e) : 0)});
-  }
-  return null;
-});
-// double développement (25.10.2026) : ★ (x + a)(x + b) ; ★★ (ax + b)(x + d) ; ★★★ (ax + b)(cx + d) avec les relatifs, ou (x + a)(x² + bx + c) (six produits) ;
-// ★★★★ (ax + b)(cx² + dx + e), deux lettres (2x + y)(x − 3y), ou un moins devant le produit, x² − (x + 3)(x − 2) (on développe d'abord dans la parenthèse) ;
-// identités remarquables : objectifs à part. Flèches et facteurs : 1er terme en marron, 2e en turquoise
+// double développement : flèches et facteurs, 1er terme en marron, 2e en turquoise (générateur : « Calcul littéral par poids » ci-dessous)
 function dev2Arcs(A, B){ const toks = [{t: '('}], ia = [], ib = [];
   tokTerms(A, toks, ia); toks.push({t: ')'}, {t: '('}); tokTerms(B, toks, ib); toks.push({t: ')'});
   return arcExpr(toks, ib.map(j => [ia[0], j, BROWN]).concat(ib.map(j => [ia[1], j, TEAL]))); }
-GL('l_dev2', [1, 2, 3, 4], lv => {
-  const v = V1(), w = other(v), m = {[v]: 1}, m2 = {[v]: 2}, n = {[w]: 1};
-  for (let t = 0; t < 300; t++){
-    let A, B, M0 = null;                                         // M0 : ce qui précède « − (A)(B) »
-    if (lv === 1){ A = [[1, m], [ri(1, 6), {}]]; B = [[1, m], [ri(1, 6), {}]]; }
-    else if (lv === 2){ A = [[ri(2, 3), m], [ri(1, 9), {}]]; B = [[1, m], [NEG ? cf(1, 9, .5) : ri(1, 9), {}]]; if (chance(.5)) [A, B] = [B, A]; }
-    else if (lv === 3){ if (chance(.5)){ A = [[ri(2, 4), m], [cf(1, 9, .4), {}]]; B = [[ri(1, 3), m], [cf(1, 9, .4), {}]]; }
-      else { A = [[1, m], [cf(1, 6, .4), {}]]; B = [[1, m2], [cf(1, 5, .4), m], [cf(1, 6, .4), {}]]; } }
-    else { const f = pick(['tri', 'xy', 'moins']);
-      if (f === 'tri'){ A = [[ri(2, 3), m], [cf(1, 5, .5), {}]]; B = [[ri(1, 2), m2], [cf(1, 5, .5), m], [cf(1, 6, .5), {}]]; }
-      else if (f === 'xy'){ A = [[ri(1, 3), m], [cf(1, 4, .5), n]]; B = [[ri(1, 3), m], [cf(1, 4, .5), n]]; }
-      else { A = [[1, m], [cf(1, 6, .5), {}]]; B = [[1, m], [cf(1, 6, .5), {}]]; M0 = chance(.5) ? [[1, m2]] : [[ri(2, 3), m2], [ri(1, 9), {}]]; } }
-    if (!NEG && A.concat(B).some(([c]) => c < 0)) continue;
-    const P = A.flatMap(a => B.map(b => mulT(a, b))), PR = polyNorm(P), E = M0 ? M0.concat(PR.map(([c, mm]) => [-c, mm])) : P, R = polyNorm(E);
-    if (!R.length || NKIND(E) > 4) continue;
-    if (!NEG && (R[0][0] < 0 || (M0 && PR.some(([c]) => c < 0)))) continue;
-    const prodH = '(' + polyH(A) + ')(' + polyH(B) + ')', qh = (M0 ? polyH(M0) + ' − ' : '') + prodH;
-    const prods = A.flatMap((a, i) => B.map((b, j) => (i || j ? ' + ' : '') + H(i ? 'cM' : 'cK', facPar(a, 1)) + ' ∙ ' + facPar(b, 1))).join('');
-    return litQ(qh, R, () => { const rows = M0 ? [polyH(M0) + ' − (' + prods + ')', polyH(M0) + ' − (' + polyH(PR) + ')', polyH(E, true)] : [prods, polyH(P, true)];
-        const G = polyH(grouped(E), true); if (G !== rows[rows.length - 1]) rows.push(G);
-        return dev2Arcs(A, B) + steps(qh, rows.filter((r, i, a) => !i || r !== a[i - 1]).concat([ANS(polyH(R))])); },
-      {con: LITC.dev, qe: e => (M0 ? pEval(M0, e) - pEval(A, e) * pEval(B, e) : pEval(A, e) * pEval(B, e))});
+/* =====================================================================
+   Calcul littéral par poids (07.11.2026) : multiplication de monômes (réduire un monôme compris), addition et soustraction de monômes,
+   addition et soustraction de polynômes, développer (simple et double). Les identités remarquables et Factoriser : plus loin, inchangés.
+   L'enseignant (07.11.2026) : « calme un peu les calculs à faire sur les coefficients, à tous les niveaux. Regarde ce que tu as déjà mis en
+   place pour la difficulté et améliorons tout ça avec un système de poids. » QCM (ses réponses) :
+   - coefficients : les livrets, mais au plus un facteur de 6 à 9 par produit (7 ∙ 3y oui, 7 ∙ 8 non), ∙ 10 permis ; produits au plus 30 à ★,
+     40 à ★★, 60 ensuite ; sommes au plus 15 à ★, 20 ensuite (les nombres ne pèsent plus que peu : les étoiles viennent surtout du reste) ;
+   - multiplication : signes − dès ★ (relatifs), coefficient caché 1 ou −1, puissance d'un monôme dès ★★★ (« pas plus d'une sur 5 »),
+     nombres à virgule dès ★★ (« calculs très simples ») ; deux lettres dès ★★, trois dès ★★★ ;
+   - addition et soustraction de monômes : écriture simplifiée comme sa série (4b − 9b, −6x − 4x), + (−3x) et − (−3x) en piège dès ★★
+     (relatifs) ; pièges : une sorte qui s'annule (« petit poids. Ne te force pas à le faire souvent, reste assez naturel »), coefficient
+     caché et résultat 1 ou −1, x² et x ensemble dès ★★, nombres à virgule dès ★★ ;
+   - polynômes : termes dans le désordre, signes qui changent (soustraction), une sorte qui s'annule (« n'est pas vraiment un ajout de
+     difficulté » : poids nul, pas forcé), deux lettres dès ★★★, trois polynômes à ★★★★ ;
+   - développer : facteur écrit après ((x + 6) ∙ 2), deux lettres dès ★★★, nombres à virgule dès ★★, réduire après (un terme dès ★★★, deux
+     développements à ★★★★) ; −x(x − 2) seul : ★★ ou ★★★ ;
+   - ordre des termes de la réponse : inchangé (degré décroissant, puis ordre d'apparition).
+   Méthode (QPC_8, « difficulté par points ») : chaque chose qui rend la question plus dure a un poids (*_W), le total donne les étoiles
+   (plages *_BAND) ; ce qui doit garder sa fréquence est décidé d'abord (*Var), puis on tire jusqu'à tomber dans la plage (lwPick) ; ce que
+   l'enseignant impose à un niveau reste une règle à part. Poids à revoir avec lui.
+   ===================================================================== */
+const LW_PCAP = [0, 30, 40, 60, 60], LW_SCAP = [0, 15, 20, 20, 20];        // produits, sommes : au plus (par niveau)
+const lwN = () => chance(.22) ? ri(6, 9) : chance(.05) ? 10 : ri(2, 5);       // un coefficient : surtout 2 à 5
+// nombres d'un produit (1 et −1 ne comptent pas) : entiers de 2 à 10, au plus un de 6 à 9 ; au plus un nombre à virgule (0,5 ; 1,5 ; 2,5),
+// rendu entier par un autre facteur (0,5 ∙ 6 ; 1,5 ∙ 4 ; 2,5 ∙ 2) ; produit entier, au plus cap
+function lwProd(ns, cap){
+  const a = ns.map(Math.abs).filter(x => x !== 1), dec = a.filter(x => !Number.isInteger(x)), int = a.filter(x => Number.isInteger(x));
+  if (int.some(x => x > 10) || int.filter(x => x >= 6 && x <= 9).length > 1 || dec.length > 1) return false;
+  if (dec.length && (![.5, 1.5, 2.5].includes(dec[0]) || !int.some(x => Number.isInteger(rnd(dec[0] * x))))) return false;
+  const p = rnd(a.reduce((q, x) => q * x, 1));
+  return Number.isInteger(p) && p <= cap;
+}
+// une somme de coefficients, dans l'ordre : chaque somme partielle au plus cap (valeur absolue)
+const lwSum = (cs, cap) => { let s = 0; for (const c of cs){ s = rnd(s + c); if (Math.abs(s) > cap) return false; } return true; };
+// développer : les termes sont des produits (jusqu'à 30 / 40 / 60) ; ce sont les résultats des additions qui restent au plus 15 / 20
+// (4(7a + 7) + 9a, 37a : non ; 18x − 3x : oui)
+const lwRes = (cs, cap) => { let s = cs[0]; for (const c of cs.slice(1)){ s = rnd(s + c); if (Math.abs(s) > cap) return false; } return true; };
+const lwResAll = (E, cap) => [...new Set(E.map(t => lwKey(t[1])))].every(k => lwRes(E.filter(t => lwKey(t[1]) === k).map(t => t[0]), cap));
+const LW_L2 = [['x', 'y'], ['x', 'y'], ['a', 'b'], ['m', 'n'], ['a', 'x']], LW_L3 = [['a', 'b', 'c'], ['x', 'y', 'z']];
+const lwLets = k => k <= 1 ? [V1()] : (k === 2 ? pick(LW_L2) : pick(LW_L3)).slice();
+const lwDist = d => { let r = Math.random(); for (let i = 0; i < d.length; i++){ r -= d[i]; if (r < 0) return i; } return d.length - 1; };
+const lwSc = (W, f) => Object.keys(f).reduce((s, k) => s + (W[k] || 0) * f[k], 0);      // points : poids × compteurs
+const lwKey = m => mKey(m);
+// tirage par points : draw(t) rend un tirage (ou null), score ses points ; on tire jusqu'à tomber dans la plage, sinon on garde le plus proche
+function lwPick(draw, score, band, n){
+  let best = null, bd = 1e9;
+  for (let t = 0; t < (n || 700); t++){
+    const Q = draw(t); if (!Q) continue;
+    const s = rnd(score(Q)); Q.sc = s;
+    if (s >= band[0] && s < band[1]) return Q;
+    const d = s < band[0] ? band[0] - s : s - band[1] + 1e-6; if (d < bd){ bd = d; best = Q; }
   }
-  return null;
-});
+  return best;
+}
+// x² et x ensemble (la même lettre au degré 2 et au degré 1, termes à une seule lettre)
+const lwX2X = T => T.some(t => mDeg(t.m) === 2 && Object.keys(t.m).length === 1 && T.some(u => mDeg(u.m) === 1 && u.m[Object.keys(t.m)[0]]));
+// une sorte de termes dont les termes ne se suivent pas
+const lwDis = T => [...new Set(T.map(t => lwKey(t.m)))].filter(k => { const ix = T.map((t, i) => lwKey(t.m) === k ? i : -1).filter(i => i >= 0);
+  return ix.length > 1 && ix[ix.length - 1] - ix[0] + 1 > ix.length; }).length;
+// sortes de termes (avec au moins deux termes) : résultat négatif, 1 ou −1, nul ; somme partielle au-delà de 10
+function lwRed(T){
+  const K = [...new Set(T.map(t => lwKey(t.m)))], f = {negR: 0, res1: 0, zero: 0, three: 0, big: 0};
+  K.forEach(k => { const cs = T.filter(t => lwKey(t.m) === k).map(t => t.c); if (cs.length < 2) return;
+    let s = 0, b = false; cs.forEach(c => { s = rnd(s + c); if (Math.abs(s) > 10) b = true; });
+    if (s < 0) f.negR++; if (Math.abs(s) === 1 && k !== '') f.res1++; if (s === 0) f.zero++; if (cs.length >= 3) f.three++; if (b) f.big++; });
+  f.negR = Math.min(2, f.negR); f.res1 = Math.min(2, f.res1); f.big = Math.min(3, f.big);
+  return f;
+}
+const lwHid = T => T.filter(t => Math.abs(t.c) === 1 && mDeg(t.m)).length;      // coefficients cachés (x, −y)
+// au moins une sorte de termes avec une lettre qui a deux termes ou plus (E : [[c, m]…]) : sinon seuls les nombres se réduisent
+const lwLetRed = E => [...new Set(E.filter(t => mDeg(t[1])).map(t => lwKey(t[1])))].some(k => E.filter(t => lwKey(t[1]) === k).length > 1);
+// parties littérales (l'enseignant, 07.11.2026, retour sur la n° 17 : « pas assez d'occurrences […] de choses comme 4a²b ou 4ab² ou même 4a³b ou
+// 4ab³ […] mets de plus en plus de poids à mesure que tu augmentes le degré, et fais degré 4 et plus seulement à partir de 3 étoiles quoi qu'il
+// arrive » ; « regarde qu'il y a aussi du ab ou ba de temps en temps. Et n'oublie pas de mettre du poids à ces parties littérales plus
+// compliquées » ; QCM : environ une question sur trois, dès que deux lettres sont permises : ★★ multiplication et monômes, ★★★ polynômes et
+// développer)
+const LW_DMAX = [0, 3, 3, 6, 6];                                                   // degré d'un terme au plus (4 et plus : dès ★★★)
+const lwNL = m => Object.keys(m).filter(v => m[v]).length;
+const lwA2B = m => lwNL(m) >= 2 && mDeg(m) >= 3;                                  // 4a²b, 4ab², 4a³b, abc
+const lwE3 = m => lwNL(m) >= 2 && Object.values(m).some(e => e >= 3);              // 4a³b, 4ab³ : l'exposant 3 pèse plus
+const lwLS = m => Object.keys(m).filter(v => m[v]).sort().join();
+const lwSw = Ms => Ms.some(m => lwNL(m) >= 2 && Ms.some(n => mKey(n) !== mKey(m) && mDeg(n) === mDeg(m) && lwLS(n) === lwLS(m)));   // a²b et ab² : pas semblables
+// une partie littérale dans l'ordre alphabétique ou à l'envers (rev : « ba ») ; un terme sans son signe ; un polynôme de termes {c, m, rev}
+const mHo = (m, rev) => { const ks = Object.keys(m).filter(v => m[v]).sort(); if (rev) ks.reverse(); return ks.map(v => '<i>' + v + '</i>' + (m[v] > 1 ? '<sup>' + m[v] + '</sup>' : '')).join(''); };
+const lwTH = (c, m, rev, col) => { const mh = mHo(m, rev), a = Math.abs(c), co = (a === 1 && mh) ? '' : fmtNum(a); return col ? H(colorOf(m), co + mh) : co + mh; };
+const lwPolyH = (P, col) => P.length ? P.map((t, i) => (i ? (t.c < 0 ? ' − ' : ' + ') : (t.c < 0 ? '−' : '')) + lwTH(t.c, t.m, t.rev, col)).join('') : '0';
+// « ba » : un terme d'une sorte à deux lettres qui a déjà paru (pas le premier de sa sorte) écrit à l'envers (4ab − ba : semblables)
+function lwRev(T){ const seen = new Set(), c = [];
+  T.forEach(t => { const k = lwKey(t.m); if (lwNL(t.m) >= 2 && seen.has(k)) c.push(t); seen.add(k); });
+  if (!c.length) return false; pick(c).rev = true; return true; }
+
+/* ---------- multiplication de monômes (réduire un monôme compris : 3 ∙ x ∙ 4) ----------
+   Facteurs F : {c, m, p} (c : coefficient avec son signe ; m : {lettre: exposant} ; p : puissance, 1 sauf (3x)²) ; sep : écriture séparée
+   (3 ∙ x ∙ 4 ∙ x, une fois sur deux : l'ancien « réduire un monôme »). Poids : chaque multiplication de nombres 0,15, un facteur de 6 à 9
+   0,15, produit au-delà de 20 / 40 0,1 / 0,25 ; nombre à virgule 0,4 (0,5) ou 0,5 (1,5 ; 2,5) ; coefficient caché (x ∙ 5x, (−x), (−1)) 0,25
+   (0,1 de plus par autre) ; signes : 1 : 0,25, 2 : 0,4, 3 : 0,55… ; deux lettres 0,45, trois 1 ; chaque lettre à regrouper 0,15, exposants à
+   additionner 0,15 par lettre, et 0,1 de plus pour x² ∙ x (l'exposant 1 caché) ; degré 4 et plus 0,1, 5 et plus 0,2 ; lettres pas dans
+   l'ordre (y ∙ x ∙ 4) 0,1 ; facteurs au-delà de 3 0,08 (écriture séparée : au-delà de 4, 0,05) ; puissance d'un monôme 1,1 (carré) ou
+   1,2 (cube), exposant dans la puissance ((2x²)³) 0,2, base négative 0,2 (exposant pair) ou 0,25 ; résultat 1 ou −1 (−ab, pas −1ab) 0,1 */
+const MM_W = {mul: .15, big: .15, p20: .1, p40: .15, dec1: .4, dec2: .5, hid: .25, hidN: .1, L2: .45, L3: 1, merge: .15, expo: .15, trap1: .1,
+  deg4: .15, deg5: .15, deg6: .15, a2b: .15, e3: .2, rev: .1, ord: .1, len: .08, sepLen: .05, pw2: 1.1, pw3: 1.2, pwE: .2, pwNegE: .2, pwNegO: .25, res1: .1};
+const MM_NEGW = [0, .25, .4, .55, .65, .75];
+const MM_BAND = {1: [0, .55], 2: [.55, 1.05], 3: [1.05, 1.65], 4: [1.65, 3]};
+// décidé d'abord : écriture séparée une fois sur deux, coefficient caché 3 fois sur 10, nombre à virgule 2 fois sur 10 (dès ★★, case
+// « décimaux »), nombre de signes − (relatifs) ; puissance d'un monôme dès ★★★, 3 fois sur 10 quand elle est permise : jamais deux à moins de
+// cinq multiplications de ★★★ ou plus l'une de l'autre (« pas plus d'une sur 5 » : comptées dans la séance, TALLY mmP et mmS…, et à
+// l'affichage, q.rare 'mpw', RARE_GAPS)
+const MM_SEP = .5, MM_HID = .3, MM_DEC = .2, MM_PW = .3, MM_PWGAP = 4;
+// réponse à deux lettres de degré 3 ou plus (6a²b) : décidée d'abord dès ★★ (à ★★★★ elle vient d'elle-même, 70 %) ; un facteur écrit « ba »
+// (3ba ∙ 2a) 25 % dès ★★
+const MM_A2B = [0, 0, .32, .15, 0], MM_REV = .25;
+const MM_NEG = {1: [.55, .45], 2: [.3, .4, .3], 3: [.25, .35, .3, .1], 4: [.2, .3, .3, .2]}, MM_NEGMAX = [0, 1, 2, 3, 4];
+const MM_NF = {1: [2, 3], 2: [2, 3], 3: [2, 4], 4: [3, 5]}, MM_NN = {1: [1, 2], 2: [2, 3], 3: [2, 3], 4: [2, 4]};
+const MM_LETS = {1: [1], 2: [1, 1, 2], 3: [1, 2, 2, 3], 4: [1, 2, 2, 3]}, MM_LMAX = [0, 1, 2, 3, 3];
+function mmVar(lv, form){
+  const P = TALLY.mmP || 0, pwOK = lv >= 3 && form !== 'sep' && !NO_RARE.has('mpw') && (!P || (TALLY['mmS' + P] || 0) >= MM_PWGAP);
+  const V = {sep: form === 'sep' || (!form && chance(MM_SEP)), s: NEG ? lwDist(MM_NEG[lv]) : 0, hid: chance(MM_HID), dec: DEC && lv >= 2 && chance(MM_DEC),
+    pw: pwOK && chance(MM_PW)};
+  V.a2b = !V.pw && lv >= 2 && chance(MM_A2B[lv]);
+  if (V.pw) V.sep = false;
+  return V;
+}
+function mmDraw(lv, W){
+  const L = lwLets(W.pw && lv === 3 ? 1 : Math.min(W.a2b ? Math.max(2, pick(MM_LETS[lv])) : pick(MM_LETS[lv]), MM_LMAX[lv])), cap = LW_PCAP[lv];   // puissance à ★★★ : une lettre
+  const ex = () => lv >= 2 && chance(lv === 2 ? .15 : .25) ? (lv >= 3 && chance(.25) ? 3 : 2) : 1;
+  const F = [];
+  if (W.sep){
+    const nn = W.hid && !NEG ? (chance(.5) ? 0 : 1) : ri(...MM_NN[lv]);              // sans relatifs, coefficient caché : que des lettres (x ∙ x ∙ x, a ∙ b ∙ a ∙ b)
+    for (let i = 0; i < nn; i++) F.push({c: lwN(), m: {}, p: 1});
+    L.forEach(x => { const o = ri(1, lv <= 2 ? 2 : 3); for (let j = 0; j < o; j++) F.push({c: 1, m: {[x]: ex()}, p: 1}); });
+    if (W.hid && NEG){ if (nn && chance(.4)) F.push({c: -1, m: {}, p: 1}); else pick(F.filter(f => mDeg(f.m))).c = -1; }    // b ∙ (−1) ∙ a ; (−x)
+  } else {
+    const nf = ri(...MM_NF[lv]);
+    for (let i = 0; i < nf; i++){ const m = {};
+      if (!(i && chance(.18))) L.forEach(x => { if (L.length === 1 || chance(.6)) m[x] = ex(); });      // parfois un nombre seul (2 ∙ 3a ∙ 5)
+      F.push({c: lwN(), m, p: 1}); }
+    if (!F.some(f => mDeg(f.m))) F[0].m = {[L[0]]: 1};
+    if (W.pw){ const f = pick(F.filter(f => mDeg(f.m))); f.p = chance(.65) ? 2 : 3; f.c = f.p === 3 ? pick([1, 2, 2]) : pick([1, 2, 3, 3]);
+      Object.keys(f.m).forEach(x => f.m[x] = chance(.15) ? 2 : 1); }
+    if (W.hid){ const c = F.filter(f => mDeg(f.m) && f.p === 1); if (c.length) pick(c).c = 1; }          // x ∙ 5x
+  }
+  shuffle(F);
+  const sF = F.filter(f => !(f.c === -1 && !mDeg(f.m)));                         // pas le facteur (−1) : il deviendrait « ∙ 1 ∙ »
+  shuffle(sF).slice(0, Math.min(W.s, sF.length)).forEach(f => { f.c = -f.c; });
+  if (F.some(f => f.p > 1 && f.c === 1 && mDeg(f.m) === 1)) return null;       // (y)³ : on écrirait y³ ((−y)³, (xy)², (y²)³ restent)
+  if (lv >= 2 && chance(MM_REV)){ const c = F.filter(f => f.p === 1 && lwNL(f.m) >= 2); if (c.length) pick(c).rev = true; }
+  if (W.dec){ const nf = F.filter(f => f.p === 1 && Math.abs(f.c) >= 2); if (nf.length < 2) return null;
+    const [f, g] = shuffle(nf.slice()), d = pick([.5, .5, .5, 1.5, 2.5]);
+    g.c = Math.sign(g.c) * (d === 2.5 ? pick([2, 4]) : pick([2, 4, 6])); f.c = Math.sign(f.c) * d; }
+  const M = {}; let c = 1;
+  F.forEach(f => { c = rnd(c * f.c ** f.p); Object.keys(f.m).forEach(x => M[x] = (M[x] || 0) + f.m[x] * f.p); });
+  if (F.length < 2 || mDeg(M) > LW_DMAX[lv] || Object.keys(M).length > MM_LMAX[lv] || !Number.isInteger(c)) return null;
+  if (W.a2b && !lwA2B(M)) return null;
+  if (F.filter(f => f.c < 0).length > MM_NEGMAX[lv]) return null;
+  if (!lwProd(F.flatMap(f => Array(f.p).fill(f.c)), cap)) return null;
+  return {F, sep: W.sep, R: [[c, M]]};
+}
+function mmFeat(Q){
+  const {F, sep} = Q, f = {}, occ = {}, ex = {};
+  const nn = F.filter(x => Math.abs(x.c) !== 1).map(x => Math.abs(x.c) ** x.p);
+  f.mul = Math.max(0, nn.length - 1);
+  f.big = f.mul && F.some(x => x.p === 1 && Math.abs(x.c) >= 6 && Math.abs(x.c) <= 9) ? 1 : 0;
+  const pr = Math.abs(Q.R[0][0]); f.p20 = pr > 20 ? 1 : 0; f.p40 = pr > 40 ? 1 : 0;
+  const dv = F.map(x => Math.abs(x.c)).find(a => !Number.isInteger(a)); f.dec1 = dv === .5 ? 1 : 0; f.dec2 = dv && dv !== .5 ? 1 : 0;
+  const hid = F.filter(x => Math.abs(x.c) === 1 && (sep ? x.c < 0 : (mDeg(x.m) || x.p > 1))).length;     // x ∙ 5x ; (−x), (−1) ; (−xy)²
+  f.hid = hid ? 1 : 0; f.hidN = Math.max(0, hid - 1);
+  F.forEach(x => Object.keys(x.m).forEach(v => { occ[v] = (occ[v] || 0) + 1; (ex[v] = ex[v] || []).push(x.m[v] * x.p); }));
+  const Ls = Object.keys(occ); f.L2 = Ls.length === 2 ? 1 : 0; f.L3 = Ls.length >= 3 ? 1 : 0;
+  f.merge = Ls.reduce((s, v) => s + occ[v] - 1, 0);
+  f.expo = Ls.filter(v => occ[v] > 1 && ex[v].some(e => e > 1)).length;
+  f.trap1 = Ls.filter(v => occ[v] > 1 && ex[v].some(e => e > 1) && ex[v].some(e => e === 1)).length;
+  const dg = mDeg(Q.R[0][1]); f.deg4 = dg >= 4 ? 1 : 0; f.deg5 = dg >= 5 ? 1 : 0; f.deg6 = dg >= 6 ? 1 : 0;
+  f.a2b = lwA2B(Q.R[0][1]) ? 1 : 0; f.e3 = lwE3(Q.R[0][1]) ? 1 : 0; f.rev = F.some(x => x.rev) ? 1 : 0;
+  const first = []; F.forEach(x => Object.keys(x.m).sort().forEach(v => { if (!first.includes(v)) first.push(v); }));
+  f.ord = first.join('') !== first.slice().sort().join('') ? 1 : 0;
+  f.len = sep ? 0 : Math.max(0, F.length - 3); f.sepLen = sep ? Math.max(0, F.length - 4) : 0;
+  const pw = F.find(x => x.p > 1);
+  f.pw2 = pw && pw.p === 2 ? 1 : 0; f.pw3 = pw && pw.p === 3 ? 1 : 0; f.pwE = pw && Object.values(pw.m).some(e => e > 1) ? 1 : 0;
+  f.pwNegE = pw && pw.c < 0 && pw.p % 2 === 0 ? 1 : 0; f.pwNegO = pw && pw.c < 0 && pw.p % 2 ? 1 : 0;
+  f.neg = F.filter(x => x.c < 0 && x.p === 1).length;
+  f.res1 = pr === 1 && (hid || nn.length) ? 1 : 0;
+  return f;
+}
+function mmScore(Q){ const f = mmFeat(Q); Q.f = f;
+  if (!(f.mul + f.merge + f.neg + f.pw2 + f.pw3)) return 99;          // rien à calculer (5 ∙ x, b ∙ a, 3 ∙ a ∙ b, x ∙ 5y) : jamais
+  return lwSc(MM_W, Object.assign({}, f, {neg: 0})) + MM_NEGW[Math.min(f.neg, 5)]; }
+const fN2 = (n, i) => n < 0 && i ? '(' + fmtNum(n) + ')' : fmtNum(n);
+// détail : les puissances écrites en produit ((2x)³ = 2x ∙ 2x ∙ 2x) ; les signes (deux − ou plus) ; les nombres en bleu, les lettres en rose,
+// regroupées lettre par lettre (le −1 d'un coefficient caché écrit) ; si une lettre revient, la somme des exposants ; la réponse
+function mmDet(Q, qh){
+  const {F, R} = Q, rows = [], fH = (c, m, i) => { const h = mDeg(m) ? polyH([[c, m]]) : fmtNum(c); return i && c < 0 ? '(' + h + ')' : h; };
+  if (F.some(f => f.p > 1)) rows.push(F.flatMap(f => Array(f.p).fill(f)).map((f, i) => fH(f.c, f.m, i)).join(' ∙ '));
+  const E = F.flatMap(f => Array(f.p).fill(f)), nums = E.map(f => f.c).filter(c => c !== 1), lets = E.flatMap(f => Object.keys(f.m).sort().map(x => [x, f.m[x]]));
+  const LT = [...new Set(lets.map(l => l[0]))].sort(), lh = (x, e) => '<i>' + x + '</i>' + (e > 1 ? '<sup>' + e + '</sup>' : '');
+  const nh = nums.length ? H('cA', nums.map(fN2).join(' ∙ ')) : '', lt = H('cD', LT.flatMap(x => lets.filter(l => l[0] === x).map(([, e]) => lh(x, e))).join(' ∙ '));
+  const r1 = nh + (nh ? ' ∙ ' : '') + lt, tx = h => h.replace(/<[^>]+>/g, '').replace(/[()]/g, '');
+  if (tx(r1) !== tx(rows.length ? rows[rows.length - 1] : qh)) rows.push(r1);
+  if (LT.some(x => lets.filter(l => l[0] === x).length > 1))
+    rows.push((nums.length ? H('cA', fmtNum(R[0][0])) + ' ∙ ' : '') + H('cD', LT.map(x => { const es = lets.filter(l => l[0] === x).map(l => l[1]);
+      return es.length > 1 ? powH('<i>' + x + '</i>', es.join(' + ')) : lh(x, es[0]); }).join(' ∙ ')));
+  const ng = E.filter(f => f.c < 0).length;
+  return (ng >= 2 ? DIV(E.filter(f => f.c < 0).map(() => '(−)').join(' ∙ ') + ' → ' + (ng % 2 ? '(−)' : '(+)'), 'gr') : '') + steps(qh, rows.concat([ANS(polyH(R))]));
+}
+function mmBuild(Q, lv){
+  const {F, sep, R} = Q, pw = F.some(f => f.p > 1);
+  const facH = (f, i) => { if (f.p > 1) return '<span class="pw">(' + polyH([[f.c, f.m]]) + ')<sup>' + f.p + '</sup></span>';
+    const h = mDeg(f.m) ? (f.c < 0 ? '−' : '') + lwTH(f.c, f.m, f.rev) : fmtNum(f.c); return i && f.c < 0 ? '(' + h + ')' : h; };
+  const qh = F.map(facH).join(' ∙ ');
+  return litQ(qh, R, () => mmDet(Q, qh), {con: LITC.red, qe: e => F.reduce((q, f) => q * pEval([[f.c, f.m]], e) ** f.p, 1), rare: pw ? 'mpw' : null,
+    cnt: lv >= 3 ? (pw ? 'mmP' : 'mmS' + (TALLY.mmP || 0)) : null, chk: {lit: true, lw: {k: 'mm', lv, sc: Q.sc, f: Q.f, sep, pw, d: {F}}}});
+}
+function mmGen(lv, form){
+  const V = mmVar(lv, form);
+  const Q = lwPick(t => mmDraw(lv, t < 350 ? V : Object.assign({}, V, {hid: t < 450 && V.hid, dec: t < 550 && V.dec, s: t < 500 ? V.s : (NEG ? lwDist(MM_NEG[lv]) : 0)})),
+    mmScore, MM_BAND[lv], 700);
+  return Q ? mmBuild(Q, lv) : null;
+}
+
+/* ---------- addition et soustraction de monômes (écriture simplifiée, comme sa série : 4b − 9b, −6x − 4x + 2) ----------
+   Termes T : {c (valeur), m, tr} ; tr : 'P' (+ (−3x)) ou 'M' (− (−3x)), le piège (dès ★★, relatifs). Poids : terme au-delà de 2 0,12 ;
+   sorte de termes au-delà de 1 0,3 ; x² et x ensemble 0,25 ; terme à deux lettres (xy) 0,15 ; deux lettres (x et y) 0,1 ; sorte dont les
+   termes ne se suivent pas 0,1 ; 1er terme négatif 0,15 ; résultat négatif d'une sorte 0,15 ; + (−3x) 0,3, − (−3x) 0,4 ; coefficient caché
+   0,2 (0,1 de plus par autre) ; résultat 1 ou −1 0,15 ; sorte qui s'annule 0,1 (pas forcée) ; trois termes d'une sorte 0,05 ; somme
+   au-delà de 10 0,05 ; nombre à virgule 0,5 */
+const MS_W = {term: .12, kind: .3, x2x: .25, xy: .15, two: .1, dis: .1, neg1: .15, negR: .15, trP: .3, trM: .4, hid: .2, hidN: .1, res1: .15, zero: .1,
+  three: .05, big: .05, dec: .5, a2b: .1, sw: .15, e3: .2, d4: .15, rev: .2};
+// parties littérales (n° 18) : 4a²b et 4ab² (dès ★★), 4a³b, 4ab³, 4a²b² (dès ★★★), décidées d'abord environ une fois sur trois (MS_KA : sortes) ;
+// poids : terme à deux lettres de degré 3 ou plus 0,1 (en plus de xy 0,15), a²b et ab² ensemble (pas semblables) 0,15, exposant 3 dans un terme à
+// deux lettres 0,2, degré 4 ou plus 0,15, un terme « ba » (semblable à ab, dès ★★, une fois sur deux quand c'est possible) 0,2
+const MS_A2B = [0, 0, .36, .36, .36], MS_REV = .5;
+const MS_KA = {2: [[['x2y', 'xy2'], 3], [['x2y', 'xy'], 1], [['xy2', 'y'], 1], [['x2y', 'c'], 1]],
+  3: [[['x2y', 'xy2', 'c'], 2], [['x2y', 'xy2', 'xy'], 2], [['x3y', 'xy3', 'xy'], 1], [['x2y2', 'xy', 'c'], 1], [['x2y', 'x2', 'x'], 1]],
+  4: [[['x2y', 'xy2', 'xy', 'c'], 2], [['x3y', 'xy3', 'x2y2', 'c'], 1], [['x2y', 'xy2', 'x2', 'x'], 1], [['x3y', 'x2y', 'xy', 'c'], 1]]};
+const MS_BAND = {1: [0, .5], 2: [.5, 1], 3: [1, 1.55], 4: [1.55, 3.2]};
+// décidé d'abord : nombre à virgule 2 fois sur 10 (dès ★★, case « décimaux ») ; coefficient caché 35 % ; pièges (relatifs) : ★★ un 1 fois sur
+// 4 ; ★★★ un 3 fois sur 10, deux 1 fois sur 10 ; ★★★★ un 3 fois sur 10, deux 2 fois sur 10
+const MS_DEC = .2, MS_HID = .35, MS_TR = {2: [.75, .25], 3: [.6, .3, .1], 4: [.5, .3, .2]};
+const MS_N = {1: [2, 3], 2: [3, 4], 3: [4, 5], 4: [5, 6]};
+const MS_K = {1: [[['x'], 6], [['x2'], 1], [['xy'], 1], [['x', 'c'], 2]],
+  2: [[['x', 'c'], 3], [['x', 'y'], 2], [['x2', 'x'], 2], [['xy', 'x'], 1], [['x'], 1], [['x2', 'c'], 1]],
+  3: [[['x2', 'x', 'c'], 3], [['x', 'y', 'c'], 2], [['xy', 'x', 'c'], 1], [['x2', 'x'], 1], [['x', 'c'], 1], [['xy', 'y', 'x'], 1]],
+  4: [[['x2', 'x', 'y', 'c'], 2], [['x2', 'xy', 'x', 'c'], 2], [['xy', 'x', 'y', 'c'], 1], [['x2', 'x', 'c'], 2], [['x2', 'x', 'y'], 1]]};
+function msVar(lv){ return {dec: DEC && lv >= 2 && chance(MS_DEC), tr: NEG && lv >= 2 ? lwDist(MS_TR[lv]) : 0, hid: chance(MS_HID), a2b: lv >= 2 && chance(MS_A2B[lv])}; }
+function msDraw(lv, W){
+  const v = V1(), w = other(v), K = {x: {[v]: 1}, y: {[w]: 1}, x2: {[v]: 2}, xy: {[v]: 1, [w]: 1}, c: {}, x2y: {[v]: 2, [w]: 1}, xy2: {[v]: 1, [w]: 2},
+    x3y: {[v]: 3, [w]: 1}, xy3: {[v]: 1, [w]: 3}, x2y2: {[v]: 2, [w]: 2}}, cap = LW_SCAP[lv];
+  const kinds = wpick(W.a2b ? MS_KA[lv] : MS_K[lv], z => z[1])[0], n = Math.min(ri(...MS_N[lv]), 3 * kinds.length);
+  if (n < kinds.length + 1) return null;
+  const cnt = kinds.map(() => 1); while (cnt.reduce((a, b) => a + b, 0) < n){ const i = ri(0, kinds.length - 1); if (cnt[i] < 3) cnt[i]++; }
+  let T = []; kinds.forEach((k, i) => { for (let j = 0; j < cnt[i]; j++) T.push({c: mDeg(K[k]) && chance(.08) ? 1 : ri(1, 9), m: K[k], k}); });
+  if (W.hid){ const c = T.filter(t => mDeg(t.m)); pick(c).c = 1; }
+  if (W.dec){ const ks = kinds.filter((z, i) => z !== 'c' && cnt[i] > 1), k = pick(ks.length ? ks : kinds.filter(z => z !== 'c')), c = T.filter(t => t.k === k),
+      h = shuffle(c.slice()).slice(0, c.length > 1 && chance(.5) ? 2 : 1);
+    h.forEach(t => { t.c = t.c === 1 && chance(.5) ? .5 : rnd(t.c - .5 + (t.c === 1 ? 1 : 0)); }); }
+  T = chance(.35) ? T : shuffle(T);                                 // dans l'ordre des sortes, ou mélangés
+  T.forEach((t, i) => { if (i ? chance(.42) : NEG && chance(.2)) t.c = -t.c; });
+  if (W.tr){ const c = T.slice(1); shuffle(c).slice(0, W.tr).forEach(t => { t.tr = t.c < 0 ? 'P' : 'M'; }); }
+  if (lv >= 2 && chance(MS_REV)) lwRev(T);
+  if (T.some(t => mDeg(t.m) > LW_DMAX[lv])) return null;
+  const R = polyNorm(T.map(t => [t.c, t.m]));
+  for (const k of new Set(T.map(t => lwKey(t.m)))){ const cs = T.filter(t => lwKey(t.m) === k).map(t => t.c); if (!lwSum(cs, cap)) return null;
+    if (!NEG && rnd(cs.reduce((a, b) => a + b, 0)) < 0) return null; }
+  if (!NEG && T[0].c < 0) return null;
+  if (!lwLetRed(T.map(t => [t.c, t.m]))) return null;                  // au moins une sorte avec une lettre à réduire
+  return {T, R};
+}
+function msFeat(Q){
+  const {T} = Q, f = {}, hid = lwHid(T);
+  f.term = T.length - 2; f.kind = new Set(T.map(t => lwKey(t.m))).size - 1;
+  f.x2x = lwX2X(T) ? 1 : 0; f.xy = T.some(t => Object.keys(t.m).length === 2) ? 1 : 0;
+  f.two = new Set(T.filter(t => mDeg(t.m) === 1).map(t => lwKey(t.m))).size >= 2 ? 1 : 0;
+  f.dis = Math.min(3, lwDis(T)); f.neg1 = T[0].c < 0 ? 1 : 0;
+  f.trP = T.filter(t => t.tr === 'P').length; f.trM = T.filter(t => t.tr === 'M').length;
+  f.hid = hid ? 1 : 0; f.hidN = Math.min(2, Math.max(0, hid - 1));
+  Object.assign(f, lwRed(T));
+  f.dec = T.some(t => !Number.isInteger(t.c) && T.filter(u => lwKey(u.m) === lwKey(t.m)).length > 1) ? 1 : 0;     // un nombre à virgule qui se calcule
+  const Ms = T.map(t => t.m); f.a2b = Ms.some(lwA2B) ? 1 : 0; f.sw = lwSw(Ms) ? 1 : 0; f.e3 = Ms.some(lwE3) ? 1 : 0;
+  f.d4 = Ms.some(m => mDeg(m) >= 4) ? 1 : 0; f.rev = T.some(t => t.rev) ? 1 : 0;
+  return f;
+}
+function msScore(Q){ const f = msFeat(Q); Q.f = f; return lwSc(MS_W, f); }
+function msBuild(Q, lv){
+  const {T, R} = Q, E = T.map(t => [t.c, t.m]);
+  const qT = col => T.map((t, i) => { if (!i) return (t.c < 0 ? '−' : '') + lwTH(t.c, t.m, t.rev, col);
+    if (t.tr) return (t.tr === 'P' ? ' + ' : ' − ') + '(−' + lwTH(t.c, t.m, t.rev, col) + ')';     // + (−5x) ; − (−5x)
+    return (t.c < 0 ? ' − ' : ' + ') + lwTH(t.c, t.m, t.rev, col); }).join('');
+  const qh = qT(false);
+  return litQ(qh, R, () => { const rows = [];
+      if (T.some(t => t.tr)) rows.push(polyH(E, true));            // + (−5x) → − 5x ; − (−5x) → + 5x
+      const G2 = grouped(E); if (polyH(G2) !== polyH(E)) rows.push(polyH(G2, true));
+      rows.push(ANS(polyH(R))); return steps(qT(true), rows); },
+    {con: LITC.red, qe: e => pEval(E, e), chk: {lit: true, lw: {k: 'ms', lv, sc: Q.sc, f: Q.f, d: {T}}}});
+}
+function msGen(lv){
+  const V = msVar(lv);
+  const Q = lwPick(t => msDraw(lv, t < 350 ? V : Object.assign({}, V, {hid: t < 450 && V.hid, dec: t < 550 && V.dec, tr: t < 500 ? V.tr : 0, a2b: t < 600 && V.a2b})), msScore, MS_BAND[lv], 700);
+  return Q ? msBuild(Q, lv) : null;
+}
+
+/* ---------- addition et soustraction de polynômes ----------
+   Polynômes Ps (listes de termes {c, m}), signes sg devant chaque parenthèse. Poids : trois polynômes 0,75 ; terme au-delà de 4 0,1 ; sorte
+   au-delà de 2 0,25 ; x² et x 0,2 ; deux lettres 0,6 ; terme xy 0,15 ; polynôme dans le désordre 0,15 ; 1er terme d'un polynôme négatif 0,1,
+   autre terme négatif 0,05 ; soustraction : 0,15 par terme qui change de signe, 0,15 de plus pour un terme négatif, −(…) au début 0,25 ;
+   coefficient caché 0,15 (0,05 par autre) ; résultat 1 ou −1 0,1 ; somme au-delà de 10 0,05 ; sorte qui s'annule : 0 */
+const MP_W = {three: .75, term: .1, kind: .25, x2x: .2, two: .6, xy: .15, dis: .15, negF: .1, negO: .05, sub: .15, subN: .15, start: .25, hid: .15, hidN: .05,
+  res1: .1, big: .05, a2b: .3, sw: .15, e3: .2, d4: .15, rev: .15};
+// parties littérales (n° 18) : dès ★★★, environ une fois sur trois (décidé d'abord ; à la place de « deux lettres » x et y, qui passe à 2 fois sur 10) :
+// polynômes faits des sortes d'une liste (MP_POOLA) ; poids : terme à deux lettres de degré 3 ou plus 0,3, a²b et ab² ensemble 0,15, exposant 3
+// 0,2, degré 4 ou plus 0,15, un terme « ba » (4 fois sur 10 quand c'est possible) 0,15
+const MP_A2B = [0, 0, 0, .36, .36], MP_REV = .4;
+const MP_POOLA = {3: [['x2y', 'xy', 'c'], ['x2y', 'xy2', 'xy'], ['xy2', 'xy', 'y', 'c'], ['x2y', 'xy2', 'c']],
+  4: [['x2y', 'xy', 'c'], ['x2y', 'xy2', 'xy'], ['x2y', 'xy2', 'c'], ['x3y', 'x2y', 'xy', 'c'], ['x2y2', 'xy', 'x', 'c'], ['x2y', 'xy2', 'x2', 'c'], ['xy3', 'xy2', 'y', 'c']]};
+const MP_BAND = {a: {1: [0, .35], 2: [.35, .8], 3: [.8, 1.2], 4: [1.2, 3.2]}, s: {1: [0, .4], 2: [.4, .9], 3: [.9, 1.5], 4: [1.5, 3.2]}};   // addition, soustraction
+// décidé d'abord : trois polynômes 35 % à ★★★★ ; deux lettres 3 fois sur 10 dès ★★★ ; −(…) au début (soustraction, relatifs) 25 % ;
+// un seul terme dans la 1re parenthèse (6 − (−2b + 6), dès ★★) 12 %
+const MP_THREE = .35, MP_TWO = [0, 0, 0, .2, .2], MP_START = [0, 0, .25, .25, .2], MP_ONE = .12, MP_DIS = .4;
+const mpOrd = P => P.every((t, i) => !i || (mDeg(P[i - 1].m) > mDeg(t.m) || (mDeg(P[i - 1].m) === mDeg(t.m) && lwKey(P[i - 1].m) <= lwKey(t.m))));
+function mpVar(lv, sub){ const three = lv === 4 && chance(MP_THREE), a2b = lv >= 3 && chance(MP_A2B[lv]);
+  const start = sub && NEG && lv >= 2 && chance(MP_START[lv]);
+  return {three, a2b, two: !three && !a2b && chance(MP_TWO[lv]), start, one: lv >= 2 && !three && !start && chance(MP_ONE)}; }
+function mpDraw(lv, sub, W){
+  const v = V1(), w = other(v), K = {x: {[v]: 1}, y: {[w]: 1}, x2: {[v]: 2}, xy: {[v]: 1, [w]: 1}, c: {}, x2y: {[v]: 2, [w]: 1}, xy2: {[v]: 1, [w]: 2},
+    x3y: {[v]: 3, [w]: 1}, xy3: {[v]: 1, [w]: 3}, x2y2: {[v]: 2, [w]: 2}}, cap = LW_SCAP[lv];
+  const pool = W.a2b ? pick(MP_POOLA[lv]).slice() : W.two ? (lv === 4 && chance(.3) ? ['xy', 'x', 'y', 'c'] : ['x', 'y', 'c']) : lv === 1 ? ['x', 'c'] : lv === 2 ? (chance(.7) ? ['x', 'c'] : ['x2', 'x', 'c'])
+    : (chance(.25) ? ['x', 'c'] : ['x2', 'x', 'c']);
+  const np = W.three ? 3 : 2;
+  const sg = sub ? (np === 2 ? [W.start ? -1 : 1, -1] : pick(NEG ? [[1, -1, 1], [1, 1, -1], [1, -1, -1]] : [[1, -1, 1], [1, 1, -1]])) : Array(np).fill(1);
+  if (np === 3 && W.start) sg[0] = -1;
+  const Ps = [];
+  for (let i = 0; i < np; i++){
+    let ks;
+    if (W.one && i === 0) ks = [pick(pool)];
+    else if (pool.length === 2) ks = pool.slice();
+    else { const k = W.three ? 2 : lv <= 2 ? ri(2, 3) : chance(.6) ? 3 : 2; ks = shuffle(pool.slice()).slice(0, Math.min(k, pool.length)).sort((a, b) => pool.indexOf(a) - pool.indexOf(b)); }
+    let P = ks.map(k => ({c: mDeg(K[k]) && chance(.12) ? 1 : ri(1, 9), m: K[k]}));
+    const negOK = NEG || sg[i] > 0;                                  // sans relatifs : aucun terme négatif dans une parenthèse soustraite
+    P.forEach((t, j) => { if (j ? negOK && chance(.3) : NEG && lv >= 2 && chance(.2)) t.c = -t.c; });
+    if (lv >= 2 && P.length > 1 && chance(MP_DIS)) shuffle(P);
+    if (!NEG && P[0].c < 0) return null;
+    Ps.push(P);
+  }
+  const E = Ps.flatMap((P, i) => P.map(t => [sg[i] * t.c, t.m])), R = polyNorm(E);
+  if (!R.length || NKIND(E) > 4) return null;
+  for (const k of new Set(E.map(t => lwKey(t[1])))) if (!lwSum(E.filter(t => lwKey(t[1]) === k).map(t => t[0]), cap)) return null;
+  if (!NEG && (R[0][0] < 0 || (R.some(([c]) => c < 0) && chance(.5)))) return null;
+  if (NKIND(E) > R.length && chance(.5)) return null;               // une sorte qui s'annule : pas trop souvent (pas forcée, l'enseignant)
+  if (!sub && !lwLetRed(E)) return null;                             // addition : au moins une sorte avec une lettre à réduire
+  if (E.some(t => mDeg(t[1]) > LW_DMAX[lv]) || (W.a2b && !E.some(t => lwA2B(t[1])))) return null;
+  if (chance(MP_REV)) lwRev(Ps.flat());
+  return {Ps, sg, E, R};
+}
+function mpFeat(Q){
+  const {Ps, sg, E} = Q, f = {}, T = Ps.flat(), hid = lwHid(T);
+  f.three = Ps.length === 3 ? 1 : 0; f.term = Math.max(0, T.length - 4);
+  f.kind = Math.max(0, new Set(T.map(t => lwKey(t.m))).size - 2); f.x2x = lwX2X(T) ? 1 : 0;
+  f.two = new Set(T.filter(t => mDeg(t.m) === 1).map(t => lwKey(t.m))).size >= 2 ? 1 : 0; f.xy = T.some(t => Object.keys(t.m).length === 2) ? 1 : 0;
+  f.dis = Ps.filter(P => P.length > 1 && !mpOrd(P)).length;
+  f.negF = Ps.filter(P => P[0].c < 0).length; f.negO = Math.min(4, Ps.reduce((s, P) => s + P.slice(1).filter(t => t.c < 0).length, 0));
+  f.sub = Ps.reduce((s, P, i) => s + (sg[i] < 0 ? P.length : 0), 0); f.subN = Ps.reduce((s, P, i) => s + (sg[i] < 0 ? P.filter(t => t.c < 0).length : 0), 0);
+  f.start = sg[0] < 0 ? 1 : 0; f.hid = hid ? 1 : 0; f.hidN = Math.min(2, Math.max(0, hid - 1));
+  const r = lwRed(E.map(([c, m]) => ({c, m}))); f.res1 = r.res1; f.big = r.big; f.zero = r.zero;
+  const Ms = T.map(t => t.m); f.a2b = Ms.some(lwA2B) ? 1 : 0; f.sw = lwSw(Ms) ? 1 : 0; f.e3 = Ms.some(lwE3) ? 1 : 0;
+  f.d4 = Ms.some(m => mDeg(m) >= 4) ? 1 : 0; f.rev = T.some(t => t.rev) ? 1 : 0;
+  return f;
+}
+function mpScore(Q){ const f = mpFeat(Q); Q.f = f; return lwSc(MP_W, f); }
+function mpBuild(Q, lv){
+  const {Ps, sg, E, R} = Q;
+  const qh = Ps.map((P, i) => { const h = lwPolyH(P), one = P.length === 1 && i === 0 && sg[0] > 0;
+    return (i ? (sg[i] < 0 ? ' − ' : ' + ') : sg[i] < 0 ? '−' : '') + (one ? h : '(' + h + ')'); }).join('');
+  return litQ(qh, R, () => { const rows = [polyH(E, true), polyH(grouped(E), true)].filter((r, i, a) => !i || r !== a[i - 1]);
+      return steps(qh, rows.concat([ANS(polyH(R))])); },
+    {con: LITC.red, qe: e => Ps.reduce((s, P, i) => s + sg[i] * pEval(P.map(t => [t.c, t.m]), e), 0), key: (sg.some(s => s < 0) ? '−' : '+') + qh,
+      chk: {lit: true, lw: {k: 'mp', lv, sc: Q.sc, f: Q.f, d: {Ps, sg}}}});
+}
+function mpGen(lv, sub){
+  const V = mpVar(lv, sub);
+  const Q = lwPick(t => mpDraw(lv, sub, t < 400 ? V : Object.assign({}, V, {one: false, start: t < 550 && V.start, a2b: t < 600 && V.a2b})), mpScore, MP_BAND[sub ? 's' : 'a'][lv], 700);
+  return Q ? mpBuild(Q, lv) : null;
+}
+
+/* ---------- développer (distributivité simple) ----------
+   Développements D : {k: [c, m] (facteur), T: [[a, m]…] (parenthèse), after (facteur écrit après : (x + 6) ∙ 2)} ; X : un terme à réduire
+   avec (5(x + 2) − 2x ; 1,5x + 4(x − 1)), pos 'b' (avant) ou 'a' (après). Poids : facteur négatif 0,45, −(…) 0,5, une lettre x(x + 1) 0,45,
+   −x 0,65, un monôme 2x(…) 0,5, −2x 0,75, x² dans le facteur 0,15, deux lettres dans le facteur (xy(x + y)) 0,55, nombre à virgule 0,5 ;
+   facteur écrit après 0,15 ; trois termes 0,35 ; x² dans la parenthèse 0,1 ; deux lettres dans la parenthèse 0,55 ; nombre d'abord (3 − b)
+   0,1 ; terme négatif 0,1 (au plus deux), 0,15 de plus quand c'est le 1er (4(−5x − 3)) ; signe − par signe − 0,1 ; nombre à virgule dans la parenthèse 0,5 ; produit avec un facteur de 6 à
+   9 0,05, au-delà de 20 0,05 ; lettre par la même lettre (x ∙ x²) 0,1 ; degré 3 0,1 ; deux développements 1,4 ; un terme à réduire 1 ;
+   résultat 1 ou −1 0,1 */
+const MD_W = {neg: .45, m1: .5, x: .45, mx: .65, kx: .5, mkx: .75, fx2: .15, f2l: .55, fdec: .5, after: .15, t3: .35, tx2: .1, t2l: .55, cfirst: .1,
+  negT: .1, negF: .15, nn: .1, tdec: .5, big: .05, p20: .05, expo: .1, deg3: .1, two: 1.4, extra: 1, res1: .1, a2b: .2, e3: .2, d4: .15, d5: .15};
+// parties littérales (n° 18) : dès ★★★, environ une fois sur trois (décidé d'abord) : 2ab(a + 3b), 3a(ab − 2b), a²(b + 2), à ★★★★ aussi a²b(a + b) ;
+// poids : produit à deux lettres de degré 3 ou plus 0,2, exposant 3 0,2, degré 4 0,15, 5 0,15 de plus. Facteur écrit après la parenthèse : une fois sur
+// trois (l'enseignant, 07.11.2026), aussi avec deux développements ou un terme à réduire (le premier développement)
+const MD_BAND = {1: [0, .45], 2: [.45, 1], 3: [1, 1.65], 4: [1.65, 3.6]};
+// facteur devant la parenthèse (fréquences par niveau ; neg, m1, mx, mkx avec les relatifs) ; décidé d'abord : deux développements 45 % à ★★★★,
+// un terme à réduire 35 % à ★★★ et 20 % à ★★★★, nombre à virgule 2 fois sur 10 (dès ★★, case « décimaux »), facteur écrit après 2 fois sur
+// 10, deux lettres 25 % dès ★★★
+const MD_FK = {1: {n: 1}, 2: {n: 3, neg: 2, m1: 1.2, x: 1.5, mx: .8}, 3: {n: 2, neg: 2, m1: 1, x: 1, mx: 1, kx: 2, mkx: 1.2},
+  4: {n: 1.5, neg: 1.5, m1: 1, x: 1, mx: 1, kx: 2, mkx: 1.5}};
+const MD_TWO = .45, MD_EXTRA = [0, 0, 0, .35, .2], MD_DEC = .2, MD_AFTER = [0, .33, .36, .42, .37], MD_L2 = .25, MD_A2B = [0, 0, 0, .45, .33];      // facteur après : une fois sur trois mesurée
+function mdVar(lv){ const two = lv === 4 && chance(MD_TWO);
+  return {two, extra: !two && chance(MD_EXTRA[lv]), dec: DEC && lv >= 2 && chance(MD_DEC), after: chance(MD_AFTER[lv]), l2: lv >= 3 && chance(MD_L2), a2b: lv >= 3 && chance(MD_A2B[lv])}; }
+function mdOne(lv, W, v, w, kind, dec, cap, a2b){
+  const fks = Object.keys(MD_FK[lv]).filter(k => NEG || !['neg', 'm1', 'mx', 'mkx'].includes(k));
+  const fk = kind || wpick(fks, k => MD_FK[lv][k]), lx = () => W.l2 && chance(.4) ? {[v]: 1, [w]: 1} : {[v]: lv >= 3 && chance(.2) ? 2 : 1};
+  let k = fk === 'n' ? [lwN(), {}] : fk === 'neg' ? [-lwN(), {}] : fk === 'm1' ? [-1, {}] : fk === 'x' ? [1, lx()] : fk === 'mx' ? [-1, lx()]
+    : fk === 'kx' ? [lwN(), lx()] : [-lwN(), lx()];
+  if (dec === 'f') k = [(k[0] < 0 ? -1 : 1) * pick([.5, .5, 1.5, 2.5]), {}];
+  const n = lv === 1 ? 2 : chance(lv === 2 ? .35 : .45) ? 3 : 2, two = W.l2 && !mDeg(k[1]) ? chance(.6) : false;
+  let ks = two ? (n === 3 ? [{[v]: 1}, {[w]: 1}, {}] : [{[v]: 1}, {[w]: 1}]) : n === 3 ? [{[v]: 2}, {[v]: 1}, {}] : [{[v]: 1}, {}];
+  if (a2b){ // 2ab(a + 3b) ; 3a(ab − 2b) ; a²(b + 2) ; ★★★★ : a²b(a + b)
+    const pat = pick(lv >= 4 ? ['f2', 'f2', 'f1', 'fx2', 'f21'] : ['f2', 'f2', 'f1', 'fx2']), fk2 = pick(NEG ? ['x', 'kx', 'kx', 'mx', 'mkx'] : ['x', 'kx', 'kx']);
+    const c0 = fk2 === 'x' ? 1 : fk2 === 'mx' ? -1 : fk2 === 'kx' ? lwN() : -lwN(), A = () => ({[v]: 1}), B = () => ({[w]: 1}), AB = () => ({[v]: 1, [w]: 1});
+    if (pat === 'f2'){ k = [c0, AB()]; ks = pick([[A(), B()], [A(), {}], [B(), {}], [A(), B(), {}]]); }
+    else if (pat === 'f1'){ k = [c0, pick([A(), B()])]; ks = pick([[AB(), B()], [AB(), {}], [AB(), A(), {}]]); }
+    else if (pat === 'fx2'){ k = [c0, {[v]: 2}]; ks = pick([[B(), {}], [B(), A()]]); }
+    else { k = [c0, {[v]: 2, [w]: 1}]; ks = pick([[A(), B()], [A(), {}]]); } }
+  let T = ks.map(m => [mDeg(m) && chance(lv === 1 ? .4 : .3) ? 1 : ri(1, 9), m]);
+  if (dec === 't'){ const i = T.findIndex(([, m]) => !mDeg(m)); if (i < 0) return null; T[i][0] = pick([.5, .5, 1.5]); }
+  T = T.map(([a, m], j) => [j ? (chance(.35) ? -a : a) : (NEG && lv >= 2 && chance(.15) ? -a : a), m]);
+  if (T.length === 2 && !mDeg(T[1][1]) && chance(.15)) T = [[Math.abs(T[1][0]), T[1][1]], [(chance(.6) ? -1 : 1) * Math.abs(T[0][0]), T[0][1]]];    // 4(3 − b)
+  if (!NEG && T[0][0] < 0) return null;
+  for (const [a] of T){ const d = [k[0], a].find(x => !Number.isInteger(x));
+    if (d === undefined){ if (!lwProd([k[0], a], cap)) return null; continue; }
+    const o = Math.abs(d === k[0] ? a : k[0]);                      // 0,5 ∙ 4 ; 1,5 ∙ 2 ; 0,5 ∙ x : l'autre facteur vaut 1 ou est pair
+    if (o !== 1 && (o % 2 || o > 10 || Math.abs(rnd(d * o)) > cap)) return null; }
+  return {k, T, after: false};
+}
+function mdDraw(lv, W){
+  const v = V1(), w = other(v), cap = LW_PCAP[lv], dec = W.dec ? (!W.a2b && chance(.5) ? 'f' : 't') : null;
+  const D = []; const d1 = mdOne(lv, W, v, w, null, dec, cap, W.a2b); if (!d1) return null; D.push(d1);
+  if (W.two){ const d2 = mdOne(lv, W, v, w, null, null, cap); if (!d2) return null; if (!NEG && d2.k[0] < 0) return null; D.push(d2); }
+  if (W.after && !(Math.abs(D[0].k[0]) === 1 && !mDeg(D[0].k[1]))) D[0].after = true;          // pas pour −(…)
+  let X = null;
+  if (W.extra){ const ms = D[0].T.map(([, m]) => m).filter(m => mDeg(m)), m = pick(ms.length ? ms : [{[v]: 1}]); X = {t: [(chance(.5) ? -1 : 1) * (chance(.15) ? 1 : ri(1, 9)), m], pos: chance(.4) ? 'b' : 'a'};
+    if (X.pos === 'b' && X.t[0] < 0 && !NEG) X.t[0] = -X.t[0]; }
+  const E = (X && X.pos === 'b' ? [X.t] : []).concat(D.flatMap(d => d.T.map(x => mulT(d.k, x)))).concat(X && X.pos === 'a' ? [X.t] : []), R = polyNorm(E);
+  if (!R.length || NKIND(E) > 4) return null;
+  if (E.some(t => mDeg(t[1]) > LW_DMAX[lv]) || (W.a2b && !E.some(t => lwA2B(t[1])))) return null;
+  if (!lwResAll(E, LW_SCAP[lv])) return null;
+  if (!NEG && R[0][0] < 0) return null;
+  if (R.some(([c]) => !Number.isInteger(rnd(c * 2)))) return null;
+  if (NKIND(E) > R.length && chance(.5)) return null;               // une sorte qui s'annule : pas trop souvent
+  return {D, X, E, R};
+}
+function mdFeat(Q){
+  const {D, X, R} = Q, f = {};
+  const add = (k, n) => { f[k] = (f[k] || 0) + (n === undefined ? 1 : n); };
+  D.forEach(d => {
+    const [c, m] = d.k, L = Object.keys(m).length;
+    const fk = !Number.isInteger(c) ? 'fdec' : !mDeg(m) ? (c === -1 ? 'm1' : c < 0 ? 'neg' : null) : Math.abs(c) === 1 ? (c < 0 ? 'mx' : 'x') : (c < 0 ? 'mkx' : 'kx');
+    if (fk) add(fk);
+    if (L === 1 && mDeg(m) >= 2) add('fx2'); if (L >= 2) f.f2l = 1; if (d.after) f.after = 1;
+    if (d.T.length >= 3) add('t3'); if (d.T.some(([, mm]) => mDeg(mm) >= 2 && Object.keys(mm).length === 1)) f.tx2 = 1;
+    if (new Set(d.T.flatMap(([, mm]) => Object.keys(mm))).size >= 2) f.t2l = 1;
+    if (!mDeg(d.T[0][1])) f.cfirst = 1; if (d.T[0][0] < 0) f.negF = 1;
+    add('negT', d.T.filter(([a]) => a < 0).length); if (c < 0) add('nn', d.T.filter(([a]) => a < 0).length);
+    if (d.T.some(([a]) => !Number.isInteger(a))) f.tdec = 1;
+    d.T.forEach(([a, mm]) => { const A = Math.abs(a), C = Math.abs(c);
+      if (A !== 1 && C !== 1 && ((A >= 6 && A <= 9) || (C >= 6 && C <= 9))) add('big');
+      if (Math.abs(rnd(a * c)) > 20) add('p20');
+      if (Object.keys(m).some(x => mm[x])) add('expo'); });
+  });
+  f.negT = Math.min(2, f.negT || 0); f.nn = Math.min(3, f.nn || 0); f.big = Math.min(3, f.big || 0); f.p20 = Math.min(2, f.p20 || 0);
+  if (D.length > 1) f.two = 1; if (X) f.extra = 1;
+  if (R.some(([, m]) => mDeg(m) >= 3)) f.deg3 = 1; if (R.some(([c, m]) => Math.abs(c) === 1 && mDeg(m))) f.res1 = 1;
+  const Ms = Q.E.map(t => t[1]), dmx = Math.max(...Ms.map(mDeg));
+  f.a2b = Ms.some(lwA2B) ? 1 : 0; f.e3 = Ms.some(lwE3) ? 1 : 0; f.d4 = dmx >= 4 ? 1 : 0; f.d5 = dmx >= 5 ? 1 : 0;
+  return f;
+}
+function mdScore(Q){ const f = mdFeat(Q); Q.f = f; return lwSc(MD_W, f); }
+// flèches d'un facteur écrit après la parenthèse ((x + 6) ∙ 2)
+function devArcsAfter(kT, T, col){
+  const toks = [{t: '('}], idx = []; tokTerms(T, toks, idx); toks.push({t: ')'}, {t: ' ∙ '});
+  const neg = kT[0][0] < 0; if (neg) toks.push({t: '('});
+  tokPoly(kT, col).forEach(t => toks.push(t)); const ki = toks.length - 1; if (neg) toks.push({t: ')'});
+  return arcExpr(toks, idx.map(j => [ki, j, col]));
+}
+function mdBuild(Q, lv){
+  const {D, X, E, R} = Q, Xb = X && X.pos === 'b';
+  const devH = (d, first) => { const [c, m] = d.k, inner = '(' + polyH(d.T) + ')';
+    if (d.after){ const kh = mDeg(m) ? polyH([d.k]) : fmtNum(c), h = inner + ' ∙ ' + (c < 0 ? '(' + kh + ')' : kh); return first ? h : ' + ' + h; }
+    const kh = c === 1 && mDeg(m) ? mH(m) : c === -1 ? '−' + mH(m) : polyH([d.k]);
+    if (first) return kh + inner;
+    return (c < 0 ? ' − ' + (c === -1 ? mH(m) : polyH([[-c, m]])) : ' + ' + kh) + inner; };
+  const xh = X ? (Xb ? polyH([X.t]) : (X.t[0] < 0 ? ' − ' : ' + ') + termH(Math.abs(X.t[0]), X.t[1])) : '';
+  const qh = (Xb ? xh : '') + D.map((d, i) => devH(d, !i && !Xb)).join('') + (X && !Xb ? xh : '');
+  const prod = (d, i) => d.T.map((x, j) => (j ? ' + ' : '') + (d.after ? facPar(x, j) + ' ∙ ' + H(i ? 'cM' : 'cK', facPar(d.k, 1))
+    : H(i ? 'cM' : 'cK', facPar(d.k, 1)) + ' ∙ ' + facPar(x, 1))).join('');
+  const pr = (Xb ? xh + ' + ' : '') + D.map((d, i) => (i ? ' + ' : '') + prod(d, i)).join('') + (X && !Xb ? xh : '');
+  return litQ(qh, R, () => '<div class="frow">' + D.map((d, i) => d.after ? devArcsAfter([d.k], d.T, BROWN) : devArcs([d.k], d.T, i ? TEAL : BROWN)).join('') + '</div>' +
+      steps(qh, [pr].concat(D.length > 1 || X ? [polyH(E, true), polyH(grouped(E), true)].filter((r, i, a) => !i || r !== a[i - 1]) : []).concat([ANS(polyH(R))])),
+    {con: LITC.dev, qe: e => pEval(E, e), chk: {lit: true, lw: {k: 'md', lv, sc: Q.sc, f: Q.f, d: {D, X}}}});
+}
+function mdGen(lv){
+  const V = mdVar(lv);
+  const Q = lwPick(t => mdDraw(lv, t < 400 ? V : Object.assign({}, V, {dec: t < 550 && V.dec, after: t < 500 && V.after, l2: t < 600 && V.l2, a2b: t < 650 && V.a2b})), mdScore, MD_BAND[lv], 800);
+  return Q ? mdBuild(Q, lv) : null;
+}
+
+/* ---------- double développement ----------
+   (A)(B), parfois M0 − (A)(B). Poids : coefficient devant x (ou x²) 0,3 par facteur ; terme négatif 0,15 (au plus trois) ; nombre d'abord
+   (3 + x) 0,1 ; six produits (x + 1)(x² + 2x + 3) 0,8 ; deux lettres 0,8 ; un moins devant le produit 1 ; produit avec un facteur de 6 à 9
+   0,05 ; termes du milieu de signes contraires 0,1 ; somme du milieu au-delà de 10 0,1 ; terme du milieu 1 ou −1 (x² − x − 6) 0,05 */
+const M2_W = {lead: .3, negT: .15, cfirst: .1, six: .8, two: .8, minus: 1, big: .05, opp: .1, msum: .1, res1: .05};
+const M2_BAND = {1: [0, .3], 2: [.3, .7], 3: [.7, 1.15], 4: [1.15, 3.2]};
+// décidé d'abord : six produits 35 % à ★★★ ; à ★★★★ toujours une des trois : six produits, deux lettres ou un moins devant (un tiers chacune)
+const M2_SIX = .35;
+function m2Var(lv){ if (lv < 4) return {six: lv === 3 && chance(M2_SIX)}; const k = pick(['six', 'two', 'minus']); return {[k]: true}; }
+function m2Draw(lv, W){
+  const v = V1(), w = other(v), m = {[v]: 1}, m2 = {[v]: 2}, n = {[w]: 1}, cap = LW_PCAP[lv];
+  const sg = p => NEG && chance(p) ? -1 : 1, cb = () => ri(1, lv <= 2 ? 6 : 7), np = [0, .25, .35, .4, .45][lv];
+  let A, B, M0 = null;
+  if (W.minus){ A = [[chance(.4) ? ri(2, 3) : 1, m], [sg(.45) * ri(1, 6), {}]]; B = [[1, m], [sg(.45) * ri(1, 6), {}]]; M0 = chance(.5) ? [[ri(1, 3), m2]] : [[ri(2, 4), m2], [ri(1, 9), {}]]; }
+  else if (W.two){ A = [[ri(1, 3), m], [sg(.5) * ri(1, 4), n]]; B = [[ri(1, 3), m], [sg(.5) * ri(1, 4), n]]; }
+  else {
+    const a1 = lv >= 2 && chance(lv === 2 ? .55 : .6) ? ri(2, 4) : 1, a2 = lv >= 3 && chance(.5) ? ri(2, 3) : 1;
+    A = [[a1, m], [sg(np) * cb(), {}]];
+    B = W.six ? [[chance(.6) ? 1 : 2, m2], [sg(np) * ri(1, 5), m], [sg(np) * ri(1, 6), {}]] : [[a2, m], [sg(np) * cb(), {}]];
+    if (chance(.5)) [A, B] = [B, A];
+  }
+  if (!NEG && A.concat(B).some(([c]) => c < 0)) return null;
+  for (const a of A) for (const b of B) if (!lwProd([a[0], b[0]], cap)) return null;
+  if (polyH(A) === polyH(B) || [A, B].some(F => F.length === 2 && gcd(F[0][0], F[1][0]) > 1)) return null;     // pas (2x − 4b)², ni (2x + 6)
+  // nombre d'abord (3 + x) : dès ★★, 15 % par facteur à deux termes
+  const ord = P => P.length === 2 && lv >= 2 && !M0 && !mDeg(P[1][1]) && chance(.15) && (NEG || P[1][0] > 0) ? [P[1], P[0]] : P;
+  const Ad = ord(A), Bd = ord(B);
+  const P = Ad.flatMap(a => Bd.map(b => mulT(a, b))), PR = polyNorm(P), E = M0 ? M0.concat(PR.map(([c, mm]) => [-c, mm])) : P, R = polyNorm(E);
+  if (!R.length || NKIND(E) > 4) return null;
+  if (!NEG && (R[0][0] < 0 || (M0 && PR.some(([c]) => c < 0)))) return null;
+  if (!lwResAll(P, LW_SCAP[lv]) || (M0 && !lwResAll(E, LW_SCAP[lv]))) return null;     // termes du milieu, puis avec M0 : au plus 15 / 20
+  return {A: Ad, B: Bd, M0, P, E, R};
+}
+function m2Feat(Q){
+  const {A, B, M0, P, R} = Q, f = {};
+  const lead = F => { const t = F.find(([, mm]) => mDeg(mm)); return t && Math.abs(t[0]) !== 1 ? 1 : 0; };
+  f.lead = lead(A) + lead(B); f.negT = Math.min(3, A.concat(B).filter(([c]) => c < 0).length);
+  f.cfirst = [A, B].filter(F => !mDeg(F[0][1])).length;
+  f.six = A.length + B.length > 4 ? 1 : 0; f.two = new Set(A.concat(B).flatMap(([, mm]) => Object.keys(mm))).size >= 2 ? 1 : 0;
+  f.minus = M0 ? 1 : 0;
+  f.big = Math.min(3, A.reduce((s, a) => s + B.filter(b => Math.abs(a[0]) !== 1 && Math.abs(b[0]) !== 1 && [a[0], b[0]].some(c => Math.abs(c) >= 6 && Math.abs(c) <= 9)).length, 0));
+  const ks = [...new Set(P.map(([, mm]) => lwKey(mm)))].filter(k => P.filter(([, mm]) => lwKey(mm) === k).length > 1);      // sortes qui se réduisent
+  const cs = k => P.filter(([, mm]) => lwKey(mm) === k).map(([c]) => c);
+  f.opp = ks.some(k => cs(k).some(c => c < 0) && cs(k).some(c => c > 0)) ? 1 : 0;
+  f.msum = ks.some(k => Math.abs(cs(k).reduce((s, c) => s + c, 0)) > 10) ? 1 : 0;
+  f.res1 = R.some(([c, mm]) => Math.abs(c) === 1 && ks.includes(lwKey(mm))) ? 1 : 0;
+  return f;
+}
+function m2Score(Q){ const f = m2Feat(Q); Q.f = f; return lwSc(M2_W, f); }
+function m2Build(Q, lv){
+  const {A, B, M0, P, E, R} = Q, PR = polyNorm(P);
+  const prodH = '(' + polyH(A) + ')(' + polyH(B) + ')', qh = (M0 ? polyH(M0) + ' − ' : '') + prodH;
+  const prods = A.flatMap((a, i) => B.map((b, j) => (i || j ? ' + ' : '') + H(i ? 'cM' : 'cK', facPar(a, 1)) + ' ∙ ' + facPar(b, 1))).join('');
+  return litQ(qh, R, () => { const rows = M0 ? [polyH(M0) + ' − (' + prods + ')', polyH(M0) + ' − (' + polyH(PR) + ')', polyH(E, true)] : [prods, polyH(P, true)];
+      const G = polyH(grouped(E), true); if (G !== rows[rows.length - 1]) rows.push(G);
+      return dev2Arcs(A, B) + steps(qh, rows.filter((r, i, a) => !i || r !== a[i - 1]).concat([ANS(polyH(R))])); },
+    {con: LITC.dev, qe: e => (M0 ? pEval(M0, e) - pEval(A, e) * pEval(B, e) : pEval(A, e) * pEval(B, e)), chk: {lit: true, lw: {k: 'm2', lv, sc: Q.sc, f: Q.f, d: {A, B, M0}}}});
+}
+function m2Gen(lv){
+  const V = m2Var(lv);
+  const Q = lwPick(t => m2Draw(lv, V), m2Score, M2_BAND[lv], 700);
+  return Q ? m2Build(Q, lv) : null;
+}
+GL('l_mulm', [1, 2, 3, 4], lv => mmGen(lv));
+GL('l_mono', [1, 2, 3, 4], lv => mmGen(lv, 'sep'));          // case fondue dans « multiplication » (anciens liens : LINK_ALIAS) : l'écriture séparée
+GL('l_addm', [1, 2, 3, 4], lv => msGen(lv));
+GL('l_subm', [1, 2, 3, 4], lv => msGen(lv));                 // case fondue dans « addition et soustraction » : le même générateur
+GL('l_addp', [1, 2, 3, 4], lv => mpGen(lv, false));
+GL('l_subp', [1, 2, 3, 4], lv => mpGen(lv, true));
+GL('l_dev', [1, 2, 3, 4], lv => mdGen(lv));
+GL('l_dev2', [1, 2, 3, 4], lv => m2Gen(lv));
 /* =====================================================================
    Équations du premier degré (8 formes) et du deuxième degré (4 formes)
    ===================================================================== */
@@ -9795,6 +10189,402 @@ GL('l_tra', [1, 2, 3, 4], lv => {
     key: 'ltr' + stripTags(phr).replace(/\s+/g, ''), chk: {tra: {x, phr: stripTags(phr), prog: !!P_}}, det};
 });
 
+/* ---------- vocabulaire du calcul littéral (l'enseignant, 07.11.2026) : deux cases du bloc Calcul littéral ----------
+   « vocabulaire (sauf polynômes) » (l_voc, entre « traduire une phrase » et « substitution ») : coefficient, partie littérale, degré d'un
+   monôme ; « est-ce un monôme ? » ; monômes semblables ; nature d'une expression (somme, différence, produit, quotient : sa théorie §5) ;
+   « variable » (seulement à ★). « vocabulaire (polynômes) » (l_vocp, juste avant « addition de polynômes ») : polynôme ? et termes (binôme,
+   trinôme), degré d'un polynôme, ordonner selon les puissances décroissantes (seulement à ★★★ et ★★★★ ; l'enseignant, 07.11.2026, après « ordonne
+   plutôt les puissances croissantes » : « c'est mieux d'ordonner en puissances décroissantes en fait (pour s'habituer à ax^2+bx+c déjà) »), opposé d'un polynôme (avec les relatifs). Questions en phrases à compléter (QCM : « Phrase à compléter »).
+   Étoiles par points (QCM : « Par points ») : chaque difficulté vaut des points (VP, VQ, natScore), le total donne les étoiles (VBAND).
+   L'enseignant, même conversation : « coefficient caché, négatif ou en fraction : divise par 3 leur poids, sinon on n'en aura pas à une
+   étoile. C'est important d'en avoir dès le début, déjà un peu. Garde les monômes réduits dans ces questions. Pour nombre seul, divise aussi
+   son poids par 3 » ; puis « tu peux marquer des coefficients comme pi ou racine de deux aussi, ça ajoute un peu plus de poids qu'avoir une
+   fraction ». Les sortes de questions viennent à tour de rôle (vocGen) ; une même question ne revient pas avant que toutes les questions
+   possibles de la case (à ce niveau) aient été posées (USED) ; quand il n'en reste plus, la plus ancienne revient (q.reuse, genOne0). */
+// monôme : {s : signe, n, d : coefficient n/d (entiers), v : coefficient à virgule (ou null), sp : 'pi' ou un radicande (√2), m : lettres}
+const VP = {cache: 1 / 3, neg: 1 / 6, frac: .5, sp: 2 / 3, virg: 1, lettre: .5, deg3: .5, seul: 1 / 3,
+  deg: [0, 0, 0, .35, .75, .9, 1.05], e3: .25, e4: .3, rev: 1 / 6};
+// parties littérales (l'enseignant, 07.11.2026, retour sur la n° 17 : « pas assez d'occurrences (dans la plupart des exercices, même vocabulaire) de
+// choses comme 4a²b ou 4ab² ou même 4a³b ou 4ab³ […] mets de plus en plus de poids à mesure que tu augmentes le degré, et fais degré 4 et plus
+// seulement à partir de 3 étoiles quoi qu'il arrive » ; « regarde qu'il y a aussi du ab ou ba de temps en temps ») : poids selon le degré (VP.deg :
+// 3 : 0,35 ; 4 : 0,75 ; 5 : 0,9 ; 6 : 1,05 ; avant, 0,5 dès 3 : 4a²b reste à ★★, avec un signe ou « ba »), exposant 3 ou plus dans un terme à deux
+// lettres 0,25, une seule lettre au degré 4 ou plus (x⁴) 0,3 de plus (★★★), lettres à l'envers (4ba) 1/6 ;
+// degré au plus 3 à ★ et ★★ (V_DMAX, aussi vérifié sur la ligne de chaque question dans vocGen) ; 4a²b… décidé d'abord dès ★★ (V_A2B, environ une
+// question sur trois parmi coefficient, partie littérale, degré) ; « 4ba » 1 fois sur 4 dès ★★ (coefficient, degré ; jamais la partie littérale)
+const V_DMAX = [0, 3, 3, 6, 6], V_A2B = [0, 0, .33, .2, 0], V_REV = .25;
+let V_PA2B = false; const V_PA2BP = [0, 0, .3, .2, 0];      // vocabulaire des polynômes : deux lettres avec un terme comme 4a²b, décidé d'abord (GL('l_vocp'))
+const vDegW = m => { const L = Object.keys(m).filter(l => m[l]).length, d = mDeg(m);
+  return VP.deg[Math.min(6, d)] + (L >= 2 && Object.values(m).some(e => e >= 3) ? VP.e3 : 0) + (L === 1 && d >= 4 ? VP.e4 : 0); };
+// plus grand degré d'un monôme écrit dans du HTML (lettres <i>, exposants <sup> qui se suivent)
+const vHDeg = h => Math.max(0, ...[...String(h).matchAll(/(?:<i>[a-z]<\/i>(?:<sup>\d+<\/sup>)?)+/g)].map(r =>
+  [...r[0].matchAll(/<i>[a-z]<\/i>(?:<sup>(\d+)<\/sup>)?/g)].reduce((t, x) => t + (+x[1] || 1), 0)));
+const vqH = q => (typeof q.line === 'function' ? q.line(true) : '') + ' ' + (q.q || '') + ' ' + (q.a || '');      // nombre seul : 1/3 depuis la 2e version (dès ★)
+const VBAND = {1: [0, .55], 2: [.55, 1.05], 3: [1.05, 1.6], 4: [1.6, 99]};
+const vIn = (s, lv) => s >= VBAND[lv][0] - 1e-9 && s < VBAND[lv][1] - 1e-9;
+const VLET = ['x', 'x', 'y', 'a', 'b', 'n', 'z', 'm', 't'], VL2 = [['x', 'y'], ['a', 'b'], ['m', 'n'], ['x', 'z'], ['y', 'z'], ['a', 'c'], ['b', 'c']], VL3 = [['x', 'y', 'z'], ['a', 'b', 'c']];
+const VDEC = [.5, 1.5, 2.5, .2, .4, 1.2, 3.5, .25, .75, .8, .6];
+const vSig = M => [M.s, M.n, M.d, M.v, M.sp, mKey(M.m)].join(',');
+const vNL = M => Object.keys(M.m).filter(l => M.m[l]).length;
+const vCache = M => vNL(M) > 0 && M.n === 1 && M.d === 1 && M.v == null && !M.sp;
+function vScore(M){ const L = vNL(M);
+  return (L ? 0 : VP.seul) + (M.s < 0 ? VP.neg : 0) + (vCache(M) ? VP.cache : 0) + (M.d > 1 ? VP.frac : 0) + (M.sp ? VP.sp : 0) + (M.v != null ? VP.virg : 0) +
+    VP.lettre * Math.max(0, L - 1) + vDegW(M.m) + (M.rev ? VP.rev : 0); }
+const vSpH = M => (M.n > 1 ? fmtInt(M.n) : '') + (M.sp === 'pi' ? PIH : radH(String(M.sp), 2));
+// le coefficient (réponse) ; le monôme réduit (coefficient devant, lettres dans l'ordre alphabétique)
+function vCoefH(M){ const sg = M.s < 0 ? '−' : '';
+  if (M.v != null) return sg + fmtNum(M.v);
+  if (M.sp) return sg + vSpH(M);
+  return sg + (M.d > 1 ? fracH(fmtInt(M.n), fmtInt(M.d)) : fmtInt(M.n)); }
+function vMonoH(M, pc){ // pc : couleur de la partie littérale (détail)
+  const l0 = M.rev ? mHo(M.m, true) : mH(M.m), lh = l0 && pc ? H(pc, l0) : l0, sg = M.s < 0 ? '−' : '';
+  if (M.v != null) return sg + fmtNum(M.v) + lh;
+  if (M.sp) return sg + vSpH(M) + (lh ? (M.sp === 'pi' ? '' : ' ') + lh : '');
+  if (M.d > 1) return sg + fracH((M.n === 1 && l0 ? '' : fmtInt(M.n)) + lh, fmtInt(M.d));
+  return sg + (M.n === 1 && l0 ? '' : fmtInt(M.n)) + lh; }
+const vX = h => '<span class="nw vx">' + h + '</span>';
+// lettres et exposants (exposant 1 écrit), exposants en rose : x²y¹
+const vExpH = (m, rev) => { const ks = Object.keys(m).filter(l => m[l]).sort(); if (rev) ks.reverse(); return ks.map(l => '<i>' + l + '</i><sup>' + H('cD', m[l]) + '</sup>').join(''); };
+const vcLab = (h, lab) => '<span class="vlb"><span>' + h + '</span><span class="vll">' + lab + '</span></span>';
+function vCoefRand(M, o){ // tire le coefficient de M (lettres déjà choisies) ; o.force 'c1' : 1, 'cm1' : −1
+  const seul = !vNL(M), f = o.force;
+  const k = f === 'c1' || f === 'cm1' ? 'cache' : f === 'frac' ? 'frac' : wpick(['int', 'cache', 'frac', 'sp', 'virg'], x => (seul ? {int: 4, cache: 0, frac: 1.5, sp: o.noSp ? 0 : 1.2, virg: DEC ? 1 : 0}
+    : {int: 4, cache: 2.5, frac: 2.5, sp: o.noSp ? 0 : 1, virg: DEC ? 1.5 : 0})[x]);
+  M.n = 1; M.d = 1; M.v = null; M.sp = null;
+  if (k === 'int') M.n = ri(2, seul ? 20 : 12);
+  else if (k === 'frac'){ M.d = ri(2, 9); M.n = chance(.65) ? 1 : ri(2, 7); if (gcd(M.n, M.d) !== 1) return false; }
+  else if (k === 'sp'){ M.sp = chance(.55) ? 'pi' : pick([2, 3, 5]); M.n = chance(.6) ? 1 : ri(2, 5); }
+  else if (k === 'virg') M.v = pick(VDEC);
+  M.s = f === 'cm1' ? -1 : f === 'c1' ? 1 : NEG && chance(.4) ? -1 : 1;
+  return true;
+}
+function vLetRand(L){ const ls = L === 1 ? [pick(VLET)] : pick(L === 2 ? VL2 : VL3).slice(), m = {};
+  for (let t = 0; t < 30; t++){ ls.forEach(l => m[l] = wpick([1, 2, 3, 4], e => [0, 4, 3, 2, .7][e])); if (mDeg(m) <= 6) return m; }
+  return null; }
+function vMonoRand(o){ o = o || {}; const f = o.force;      // f : 'c1', 'cm1', 'seul', 'multi' (plusieurs lettres), 'one' (une lettre)
+  const seul = f === 'seul' || (!f && !o.noSeul && chance(.06)), M = {s: 1, n: 1, d: 1, v: null, sp: null, m: {}, rev: false};
+  if (!seul){ const L = o.L || (f === 'multi' ? wpick([2, 3], x => [0, 0, 3, 1][x]) : f === 'one' ? 1 : wpick([1, 2, 3], x => [0, 5, 3.5, 1.5][x])); M.m = vLetRand(L); if (!M.m) return null; }
+  if (!vCoefRand(M, o)) return null;
+  if (M.sp === 'pi' && !seul && chance(.5) && vNL(M) === 1) M.m = {r: pick([1, 2, 3])};      // πr², 2πr
+  if (o.rev && vNL(M) >= 2) M.rev = true;                                          // 4ba
+  return M; }
+function vMonoBand(lv, ok, o){ for (let t = 0; t < 400; t++){ const M = vMonoRand(o); if (!M || (ok && !ok(M)) || mDeg(M.m) > V_DMAX[lv]) continue; if (vIn(vScore(M), lv)) return M; } return null; }
+// détail : le monôme = coefficient ∙ partie littérale (étiquettes dessous), puis le degré ; w : 'c', 'p', 'd' (ce qui est demandé, encadré)
+function vMonoDet(M, w){
+  const seul = !vNL(M), coef = vCoefH(M), part = seul ? '<i>x</i><sup>' + H('cD', 0) + '</sup>' : w === 'd' ? vExpH(M.m, M.rev) : mHo(M.m, M.rev);
+  const cH = w === 'c' ? ANS(coef) : H('cB', coef), pH = w === 'p' ? ANS(part) : H('cA', part);
+  let h = DIV(vMonoH(M) + ' = ' + vcLab(cH, 'coefficient') + ' ∙ ' + vcLab(pH, 'partie littérale'), 'fin vrow');
+  if (w === 'd'){ const ex = seul ? [0] : (a => M.rev ? a.reverse() : a)(Object.keys(M.m).filter(l => M.m[l]).sort()).map(l => M.m[l]);
+    h += DIV('degré : ' + (ex.length > 1 ? ex.map(e => H('cD', e)).join(' + ') + ' = ' : '') + ANS(String(mDeg(M.m))), 'fin'); }
+  if (M.sp) h += DIV((M.sp === 'pi' ? PIH + ' est un nombre' : radH(String(M.sp), 2) + ' est un nombre') + ', pas une lettre', 'gr phrd vwhy');
+  return h; }
+// cas particuliers à probabilité fixe (l'enseignant, 07.11.2026 : « Je ne vois pas assez les cas particuliers (degré 0, coefficient −1, coefficient 1).
+// Je ne vois pas assez des questions de degré où il faut additionner les exposants » ; « tu peux mettre des probabilités fixes et éviter de remettre
+// les questions qui ont le même coefficient ») : la sorte est décidée d'abord, puis le monôme est tiré dans les points du niveau (sinon : sans contrainte)
+const VFORCE = {c: {c1: 2, cm1: 2, seul: 2, frac: 1.5, x: 2.5}, p: {c1: 2.5, cm1: 2.5, frac: 1.5, x: 3.5}, d: {seul: 2, multi: 5.5, one: 2.5}};
+// clés : le coefficient (c), la partie littérale (p), les exposants sans les lettres (d : x²y et ab² sont la même question ; degré 0 : une seule)
+const vMonoKey = (w, M) => 'vm' + w + (w === 'c' ? [M.s, M.n, M.d, M.v, M.sp].join(',') : w === 'p' ? mKey(M.m) : Object.values(M.m).filter(e => e).sort().join('.'));
+const vMonoQ = (w, lv) => { const W = Object.assign({}, VFORCE[w]), okP = X => vNL(X) > 0; if (!NEG) W.cm1 = 0; let M = null, f = null;
+  const a2b = lv >= 2 && chance(V_A2B[lv]), rev = w !== 'p' && lv >= 2 && chance(V_REV);         // 4a²b… décidé d'abord ; 4ba (pas pour la partie littérale)
+  const ok = X => (w !== 'p' || okP(X)) && (!a2b || (vNL(X) >= 2 && mDeg(X.m) >= 3));
+  if (a2b){ W.seul = 0; W.one = 0; }
+  while (!M && Object.values(W).some(x => x > 0)){ f = wpick(Object.keys(W), k => W[k]); W[f] = 0;           // une sorte impossible à ce niveau : une autre sorte
+    M = vMonoBand(lv, ok, Object.assign(f === 'x' ? {} : {force: f}, a2b ? {L: lv >= 3 && chance(.25) ? 3 : 2} : {}, {rev})); }
+  if (!M) return null;
+  const E = vX(vMonoH(M)), a = w === 'c' ? vCoefH(M) : w === 'p' ? mH(M.m) : String(mDeg(M.m));
+  return phrQ('Complète', {c: 'Le coefficient de ', p: 'La partie littérale de ', d: 'Le degré de '}[w] + E + ' est ', a, '.',
+    {key: vMonoKey(w, M), det: () => vMonoDet(M, w), chk: {voc: {k: w, M, a, f}}}); };
+// « … est-il un monôme ? » ; la clé ne garde que la sorte de l'expression (pas ses nombres ni ses lettres)
+function vNotMono(){ const k = wpick(['som', 'den', 'rac', 'bar'], x => ({som: 3, den: 3, rac: 2, bar: 1.5})[x]);
+  const sg = () => NEG && chance(.25) ? -1 : 1, mono1 = L => { const M = {s: 1, n: chance(.4) ? 1 : ri(2, 9), d: 1, v: null, sp: null, m: vLetRand(L)}; return M.m ? M : null; };
+  if (k === 'som'){ const A = vMonoRand({noSp: true, noSeul: true, L: wpick([1, 2], x => [0, 3, 1][x])}), B = chance(.5) ? {s: 1, n: ri(1, 12), d: 1, v: null, sp: null, m: {}} : vMonoRand({noSp: true, noSeul: true, L: 1});
+    if (!A || !B || A.d > 1 || B.d > 1 || A.v != null || B.v != null || (vNL(B) && mKey(A.m) === mKey(B.m))) return null; A.s = sg(); const op = chance(.5) ? '+' : '−';
+    const L = new Set([...Object.keys(A.m), ...Object.keys(B.m)]).size, dg = Math.max(mDeg(A.m), mDeg(B.m));
+    return {h: vMonoH(A) + ' ' + op + ' ' + vMonoH(Object.assign({}, B, {s: 1})), s: VP.lettre * Math.max(0, L - 1) + VP.deg[Math.min(6, dg)] + (A.s < 0 ? VP.neg : 0), k: 'som' + L + (dg >= 3) + (A.s < 0),
+      det: () => DIV(H('cA', vMonoH(A)) + ' ' + H('cB', op) + ' ' + H('cC', vMonoH(Object.assign({}, B, {s: 1}))), 'fin') + DIV((op === '+' ? 'une somme' : 'une différence') + ', pas un produit ⟹ ' + ANS(NON), 'gr phrd vwhy')}; }
+  if (k === 'den'){ const P = mono1(wpick([1, 2, 3], x => [0, 4, 2, 1][x])); if (!P) return null; const s = sg(), kk = ri(1, 9), L = vNL(P); if (gcd(kk, P.n) > 1) return null;      // pas de 3/(3m²)
+    const h = (s < 0 ? '−' : '') + fracH(fmtInt(kk), vMonoH(P));
+    return {h, s: 2 / 3 + VP.lettre * (L - 1) + (P.n > 1 ? 1 / 6 : 0) + vDegW(P.m) + (s < 0 ? VP.neg : 0), k: 'den' + L + (P.n > 1) + (mDeg(P.m) >= 3) + (s < 0),
+      det: () => DIV((s < 0 ? '−' : '') + fracH(H('cB', fmtInt(kk)), H('cA', vMonoH(P))), 'fin') + DIV('une lettre au dénominateur (division par une lettre) ⟹ ' + ANS(NON), 'gr phrd vwhy')}; }
+  if (k === 'rac'){ const P = mono1(wpick([1, 2], x => [0, 4, 1][x])); if (!P) return null; const out = chance(.35) ? ri(2, 5) : 1, L = vNL(P);
+    const h = (out > 1 ? fmtInt(out) : '') + radH(vMonoH(P), 2);
+    return {h, s: 1 / 3 + (out > 1 || P.n > 1 ? 1 / 6 : 0) + VP.lettre * (L - 1) + vDegW(P.m), k: 'rac' + L + (out > 1 || P.n > 1) + (mDeg(P.m) >= 3),
+      det: () => DIV((out > 1 ? fmtInt(out) : '') + H('cB', radH(H('cA', vMonoH(P)), 2)), 'fin') + DIV('une lettre sous la racine carrée ⟹ ' + ANS(NON), 'gr phrd vwhy')}; }
+  const A = vMonoRand({noSp: true, noSeul: true, L: wpick([1, 2], x => [0, 3, 1][x])}); if (!A || A.d > 1 || A.v != null) return null; A.s = 1;
+  const b = ri(1, 9), d = ri(2, 9), op = chance(.6) ? '+' : '−', L = vNL(A);
+  const h = fracH(vMonoH(A) + ' ' + op + ' ' + fmtInt(b), fmtInt(d)), A2 = Object.assign({}, A, {d: A.d * d});
+  const g = gcd(A2.n, A2.d); A2.n /= g; A2.d /= g; const g2 = gcd(b, d);
+  return {h, s: 7 / 6 + VP.lettre * (L - 1) + vDegW(A.m), k: 'bar' + L + (mDeg(A.m) >= 3),
+    det: () => DIV(fracH(H('cA', vMonoH(A)) + ' ' + op + ' ' + H('cC', fmtInt(b)), fmtInt(d)) + ' = ' + H('cA', vMonoH(A2)) + ' ' + op + ' ' + H('cC', d / g2 === 1 ? fmtInt(b / g2) : fracH(fmtInt(b / g2), fmtInt(d / g2))), 'fin') +
+      DIV('une ' + (op === '+' ? 'somme' : 'différence') + ', pas un produit ⟹ ' + ANS(NON), 'gr phrd vwhy')}; }
+function vYesMono(){
+  if (chance(.25)){ // produit pas réduit : 2x ∙ 3y (exercice 24 de sa série)
+    const ls = chance(.5) ? [pick(VLET)] : pick(VL2), A = {s: 1, n: ri(2, 9), d: 1, v: null, sp: null, m: {[ls[0]]: ri(1, 2)}}, B = {s: 1, n: ri(2, 9), d: 1, v: null, sp: null, m: {[pick(ls)]: ri(1, 2)}};
+    if (NEG && chance(.3)) B.s = -1;
+    const P = {s: A.s * B.s, n: A.n * B.n, d: 1, v: null, sp: null, m: {}}; [A, B].forEach(X => Object.keys(X.m).forEach(l => P.m[l] = (P.m[l] || 0) + X.m[l]));
+    const L = vNL(P), h = vMonoH(A) + ' ∙ ' + (B.s < 0 ? '(' + vMonoH(B) + ')' : vMonoH(B));
+    return {h, s: 1 + VP.lettre * (L - 1) + vDegW(P.m) + (B.s < 0 ? VP.neg : 0), k: 'prod' + L + (mDeg(P.m) >= 3) + (B.s < 0),
+      det: () => DIV(h + ' = ' + vcLab(H('cB', vCoefH(P)), 'coefficient') + ' ∙ ' + vcLab(H('cA', mH(P.m)), 'partie littérale'), 'fin vrow') + DIV('un nombre ∙ des lettres ⟹ ' + ANS(OUI), 'gr phrd vwhy')}; }
+  const M = vMonoRand(); if (!M) return null; const seul = !vNL(M);
+  return {h: vMonoH(M), s: vScore(M), k: 'mono' + [seul, vCache(M), M.s < 0, M.d > 1, M.v != null, !!M.sp, vNL(M), mDeg(M.m) >= 3].join(''),
+    det: () => DIV(vMonoH(M) + ' = ' + vcLab(H('cB', vCoefH(M)), 'coefficient') + ' ∙ ' + vcLab(H('cA', seul ? '<i>x</i><sup>0</sup>' : mH(M.m)), 'partie littérale'), 'fin vrow') +
+      DIV((seul ? 'un nombre seul' : 'un nombre ∙ des lettres') + ' ⟹ ' + ANS(OUI), 'gr phrd vwhy')}; }
+function vIsMonoQ(lv){ const yes0 = chance(.5);
+  for (const yes of [yes0, !yes0]) for (let t = 0; t < 300; t++){ const c = yes ? vYesMono() : vNotMono(); if (!c || !vIn(c.s, lv) || vHDeg(c.h) > V_DMAX[lv]) continue;
+    return phrQ('Oui ou non ?', vX(c.h) + ' est-il un monôme ? ', yes ? OUI : NON, '', {key: 'vmo' + (yes ? 'o' : 'n') + c.k, det: c.det, chk: {voc: {k: 'mono', yes, s: c.s}}}); }
+  return null; }
+// monômes semblables : même partie littérale ; pièges : mêmes lettres avec d'autres exposants (x²y et xy²), même coefficient (5x² et 5x)
+// monômes semblables : même partie littérale. Pièges (l'enseignant, 07.11.2026 : « pense à mettre des \"pièges\" (même coeff mais pas même degré,
+// coeff opposé et même partie littérale, même coeff et degré mais autre lettre ...) ») à probabilité fixe, décidés avant les monômes (VSEM) :
+// oui : coefficients opposés (5x²y et −5x²y, avec les relatifs), un coefficient caché (x²y et 4x²y), autres coefficients ; non : même coefficient et
+// autre degré (5x² et 5x), même coefficient et même degré mais une autre lettre (5x² et 5y² ; 3xy et 3xz), exposants échangés (x²y et xy²), autres
+// lettres. Points : le plus grand vScore des deux, plus le piège (VSEMP).
+const VSEM = {opp: 3, cache: 2, oui: 3, ordre: 2, cdeg: 3, clet: 3, swap: 2, autre: 1.5}, VSEMP = {opp: 1 / 6, cache: 0, oui: 0, ordre: 1 / 6, cdeg: .5, clet: 1 / 3, swap: 1 / 3, autre: 0};
+const VSEMW = {opp: 'les coefficients ne comptent pas, même opposés', ordre: 'l\'ordre des lettres ne compte pas', cdeg: 'même coefficient, mais pas la même partie littérale', clet: 'même coefficient et même degré, mais pas les mêmes lettres', swap: 'mêmes lettres, mais pas les mêmes exposants'};
+function vSemOne(v, lv){
+  const yes = ['opp', 'cache', 'oui', 'ordre'].includes(v), cp = (A, B) => Object.assign(B, {s: A.s, n: A.n, d: A.d, v: A.v, sp: A.sp});
+  for (let t = 0; t < 300; t++){
+    const M1 = vMonoRand({noSeul: true, force: v === 'cache' && chance(.5) ? (NEG && chance(.5) ? 'cm1' : 'c1') : null, L: v === 'swap' || v === 'ordre' ? wpick([2, 3], x => [0, 0, 3, 1][x]) : null});
+    if (!M1) continue; const ls = Object.keys(M1.m); let m2 = Object.assign({}, M1.m);
+    if (v === 'cdeg'){ const l = pick(ls); m2[l] = m2[l] === 1 ? ri(2, 3) : chance(.5) ? 1 : m2[l] + 1; }
+    else if (v === 'clet'){ const l = pick(ls), z = pick(['x', 'y', 'z', 'a', 'b', 'c', 'n', 'm'].filter(q => !(q in m2))); m2[z] = m2[l]; delete m2[l]; }
+    else if (v === 'ordre'){ if (ls.length < 2) continue; }
+    else if (v === 'swap'){ const e = ls.map(l => m2[l]); if (new Set(e).size < 2) continue; const sh = e.slice(1).concat(e[0]); ls.forEach((l, i) => m2[l] = sh[i]); }
+    else if (v === 'autre'){ const l = pick(ls); if (ls.length > 1 && chance(.5)) delete m2[l]; else { const z = pick(['x', 'y', 'z', 'a', 'b', 'c'].filter(q => !(q in m2))); m2[z] = ri(1, 2); } }
+    if ((!yes && mKey(m2) === mKey(M1.m)) || Math.max(mDeg(m2), mDeg(M1.m)) > V_DMAX[lv] || !Object.keys(m2).length) continue;
+    const M2 = {s: 1, n: 1, d: 1, v: null, sp: null, m: m2, rev: v === 'ordre'};
+    if (v === 'opp'){ cp(M1, M2); M2.s = -M1.s; }
+    else if (v === 'cdeg' || v === 'clet') cp(M1, M2);
+    else { if (!vCoefRand(M2, {force: v === 'cache' && !vCache(M1) ? (NEG && chance(.5) ? 'cm1' : 'c1') : null})) continue; if (vSig(M2) === vSig(M1)) continue;
+      if (v === 'oui' && (vCache(M1) || vCache(M2) || M2.s * M1.s < 0 && M2.n === M1.n && M2.d === M1.d && M2.v === M1.v && M2.sp === M1.sp)) continue; }
+    if (chance(.5)){ const X = Object.assign({}, M1); Object.assign(M1, M2); Object.assign(M2, X); }          // le piège tantôt à gauche, tantôt à droite
+    const s = Math.max(vScore(M1), vScore(M2)) + VSEMP[v]; if (!vIn(s, lv)) continue;
+    const ans = yes ? OUI : NON, ex = v === 'swap' || v === 'cdeg';
+    const pH = (m, c) => H(c, ex ? vExpH(m).replace(/class="cD"/g, 'class="' + c + '"') : mH(m));
+    return phrQ('Oui ou non ?', vX(vMonoH(M1)) + ' et ' + vX(vMonoH(M2)) + ' sont-ils semblables ? ', ans, '',
+      {key: 'vse' + v + [mKey(M1.m), mKey(M2.m)].sort().join('|'), chk: {voc: {k: 'sem', yes, v, m1: M1.m, m2: M2.m, s}},
+        det: () => DIV(vMonoH(M1, 'cA') + ' ; ' + vMonoH(M2, yes ? 'cA' : 'cC'), 'fin') +
+          DIV('parties littérales : ' + pH(M1.m, 'cA') + (yes ? ' = ' : ' ≠ ') + pH(M2.m, yes ? 'cA' : 'cC') + ' ⟹ ' + ANS(ans), 'fin vsm') +
+          (VSEMW[v] ? DIV(VSEMW[v], 'gr phrd vwhy') : '')}); }
+  return null; }
+function vSemQ(lv){ const W = Object.assign({}, VSEM); if (!NEG) W.opp = 0; if (lv < 2) W.ordre = 0;
+  const yes = chance(.5); Object.keys(W).forEach(k => { if (['opp', 'cache', 'oui', 'ordre'].includes(k) !== yes) W[k] = 0; });
+  while (Object.values(W).some(x => x > 0)){ const v = wpick(Object.keys(W), k => W[k]); W[v] = 0; const q = vSemOne(v, lv); if (q) return q; }
+  return null; }
+// nature d'une expression : la dernière opération (sa théorie §5 : somme, différence, produit ou quotient) ; arbres de « traduire une phrase »
+const vIsM = y => y.t === 'v' || y.t === 'n' ? true : y.t === 'sum' || y.t === 'dif' ? false : y.t === 'quo' ? vIsM(y.a) && y.b.t === 'n' : vIsM(y.a) && (!y.b || vIsM(y.b));
+function vNatScore(x){ // 0,4 par opération après la 1re (un monôme compte pour une opération), 1/3 des parenthèses ou une barre de fraction qui regroupe, 1/4 un 2e
+  let ops = 0, grp = 0;                                         // groupe, 1/6 un produit sans signe ∙ (3(x + 2)), 1/3 une somme dont un terme est un produit ou un quotient
+  const walk = (y, up, right) => { if (y.t === 'v' || y.t === 'n') return; if (!vIsM(y)) ops++;
+    if ((y.t === 'sum' || y.t === 'dif') && up && (up.t !== 'sum' && up.t !== 'dif' || (up.t === 'dif' && right))) grp++;
+    walk(y.a, y, false); if (y.b) walk(y.b, y, true); };
+  walk(x, null, false); ops = Math.max(1, ops);
+  const imp = x.t === 'pro' && !vIsM(x) ? 1 / 6 : 0, pri = (x.t === 'sum' || x.t === 'dif') && [x.a, x.b].some(y => (y.t === 'pro' || y.t === 'quo') && !vIsM(y)) ? 1 / 3 : 0;
+  return .4 * (ops - 1) + (grp >= 1 ? 1 / 3 : 0) + (grp >= 2 ? .25 : 0) + imp + pri; }
+const V_NAT = {sum: 'une\u00a0somme', dif: 'une\u00a0différence', pro: 'un\u00a0produit', quo: 'un\u00a0quotient'};
+// trE écrit x² dans un .pw (inline-flex : l'exposant se décolle de la lettre) : ici, x² comme dans les monômes
+const vTrE = x => trE(x, false).replace(/<span class="pw"><span>(<i>[a-z]<\/i>)<\/span><sup>(\d)<\/sup><\/span>/g, '$1<sup>$2</sup>');
+function vNatTree(nat){ // toutes les écritures d'une nature ; les points (vNatScore) choisissent le niveau
+  const ls = shuffle(pick([['x', 'y'], ['a', 'b'], ['x', 'y'], ['m', 'n']]).slice()), L = ls[0], M = ls[1], used = new Set();
+  const k = () => { let v = ri(2, 9); for (let i = 0; i < 20 && used.has(v); i++) v = ri(2, 9); used.add(v); return tN(v); };
+  const at = (lt) => { const l = lt || pick([L, L, M]); return pick([() => tV(l), () => tO('pro', k(), tV(l)), () => tO('sq', tV(l)), () => tO('pro', k(), tO('sq', tV(l)))])(); };
+  const atn = () => chance(.35) ? k() : at(), hs = y => trE(y, false).replace(/^\d+/, '');
+  const G = () => { for (let t = 0; t < 20; t++){ const a = at(), b = chance(.5) ? k() : at(M);
+    if (hs(a) !== hs(b)) return tO(pick(['sum', 'dif']), a, b); } return tO('sum', tV(L), k()); };      // jamais 5a² − 5a² ni 3x + 2x (termes semblables)
+  const G3 = () => { for (let t = 0; t < 20; t++){ const a = at(L), b = at(M), c = k();                  // trois termes : (x + y − 3)
+    if (hs(a) !== hs(b)) return tO(pick(['sum', 'dif']), tO(pick(['sum', 'dif']), a, b), c); } return tO('sum', tO('sum', tV(L), tV(M)), k()); };
+  const T = {
+    sum: [() => tO('sum', at(L), atn()), () => tO('sum', k(), at()), () => tO('sum', at(), tO('quo', k(), tV(pick(ls)))),
+      () => tO('sum', tO('pro', k(), G()), atn()), () => tO('sum', at(), tO('pro', k(), G())), () => tO('sum', tO('quo', G(), k()), atn()), () => tO('sum', at(), tO('pro', tV(L), G())),
+      () => tO('sum', tO('pro', k(), G3()), atn()), () => tO('sum', tO('pro', k(), G()), tO('quo', k(), tV(pick(ls)))),
+      () => tO('sum', tO('pro', G(), G()), atn()), () => tO('sum', tO('pro', k(), G()), tO('pro', k(), G())), () => tO('sum', at(), tO('quo', G(), G()))],
+    dif: [() => tO('dif', at(L), atn()), () => tO('dif', k(), at()), () => tO('dif', at(), G()), () => tO('dif', at(), tO('quo', k(), tV(pick(ls)))), () => tO('dif', at(), G3()),
+      () => tO('dif', tO('pro', k(), G()), atn()), () => tO('dif', at(), tO('pro', k(), G())), () => tO('dif', tO('quo', G(), k()), atn()),
+      () => tO('dif', tO('pro', k(), G3()), atn()), () => tO('dif', tO('pro', k(), G()), tO('quo', k(), tV(pick(ls)))),
+      () => tO('dif', tO('pro', G(), G()), atn()), () => tO('dif', tO('pro', k(), G()), tO('pro', k(), G())), () => tO('dif', at(), tO('quo', G(), G()))],
+    pro: [() => tO('pro', k(), tV(L)), () => tO('pro', tV(L), tV(M)), () => tO('pro', k(), tO('sq', tV(L))), () => tO('pro', tV(L), tO('sq', tV(M))),
+      () => tO('pro', k(), G()), () => tO('pro', tV(L), G()), () => tO('pro', tO('pro', k(), tV(L)), G()), () => tO('pro', k(), G3()), () => tO('pro', tV(L), G3()),
+      () => tO('pro', G(), G()), () => tO('pro', tO('pro', k(), G()), G()), () => tO('pro', G(), G3()), () => tO('pro', G3(), G3()), () => tO('pro', tO('pro', k(), G()), G3())],
+    quo: [() => tO('quo', tV(L), k()), () => tO('quo', tO('pro', k(), tV(L)), k()), () => tO('quo', k(), tV(L)),
+      () => tO('quo', G(), k()), () => tO('quo', at(), G()), () => tO('quo', G(), G()), () => tO('quo', G3(), k()),
+      () => tO('quo', G(), tO('pro', k(), G())), () => tO('quo', tO('pro', G(), G()), k()), () => tO('quo', G3(), G()), () => tO('quo', G3(), tO('pro', k(), G())), () => tO('quo', tO('pro', G(), G()), G())]};
+  return pick(T[nat])();
+}
+const vNatOk = x => { const s = stripTags(trE(x, false)), bad = y => !y || y.t === 'v' || y.t === 'n' ? false : (y.t === 'quo' && y.a.t === 'pro' && y.a.a.t === 'n' && y.b.t === 'n' && gcd(y.a.a.k, y.b.k) > 1) || bad(y.a) || bad(y.b);
+  return /[a-z]/.test(s) && !bad(x); };      // pas de 6x/3
+// « Est-ce une somme ou un produit ? » (l'enseignant, 07.11.2026 : « pas très clair qu'on attend les mots somme ou produit » ; deux possibilités, une
+// seule juste, jamais somme et différence ni produit et quotient : « c'est trop simple » ; « du coup tu peux compliquer un peu les expressions ») :
+// la consigne nomme deux natures, la réponse en est une ; l'autre, de préférence une opération qu'on voit dans l'expression (9a + 7b : produit).
+// Points : ceux de vNatScore moins 0,5 (le choix entre deux aide : environ une opération de plus par étoile). Une même nature une seule fois par
+// séance (clé 'vw:' + nature : l'enseignant, « Ne pose pas deux fois une question où il faut dire le même mot de vocabulaire »).
+const V_NATOFF = .5, V_ALT = {sum: ['pro', 'quo'], dif: ['pro', 'quo'], pro: ['sum', 'dif'], quo: ['sum', 'dif']};
+const vOpsIn = x => { const o = new Set(), w = (y, root) => { if (!y || y.t === 'v' || y.t === 'n') return; if (!root) o.add({dbl: 'pro', tpl: 'pro', hlf: 'quo', tie: 'quo', qua: 'quo'}[y.t] || y.t); w(y.a); w(y.b); }; w(x, true); return o; };
+function vNatQ(lv){ const U = typeof USED !== 'undefined' ? USED : new Set(), N = ['sum', 'dif', 'pro', 'quo'], fr = N.filter(n => !U.has('vw:' + n)), nat = leastUsed(fr.length ? fr : N, 'vnat:');
+  for (let t = 0; t < 600; t++){ const x = vNatTree(nat), s = vNatScore(x) - V_NATOFF; if (!vNatOk(x) || !vIn(s, lv) || (lv === 1 && vNatScore(x) < .7 && chance(.8))) continue;
+    bump('vnat:' + nat); const E = vTrE(x), a = V_NAT[nat], seen = V_ALT[nat].filter(o => vOpsIn(x).has(o)), alt = pick(seen.length ? seen : V_ALT[nat]), two = shuffle([nat, alt]);
+    return geoQ({pre: vX(E) + ' → ', a, con: 'Est-ce ' + V_NAT[two[0]] + ' ou ' + V_NAT[two[1]] + ' ?', key: 'vw:' + nat, det: () => vNatDet(x), chk: {voc: {k: 'nat', x, a, alt}}}); }
+  return null; }
+function vNatDet(x){
+  if (x.t === 'pro' && tMonoL(x.a) && tMonoL(x.b) && tMonoL(x.a) > tMonoL(x.b)) x = tO('pro', x.b, x.a);      // y ∙ x² → x² ∙ y (comme la question : x²y)
+  const op = {sum: ['+', 'addition'], dif: ['−', 'soustraction'], pro: ['∙', 'multiplication'], quo: [':', 'division']}[x.t];
+  const par = (y, side) => { const h = vTrE(y), g = y.t === 'sum' || y.t === 'dif';
+    return (x.t === 'pro' && g) || (x.t === 'quo' && (g || (side && !vIsM(y)))) || (x.t === 'dif' && side && g) ? '(' + h + ')' : h; };
+  return DIV(H('cA', par(x.a, false)) + ' ' + H('cB', op[0]) + ' ' + H('cC', par(x.b, true)), 'fin') +
+    DIV('dernière opération : ' + H('cB', op[1]) + ' ⟹ ' + ANS(V_NAT[x.t]), 'gr phrd vwhy'); }
+// « variable » (seulement à ★ ; l'enseignant : « Tu peux mettre variable, pas besoin de inconnue et indéterminée »)
+const vVarF = c => { const v = l => c ? H('cA', iv(l)) : iv(l);
+  return [['P = 4' + v('c'), ['c']], ['A = ' + v('c') + '<sup>2</sup>', ['c']], ['V = ' + v('c') + '<sup>3</sup>', ['c']], ['A = ' + v('L') + ' ∙ ' + v('l'), ['L', 'l']],
+    ['P = 2' + v('L') + ' + 2' + v('l'), ['L', 'l']], ['V = ' + v('L') + ' ∙ ' + v('l') + ' ∙ ' + v('h'), ['L', 'l', 'h']], ['A = ' + fracH(v('b') + ' ∙ ' + v('h'), '2'), ['b', 'h']],
+    ['P = 3' + v('c'), ['c']], ['P = 2' + PIH + v('r'), ['r']]]; };
+function vVarQ(){ const F = vVarF(false), i = ri(0, F.length - 1), [f, ls] = F[i], one = ls.length === 1, a = one ? 'variable' : 'variables';
+  const lst = ls.map(iv), list = lst.length === 1 ? lst[0] : lst.slice(0, -1).join(', ') + ' et ' + lst[lst.length - 1];
+  return phrQ('Complète', 'Dans la formule ' + vX(f) + ', ' + (one ? 'la lettre ' + list + ' est une ' : 'les lettres ' + list + ' sont des '), a, '.',
+    {key: 'vw:variable', chk: {voc: {k: 'var', a, i}}, det: () => DIV(vVarF(true)[i][0], 'fin') + DIV('une formule : ' + (one ? 'la lettre peut' : 'les lettres peuvent') + ' prendre plusieurs valeurs ⟹ ' + ANS(a), 'gr phrd vwhy')}); }
+// sortes à tour de rôle (TALLY de la séance) ; une question déjà posée ne revient pas tant qu'il en reste une nouvelle dans une sorte ; sinon la
+// plus ancienne (marquée reuse : genOne0 la prend sans chercher plus loin)
+function vocGen(id, lv, sorts){
+  const U = typeof USED !== 'undefined' ? USED : new Set(), old = [];
+  const ord = shuffle(sorts.filter(s => s[1]).slice()).sort((A, B) => (TALLY['vs:' + id + A[0]] || 0) - (TALLY['vs:' + id + B[0]] || 0));
+  for (const [k, f] of ord){ const seen = new Set();
+    for (let t = 0; t < 60; t++){ const q = f(lv); if (!q || vHDeg(vqH(q)) > V_DMAX[lv]) continue; if (!U.has(q.key)){ bump('vs:' + id + k); q.vs = k; return q; }
+      if (!seen.has(q.key)){ seen.add(q.key); old.push(Object.assign(q, {vs: k})); } } }
+  if (!old.length) return null;
+  const at = q => typeof USEDAT !== 'undefined' ? USEDAT.get(q.key) || 0 : 0, q = old.sort((a, b) => at(a) - at(b))[0];
+  bump('vs:' + id + q.vs); q.reuse = true; return q;
+}
+GL('l_voc', [1, 2, 3, 4], lv => vocGen('l_voc', lv, [['coe', l => vMonoQ('c', l)], ['par', l => vMonoQ('p', l)], ['deg', l => vMonoQ('d', l)], ['mon', vIsMonoQ], ['sem', vSemQ],
+  ['nat', vNatQ], ['var', lv === 1 ? vVarQ : null]]));
+
+/* polynômes : listes de monômes (comme ci-dessus) ; points VQ : 1/4 par terme après le 2e, deux lettres 1/2, une fraction 1/2, une virgule 1,
+   un coefficient caché 1/6, un 1er terme négatif 1/6 ; degré : désordre 1/2, termes semblables à réduire d'abord 1, le terme de plus haut
+   degré qui s'annule 1/2 ; polynôme ? : 5/x 2/3, √x 1/3, un seul terme 1/3 ; ordonner : 0,85 de plus (★★★ et ★★★★ seulement) ; opposés ? 1/3 */
+const VQ = {term: .25, two: .5, frac: .5, virg: 1, cache: 1 / 6, neg1: 1 / 6, desord: .5, red: 1, annul: .5, den: 2 / 3, rac: 1 / 3, seul: 1 / 3, ord: .85, yn: 1 / 3,
+  deg: [0, 0, 0, 0, .25, .4, .55], a2b: .2, e3: .15};          // n° 18 : degré du polynôme 4 : 0,25 ; 5 : 0,4 ; 6 : 0,55 ; un terme comme 4a²b 0,2 ; exposant 3 dans un terme à deux lettres 0,15
+const vPDegW = T => VQ.deg[Math.min(6, Math.max(0, ...T.map(M => mDeg(M.m))))] + (T.some(M => vNL(M) >= 2 && mDeg(M.m) >= 3) ? VQ.a2b : 0) +
+  (T.some(M => vNL(M) >= 2 && Object.values(M.m).some(e => e >= 3)) ? VQ.e3 : 0);
+const vPLet = T => new Set(T.flatMap(M => Object.keys(M.m).filter(l => M.m[l])));
+const vPScore = T => VQ.term * Math.max(0, T.length - 2) + (vPLet(T).size >= 2 ? VQ.two : 0) + (T.some(M => M.d > 1) ? VQ.frac : 0) + (T.some(M => M.v != null) ? VQ.virg : 0) +
+  (T.some(vCache) ? VQ.cache : 0) + (T[0].s < 0 ? VQ.neg1 : 0) + vPDegW(T);
+const vAbs = M => Object.assign({}, M, {s: 1});
+function vPolyH(T, cols){ return T.map((M, i) => { const sg = i ? (M.s < 0 ? ' − ' : ' + ') : (M.s < 0 ? '−' : ''), h = M.bad || vMonoH(vAbs(M)), c = cols && cols[i];
+  return c ? (i ? sg : '') + H(c, (i ? '' : sg) + h) : sg + h; }).join(''); }
+const VCOL = ['cA', 'cB', 'cC', 'cD'];
+function vTerm(m, o){ const M = {s: 1, n: 1, d: 1, v: null, sp: null, m};
+  if (!Object.keys(m).length){ if (o.virg && chance(.5)){ M.v = pick(VDEC); o.virg = false; } else M.n = ri(1, 12); return M; }
+  if (o.frac && chance(.5)){ M.d = ri(2, 7); M.n = chance(.7) ? 1 : ri(2, 5); if (gcd(M.n, M.d) !== 1) M.n = 1; o.frac = false; }
+  else if (o.virg && chance(.4)){ M.v = pick(VDEC); o.virg = false; }
+  else M.n = chance(.3) ? 1 : ri(2, 9);
+  return M; }
+// polynôme réduit (parties littérales différentes) ; o : {nT, two, letter, frac, virg, distinct : une lettre dont les puissances sont toutes différentes}
+function vPolyRand(o){
+  const two = o.two, v = o.letter || pick(['x', 'x', 'y', 'a', 'n', 'z']), pair = two ? o.pair || pick([['x', 'y'], ['a', 'b'], ['m', 'n']]) : null, parts = [];
+  for (let t = 0; t < 80 && parts.length < o.nT; t++){ let m = {};
+    if (!two){ const e = ri(0, Math.min(4, o.dmax || 6)); if (e) m[v] = e; }
+    else { const e1 = ri(0, 3), e2 = ri(0, 3); if (e1 + e2 > Math.min(5, o.dmax || 6)) continue; if (e1) m[pair[0]] = e1; if (e2) m[pair[1]] = e2; }
+    if (parts.some(p => mKey(p) === mKey(m))) continue;
+    if (o.distinct && parts.some(p => (p[o.distinct] || 0) === (m[o.distinct] || 0))) continue;
+    parts.push(m); }
+  if (parts.length < o.nT || !parts.some(m => mDeg(m))) return null;
+  if (two && vPLet(parts.map(m => ({m}))).size < 2) return null;
+  if (two && o.a2b && !parts.some(m => Object.keys(m).length >= 2 && mDeg(m) >= 3)) return null;     // deux lettres dès ★★ : au moins un terme comme 4a²b
+  const fo = {frac: o.frac, virg: DEC && o.virg}, T = parts.map(m => vTerm(m, fo));
+  T.forEach((M, i) => { if (i && chance(.45)) M.s = -1; }); if (NEG && chance(.3)) T[0].s = -1;
+  return T; }
+const vRandO = lv => ({nT: wpick([2, 3, 4, 5], x => [[0, 0, 4, 4, 1, 0], [0, 0, 3, 4, 3, .5], [0, 0, 2, 3, 3, 2], [0, 0, 1, 3, 3, 3]][lv - 1][x]),
+  two: V_PA2B || chance([.1, .4, .45, .5][lv - 1]), dmax: V_DMAX[lv], a2b: lv >= 2, frac: chance([.25, .35, .4, .4][lv - 1]), virg: chance(.25)});
+const vDegM = M => mDeg(M.m);
+// polynôme ? (oui : une somme de monômes, aussi d'un seul terme ; non : 5/x ou √x dans la somme)
+function vPolIsQ(lv){ const yes0 = chance(.5);
+  for (const yes of [yes0, !yes0]) for (let t = 0; t < 300; t++){
+    const o = vRandO(lv), one = yes && chance(.15); if (one) o.nT = 1; else o.nT = Math.max(2, Math.min(4, o.nT));
+    let T = one ? [vMonoRand({noSeul: true, noSp: true})] : vPolyRand(o); if (!T || !T[0]) continue;
+    let s = one ? vScore(T[0]) + VQ.seul : vPScore(T), kind = 'ok';
+    if (!yes){ const i = ri(0, T.length - 1), l = pick([...vPLet(T)].concat(['x'])).toString(), den = chance(.6), kk = ri(1, 9);
+      const bad = den ? fracH(fmtInt(kk), '<i>' + l + '</i>' + (chance(.3) ? '<sup>2</sup>' : '')) : (chance(.3) ? fmtInt(ri(2, 5)) : '') + radH('<i>' + l + '</i>', 2);
+      T = T.map((M, j) => j === i ? Object.assign({}, M, {bad}) : M); s += den ? VQ.den : VQ.rac; kind = den ? 'den' : 'rac'; }
+    if (!vIn(s, lv)) continue;
+    const E = vPolyH(T), ans = yes ? OUI : NON, bi = T.findIndex(M => M.bad);
+    const sig = [yes, kind, T.length, vPLet(T).size >= 2, T.some(M => M.d > 1), T.some(M => M.v != null), T[0].s < 0].join('');
+    return phrQ('Oui ou non ?', vX(E) + ' est-il un polynôme ? ', ans, '', {key: 'vpi' + sig, chk: {voc: {k: 'pol', yes}},
+      det: () => DIV(yes ? vPolyH(T, T.map((M, i) => VCOL[i % 4])) : vPolyH(T, T.map((M, i) => i === bi ? 'cB' : 'vgr')), 'fin') +
+        DIV(yes ? (T.length === 1 ? 'un seul terme : un monôme est aussi un polynôme' : 'une somme de monômes') + ' ⟹ ' + ANS(OUI)
+          : T[bi].bad + ' n\'est pas un monôme (' + (kind === 'den' ? 'une lettre au dénominateur' : 'une lettre sous la racine') + ') ⟹ ' + ANS(NON), 'gr phrd vwhy')}); }
+  return null; }
+// termes : binôme, trinôme, ou le nombre de termes (4 ou 5)
+function vPolTerQ(lv){ const U = typeof USED !== 'undefined' ? USED : new Set();
+  for (let t = 0; t < 300; t++){ const o = vRandO(lv), T = vPolyRand(o); if (!T || !vIn(vPScore(T), lv)) continue;
+    const E = vPolyH(T), n = T.length, a = n === 2 ? 'binôme' : n === 3 ? 'trinôme' : String(n);
+    if (U.has('vw:' + a) && t < 60) continue;              // binôme, trinôme, 4 termes, 5 termes : une fois par séance (l'enseignant : « j'ai eu trois fois à répondre 4 termes »)
+    const det = () => DIV(T.map((M, i) => (i ? ' ' + H(VCOL[i % 4], M.s < 0 ? '−' : '+') + ' ' : '') + vcLab(H(VCOL[i % 4], (i || M.s > 0 ? '' : '−') + vMonoH(vAbs(M))), String(i + 1))).join(''), 'fin vrow') +
+      (n <= 3 ? DIV('un polynôme à ' + n + ' termes ⟹ un ' + ANS(a), 'gr phrd vwhy') : DIV(ANS(a) + ' termes', 'fin'));
+    const q = n <= 3 ? phrQ('Complète', vX(E) + ' est un ', a, '.', {}) : phrQ('Complète', 'Le polynôme ' + vX(E) + ' a ', a, ' termes.', {});   // « est un … » : on n'attend pas « somme » (l'enseignant)
+    return Object.assign(q, {key: 'vw:' + a, det, chk: {voc: {k: 'ter', n, a}}}); }
+  return null; }
+// degré d'un polynôme (une fois réduit) ; désordre, termes semblables, terme de plus haut degré qui s'annule
+function vPolDegQ(lv){
+  const wantRed = lv >= 3 && chance(lv === 3 ? .25 : .5), U = typeof USED !== 'undefined' ? USED : new Set();      // réduire d'abord : décidé avant (sinon les points font pencher ★★★★ vers lui)
+  for (let t = 0; t < 400; t++){ const o = vRandO(lv); o.virg = false; let T = vPolyRand(o); if (!T) continue;
+    T.sort((A, B) => vDegM(B) - vDegM(A)); let s = vPScore(T), red = false, annul = false;
+    if (wantRed){ // termes semblables : un terme à coefficient entier, répété
+      const cand = T.filter(M => M.d === 1 && M.v == null && vDegM(M)); if (!cand.length) continue; const A = pick(cand);
+      annul = lv === 4 && A === T[0] && T.length > 2 && chance(.5);
+      const B = {s: annul ? -A.s : (chance(.5) ? 1 : -1), n: annul ? A.n : ri(1, 9), d: 1, v: null, sp: null, m: A.m};
+      if (!annul && B.s * B.n === -A.s * A.n) continue; T = T.concat([B]); red = true; s += VQ.red + (annul ? VQ.annul : 0); }
+    const R = vPolyRed(T); if (!R.length || !R.some(vDegM)) continue;
+    const mx = Math.max(...R.map(vDegM)); if (U.has('vpd' + mx) && t < 80) continue;      // le même degré une seule fois par séance (comme le nombre de termes)
+    if (chance(lv >= 2 ? .5 : 0)) for (let k = 0; k < 10; k++){ shuffle(T); if (vDegM(T[0]) !== Math.max(...T.map(vDegM))) break; }      // désordre : le plus haut degré pas en premier
+    if (!NEG && T[0].s < 0) continue;
+    const des = vDegM(T[0]) !== Math.max(...T.map(vDegM));
+    s = vPScore(T) + (des ? VQ.desord : 0) + (red ? VQ.red : 0) + (annul ? VQ.annul : 0);
+    if (!vIn(s, lv)) continue;
+    const E = vPolyH(T), RR = R.slice().sort((A, B) => vDegM(B) - vDegM(A));
+    return phrQ('Complète', 'Le degré de ' + vX(E) + ' est ', String(mx), '.', {key: 'vpd' + mx, chk: {voc: {k: 'pdeg', T, mx}},
+      det: () => (red ? DIV(E + ' = ' + vPolyH(R), 'fin') : '') +
+        DIV(RR.map((M, i) => (i ? ' ' + (M.s < 0 ? '−' : '+') + ' ' : '') + vcLab((i || M.s > 0 ? '' : '−') + vMonoH(vAbs(M), 'cA'), (vDegM(M) === mx ? H('cD', 'degré ' + vDegM(M)) : 'degré ' + vDegM(M)))).join(''), 'fin vrow') +
+        DIV('le plus grand degré : ' + ANS(String(mx)), 'fin')}); }
+  return null; }
+function vPolyRed(T){ const map = new Map(), out = [];
+  T.forEach(M => { const k = mKey(M.m); if (M.d > 1 || M.v != null){ out.push(M); return; } if (!map.has(k)){ const N = Object.assign({}, M); map.set(k, N); out.push(N); } else { const N = map.get(k), c = N.s * N.n + M.s * M.n; N.s = c < 0 ? -1 : 1; N.n = Math.abs(c); } });
+  return out.filter(M => M.n !== 0); }
+// ordonner selon les puissances décroissantes (★★★ et ★★★★ ; croissantes jusqu'à la n° 19) ; deux lettres : selon les puissances d'une seule, toutes différentes
+function vPolOrdQ(lv){
+  for (let t = 0; t < 400; t++){ const o = vRandO(lv); o.nT = Math.max(3, o.nT); const two = o.two, pair = two ? pick([['x', 'y'], ['a', 'b'], ['m', 'n']]) : null;
+    let T; if (two){ const lt = pick(pair); o.letter = null; T = vPolyRand(Object.assign(o, {distinct: lt, pair})); if (!T) continue; o.lt = lt; }
+    else { o.letter = pick(['x', 'x', 'y', 'a', 'n']); T = vPolyRand(Object.assign(o, {distinct: o.letter})); if (!T) continue; o.lt = o.letter; }
+    const lt = o.lt, e = M => M.m[lt] || 0, S2 = T.slice().sort((A, B) => e(B) - e(A));
+    for (let k = 0; k < 10 && T.every((M, i) => M === S2[i]); k++) shuffle(T);
+    if (T.every((M, i) => M === S2[i])) continue;
+    if (!NEG && (T[0].s < 0 || S2[0].s < 0)) continue;
+    const s = VQ.ord + vPScore(T) + (S2[0].s < 0 ? VQ.neg1 : 0); if (!vIn(s, lv)) continue;
+    const E = vPolyH(T), A = vPolyH(S2);
+    return {q: '<span>' + E + '</span>', a: A, con: 'Ordonne selon les puissances décroissantes de ' + iv(lt), key: 'vpo' + stripTags(E).replace(/\s+/g, ''), chk: {voc: {k: 'ord', T, S: S2, lt}},
+      det: () => { const row = (U, ans) => U.map((M, i) => (i ? ' ' + (M.s < 0 ? '−' : '+') + ' ' : '') + vcLab((i || M.s > 0 ? '' : '−') + vMonoH(vAbs(M), 'cA'), H('cD', iv(lt) + '<sup>' + e(M) + '</sup>'))).join('');
+        return DIV(row(T), 'fin vrow') + DIV('= ' + ANS(A), 'fin'); }}; }
+  return null; }
+// opposé d'un polynôme (avec les relatifs) : « L'opposé de … est ▢ » ; parfois « … et … sont-ils opposés ? » (somme nulle ?)
+function vPolOppQ(lv){
+  for (let t = 0; t < 400; t++){ const o = vRandO(lv); o.nT = Math.min(4, o.nT); const T = vPolyRand(o); if (!T) continue;
+    const O = T.map(M => Object.assign({}, M, {s: -M.s})), yn = chance(.3);
+    if (!yn){ const s = vPScore(T); if (!vIn(s, lv)) continue; const E = vPolyH(T), A = vPolyH(O), cols = T.map((M, i) => VCOL[i % 4]);
+      return phrQ('Complète', 'L\'opposé de ' + vX(E) + ' est ', vX(A), '.', {key: 'vpp' + stripTags(E).replace(/\s+/g, ''), chk: {voc: {k: 'opp', T, O}},
+        det: () => DIV('−(' + vPolyH(T, cols) + ') = ' + ANS(vPolyH(O, cols)), 'fin') + DIV('chaque terme change de signe', 'gr phrd vwhy')}); }
+    const yes = chance(.5); let U = O, j = -1;
+    if (!yes){ const ok = T.map((M, i) => i).filter(i => T[i].d === 1 && T[i].v == null); if (!ok.length) continue; j = pick(ok); U = O.map((M, i) => i === j ? Object.assign({}, M, {s: -M.s}) : M); }
+    const s = vPScore(T) + VQ.yn; if (!vIn(s, lv)) continue;
+    const E = vPolyH(T), F = vPolyH(U), ans = yes ? OUI : NON;
+    // détail (l'enseignant, 07.11.2026 : la somme des deux polynômes « c'est trop compliqué même si plus rigoureux : mets juste en évidence ce qui ne
+    // va pas (et si ça va, dis que chaque terme a son coefficient opposé donc c'est bon) ») : les deux polynômes l'un sous l'autre, terme sous terme ;
+    // oui : chaque paire de termes dans sa couleur ; non : la paire qui ne va pas en orange, les autres en gris
+    const cols = T.map((M, i) => yes ? VCOL[i % 4] : i === j ? 'cB' : 'vgr'), tm = (M, i) => (i ? (M.s < 0 ? '− ' : '+ ') : M.s < 0 ? '−' : '') + vMonoH(vAbs(M));
+    const row = P => '<tr>' + P.map((M, i) => '<td><span class="' + cols[i] + '">' + tm(M, i) + '</span></td>').join('') + '</tr>';
+    return phrQ('Oui ou non ?', vX(E) + ' et ' + vX(F) + ' sont-ils opposés ? ', ans, '', {key: 'vpq' + (yes ? 'o' : 'n') + stripTags(E).replace(/\s+/g, ''), chk: {voc: {k: 'oppyn', yes, T, U}},
+      det: () => '<table class="vop">' + row(T) + row(U) + '</table>' + DIV(yes ? 'chaque terme a son coefficient opposé ⟹ ' + ANS(OUI)
+        : H('cB', tm(T[j], 0).replace(/^\+ /, '')) + ' et ' + H('cB', tm(U[j], 0).replace(/^\+ /, '')) + ' : pas opposés ⟹ ' + ANS(NON), 'fin vsm')}); }
+  return null; }
+GL('l_vocp', [1, 2, 3, 4], lv => { const S = [['pol', vPolIsQ], ['ter', vPolTerQ], ['deg', vPolDegQ], ['ord', lv >= 3 ? vPolOrdQ : null], ['opp', NEG ? vPolOppQ : null]];
+  V_PA2B = lv >= 2 && chance(V_PA2BP[lv]);             // deux lettres et un terme comme 4a²b (n° 18) ; s'il n'y a plus rien de nouveau : sans
+  try { const q = vocGen('l_vocp', lv, S); if (q && !q.reuse) return q; } finally { V_PA2B = false; }
+  return vocGen('l_vocp', lv, S); });
+
 /* ---------- tangente au cercle (11e ; onglet Géométrie, bloc Angles) ----------
    La tangente en A est perpendiculaire au rayon [OA]. ★ l'angle entre le rayon et la tangente (90°), quelle droite est tangente, un angle
    du triangle OAT (multiples de 5) ; ★★ le même triangle (n'importe quels entiers), « La droite d est-elle tangente ? » (angle droit codé
@@ -9964,9 +10754,13 @@ const TABS = [
       rows: [[null, [['q4', 'quatrième proportionnelle (prix, taux de change…)'], ['pagr', 'agrandissement, réduction'], ['pech', 'échelle'], ['ppen', 'pente']]],
         ['Problèmes', [['pvit', 'vitesse'], ['pdeb', 'débit'], ['pmv', 'masse volumique']]]],
       hint: 'Relatifs cochés : aussi des pentes négatives (la route descend).'},
-    {id: 'lit', name: 'Calcul littéral', nd: ['dec', 'rel'], kw: 'reduire developper factoriser identites remarquables monomes polynomes substituer viete zeros formule traduire phrase expression litterale programme de calcul double triple moitie somme produit',
-      rows: [[null, [['l_tra', 'traduire une phrase'], ['l_sub', 'substitution']]], ['Réduire', [['l_mono', 'un monôme'], ['l_mulm', 'multiplication de monômes'], ['l_addm', 'addition de monômes'], ['l_subm', 'soustraction de monômes'],
-        ['l_addp', 'addition de polynômes'], ['l_subp', 'soustraction de polynômes']]], ['Développer', [['l_dev', 'simple'], ['l_dev2', 'double']]],
+    {id: 'lit', name: 'Calcul littéral', nd: ['dec', 'rel'], kw: 'reduire developper factoriser identites remarquables monomes polynomes substituer viete zeros formule traduire phrase expression litterale programme de calcul double triple moitie somme produit vocabulaire coefficient partie litterale degre semblables nature variable binome trinome termes ordonner oppose',
+      rows: [[null, [['l_tra', 'traduire une phrase'], ['l_sub', 'substitution']]],
+        // monômes à gauche, polynômes à droite, sur ordinateur (l'enseignant, 07.11.2026 : « Enlève le mot "réduire" du bloc, fais plutôt un "monômes" en gras à gauche et un "polynômes" en gras à droite » ; colonnes : 5e élément {col}, blockHTML) ;
+        // « un monôme » (l_mono) et « soustraction de monômes » (l_subm) n'ont plus de case : dans « multiplication » et « addition et soustraction » (GEN, LINK_ALIAS)
+        [null, [['l_voc', 'vocabulaire (sauf polynômes)']]],      // au-dessus des deux colonnes, pas dans « Monômes » (l'enseignant, 07.11.2026)
+        ['Monômes', [['l_mulm', 'multiplication'], ['l_addm', 'addition et soustraction']], null, null, {col: 'L'}],
+        ['Polynômes', [['l_vocp', 'vocabulaire (polynômes)'], ['l_addp', 'addition'], ['l_subp', 'soustraction']], null, null, {col: 'R'}], ['Développer', [['l_dev', 'simple'], ['l_dev2', 'double']]],
         [null, [['l_ir1', '(' + iv('a') + ' + ' + iv('b') + ')' + sp(2)], ['l_ir2', '(' + iv('a') + ' − ' + iv('b') + ')' + sp(2)], ['l_ir3', '(' + iv('a') + ' + ' + iv('b') + ')(' + iv('a') + ' − ' + iv('b') + ')'],
           ['l_ir4', '(' + iv('x') + ' + ' + iv('a') + ')(' + iv('x') + ' + ' + iv('b') + ')']], 'identités remarquables' + NBSP + ':'],
         ['Factoriser', [['l_fme', 'mise en évidence']]],
@@ -10174,7 +10968,7 @@ function genOne0(sub, lv, fl, mode){
   let p = null, any = null; const old = new Map();
   for (let t = 0, nt = geo ? 300 : 80; t < nt; t++){       // géométrie : plus d'essais (générateurs rapides), pour trouver aussi la dernière question pas encore posée
     let q = null; try { q = pick(L)(); } catch (e) { console.error(sub, lv, e); }
-    if (!q) continue; any = any || q; if (!USED.has(q.key)){ p = q; break; }
+    if (!q) continue; any = any || q; if (!USED.has(q.key) || q.reuse){ p = q; break; }      // reuse : reprise voulue (vocabulaire du calcul littéral, 07.11.2026)
     if (!old.has(q.key)) old.set(q.key, q);
   }
   if (!p && geo){ if (mode === 'new') return null;
@@ -10377,7 +11171,7 @@ function spreadSame(list, mix){
 // question « from » ; une question trop proche est remplacée (NO_RARE : les sortes interdites à cet endroit)
 // vocabulaire et nom du bloc Triangles et quadrilatères (q.rare = 'tqx') : jamais deux à la suite (l'enseignant, 31.10.2026, 5e conversation) :
 // écart 1 (RARE_GAPS)
-const RARE_GAP = 10, RARE_GAPS = {tqx: 1};
+const RARE_GAP = 10, RARE_GAPS = {tqx: 1, mpw: 4};      // mpw : puissance d'un monôme, au plus une sur cinq questions (07.11.2026)
 function rareSpace(list, from){
   const last = {};
   list.forEach((q, i) => ['L', 'R'].forEach(s => { let p = q[s]; if (!p || !p.rare) return;
@@ -11266,12 +12060,20 @@ function optHTML(kind){
   if (kind === 'sol') return '<div class="opts key"><span class="lab2">Solides :</span>' + SOLK.map(([k, n]) => '<label><input type="checkbox" data-op="' + k + '"> ' + n + '</label>').join('') + '</div>';
   return '';
 }
+// lignes d'un bloc ; deux lignes qui se suivent avec {col: 'L'} puis {col: 'R'} (5e élément) : côte à côte, en colonnes (.c2 ; une seule colonne sur téléphone)
+function rowsHTML(b){
+  const row = ([t, its, sub, ex, o]) => '<div class="opts' + (sub ? ' sub' : '') + (o && o.col ? ' colv' : '') + '">' + (t ? '<span class="lab2">' + t + '</span>' : '') + (sub ? '<span class="lab3">' + sub + '</span>' : '') +
+    its.map(([id, lab, cls]) => '<label' + (cls ? ' class="' + cls + '"' : '') + '><input type="checkbox" data-it="' + id + '"> <span>' + lab + '</span>' + (NOSTAR.has(id) && !b.hint ? '<span class="nost">(sans étoiles)</span>' : '') + '</label>').join('') + (ex || '') + '</div>';
+  const rs = b.rows || []; let h = '';
+  for (let i = 0; i < rs.length; i++){ const o = rs[i][4], n = rs[i + 1] && rs[i + 1][4];
+    if (o && o.col === 'L' && n && n.col === 'R'){ h += '<div class="c2">' + row(rs[i]) + row(rs[i + 1]) + '</div>'; i++; } else h += row(rs[i]); }
+  return h;
+}
 function blockHTML(b){
   return '<section class="blk" data-bl="' + b.id + '"><div class="bh"><label class="bn"><input type="checkbox" data-bl="' + b.id + '"> <span>' + b.name + '</span></label>' +
     '<span class="bhr">' + (b.nd ? '<span class="nd">' + b.nd.map(k => '<label title="' + ((b.ndt || {})[k] || 'Nombres ' + NDL[k] + ' dans ce bloc') + '"><input type="checkbox" data-nd="' + b.id + '" data-k="' + k + '"> ' + ((b.ndl || {})[k] || NDL[k]) + '</label>').join('') + '</span>' : '') +
     '<span class="trb"><button class="mini" data-tr="all" data-b="' + b.id + '" title="Tout cocher dans ce bloc">Tout</button><button class="mini" data-tr="none" data-b="' + b.id + '" title="Tout décocher dans ce bloc">Rien</button></span></span></div>' +
-    '<div class="bb">' + (b.opts ? optHTML(b.opts) : '') + (b.rows || []).map(([t, its, sub, ex]) => '<div class="opts' + (sub ? ' sub' : '') + '">' + (t ? '<span class="lab2">' + t + '</span>' : '') + (sub ? '<span class="lab3">' + sub + '</span>' : '') +
-      its.map(([id, lab]) => '<label><input type="checkbox" data-it="' + id + '"> <span>' + lab + '</span>' + (NOSTAR.has(id) && !b.hint ? '<span class="nost">(sans étoiles)</span>' : '') + '</label>').join('') + (ex || '') + '</div>').join('') +
+    '<div class="bb">' + (b.opts ? optHTML(b.opts) : '') + rowsHTML(b) +
     (b.hint ? '<div class="hint">' + b.hint + '</div>' : '') + '</div></section>';
 }
 function buildSettingsUI(){
@@ -11808,12 +12610,13 @@ function linkFrag(P){
   return 'q1' + (P.t ? '&t=' + lnkEnc(P.t) : '') + '&x=' + x.join(',') + (n.length ? '&n=' + n.join(',') : '') + (o.length ? '&o=' + o.join(',') : '') + (P.fr ? '&f=1' : '') + (P.rnd ? '&h=1' : '');
 }
 const linkURL = P => QPC_BASE + QPC_VERSION + '/#' + linkFrag(P);
+const LINK_ALIAS = {l_mono: 'l_mulm', l_subm: 'l_addm'};      // cases fondues dans une autre (07.11.2026) : un ancien lien garde ses exercices
 function linkParse(str){             // un lien entier, ou seulement ce qui suit # ; null s'il n'y a aucun exercice connu de cette version
   const m = /(?:^|#)(q1(?:&[^#\s]*)?)\s*$/.exec(String(str || '').trim()); if (!m) return null;
   const f = {}; m[1].split('&').slice(1).forEach(kv => { const i = kv.indexOf('='); if (i > 0) f[kv.slice(0, i)] = kv.slice(i + 1); });
   const vm = /\/qpc\/(\d{4}-\d{2}-\d{2})\/(?:index\.html)?#/.exec(String(str || ''));     // la version de la page qui a fait le lien (lien entier seulement)
   const P = {t: f.t ? (lnkDec(f.t) || '').trim().slice(0, 120) : '', it: [], blk: [], num: {}, opt: {}, cap: {}, fr: f.f === '1', rnd: f.h === '1', ver: vm ? vm[1] : '', lost: 0};
-  (f.x || '').split(',').forEach(e => { const r = /^(.*?)(?:\*([1-3]))?$/.exec(e), id = r && lnkDec(r[1]); if (!id) return;
+  (f.x || '').split(',').forEach(e => { const r = /^(.*?)(?:\*([1-3]))?$/.exec(e), id0 = r && lnkDec(r[1]), id = id0 && (LINK_ALIAS[id0] || id0); if (!id) return;
     if (id[0] === '@'){ const b = id.slice(1); if (BLOCKS[b] && !BLOCKS[b].items.length){ if (!P.blk.includes(b)){ P.blk.push(b); if (r[2]) P.cap[b] = Number(r[2]); } } else P.lost++; }
     else if (ITEM_BLOCK[id]){ if (!P.it.includes(id)){ P.it.push(id); if (r[2]) P.cap[id] = Number(r[2]); } } else P.lost++; });
   (f.n || '').split(',').forEach(e => { const i = e.indexOf('.'), b = e.slice(0, i), fl = e.slice(i + 1); if (i > 0 && BLOCKS[b] && /^[drf]*$/.test(fl)) P.num[b] = fl; });
@@ -11954,7 +12757,7 @@ function linkNote(P){
 // titre proposé dans « Lien élèves » (l'enseignant, 07.11.2026) : un seul exercice d'un bloc : « Renfort » + le nom de l'exercice ; plusieurs
 // exercices d'un bloc : « Renfort » + le bloc ; deux blocs : « Renfort x et y » (chacun : le bloc ou l'exercice) ; plus de deux : « Révisions ».
 // Un nom par exercice (TNAME, par identifiant) ; un exercice ajouté plus tard sans nom : son nom affiché, sans les formules.
-const TNAME = {"m+": "addition en calcul mental", "m−": "soustraction en calcul mental", "m∙": "multiplication en calcul mental", "m:": "division en calcul mental", "liv": "livrets", "livd": "livrets : divisions", "m10": "multiplication et division par 10, 100, 0,1…", "m10x": "multiplication et division par 600, 0,3…", "mcom": "commutativité en calcul mental", "mdis": "distributivité en calcul mental", "p+": "addition en colonne", "p−": "soustraction en colonne", "p∙": "multiplication en colonne", "p:": "division en colonne", "rcmp": "comparaison de nombres relatifs", "radd": "addition de nombres relatifs", "rsub": "soustraction de nombres relatifs", "rsum": "sommes de plusieurs nombres relatifs", "rmul": "multiplication de nombres relatifs", "rdiv": "division de nombres relatifs", "rpow": "puissances de nombres relatifs", "rprio": "priorités des opérations avec les relatifs", "dvb": "critères de divisibilité", "prm": "nombres premiers", "dcp": "décomposition en facteurs premiers", "pgdc": "pgdc", "ppmc": "ppmc", "pb_1": "probabilités en une étape", "pb_2": "probabilités en plusieurs étapes", "pb_den": "dénombrement", "fs": "simplification de fractions", "fa": "amplification de fractions", "fcmp": "comparaison de fractions", "fax": "fractions sur un axe gradué", "fd": "écriture décimale d’une fraction", "f+": "addition et soustraction de fractions", "f∙": "multiplication de fractions", "f:": "division de fractions", "fpow": "puissances de fractions", "fprio": "priorités des opérations avec les fractions", "fq": "fraction d’un nombre", "fr": "fraction d’un nombre inconnu", "pc_ecr": "écritures d’un pourcentage", "fp": "pourcentage d’un nombre", "pc_init": "pourcentage d’un nombre inconnu", "pc_var": "augmentations et diminutions en pourcentage", "pc_taux": "recherche d’un pourcentage", "pwc": "calcul de puissances", "pp1": "produit de puissances de même base", "pp2": "quotient de puissances de même base", "pp3": "puissance d’une puissance", "pp4": "produit de puissances de même exposant", "pp5": "propriétés des puissances", "r2": "racines carrées", "r3": "racines cubiques", "renc2": "encadrement d’une racine carrée", "renc3": "encadrement d’une racine cubique", "rp1": "produit de racines", "rp2": "quotient de racines", "rp3": "extraction de racines", "rp4": "propriétés des racines", "q4": "quatrième proportionnelle", "pagr": "agrandissements et réductions", "pech": "échelles", "ppen": "pente", "pvit": "problèmes de vitesse", "pdeb": "problèmes de débit", "pmv": "problèmes de masse volumique", "l_tra": "traduction d’une phrase en expression littérale", "l_sub": "substitution", "l_mono": "réduction d’un monôme", "l_mulm": "multiplication de monômes", "l_addm": "addition de monômes", "l_subm": "soustraction de monômes", "l_addp": "addition de polynômes", "l_subp": "soustraction de polynômes", "l_dev": "développement simple", "l_dev2": "développement double", "l_ir1": "développement de (a + b)²", "l_ir2": "développement de (a − b)²", "l_ir3": "développement de (a + b)(a − b)", "l_ir4": "développement de (x + a)(x + b)", "l_fme": "mise en évidence", "l_fir1": "factorisation de a² + 2ab + b²", "l_fir2": "factorisation de a² − 2ab + b²", "l_fir3": "factorisation de a² − b²", "l_fir4": "factorisation de x² + (a + b)x + ab", "l_fvi": "factorisation avec Viète", "e1_1": "équations x + a = b", "e1_2": "équations ax = b", "e1_3": "équations x : a = b", "e1_4": "équations ax + b = c", "e1_5": "équations ax + b = cx + d", "e1_6": "équations a(x + b) = c", "e1_7": "équations a(x + b) = c(x + d)", "e1_8": "équations x : a + b = c", "e2_1": "équations x² = a", "e2_2": "équations (x + a)(x + b) = 0", "e2_3": "équations ax² + bx = 0", "e2_4": "équations x² + bx + c = 0", "e2_5": "équations ax² + bx + c = 0", "sy_sub": "systèmes par substitution", "sy_com": "systèmes par combinaison", "fn_gx": "expression d’une fonction d’après son graphique", "fn_xg": "graphique d’une fonction d’après son expression", "fn_lim": "lecture d’images", "fn_im": "calcul d’images", "fn_lpi": "lecture de préimages", "fn_pi": "calcul de préimages", "fn_tab": "tableaux de valeurs", "d_car": "diagrammes cartésiens", "d_col": "diagrammes en colonnes", "d_cir": "diagrammes circulaires", "d_bar": "diagrammes en barre", "cv_lon": "conversions de longueurs", "cv_mas": "conversions de masses", "cv_cap": "conversions de capacités", "cv_air": "conversions d’aires", "cv_vol": "conversions de volumes", "cv_tem": "conversions de temps", "cv_vit": "conversions de vitesses", "cv_mv": "conversions de masses volumiques", "cv_deb": "conversions de débits", "aro": "arrondis", "enc": "encadrements", "f_car": "périmètre et aire du carré", "f_rec": "périmètre et aire du rectangle", "f_tri": "périmètre et aire du triangle", "f_par": "périmètre et aire du parallélogramme", "f_los": "périmètre et aire du losange", "f_tra": "périmètre et aire du trapèze", "f_dis": "périmètre et aire du disque", "f_sec": "périmètre et aire d’un secteur", "v_cub": "volume du cube", "v_pav": "volume du pavé droit", "v_pri": "volume du prisme droit", "v_cyl": "volume du cylindre", "v_pyr": "volume de la pyramide", "v_con": "volume du cône", "v_bou": "volume de la boule", "at_cub": "aire totale du cube", "at_pav": "aire totale du pavé droit", "at_pri": "aire totale du prisme droit", "at_cyl": "aire totale du cylindre", "at_pyr": "aire totale de la pyramide", "at_bou": "aire de la sphère", "py_calc": "calcul d’une longueur avec Pythagore", "py_rec": "réciproque du théorème de Pythagore", "py_con": "contraposée du théorème de Pythagore", "py_esp": "Pythagore dans l’espace", "th_calc": "calcul d’une longueur avec Thalès", "th_rec": "réciproque du théorème de Thalès", "th_con": "contraposée du théorème de Thalès", "g_not": "notations et codage", "g_mtr": "médiatrices", "g_bis": "bissectrices", "g_mdn": "médianes", "g_hau": "hauteurs", "g_cci": "cercle circonscrit", "g_cin": "cercle inscrit", "q_tri": "triangles particuliers", "q_con": "triangles constructibles", "q_car": "propriétés du carré", "q_rec": "propriétés du rectangle", "q_los": "propriétés du losange", "q_par": "propriétés du parallélogramme", "q_tra": "propriétés du trapèze", "q_rho": "propriétés du rhomboïde", "g_type": "types d’angles", "g_tri": "somme des angles d’un triangle", "g_opp": "angles opposés par le sommet et adjacents", "g_par": "angles alternes-internes", "g_ins": "angle inscrit et angle au centre", "g_tan": "tangente au cercle", "g_tha": "cercle de Thalès", "g_pol": "angles des polygones réguliers", "g_sym": "axes de symétrie", "g_csym": "centre de symétrie", "t_ax": "symétrie axiale", "t_ce": "symétrie centrale", "t_tr": "translation", "t_ro": "rotation", "t_ho": "homothétie", "g_rep2": "repérage dans le plan", "g_rep3": "repérage dans l’espace", "g_nsol": "noms des solides", "g_sol": "faces, sommets et arêtes", "g_pat": "développements des solides"};
+const TNAME = {"m+": "addition en calcul mental", "m−": "soustraction en calcul mental", "m∙": "multiplication en calcul mental", "m:": "division en calcul mental", "liv": "livrets", "livd": "livrets : divisions", "m10": "multiplication et division par 10, 100, 0,1…", "m10x": "multiplication et division par 600, 0,3…", "mcom": "commutativité en calcul mental", "mdis": "distributivité en calcul mental", "p+": "addition en colonne", "p−": "soustraction en colonne", "p∙": "multiplication en colonne", "p:": "division en colonne", "rcmp": "comparaison de nombres relatifs", "radd": "addition de nombres relatifs", "rsub": "soustraction de nombres relatifs", "rsum": "sommes de plusieurs nombres relatifs", "rmul": "multiplication de nombres relatifs", "rdiv": "division de nombres relatifs", "rpow": "puissances de nombres relatifs", "rprio": "priorités des opérations avec les relatifs", "dvb": "critères de divisibilité", "prm": "nombres premiers", "dcp": "décomposition en facteurs premiers", "pgdc": "pgdc", "ppmc": "ppmc", "pb_1": "probabilités en une étape", "pb_2": "probabilités en plusieurs étapes", "pb_den": "dénombrement", "fs": "simplification de fractions", "fa": "amplification de fractions", "fcmp": "comparaison de fractions", "fax": "fractions sur un axe gradué", "fd": "écriture décimale d’une fraction", "f+": "addition et soustraction de fractions", "f∙": "multiplication de fractions", "f:": "division de fractions", "fpow": "puissances de fractions", "fprio": "priorités des opérations avec les fractions", "fq": "fraction d’un nombre", "fr": "fraction d’un nombre inconnu", "pc_ecr": "écritures d’un pourcentage", "fp": "pourcentage d’un nombre", "pc_init": "pourcentage d’un nombre inconnu", "pc_var": "augmentations et diminutions en pourcentage", "pc_taux": "recherche d’un pourcentage", "pwc": "calcul de puissances", "pp1": "produit de puissances de même base", "pp2": "quotient de puissances de même base", "pp3": "puissance d’une puissance", "pp4": "produit de puissances de même exposant", "pp5": "propriétés des puissances", "r2": "racines carrées", "r3": "racines cubiques", "renc2": "encadrement d’une racine carrée", "renc3": "encadrement d’une racine cubique", "rp1": "produit de racines", "rp2": "quotient de racines", "rp3": "extraction de racines", "rp4": "propriétés des racines", "q4": "quatrième proportionnelle", "pagr": "agrandissements et réductions", "pech": "échelles", "ppen": "pente", "pvit": "problèmes de vitesse", "pdeb": "problèmes de débit", "pmv": "problèmes de masse volumique", "l_tra": "traduction d’une phrase en expression littérale", "l_voc": "vocabulaire du calcul littéral", "l_sub": "substitution", "l_mulm": "multiplication de monômes", "l_addm": "addition et soustraction de monômes", "l_addp": "addition de polynômes", "l_subp": "soustraction de polynômes", "l_vocp": "vocabulaire des polynômes", "l_dev": "développement simple", "l_dev2": "développement double", "l_ir1": "développement de (a + b)²", "l_ir2": "développement de (a − b)²", "l_ir3": "développement de (a + b)(a − b)", "l_ir4": "développement de (x + a)(x + b)", "l_fme": "mise en évidence", "l_fir1": "factorisation de a² + 2ab + b²", "l_fir2": "factorisation de a² − 2ab + b²", "l_fir3": "factorisation de a² − b²", "l_fir4": "factorisation de x² + (a + b)x + ab", "l_fvi": "factorisation avec Viète", "e1_1": "équations x + a = b", "e1_2": "équations ax = b", "e1_3": "équations x : a = b", "e1_4": "équations ax + b = c", "e1_5": "équations ax + b = cx + d", "e1_6": "équations a(x + b) = c", "e1_7": "équations a(x + b) = c(x + d)", "e1_8": "équations x : a + b = c", "e2_1": "équations x² = a", "e2_2": "équations (x + a)(x + b) = 0", "e2_3": "équations ax² + bx = 0", "e2_4": "équations x² + bx + c = 0", "e2_5": "équations ax² + bx + c = 0", "sy_sub": "systèmes par substitution", "sy_com": "systèmes par combinaison", "fn_gx": "expression d’une fonction d’après son graphique", "fn_xg": "graphique d’une fonction d’après son expression", "fn_lim": "lecture d’images", "fn_im": "calcul d’images", "fn_lpi": "lecture de préimages", "fn_pi": "calcul de préimages", "fn_tab": "tableaux de valeurs", "d_car": "diagrammes cartésiens", "d_col": "diagrammes en colonnes", "d_cir": "diagrammes circulaires", "d_bar": "diagrammes en barre", "cv_lon": "conversions de longueurs", "cv_mas": "conversions de masses", "cv_cap": "conversions de capacités", "cv_air": "conversions d’aires", "cv_vol": "conversions de volumes", "cv_tem": "conversions de temps", "cv_vit": "conversions de vitesses", "cv_mv": "conversions de masses volumiques", "cv_deb": "conversions de débits", "aro": "arrondis", "enc": "encadrements", "f_car": "périmètre et aire du carré", "f_rec": "périmètre et aire du rectangle", "f_tri": "périmètre et aire du triangle", "f_par": "périmètre et aire du parallélogramme", "f_los": "périmètre et aire du losange", "f_tra": "périmètre et aire du trapèze", "f_dis": "périmètre et aire du disque", "f_sec": "périmètre et aire d’un secteur", "v_cub": "volume du cube", "v_pav": "volume du pavé droit", "v_pri": "volume du prisme droit", "v_cyl": "volume du cylindre", "v_pyr": "volume de la pyramide", "v_con": "volume du cône", "v_bou": "volume de la boule", "at_cub": "aire totale du cube", "at_pav": "aire totale du pavé droit", "at_pri": "aire totale du prisme droit", "at_cyl": "aire totale du cylindre", "at_pyr": "aire totale de la pyramide", "at_bou": "aire de la sphère", "py_calc": "calcul d’une longueur avec Pythagore", "py_rec": "réciproque du théorème de Pythagore", "py_con": "contraposée du théorème de Pythagore", "py_esp": "Pythagore dans l’espace", "th_calc": "calcul d’une longueur avec Thalès", "th_rec": "réciproque du théorème de Thalès", "th_con": "contraposée du théorème de Thalès", "g_not": "notations et codage", "g_mtr": "médiatrices", "g_bis": "bissectrices", "g_mdn": "médianes", "g_hau": "hauteurs", "g_cci": "cercle circonscrit", "g_cin": "cercle inscrit", "q_tri": "triangles particuliers", "q_con": "triangles constructibles", "q_car": "propriétés du carré", "q_rec": "propriétés du rectangle", "q_los": "propriétés du losange", "q_par": "propriétés du parallélogramme", "q_tra": "propriétés du trapèze", "q_rho": "propriétés du rhomboïde", "g_type": "types d’angles", "g_tri": "somme des angles d’un triangle", "g_opp": "angles opposés par le sommet et adjacents", "g_par": "angles alternes-internes", "g_ins": "angle inscrit et angle au centre", "g_tan": "tangente au cercle", "g_tha": "cercle de Thalès", "g_pol": "angles des polygones réguliers", "g_sym": "axes de symétrie", "g_csym": "centre de symétrie", "t_ax": "symétrie axiale", "t_ce": "symétrie centrale", "t_tr": "translation", "t_ro": "rotation", "t_ho": "homothétie", "g_rep2": "repérage dans le plan", "g_rep3": "repérage dans l’espace", "g_nsol": "noms des solides", "g_sol": "faces, sommets et arêtes", "g_pat": "développements des solides"};
 const blTitle = bl => { const n = BLOCKS[bl].name.replace(/<[^>]+>/g, ''); return bl === 'pyt' || bl === 'tha' ? n : n.charAt(0).toLowerCase() + n.slice(1); };
 function linkSugT(){                // le titre proposé d'après les exercices cochés de la fenêtre
   if (!LNK || !LNK.P) return '';

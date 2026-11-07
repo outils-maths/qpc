@@ -314,6 +314,9 @@ body.two:not(.noside):not(.empty) .side1{display:inline-block}
 .tact:not(.on){background:var(--accent);border-color:var(--accent);color:#fff}.tact:not(.on):hover{background:var(--accent);filter:brightness(1.1)}
 .btn:disabled{opacity:.35;cursor:default;background:var(--panel)}
 .nav{font-size:1.15em;padding:.38em .8em}
+/* flèches ◀ ▶ des boutons dessinées en SVG, pas en caractères (07.11.2026) : sur iPhone, ◀ et ▶ ne venaient pas de la même
+   police (l'un en émoji, l'autre en texte) et ne se ressemblaient pas */
+.tri{display:inline-block;width:.65em;height:.65em;margin:0 .07em;vertical-align:-.08em;fill:currentColor;flex:none}
 /* dernière question : la flèche ▶ devient « Continuer ▶ » (l'enseignant, 04.11.2026 : « combiner ces boutons en 1 seul (sur tous les types d'écran) » ;
    avant : ▶ grisé et un bouton « Continuer » à côté). Sur ordinateur, le bouton s'élargit vers la droite sans déplacer les autres : sa place est
    tenue par une copie invisible de ▶ (.nph), le bouton est posé dessus (absolute). Sur téléphone : à sa place, normalement. */
@@ -764,10 +767,10 @@ body.sturnd .lvb{display:none !important}
 <footer>
   <div class="fl0"><button class="btn side1" id="bSL" title="Question de gauche : réponse, puis détail, puis question seule (touche 7)"><span class="lb">Réponse à gauche</span><span class="kh">7</span></button></div>
   <div class="fmid">
-    <button class="btn nav" id="bPrev" title="Question précédente (←)">◀<span class="kh">←</span></button>
+    <button class="btn nav" id="bPrev" title="Question précédente (←)"><svg class="tri" viewBox="0 0 10 10" aria-hidden="true"><path d="M0 5L10 0V10Z"/></svg><span class="kh">←</span></button>
     <button class="btn" id="bAns" title="Afficher la réponse (Entrée)">Réponse<span class="kh">Entrée</span></button>
     <button class="btn" id="bDet" title="Réponse et détail (Entrée, quand la réponse est affichée)">Détail<span class="kh">Entrée</span></button>
-    <span class="nslot"><span class="btn nav nph" aria-hidden="true">▶</span><button class="btn nav" id="bNext" title="Question suivante (→)"><span class="mlab"><span class="long">Continuer</span><span class="short">+1</span> </span>▶<span class="kh">→</span></button></span>
+    <span class="nslot"><span class="btn nav nph" aria-hidden="true"><svg class="tri" viewBox="0 0 10 10" aria-hidden="true"><path d="M10 5L0 0V10Z"/></svg></span><button class="btn nav" id="bNext" title="Question suivante (→)"><span class="mlab"><span class="long">Continuer</span><span class="short">+1</span> </span><svg class="tri" viewBox="0 0 10 10" aria-hidden="true"><path d="M10 5L0 0V10Z"/></svg><span class="kh">→</span></button></span>
   </div>
   <div class="fend"><span class="lvb" id="lvBtns"><button class="btn" data-lv="1" title="Tout de suite une question à ★">1★</button><button class="btn" data-lv="2" title="Tout de suite une question à ★★">2★</button><button class="btn" data-lv="3" title="Tout de suite une question à ★★★">3★</button><button class="btn" data-lv="4" title="Tout de suite une question à ★★★★">4★</button></span><button class="btn side1" id="bSR" title="Question de droite : réponse, puis détail, puis question seule (touche 9)"><span class="lb">Réponse à droite</span><span class="kh">9</span></button></div>
 </footer>
@@ -10298,8 +10301,8 @@ function futMove(lv, i, j){
   const L = FUT[lv]; if (!L || i === j || i < 0 || j < 0 || i >= L.length || j >= L.length) return;
   const q = L.splice(i, 1)[0]; q.pin = true; L.splice(j, 0, q); renderGrid();
 }
-const mvHTML = (i, n) => '<span class="mvs"><span class="mv' + (i ? '' : ' off') + '" data-mv="-1" title="Plus tôt">◀</span>' +
-  '<span class="mv' + (i < n - 1 ? '' : ' off') + '" data-mv="1" title="Plus tard">▶</span></span>';
+const mvHTML = (i, n) => '<span class="mvs"><span class="mv' + (i ? '' : ' off') + '" data-mv="-1" title="Plus tôt"><svg class="tri" viewBox="0 0 10 10" aria-hidden="true"><path d="M0 5L10 0V10Z"/></svg></span>' +
+  '<span class="mv' + (i < n - 1 ? '' : ' off') + '" data-mv="1" title="Plus tard"><svg class="tri" viewBox="0 0 10 10" aria-hidden="true"><path d="M10 5L0 0V10Z"/></svg></span></span>';
 // glisser-déposer : souris tout de suite (après 6 px), doigt après un appui long (350 ms) ; la carte suit le pointeur, la place visée est encadrée
 let FDRAG = null, FD_CLICK = false, FD_T = 0;
 function fdStart(card, x, y){

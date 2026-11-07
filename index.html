@@ -607,7 +607,10 @@ body.pick footer #bPrev,body.pick.pnext footer #bNext{visibility:visible}
 /* mode élève (body.stu) : pas de réglages, de minuteur, de questions multiples ni de jumelles ; ☰ ramène à la liste des exercices */
 #bStu{display:none}
 body.stu:not(.stu0):not(.stumsg) #bStu{display:inline-block}
-body.stu:not(.stufr) #bFr,body.stu #bTim,body.stu #bGrp,body.stu #bAll,body.stu #bNew,body.stu #bSet,body.stu #bFull,body.stu .side1{display:none !important}
+body.stu:not(.stufr) #bFr,body.stu #bTim,body.stu #bGrp,body.stu #bAll,body.stu.stu0 #bNew,body.stu.stumsg #bNew,body.stu #bSet,body.stu #bFull,body.stu .side1{display:none !important}
+/* ↻ : recommencer avec de nouvelles questions (l'enseignant, 07.11.2026 : « les petits points finissent par prendre beaucoup de place ») ; avant ☰ */
+body.stu #bNew{order:-2}
+body.stu #bStu{order:-1}
 body.stu header .title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:46vw}
 body.stu .lvb{display:inline-flex;gap:.3em;align-items:center;margin-left:.4em}
 body.stu .lvb .btn{padding:.45em .55em;font-weight:700}
@@ -681,6 +684,18 @@ body.stumsg .stuM{display:flex;flex:1;align-items:center;justify-content:center;
   .lright{max-width:none}
 }
 .seaL>.seaE{grid-column:1 / -1}
+/* mode élève sur téléphone (l'enseignant, 07.11.2026) : le titre entier (sur deux lignes au plus) ; ▶ sans « +1 » ; pied plus haut, les étoiles
+   en carré à gauche (1★ 2★ en haut, 3★ 4★ en bas), les boutons à droite */
+@media (max-width:700px){
+  body.stu header .title{flex:1 1 0;max-width:none;white-space:normal;text-overflow:clip;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-height:1.2}
+  body.stu #bNext .mlab{display:none}
+  body.stu footer{flex-wrap:wrap;align-items:center;justify-content:center;column-gap:.9em;row-gap:.6em;padding:.85em .4em calc(.95em + env(safe-area-inset-bottom, 0px))}
+  body.stu .fend{order:-1;flex:none}
+  html body.stu .lvb{display:grid;grid-template-columns:repeat(2, auto);gap:.45em;margin-left:0}
+  html body.stu .lvb .btn{padding:.5em .6em;font-size:.95em;min-width:2.9em}
+  html body.stu .fmid{gap:.4em}
+  html body.stu .fmid .btn{padding-top:.6em;padding-bottom:.6em}
+}
 </style>
 </head>
 <body>
@@ -10761,7 +10776,7 @@ function fitFooter(){ // pas la place (écran partagé…) : libellés courts (�
   // d'abord des boutons un peu plus serrés (lvs), puis une 2e ligne (lv2)
   B.classList.remove('lv2', 'lvs'); const lv = $('lvBtns'), ft = document.querySelector('footer'), nb = $('bNext'), had = nb.classList.contains('more'); nb.classList.add('more');
   const lvOver = () => ft.scrollWidth > ft.clientWidth + 1 || lv.getBoundingClientRect().right > ft.getBoundingClientRect().right - 2 || nb.getBoundingClientRect().right > lv.getBoundingClientRect().left + 1 || (STU && innerWidth > 700 && nb.getBoundingClientRect().right > lv.getBoundingClientRect().left - 14);   // mode élève, ordinateur : un petit écart
-  if (lv.offsetWidth && lvOver()){ B.classList.add('lvs'); if (lvOver()){ B.classList.remove('lvs'); B.classList.add('lv2'); } }
+  if (lv.offsetWidth && !(STU && innerWidth <= 700) && lvOver()){ B.classList.add('lvs'); if (lvOver()){ B.classList.remove('lvs'); B.classList.add('lv2'); } }
   if (!had) nb.classList.remove('more');
   const Fr = document.querySelector('footer').getBoundingClientRect();
   if (!B.classList.contains('two') || B.classList.contains('empty')) return;
@@ -11790,6 +11805,7 @@ function stuBoot(){                  // au chargement : true si la page est en m
   document.body.classList.add('stu'); document.body.classList.toggle('stufr', !!P.fr);   // bouton FR seulement si l'enseignant l'a coché
   if (P.t) document.title = P.t;
   document.querySelector('header .title').textContent = P.t || 'Questions pour des champions';
+  $('bNew').title = 'Recommencer avec de nouvelles questions';
   applyLook(); stuBuild(); QS = []; cur = 0; render();                 // la liste des exercices ; « Commencer » : une question à ★, exercices mélangés
   return true;
 }
@@ -11856,6 +11872,9 @@ function stuKey(e){                  // clavier du mode élève : 1 à 4 (étoil
 $('stuL').addEventListener('change', e => { const x = e.target; if (!STU || !x.dataset.o) return; if (x.checked) STU.off.delete(x.dataset.o); else STU.off.add(x.dataset.o); stuSyncStart(); });
 $('stuB').onclick = e => { const b = e.target.closest('button[data-go]'); if (b && !b.disabled){ b.blur(); stuGo(STU.lv); } };
 $('bStu').onclick = e => { e.currentTarget.blur(); stuStart(); };
+function stuReset(){                  // ↻ : on recommence, avec de nouvelles questions, à la même difficulté (les petits points repartent de 1)
+  if (!STU || STU.start) return; QS = []; cur = 0; stuGo(STU.lv || 1); }
+$('bNew').onclick = e => { e.currentTarget.blur(); if (STU) stuReset(); else newOrSettings(); };
 
 /* ---------- fenêtre « Lien élèves » : titre, étoiles permises de chaque exercice, QR code et lien ---------- */
 let LNK = null;                      // {P : le lien (d'après les exercices cochés), url, qr}

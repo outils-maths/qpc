@@ -11319,7 +11319,8 @@ function doSearch(){ // au fur et à mesure qu'on tape : les blocs dont le titre
   document.querySelectorAll('#oSet .tab').forEach(t => t.classList.toggle('on', !on && t.dataset.t === curTab));
   if (on) $('panes').scrollTop = 0;
 }
-function openSet(){ if (STU) return; draft = clone(S); pctReset(); $('setWarn').textContent = ''; $('srch').value = ''; doSearch(); syncUI(); $('oSet').classList.add('open'); fitTwo(); }
+const STU_MSG = () => document.body.classList.contains('stumsg');   // page en ligne sans lien élèves, ou lien qui ne marche pas : seulement le message
+function openSet(){ if (STU || STU_MSG()) return; draft = clone(S); pctReset(); $('setWarn').textContent = ''; $('srch').value = ''; doSearch(); syncUI(); $('oSet').classList.add('open'); fitTwo(); }
 // « Deux questions » sur une seule ligne (02.11.2026 : « non », « oui », « 8 passe d'1 question à 2 et inversement », la difficulté à droite) : sinon
 // « même difficulté » passe à la ligne et Général défile (1280 × 800, 1440 × 900) ; on serre en trois étapes, puis on laisse passer à la ligne
 function fpnFit(){ // limiteur du bloc Fractions : sur la ligne de « priorités des opérations cochées » s'il y tient, sinon seul, avec « Opérations : »
@@ -11526,7 +11527,8 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && open && e.target === $('srch') && $('srch').value){ $('srch').value = ''; doSearch(); return; }
   if (e.key === 'Escape' && open){ open.classList.remove('open'); return; }
   const typing = e.target.closest && e.target.closest('input[type="text"], input[type="search"], input:not([type]), textarea, [contenteditable]');
-  if (STU){ stuKey(e); return; }                                                    // mode élève : ses touches seulement
+  if (STU || STU_MSG()){ stuKey(e); return; }                                       // mode élève : ses touches seulement ; page message : aucune
+                                                                                     // (l'enseignant, 07.11.2026 : « Si on appuie sur R on a quand même la page des réglages »)
   if ((e.key === 'f' || e.key === 'F') && !typing && !e.altKey && !e.ctrlKey && !e.metaKey){ e.preventDefault(); toggleFull(); return; }   // F : plein écran, aussi dans les réglages (02.11.2026, 3e conversation), sauf en tapant dans la recherche
   if ((e.key === 'r' || e.key === 'R') && open === $('oSet') && !typing && !e.altKey && !e.ctrlKey && !e.metaKey){ e.preventDefault(); open.classList.remove('open'); return; }   // R ferme aussi les réglages (comme Échap ; utile en plein écran, où Échap sort du plein écran)
   if (open === $('oSet') && !e.altKey && !e.ctrlKey && !e.metaKey){                 // réglages (l'enseignant, 02.11.2026) :

@@ -613,6 +613,7 @@ body.stu:not(.stu0):not(.stumsg) #bStu{display:inline-block}
 body.stu:not(.stufr) #bFr,body.stu #bTim,body.stu #bGrp,body.stu #bAll,body.stu.stu0 #bNew,body.stu.stumsg #bNew,body.stu #bSet,body.stu #bFull,body.stu .side1{display:none !important}
 /* ↻ : recommencer avec de nouvelles questions (l'enseignant, 07.11.2026 : « les petits points finissent par prendre beaucoup de place ») ; avant ☰ */
 body.stu #bNew{order:-2}
+body.stu .hbtns .hbtn{font-size:1.2em;padding:.38em .75em;border-radius:.55em}   /* plus grands en mode élève (l'enseignant, 07.11.2026) */
 body.stu #bStu{order:-1}
 body.stu header .title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:46vw}
 body.stu .lvb{display:inline-flex;gap:.3em;align-items:center;margin-left:.4em}
@@ -630,6 +631,8 @@ body.stu0 main>:not(#stuS){display:none !important}
 body.stu0 footer,body.stu0 .progress,body.stu0 header .title{visibility:hidden}
 body.stu0 .stuS{display:flex;flex:1;min-width:0;flex-direction:column;align-items:center;gap:.9em;overflow:auto;padding:1.2em 1em 1.6em}
 .stuT{margin:0;font-size:1.65em;text-align:center;color:var(--ink);max-width:28em;line-height:1.25}
+body.stu header .title:empty,.stuT:empty{display:none}   /* lien sans titre */
+.stuT:empty+.stuL{margin-top:auto}
 .stuL{display:flex;flex-direction:column;gap:.55em;width:min(100%, 36em);background:var(--panel);border:1px solid var(--line);border-radius:.7em;padding:.7em 1em}
 .stuG{display:flex;flex-direction:column;gap:.15em}
 .stuGn{font-weight:700;color:var(--muted);font-size:.86em}
@@ -654,21 +657,25 @@ body.stumsg .stuM{display:flex;flex:1;align-items:center;justify-content:center;
 /* fenêtre « Lien élèves » */
 .lbox{max-width:min(96vw, 64em)}
 .lbody{display:grid;grid-template-columns:minmax(0, 1fr) auto;gap:1em 1.6em;padding:.8em 1.1em 1em;overflow:auto;min-height:0}
-.ltit{display:flex;align-items:center;gap:.6em;margin-bottom:.8em}
+.ltit{display:grid;grid-template-columns:auto minmax(0, 1fr);align-items:center;column-gap:.6em;margin-bottom:.45em}
+.lsug{grid-column:2;justify-self:start;margin-top:.3em;font:inherit;font-size:.78em;font-weight:700;padding:.12em .65em;border:1px solid var(--sel);border-radius:.45em;background:#fff;color:var(--sel-k);cursor:pointer}   /* titre proposé (l'enseignant, 07.11.2026) */
+.lsug:hover{background:var(--sel-soft)}
+.lsug.lsoff{visibility:hidden}
 .ltit input{flex:1;min-width:0;font:inherit;padding:.4em .6em;border:1px solid var(--line);border-radius:.45em}
 .lex{display:grid;grid-template-columns:minmax(0, 1fr) auto;gap:.18em 1em;align-items:center}
 .lexh{font-weight:700;color:var(--muted);font-size:.85em;border-bottom:1px solid var(--line);padding-bottom:.15em}
 .lexa{font-weight:700}
 .lexn{min-width:0;overflow-wrap:anywhere}
 .lns{color:var(--muted);font-size:.85em}
-.lfr{display:flex;align-items:flex-start;gap:.45em;margin-top:.9em;padding-top:.6em;border-top:1px solid var(--line)}
+.lopth{margin-top:.9em;padding-top:.6em;border-top:1px solid var(--line);font-weight:700;color:var(--muted);font-size:.85em}
+.lfr{display:flex;align-items:flex-start;gap:.45em;margin-top:.35em;font-size:.9em}   /* options plus petites que les exercices (l'enseignant, 07.11.2026) */
 .lfr input{width:1.1em;height:1.1em;accent-color:var(--sel);flex:none;margin-top:.12em}
 .lpaste{display:flex;flex-wrap:wrap;align-items:center;gap:.3em .6em;margin-top:.7em}
 .lpaste input{flex:1 1 12em;min-width:0;font:inherit;font-size:.9em;padding:.3em .55em;border:1px solid var(--line);border-radius:.45em}
 .lpw{flex-basis:100%;color:var(--red);font-size:.85em}
 .lpw:empty{display:none}
 .lnone{color:var(--muted);margin:.2em 0 .4em}
-.lempty .ltit,.lempty .lfr,.lempty .lright{display:none}
+.lempty .ltit,.lempty .lopth,.lempty .lfr,.lempty .lright{display:none}
 .lempty .lbody{grid-template-columns:1fr}
 .lrate{display:inline-flex;white-space:nowrap}
 .lrate button{background:none;border:0;padding:0 .07em;font-size:1.3em;line-height:1.05;color:#d3d8de;cursor:pointer}
@@ -690,16 +697,19 @@ body.stumsg .stuM{display:flex;flex:1;align-items:center;justify-content:center;
 /* mode élève sur téléphone (l'enseignant, 07.11.2026) : le titre entier (sur deux lignes au plus) ; ▶ sans « +1 » ; pied plus haut, les étoiles
    en carré à droite des boutons (1★ 2★ en haut, 3★ 4★ en bas ; l'enseignant : « à droite de l'écran ») */
 @media (max-width:700px){
-  body.stu header .title{flex:1 1 0;max-width:none;white-space:normal;text-overflow:clip;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-height:1.2}
+  body.stu header .title{order:-3;flex:1 1 100%;max-width:none;white-space:normal;text-overflow:clip;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-height:1.2}
+  body.stu header .progress{order:0;flex:1 1 0;min-width:0}
+  body.stu.stu0 header .title{display:none}
   body.stu #bNext .mlab{display:none}
+  body.stu .hbtns .hbtn{font-size:1.3em;padding:.5em .8em}
   body.stu footer{flex-wrap:wrap;align-items:center;justify-content:center;column-gap:.9em;row-gap:.6em;padding:.85em .4em calc(.95em + env(safe-area-inset-bottom, 0px))}
   body.stu .fend{flex:none}
   html body.stu .lvb{display:grid;grid-template-columns:repeat(2, auto);gap:.45em;margin-left:0}
   html body.stu .lvb .btn{padding:.5em .6em;font-size:.95em;min-width:2.9em}
   html body.stu .fmid{gap:.4em}
-  html body.stu .fmid .btn{padding-top:.6em;padding-bottom:.6em}
+  html body.stu .fmid .btn{padding-top:.85em;padding-bottom:.85em}   /* plus hauts (l'enseignant, 07.11.2026 ; pas les étoiles) */
 }
-/* fenêtre « Lien élèves » : une case par exercice (décochée : pas dans le lien) ; « Étoiles cachées » puis « Bouton FR » */
+/* fenêtre « Lien élèves » : une case par exercice (décochée : pas dans le lien) ; « Options : », « Étoiles cachées » puis « Bouton FR » */
 label.lexn{display:flex;align-items:flex-start;gap:.45em;cursor:pointer}
 label.lexn input{width:1.05em;height:1.05em;margin-top:.15em;flex:none;accent-color:var(--sel)}
 .lexn.loff span,.lexr.loff{opacity:.42}
@@ -854,8 +864,9 @@ body.sturnd .lvb{display:none !important}
     <div class="boxhead"><h2 class="title">Lien élèves</h2><button class="hbtn" data-close>✕</button></div>
     <div class="lbody">
       <div class="lleft">
-        <label class="ltit"><span class="lab2">Titre</span><input type="text" id="lTitle" maxlength="80" placeholder="Ex. Épreuve 4 : périmètres, aires, Pythagore" autocomplete="off"></label>
+        <label class="ltit"><span class="lab2">Titre</span><input type="text" id="lTitle" maxlength="80" placeholder="Ex. Épreuve 4 : périmètres, aires, Pythagore" autocomplete="off"><button type="button" class="lsug lsoff" id="lSug" title="Écrire ce titre dans la case">Choisir ce titre ?</button></label>
         <div class="lex" id="lEx"></div>
+        <div class="lopth">Options :</div>
         <label class="lfr"><input type="checkbox" id="lRnd"> <span><b>Étoiles cachées</b> : chaque question a une difficulté au hasard, parmi les étoiles permises</span></label>
         <label class="lfr lfr2"><input type="checkbox" id="lFr"> <span>Bouton <b>FR</b> pour les élèves (le calcul lu en français)</span></label>
         <div class="lpaste"><span class="lab2">Reprendre un lien</span><input type="text" id="lPaste" placeholder="Colle ici un lien élèves ou l'image de son code QR" autocomplete="off" spellcheck="false"><span class="lpw" id="lPw"></span></div>
@@ -11827,7 +11838,7 @@ function stuBoot(){                  // au chargement : true si la page est en m
   STU = {P, cap: P.cap || {}, all: O, off: new Set(), lv: 1, start: true, rnd: !!P.rnd};
   document.body.classList.add('stu'); document.body.classList.toggle('stufr', !!P.fr); document.body.classList.toggle('sturnd', !!P.rnd);   // bouton FR seulement si l'enseignant l'a coché
   if (P.t) document.title = P.t;
-  document.querySelector('header .title').textContent = P.t || 'Questions pour des champions';
+  document.querySelector('header .title').textContent = P.t || '';   // lien sans titre : pas de titre (l'enseignant, 07.11.2026)
   $('bNew').title = 'Recommencer avec de nouvelles questions';
   applyLook(); stuBuild(); QS = []; cur = 0; render();                 // la liste des exercices ; « Commencer » : une question à ★, exercices mélangés
   return true;
@@ -11841,7 +11852,7 @@ function stuMax(){                   // la plus haute difficulté permise parmi 
 const stuNoStar = () => objectives(S).every(isNoStar);
 function stuBuild(){                 // liste des exercices (au départ, et ☰ Exercices) : ceux du lien, groupés par bloc, tous cochés au départ
   const g = {}; STU.all.forEach(o => (g[o.bl] = g[o.bl] || []).push(o));
-  $('stuT').textContent = STU.P.t || 'Questions pour des champions';
+  $('stuT').textContent = STU.P.t || '';
   $('stuL').innerHTML = Object.entries(g).map(([bl, os]) => '<div class="stuG">' + (BLOCKS[bl].items.length
     ? '<div class="stuGn">' + BLOCKS[bl].name + '</div><div class="stuGi">' + os.map(o => '<label><input type="checkbox" data-o="' + o.id + '"> <span>' + stuLabel(o, false) + '</span></label>').join('') + '</div>'
     : '<label class="stuGn"><input type="checkbox" data-o="' + bl + '"> <span>' + BLOCKS[bl].name + '</span></label>') + '</div>').join('');
@@ -11940,6 +11951,23 @@ function linkNote(P){
   if (n) t.push((n > 1 ? n + ' exercices de ce lien n\'existent' : '1 exercice de ce lien n\'existe') + ' pas dans cette version de la page : ' + (n > 1 ? 'ils ne sont pas repris.' : 'il n\'est pas repris.'));
   return t.length ? '⚠ ' + t.join(' ') : '';
 }
+// titre proposé dans « Lien élèves » (l'enseignant, 07.11.2026) : un seul exercice d'un bloc : « Renfort » + le nom de l'exercice ; plusieurs
+// exercices d'un bloc : « Renfort » + le bloc ; deux blocs : « Renfort x et y » (chacun : le bloc ou l'exercice) ; plus de deux : « Révisions ».
+// Un nom par exercice (TNAME, par identifiant) ; un exercice ajouté plus tard sans nom : son nom affiché, sans les formules.
+const TNAME = {"m+": "addition en calcul mental", "m−": "soustraction en calcul mental", "m∙": "multiplication en calcul mental", "m:": "division en calcul mental", "liv": "livrets", "livd": "livrets : divisions", "m10": "multiplication et division par 10, 100, 0,1…", "m10x": "multiplication et division par 600, 0,3…", "mcom": "commutativité en calcul mental", "mdis": "distributivité en calcul mental", "p+": "addition en colonne", "p−": "soustraction en colonne", "p∙": "multiplication en colonne", "p:": "division en colonne", "rcmp": "comparaison de nombres relatifs", "radd": "addition de nombres relatifs", "rsub": "soustraction de nombres relatifs", "rsum": "sommes de plusieurs nombres relatifs", "rmul": "multiplication de nombres relatifs", "rdiv": "division de nombres relatifs", "rpow": "puissances de nombres relatifs", "rprio": "priorités des opérations avec les relatifs", "dvb": "critères de divisibilité", "prm": "nombres premiers", "dcp": "décomposition en facteurs premiers", "pgdc": "pgdc", "ppmc": "ppmc", "pb_1": "probabilités en une étape", "pb_2": "probabilités en plusieurs étapes", "pb_den": "dénombrement", "fs": "simplification de fractions", "fa": "amplification de fractions", "fcmp": "comparaison de fractions", "fax": "fractions sur un axe gradué", "fd": "écriture décimale d’une fraction", "f+": "addition et soustraction de fractions", "f∙": "multiplication de fractions", "f:": "division de fractions", "fpow": "puissances de fractions", "fprio": "priorités des opérations avec les fractions", "fq": "fraction d’un nombre", "fr": "fraction d’un nombre inconnu", "pc_ecr": "écritures d’un pourcentage", "fp": "pourcentage d’un nombre", "pc_init": "pourcentage d’un nombre inconnu", "pc_var": "augmentations et diminutions en pourcentage", "pc_taux": "recherche d’un pourcentage", "pwc": "calcul de puissances", "pp1": "produit de puissances de même base", "pp2": "quotient de puissances de même base", "pp3": "puissance d’une puissance", "pp4": "produit de puissances de même exposant", "pp5": "propriétés des puissances", "r2": "racines carrées", "r3": "racines cubiques", "renc2": "encadrement d’une racine carrée", "renc3": "encadrement d’une racine cubique", "rp1": "produit de racines", "rp2": "quotient de racines", "rp3": "extraction de racines", "rp4": "propriétés des racines", "q4": "quatrième proportionnelle", "pagr": "agrandissements et réductions", "pech": "échelles", "ppen": "pente", "pvit": "problèmes de vitesse", "pdeb": "problèmes de débit", "pmv": "problèmes de masse volumique", "l_tra": "traduction d’une phrase en expression littérale", "l_sub": "substitution", "l_mono": "réduction d’un monôme", "l_mulm": "multiplication de monômes", "l_addm": "addition de monômes", "l_subm": "soustraction de monômes", "l_addp": "addition de polynômes", "l_subp": "soustraction de polynômes", "l_dev": "développement simple", "l_dev2": "développement double", "l_ir1": "développement de (a + b)²", "l_ir2": "développement de (a − b)²", "l_ir3": "développement de (a + b)(a − b)", "l_ir4": "développement de (x + a)(x + b)", "l_fme": "mise en évidence", "l_fir1": "factorisation de a² + 2ab + b²", "l_fir2": "factorisation de a² − 2ab + b²", "l_fir3": "factorisation de a² − b²", "l_fir4": "factorisation de x² + (a + b)x + ab", "l_fvi": "factorisation avec Viète", "e1_1": "équations x + a = b", "e1_2": "équations ax = b", "e1_3": "équations x : a = b", "e1_4": "équations ax + b = c", "e1_5": "équations ax + b = cx + d", "e1_6": "équations a(x + b) = c", "e1_7": "équations a(x + b) = c(x + d)", "e1_8": "équations x : a + b = c", "e2_1": "équations x² = a", "e2_2": "équations (x + a)(x + b) = 0", "e2_3": "équations ax² + bx = 0", "e2_4": "équations x² + bx + c = 0", "e2_5": "équations ax² + bx + c = 0", "sy_sub": "systèmes par substitution", "sy_com": "systèmes par combinaison", "fn_gx": "expression d’une fonction d’après son graphique", "fn_xg": "graphique d’une fonction d’après son expression", "fn_lim": "lecture d’images", "fn_im": "calcul d’images", "fn_lpi": "lecture de préimages", "fn_pi": "calcul de préimages", "fn_tab": "tableaux de valeurs", "d_car": "diagrammes cartésiens", "d_col": "diagrammes en colonnes", "d_cir": "diagrammes circulaires", "d_bar": "diagrammes en barre", "cv_lon": "conversions de longueurs", "cv_mas": "conversions de masses", "cv_cap": "conversions de capacités", "cv_air": "conversions d’aires", "cv_vol": "conversions de volumes", "cv_tem": "conversions de temps", "cv_vit": "conversions de vitesses", "cv_mv": "conversions de masses volumiques", "cv_deb": "conversions de débits", "aro": "arrondis", "enc": "encadrements", "f_car": "périmètre et aire du carré", "f_rec": "périmètre et aire du rectangle", "f_tri": "périmètre et aire du triangle", "f_par": "périmètre et aire du parallélogramme", "f_los": "périmètre et aire du losange", "f_tra": "périmètre et aire du trapèze", "f_dis": "périmètre et aire du disque", "f_sec": "périmètre et aire d’un secteur", "v_cub": "volume du cube", "v_pav": "volume du pavé droit", "v_pri": "volume du prisme droit", "v_cyl": "volume du cylindre", "v_pyr": "volume de la pyramide", "v_con": "volume du cône", "v_bou": "volume de la boule", "at_cub": "aire totale du cube", "at_pav": "aire totale du pavé droit", "at_pri": "aire totale du prisme droit", "at_cyl": "aire totale du cylindre", "at_pyr": "aire totale de la pyramide", "at_bou": "aire de la sphère", "py_calc": "calcul d’une longueur avec Pythagore", "py_rec": "réciproque du théorème de Pythagore", "py_con": "contraposée du théorème de Pythagore", "py_esp": "Pythagore dans l’espace", "th_calc": "calcul d’une longueur avec Thalès", "th_rec": "réciproque du théorème de Thalès", "th_con": "contraposée du théorème de Thalès", "g_not": "notations et codage", "g_mtr": "médiatrices", "g_bis": "bissectrices", "g_mdn": "médianes", "g_hau": "hauteurs", "g_cci": "cercle circonscrit", "g_cin": "cercle inscrit", "q_tri": "triangles particuliers", "q_con": "triangles constructibles", "q_car": "propriétés du carré", "q_rec": "propriétés du rectangle", "q_los": "propriétés du losange", "q_par": "propriétés du parallélogramme", "q_tra": "propriétés du trapèze", "q_rho": "propriétés du rhomboïde", "g_type": "types d’angles", "g_tri": "somme des angles d’un triangle", "g_opp": "angles opposés par le sommet et adjacents", "g_par": "angles alternes-internes", "g_ins": "angle inscrit et angle au centre", "g_tan": "tangente au cercle", "g_tha": "cercle de Thalès", "g_pol": "angles des polygones réguliers", "g_sym": "axes de symétrie", "g_csym": "centre de symétrie", "t_ax": "symétrie axiale", "t_ce": "symétrie centrale", "t_tr": "translation", "t_ro": "rotation", "t_ho": "homothétie", "g_rep2": "repérage dans le plan", "g_rep3": "repérage dans l’espace", "g_nsol": "noms des solides", "g_sol": "faces, sommets et arêtes", "g_pat": "développements des solides"};
+const blTitle = bl => { const n = BLOCKS[bl].name.replace(/<[^>]+>/g, ''); return bl === 'pyt' || bl === 'tha' ? n : n.charAt(0).toLowerCase() + n.slice(1); };
+function linkSugT(){                // le titre proposé d'après les exercices cochés de la fenêtre
+  if (!LNK || !LNK.P) return '';
+  const g = new Map(); pObjs(LNK.P).filter(o => !LNK.off.has(o.id)).forEach(o => { if (!g.has(o.bl)) g.set(o.bl, []); g.get(o.bl).push(o); });
+  const ps = [...g].map(([bl, os]) => os.length > 1 || !BLOCKS[bl].items.length ? blTitle(bl)
+    : TNAME[os[0].id] || stuLabel(os[0], false).replace(/<svg.*?<\/svg>/g, '√').replace(/<[^>]+>/g, ''));
+  return !ps.length ? '' : ps.length > 2 ? 'Révisions' : 'Renfort ' + ps.join(' et ');
+}
+function linkSug(){                 // en gris dans la case vide, avec le bouton « Choisir ce titre ? » (caché dès qu'un titre est écrit)
+  const s = LNK ? linkSugT() : ''; if (LNK) LNK.sug = s;
+  $('lTitle').placeholder = s || 'Ex. Épreuve 4 : périmètres, aires, Pythagore';
+  $('lSug').classList.toggle('lsoff', !s || !!$('lTitle').value.trim());
+}
 const rateHTML = (v, id) => '<span class="lrate" data-o="' + id + '">' + [1, 2, 3, 4].map(l => '<button type="button" data-v="' + l + '"' + (l <= v ? ' class="f"' : '') +
   ' title="Jusqu\'à ' + '★'.repeat(l) + '" aria-label="Jusqu\'à ' + l + (l > 1 ? ' étoiles' : ' étoile') + '">★</button>').join('') + '</span>';
 function linkRows(){
@@ -11949,7 +11977,7 @@ function linkRows(){
     O.map(o => { const off = LNK.off.has(o.id) ? ' loff' : '';           // case : l'exercice dans le lien ou non (l'enseignant, 07.11.2026)
       return '<label class="lexn' + off + '"><input type="checkbox" data-x="' + o.id + '"' + (off ? '' : ' checked') + '><span>' + stuLabel(o, true) + '</span></label><div class="lexr' + off + '">' +
         (isNoStar(o) ? '<span class="lns">sans étoiles</span>' : rateHTML(cv(o), o.id)) + '</div>'; }).join('');
-  mathify($('lEx'));
+  mathify($('lEx')); linkSug();
 }
 function qrSVG(q){ const n = q.size + 8; let d = '';
   q.mods.forEach((r, y) => r.forEach((b, x) => { if (b) d += 'M' + (x + 4) + ' ' + (y + 4) + 'h1v1h-1z'; }));
@@ -11999,7 +12027,9 @@ $('lEx').onclick = e => { const b = e.target.closest('.lrate button'); if (!b ||
   linkRows(); linkDraw(); };
 $('lFr').onchange = () => { if (!LNK) return; LNK.P.fr = $('lFr').checked; linkDraw(); };
 $('lRnd').onchange = () => { if (!LNK) return; LNK.P.rnd = $('lRnd').checked; linkDraw(); };
-$('lTitle').addEventListener('input', () => { if (!LNK) return; LNK.P.t = $('lTitle').value.trim(); linkDraw(); });
+$('lTitle').addEventListener('input', () => { if (!LNK) return; LNK.P.t = $('lTitle').value.trim(); linkDraw(); linkSug(); });
+$('lSug').onclick = e => { e.preventDefault(); if (!LNK || !LNK.P || !LNK.sug) return; const i = $('lTitle');   // « Choisir ce titre ? » : le titre proposé dans la case, à modifier si besoin
+  i.value = LNK.sug; LNK.P.t = LNK.sug; linkDraw(); linkSug(); i.focus(); i.setSelectionRange(i.value.length, i.value.length); };
 $('lPaste').addEventListener('input', linkPaste);
 // coller (Ctrl+V) ou déposer l'image d'un code QR (copiée depuis Word ou un PDF, capture d'écran), ou un lien, n'importe où dans la fenêtre
 function linkImg(blob){ $('lPw').textContent = 'Je lis le code QR…';

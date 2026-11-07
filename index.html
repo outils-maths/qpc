@@ -708,6 +708,8 @@ label.lexn input{width:1.05em;height:1.05em;margin-top:.15em;flex:none;accent-co
 .lbtns .btn.on:disabled{background:var(--accent);color:#fff}
 .lurl:empty{display:none}
 body.sturnd .lvb{display:none !important}
+.lnote{margin:.6em 0 0;padding:.45em .7em;border-radius:.45em;background:var(--sel-soft);color:var(--sel-k);font-size:.88em;line-height:1.35}
+.lnote:empty{display:none}
 </style>
 </head>
 <body>
@@ -854,6 +856,7 @@ body.sturnd .lvb{display:none !important}
         <label class="lfr"><input type="checkbox" id="lRnd"> <span><b>Étoiles cachées</b> : chaque question a une difficulté au hasard, parmi les étoiles permises</span></label>
         <label class="lfr lfr2"><input type="checkbox" id="lFr"> <span>Bouton <b>FR</b> pour les élèves (le calcul lu en français)</span></label>
         <div class="lpaste"><span class="lab2">Reprendre un lien</span><input type="text" id="lPaste" placeholder="Colle ici un lien élèves ou l'image de son code QR" autocomplete="off" spellcheck="false"><span class="lpw" id="lPw"></span></div>
+        <p class="lnote" id="lNote"></p>
       </div>
       <div class="lright">
         <div class="lqr" id="lQr"></div>
@@ -11792,10 +11795,11 @@ const linkURL = P => QPC_BASE + QPC_VERSION + '/#' + linkFrag(P);
 function linkParse(str){             // un lien entier, ou seulement ce qui suit # ; null s'il n'y a aucun exercice connu de cette version
   const m = /(?:^|#)(q1(?:&[^#\s]*)?)\s*$/.exec(String(str || '').trim()); if (!m) return null;
   const f = {}; m[1].split('&').slice(1).forEach(kv => { const i = kv.indexOf('='); if (i > 0) f[kv.slice(0, i)] = kv.slice(i + 1); });
-  const P = {t: f.t ? (lnkDec(f.t) || '').trim().slice(0, 120) : '', it: [], blk: [], num: {}, opt: {}, cap: {}, fr: f.f === '1', rnd: f.h === '1'};
+  const vm = /\/qpc\/(\d{4}-\d{2}-\d{2})\/(?:index\.html)?#/.exec(String(str || ''));     // la version de la page qui a fait le lien (lien entier seulement)
+  const P = {t: f.t ? (lnkDec(f.t) || '').trim().slice(0, 120) : '', it: [], blk: [], num: {}, opt: {}, cap: {}, fr: f.f === '1', rnd: f.h === '1', ver: vm ? vm[1] : '', lost: 0};
   (f.x || '').split(',').forEach(e => { const r = /^(.*?)(?:\*([1-3]))?$/.exec(e), id = r && lnkDec(r[1]); if (!id) return;
-    if (id[0] === '@'){ const b = id.slice(1); if (BLOCKS[b] && !BLOCKS[b].items.length && !P.blk.includes(b)){ P.blk.push(b); if (r[2]) P.cap[b] = Number(r[2]); } }
-    else if (ITEM_BLOCK[id] && !P.it.includes(id)){ P.it.push(id); if (r[2]) P.cap[id] = Number(r[2]); } });
+    if (id[0] === '@'){ const b = id.slice(1); if (BLOCKS[b] && !BLOCKS[b].items.length){ if (!P.blk.includes(b)){ P.blk.push(b); if (r[2]) P.cap[b] = Number(r[2]); } } else P.lost++; }
+    else if (ITEM_BLOCK[id]){ if (!P.it.includes(id)){ P.it.push(id); if (r[2]) P.cap[id] = Number(r[2]); } } else P.lost++; });
   (f.n || '').split(',').forEach(e => { const i = e.indexOf('.'), b = e.slice(0, i), fl = e.slice(i + 1); if (i > 0 && BLOCKS[b] && /^[drf]*$/.test(fl)) P.num[b] = fl; });
   (f.o || '').split(',').forEach(e => { const i = e.indexOf(':'), k = e.slice(0, i), v = e.slice(i + 1); if (i > 0 && k in DEFAULTS.opt && /^\d+$/.test(v)) P.opt[k] = Number(v); });
   return P.it.length || P.blk.length ? P : null;
@@ -11894,7 +11898,7 @@ $('bNew').onclick = e => { e.currentTarget.blur(); if (STU) stuReset(); else new
 let LNK = null;                      // {P : le lien (d'après les exercices cochés), off : exercices décochés dans la fenêtre, E : le lien sans eux, url, qr}
 function linkOpen(){                 // les exercices cochés ; rien de coché : la fenêtre s'ouvre quand même, pour coller un lien
   const none = !objectives(draft).length, w = none ? '' : checkDraft(draft); if (w){ $('setWarn').textContent = w; return; }
-  LNK = {P: none ? null : pFromState(draft, '', {}), off: new Set()}; $('lPaste').value = ''; $('lPw').textContent = '';
+  LNK = {P: none ? null : pFromState(draft, '', {}), off: new Set()}; $('lPaste').value = ''; $('lPw').textContent = ''; $('lNote').textContent = '';
   linkShow(); $('oLink').classList.add('open'); if (!none) linkCheck();
 }
 function linkShow(){                 // la fenêtre d'après LNK.P (null : aucun exercice, seulement « Reprendre un lien »)
@@ -11910,11 +11914,26 @@ function pToDraft(P){                // les exercices d'un lien dans le brouillo
 }
 function linkPaste(){                // « Reprendre un lien » : un lien élèves collé
   const v = $('lPaste').value.trim(); if (!v){ $('lPw').textContent = ''; return; }
-  const P = linkParse(v);
-  if (!P || !pObjs(P).length){ $('lPw').textContent = 'Ce n\'est pas un lien de « Questions pour des champions ».'; return; }
+  const P = linkParse(v), vm = /\/qpc\/(\d{4}-\d{2}-\d{2})\//.exec(v);
+  if (!P || !pObjs(P).length){ $('lPw').textContent = vm && vm[1] > QPC_VERSION ? 'Ce lien a été fait avec une version plus récente de la page (' + verFr(vm[1]) +
+    ') : prends la dernière version de « Questions pour des champions ».' : 'Ce n\'est pas un lien de « Questions pour des champions ».'; return; }
   pToDraft(P); $('setWarn').textContent = ''; syncUI();
   LNK.P = Object.assign(pFromState(draft, P.t, P.cap), {fr: !!P.fr, rnd: !!P.rnd}); LNK.off = new Set(); $('lPaste').value = ''; $('lPw').textContent = '';
-  linkShow(); linkCheck();
+  linkShow(); linkCheck(); $('lNote').textContent = linkNote(P);
+}
+// un lien d'une autre version de la page (l'enseignant, 07.11.2026 : « si on copie colle un ancien code QR dans une version plus récente de qpc, ça
+// va pas forcément être les mêmes exos que les élèves avaient … il faudrait un attention pour ça ») : les exercices sont repris par leur nom fixe,
+// mais leurs questions ont pu changer, et un exercice qui n'existe pas dans cette version n'est pas repris
+const MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+const verFr = v => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v); return m ? 'du ' + Number(m[3]) + (m[3] === '01' ? 'er' : '') + ' ' + MOIS[Number(m[2]) - 1] + ' ' + m[1] : v; };
+function linkNote(P){
+  const t = [], n = P.lost;
+  if (P.ver && P.ver < QPC_VERSION) t.push('Ce lien a été fait avec une version plus ancienne de la page (' + verFr(P.ver) + ') : il ouvre toujours cette ' +
+    'ancienne version. Le nouveau lien ouvre la version de cette page : mêmes exercices, mais ils ont pu un peu changer depuis.');
+  if (P.ver && P.ver > QPC_VERSION) t.push('Ce lien a été fait avec une version plus récente de la page (' + verFr(P.ver) + ') : prends la dernière version de ' +
+    '« Questions pour des champions ».');
+  if (n) t.push((n > 1 ? n + ' exercices de ce lien n\'existent' : '1 exercice de ce lien n\'existe') + ' pas dans cette version de la page : ' + (n > 1 ? 'ils ne sont pas repris.' : 'il n\'est pas repris.'));
+  return t.length ? '⚠ ' + t.join(' ') : '';
 }
 const rateHTML = (v, id) => '<span class="lrate" data-o="' + id + '">' + [1, 2, 3, 4].map(l => '<button type="button" data-v="' + l + '"' + (l <= v ? ' class="f"' : '') +
   ' title="Jusqu\'à ' + '★'.repeat(l) + '" aria-label="Jusqu\'à ' + l + (l > 1 ? ' étoiles' : ' étoile') + '">★</button>').join('') + '</span>';

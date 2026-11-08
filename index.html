@@ -232,7 +232,7 @@ table.pv{border-collapse:collapse;font-variant-numeric:tabular-nums}
 /* traduire une phrase (02.11.2026) : la phrase en gras, sur plusieurs lignes s'il le faut ; détail : une ligne par opération */
 .dat .trp{display:inline-block;white-space:normal;max-width:20em;font-size:1.3em;font-weight:700;line-height:1.3}
 .vlb{display:inline-flex;flex-direction:column;align-items:center;vertical-align:baseline}.vll{font-size:.4em;font-weight:400;color:#8a929c;line-height:1.1;margin-top:.15em;white-space:nowrap}   /* vocabulaire du calcul littéral : étiquettes sous le coefficient, la partie littérale, les termes (07.11.2026) */
-.vrow{line-height:1.25}.gr.vwhy{font-size:.62em;margin-top:.35em}.phrd.vwhy{max-width:24em}.vsm{font-size:.8em;margin-top:.3em}.vgr{color:#9aa1a9}
+.vrow{line-height:1.25}.gr.vwhy{font-size:.62em;margin-top:.35em}.gr.red0{font-size:.62em;margin-top:.35em}.phrd.vwhy{max-width:24em}.vsm{font-size:.8em;margin-top:.3em}.vgr{color:#9aa1a9}
 .vop{border-collapse:collapse;margin:0 auto .15em}.vop td{padding:.04em .28em;text-align:left;font-weight:700;white-space:nowrap}   /* polynômes opposés ? : terme sous terme */
 @media (max-height:800px) and (min-width:701px){ .bb .opts label{line-height:1} }   /* 1366 × 768 : Fonctions et algèbre sans défilement avec les deux cases « vocabulaire » (07.11.2026 ; 17 px de trop avant) */
 .c2{display:grid;grid-template-columns:auto auto;column-gap:1.4em;justify-content:start;align-items:start;margin-top:.06em}   /* Calcul littéral : monômes à gauche, polynômes à droite (07.11.2026) */
@@ -382,6 +382,9 @@ body.tall .sbox{height:96%}                 /* fenêtre en hauteur (écran parta
 .bb .opts label{padding:0}     /* lignes serrées : Fonctions et algèbre sans défilement en 1366 × 768 (24.10.2026, 6e conversation) */
 .bb .opts + .opts{margin-top:.06em}
 .blk.off .bb{opacity:.5}
+.blk.noit .bn input{visibility:hidden}     /* aucun exercice coché : coche du titre invisible, place gardée (08.11.2026) */
+.blk.noit .bn{cursor:default}
+.blk.noit .nd{opacity:.5}     /* aucun exercice choisi : décimaux, relatifs, fractions grisés (08.11.2026) */
 .tp input[type=checkbox],.tp input[type=radio]{accent-color:var(--tc, var(--accent))}
 .opts.key,.opts.key .lab2{font-weight:700;color:var(--tk)}
 .searching .tp{display:block}
@@ -3289,6 +3292,22 @@ GL('r3', [1, 2, 3, 4], lv => {
 });
 // encadrer une racine par deux entiers consécutifs (l'enseignant, 24.10.2026 : une case pour √, une pour ∛) ; ★★★★ avec les décimaux : √54,6 ;
 // ∛ d'un négatif avec les relatifs, dès ★★★ (−4 < ∛−50 < −3)
+// Revu le 08.11.2026 (l'enseignant : « à 3 étoiles limite toi à 15^2 et 5^3 (à 2 étoiles aussi mais dans les questions reste proche des carrés
+// parfaits pour aider un peu) pour ce qui est à savoir par coeur ; après pour 3 étoiles tu peux mettre des questions du style encadrer racine de 398
+// ou racine de 401, ou racine de 9999 (racine de 400 se retrouve assez bien, racine de 10 000 aussi). Tu peux en mettre une fois sur 3 peut être ..
+// A 4 étoiles tu peux supposer connu 6^3, et avoir des nombres qui ne se rapprochent pas des carrés parfaits connus, et un intervalle un tout petit
+// peu plus grand pour les cas particuliers (disons racine de 390) ») :
+//   ★     inchangé : √ de 2 à 50, ∛ de 2 à 60 ;
+//   ★★    près d'un carré connu (7² à 15², à 3 près) ou d'un cube connu (2³ à 5³, à 4 près), sans dépasser 15² et 5³ ;
+//   ★★★   carrés jusqu'à 15², cubes jusqu'à 5³ (√ de 101 à 224, ∛ de 28 à 124) ; une fois sur 3 un cas particulier : à 1, 2 ou 3 d'un carré
+//         (10k)² (400 à 10 000 : √398, √401, √9999) ou d'un cube (10k)³ (1000 à 125 000 : ∛999, ∛8002) ;
+//   ★★★★  6³ connu ; loin des carrés (cubes) connus : au moins un quart de l'écart entre les deux (√ entre 7² et 15², ∛ entre 2³ et 6³) ;
+//         une fois sur 3 un cas particulier à 4 à 10 de (10k)² (√390, √9990) ou de (10k)³ (1000 à 216 000) ; avec les décimaux, toujours 35 % (√)
+//         et 30 % (∛) de nombres à virgule. ★★★★ ∛ loin : entre 3³ et 6³ (∛14 trop facile).
+// « Une fois sur 3 » : environ, corrigé d'après la séance (comme FM_SIMP), compté par genOne quand la question est prise (q.cnt).
+const RENC_SP = 1 / 3, RENC_DEC = {2: .35, 3: .3};
+function rencSp(e, lv){ const n = TALLY['rc' + e + lv] || 0, c = TALLY['rcp' + e + lv] || 0;
+  return chance(Math.min(.95, Math.max(.05, RENC_SP + .25 * (RENC_SP * n - c)))); }
 function rencQ(n, e){
   const k = Math.floor(Math.abs(n) ** (1 / e) + 1e-9), lo = n > 0 ? k : -k - 1, hi = lo + 1, rt = radH(fmtNum(n), e);
   const line = show => '<span>' + (show ? H('ansnum', fmtInt(lo)) : BOX) + '</span><span class="op">&lt;</span><span>' + rt + '</span><span class="op">&lt;</span><span>' + (show ? H('ansnum', fmtInt(hi)) : BOX) + '</span>';
@@ -3296,18 +3315,28 @@ function rencQ(n, e){
     det: () => '<div class="fin">' + radH(fmtInt(lo ** e), e) + ' &lt; ' + rt + ' &lt; ' + radH(fmtInt(hi ** e), e) + '</div>' +
       '<div class="fin">' + ANS(fmtInt(lo)) + ' &lt; ' + rt + ' &lt; ' + ANS(fmtInt(hi)) + '</div>'};
 }
-GL('renc2', [1, 2, 3, 4], lv => {
-  if (lv === 4 && DEC && chance(.35)) return rencQ(noZeroEnd(101, 999) / 10, 2);
-  // carrés à savoir par cœur : jusqu'à 15² à ★★★ ; ★★★★ jusqu'à 20² (16² à 19² à chercher) (l'enseignant, 30.10.2026)
-  const R = [[2, 50], [51, 150], [101, 224], [226, 400]][lv - 1]; let n; do { n = ri(R[0], R[1]); } while (intRoot(n, 2) !== null);
-  return rencQ(n, 2);
-});
-GL('renc3', [1, 2, 3, 4], lv => {
-  if (lv === 4 && DEC && chance(.3)) return rencQ(noZeroEnd(21, 999) / 10, 3);
-  // cubes à savoir par cœur : jusqu'à 5³ à ★★, 6³ à ★★★ ; ★★★★ jusqu'à 10³ (7³ à 9³ à chercher) (l'enseignant, 30.10.2026)
-  const R = [[2, 60], [30, 124], [65, 215], [217, 999]][lv - 1]; let n; do { n = ri(R[0], R[1]); } while (intRoot(n, 3) !== null);
-  return rencQ(NEG && lv >= 3 && chance(.35) ? -n : n, 3);
-});
+function rencNum(e, lv){            // le nombre sous la racine (sans le signe) et sa sorte ('sp' : cas particulier)
+  const pw = k => k ** e, sgn = () => chance(.5) ? 1 : -1;
+  if (lv === 1) for (;;){ const n = e === 2 ? ri(2, 50) : ri(2, 60); if (intRoot(n, e) === null) return {n, s: 'lib'}; }
+  if (lv === 2) for (;;){           // près d'un carré (cube) connu, sans dépasser 15² (5³)
+    const k = e === 2 ? ri(7, 15) : ri(2, 5), d = sgn() * ri(1, e === 2 ? 3 : 4), n = pw(k) + d;
+    if (n >= 2 && n < pw(e === 2 ? 15 : 5)) return {n, s: 'pres'}; }
+  if (rencSp(e, lv)){                 // cas particulier : juste à côté de (10k)² ou de (10k)³
+    const k = 10 * (e === 2 ? ri(2, 10) : ri(1, lv === 3 ? 5 : 6)), d = lv === 3 ? ri(1, 3) : ri(4, 10);
+    return {n: pw(k) + sgn() * d, s: 'sp'}; }
+  if (lv === 4 && DEC && chance(RENC_DEC[e] / (1 - RENC_SP))) return {n: e === 2 ? noZeroEnd(101, 999) / 10 : noZeroEnd(21, 999) / 10, s: 'dec'};
+  if (lv === 3) for (;;){ const n = e === 2 ? ri(101, 224) : ri(28, 124); if (intRoot(n, e) === null) return {n, s: 'lib'}; }
+  const k = e === 2 ? ri(7, 14) : ri(3, 5), m = Math.max(2, Math.ceil((pw(k + 1) - pw(k)) / 4));   // ★★★★ : loin des deux carrés (cubes)
+  return {n: ri(pw(k) + m, pw(k + 1) - m), s: 'loin'};
+}
+function rencGen(e, lv){
+  const {n, s} = rencNum(e, lv), neg = e === 3 && NEG && lv >= 3 && s !== 'dec' && chance(.35);
+  const q = rencQ(neg ? -n : n, e);
+  q.chk.renc = {lv, s}; if (lv >= 3) q.cnt = s === 'sp' ? ['rc' + e + lv, 'rcp' + e + lv] : 'rc' + e + lv;
+  return q;
+}
+GL('renc2', [1, 2, 3, 4], lv => rencGen(2, lv));
+GL('renc3', [1, 2, 3, 4], lv => rencGen(3, lv));
 /* ---------- propriétés des racines ---------- */
 const SQF = [2, 3, 5, 6, 7, 10, 11];
 const sq = h => radH(h, 2);
@@ -4206,7 +4235,8 @@ function lwRev(T){ const seen = new Set(), c = [];
    l'ordre (y ∙ x ∙ 4) 0,1 ; facteurs au-delà de 3 0,08 (écriture séparée : au-delà de 4, 0,05) ; puissance d'un monôme 1,1 (carré) ou
    1,2 (cube), exposant dans la puissance ((2x²)³) 0,2, base négative 0,2 (exposant pair) ou 0,25 ; résultat 1 ou −1 (−ab, pas −1ab) 0,1 */
 const MM_W = {mul: .15, big: .15, p20: .1, p40: .15, dec1: .4, dec2: .5, hid: .25, hidN: .1, L2: .45, L3: 1, merge: .15, expo: .15, trap1: .1,
-  deg4: .15, deg5: .15, deg6: .15, a2b: .15, e3: .2, rev: .1, ord: .1, len: .08, sepLen: .05, pw2: 1.1, pw3: 1.2, pwE: .2, pwNegE: .2, pwNegO: .25, res1: .1};
+  deg4: .15, deg5: .15, deg6: .15, a2b: .15, e3: .2, rev: .1, ord: .1, len: .08, sepLen: .05, pw2: 1.1, pw3: 1.2, pwE: .2, pwNegE: .2, pwNegO: .25, res1: .1,
+  cof: .1};      // n° 21 : conventions, le nombre à mettre devant (x ∙ 5 ; y ∙ 3 ∙ x)
 const MM_NEGW = [0, .25, .4, .55, .65, .75];
 const MM_BAND = {1: [0, .55], 2: [.55, 1.05], 3: [1.05, 1.65], 4: [1.65, 3]};
 // décidé d'abord : écriture séparée une fois sur deux, coefficient caché 3 fois sur 10, nombre à virgule 2 fois sur 10 (dès ★★, case
@@ -4220,25 +4250,60 @@ const MM_A2B = [0, 0, .32, .15, 0], MM_REV = .25;
 const MM_NEG = {1: [.55, .45], 2: [.3, .4, .3], 3: [.25, .35, .3, .1], 4: [.2, .3, .3, .2]}, MM_NEGMAX = [0, 1, 2, 3, 4];
 const MM_NF = {1: [2, 3], 2: [2, 3], 3: [2, 4], 4: [3, 5]}, MM_NN = {1: [1, 2], 2: [2, 3], 3: [2, 3], 4: [2, 4]};
 const MM_LETS = {1: [1], 2: [1, 1, 2], 3: [1, 2, 2, 3], 4: [1, 2, 2, 3]}, MM_LMAX = [0, 1, 2, 3, 3];
+// n° 21 (08.11.2026) — l'enseignant : « Pour la multiplication de monomes, 1 fois sur 3, il faut juste appliquer les conventions; c'est à dire
+// enlever les signes fois, utiliser une puissance, mettre le coefficient devant les variables, mettre les variables dans l'ordre alphabétique.
+// Pareil, calme un peu la longueur des calculs (je ne dis pas de jamais mettre un long truc, mais en général il faut moins) » ; puis : « les
+// règles une fois sur 4 et une fois sur 3 citées au dessus comptent seulement pour 1 étoile et 2 étoiles. Pour 3 étoiles tu peux faire ça
+// rarement ». QCM : dans ces questions « conventions », aussi des facteurs écrits en monômes (x ∙ 5y), un seul signe − (relatifs) et des
+// exposants à additionner (x² ∙ x) ; longueur « un cran de moins ».
+// Conventions (MM_CONV, décidé d'abord) : 1 fois sur 3 à ★ et ★★, 8 % à ★★★, jamais à ★★★★ ; au plus un nombre (aucune multiplication de
+// nombres), au plus un signe −, pas de puissance d'un monôme ni de virgule (mmIsConv) ; toujours quelque chose à faire en plus d'enlever les ∙
+// (une lettre qui revient, l'ordre des lettres, le coefficient à mettre devant, un signe). Les autres questions ont toujours un calcul (une
+// multiplication de nombres, deux signes − ou plus, ou une puissance d'un monôme). Nombre de facteurs écrits (une puissance compte pour un) :
+// décidé d'abord (MM_LEN), au plus MM_LMX ; avant : ★★ 2 à 5, ★★★★ 3 à 8 (écriture séparée).
+const MM_CONV = [0, 1 / 3, 1 / 3, .08, 0];
+const MM_LEN = {1: [[2, .5], [3, .5]], 2: [[2, .2], [3, .55], [4, .25]], 3: [[2, .15], [3, .4], [4, .45]], 4: [[3, .2], [4, .55], [5, .25]]}, MM_LMX = [0, 3, 4, 4, 5];
+const MM_LENPW = {3: [[2, .6], [3, .4]], 4: [[2, .25], [3, .5], [4, .25]]};      // avec une puissance d'un monôme : moins de facteurs ((3x)² ∙ 2)
+const lwLen = d => wpick(d, z => z[1])[0];
+const mmIsConv = F => F.filter(f => Math.abs(f.c) !== 1).length <= 1 && F.filter(f => f.c < 0).length <= 1 && !F.some(f => f.p > 1) && F.every(f => Number.isInteger(f.c));
+const mmS1 = () => NEG && chance(.4) ? 1 : 0;                                       // conventions : un signe − 4 fois sur 10 (relatifs)
 function mmVar(lv, form){
   const P = TALLY.mmP || 0, pwOK = lv >= 3 && form !== 'sep' && !NO_RARE.has('mpw') && (!P || (TALLY['mmS' + P] || 0) >= MM_PWGAP);
-  const V = {sep: form === 'sep' || (!form && chance(MM_SEP)), s: NEG ? lwDist(MM_NEG[lv]) : 0, hid: chance(MM_HID), dec: DEC && lv >= 2 && chance(MM_DEC),
-    pw: pwOK && chance(MM_PW)};
+  const conv = chance(MM_CONV[lv]);
+  const V = {conv, sep: form === 'sep' || (!form && chance(MM_SEP)), s: conv ? mmS1() : NEG ? lwDist(MM_NEG[lv]) : 0, hid: !conv && chance(MM_HID),
+    dec: !conv && DEC && lv >= 2 && chance(MM_DEC), pw: !conv && pwOK && chance(MM_PW), n: lwLen(MM_LEN[lv])};
   V.a2b = !V.pw && lv >= 2 && chance(MM_A2B[lv]);
-  if (V.pw) V.sep = false;
+  if (V.pw){ V.sep = false; V.n = lwLen(MM_LENPW[lv]); }
+  if (lv === 4 && !NEG && !form && V.sep && chance(.4)) V.sep = false;              // ★★★★ sans relatifs : l'écriture séparée n'atteint ses points qu'en étant longue
+  if (lv === 4 && !NEG && V.sep) V.n = 5;                                             // (moins souvent, et alors cinq facteurs)
+  if (V.sep && !conv) V.n = Math.max(3, V.n);                                       // 2 ∙ x ∙ 3 : au moins trois facteurs
   return V;
 }
 function mmDraw(lv, W){
   const L = lwLets(W.pw && lv === 3 ? 1 : Math.min(W.a2b ? Math.max(2, pick(MM_LETS[lv])) : pick(MM_LETS[lv]), MM_LMAX[lv])), cap = LW_PCAP[lv];   // puissance à ★★★ : une lettre
   const ex = () => lv >= 2 && chance(lv === 2 ? .15 : .25) ? (lv >= 3 && chance(.25) ? 3 : 2) : 1;
-  const F = [];
+  const F = [], n = W.n;
   if (W.sep){
-    const nn = W.hid && !NEG ? (chance(.5) ? 0 : 1) : ri(...MM_NN[lv]);              // sans relatifs, coefficient caché : que des lettres (x ∙ x ∙ x, a ∙ b ∙ a ∙ b)
+    // nombres : conventions 0 ou 1 (a ∙ a ∙ b ; y ∙ 3 ∙ x) ; sinon au moins deux (un seul avec deux signes −, dès ★★ avec les relatifs)
+    const lo = NEG && lv >= 2 ? 1 : 2, nn = W.conv ? (chance(.7) ? 1 : 0) : (Math.min(MM_NN[lv][1], n - 1) < lo ? -1 : ri(lo, Math.min(MM_NN[lv][1], n - 1)));
+    if (nn < 0) return null;
+    const m1 = !W.conv && W.hid && NEG && nn && chance(.4), nl = n - nn - (m1 ? 1 : 0);    // b ∙ (−1) ∙ a
+    if (nl < L.length) return null;
+    const occ = L.map(() => 1), mx = lv <= 2 ? 2 : 3;
+    for (let k = nl - L.length; k > 0; k--){ const c = occ.map((o, i) => i).filter(i => occ[i] < mx); if (!c.length) return null; occ[pick(c)]++; }
     for (let i = 0; i < nn; i++) F.push({c: lwN(), m: {}, p: 1});
-    L.forEach(x => { const o = ri(1, lv <= 2 ? 2 : 3); for (let j = 0; j < o; j++) F.push({c: 1, m: {[x]: ex()}, p: 1}); });
-    if (W.hid && NEG){ if (nn && chance(.4)) F.push({c: -1, m: {}, p: 1}); else pick(F.filter(f => mDeg(f.m))).c = -1; }    // b ∙ (−1) ∙ a ; (−x)
+    L.forEach((x, i) => { for (let j = 0; j < occ[i]; j++) F.push({c: 1, m: {[x]: ex()}, p: 1}); });
+    if (m1) F.push({c: -1, m: {}, p: 1}); else if (!W.conv && W.hid && NEG) pick(F.filter(f => mDeg(f.m))).c = -1;     // (−x)
+  } else if (W.conv){
+    // facteurs en monômes sans calcul de nombres : x ∙ 5y, b ∙ 2a, x² ∙ 3x ; le nombre parfois seul (y ∙ 3 ∙ x), parfois aucun (x ∙ y ∙ x)
+    const solo = chance(.3), none = !solo && chance(.15), nf = n - (solo ? 1 : 0);
+    if (nf < 1 || (nf < 2 && !solo)) return null;
+    for (let i = 0; i < nf; i++) F.push({c: 1, m: {}, p: 1});
+    shuffle(L.slice()).forEach((x, j) => { F[j % nf].m[x] = ex(); });
+    F.forEach(f => { L.forEach(x => { if (!f.m[x] && chance(.3)) f.m[x] = ex(); }); if (!mDeg(f.m)){ const x = pick(L); f.m[x] = ex(); } });
+    if (solo) F.push({c: lwN(), m: {}, p: 1}); else if (!none) pick(F).c = lwN();
   } else {
-    const nf = ri(...MM_NF[lv]);
+    const nf = n;
     for (let i = 0; i < nf; i++){ const m = {};
       if (!(i && chance(.18))) L.forEach(x => { if (L.length === 1 || chance(.6)) m[x] = ex(); });      // parfois un nombre seul (2 ∙ 3a ∙ 5)
       F.push({c: lwN(), m, p: 1}); }
@@ -4251,6 +4316,7 @@ function mmDraw(lv, W){
   const sF = F.filter(f => !(f.c === -1 && !mDeg(f.m)));                         // pas le facteur (−1) : il deviendrait « ∙ 1 ∙ »
   shuffle(sF).slice(0, Math.min(W.s, sF.length)).forEach(f => { f.c = -f.c; });
   if (F.some(f => f.p > 1 && f.c === 1 && mDeg(f.m) === 1)) return null;       // (y)³ : on écrirait y³ ((−y)³, (xy)², (y²)³ restent)
+  if (F.length > MM_LMX[lv] || !!W.conv !== mmIsConv(F)) return null;           // conventions seulement si décidé (n° 21)
   if (lv >= 2 && chance(MM_REV)){ const c = F.filter(f => f.p === 1 && lwNL(f.m) >= 2); if (c.length) pick(c).rev = true; }
   if (W.dec){ const nf = F.filter(f => f.p === 1 && Math.abs(f.c) >= 2); if (nf.length < 2) return null;
     const [f, g] = shuffle(nf.slice()), d = pick([.5, .5, .5, 1.5, 2.5]);
@@ -4261,7 +4327,7 @@ function mmDraw(lv, W){
   if (W.a2b && !lwA2B(M)) return null;
   if (F.filter(f => f.c < 0).length > MM_NEGMAX[lv]) return null;
   if (!lwProd(F.flatMap(f => Array(f.p).fill(f.c)), cap)) return null;
-  return {F, sep: W.sep, R: [[c, M]]};
+  return {F, sep: W.sep, conv: !!W.conv, R: [[c, M]]};
 }
 function mmFeat(Q){
   const {F, sep} = Q, f = {}, occ = {}, ex = {};
@@ -4287,9 +4353,13 @@ function mmFeat(Q){
   f.pwNegE = pw && pw.c < 0 && pw.p % 2 === 0 ? 1 : 0; f.pwNegO = pw && pw.c < 0 && pw.p % 2 ? 1 : 0;
   f.neg = F.filter(x => x.c < 0 && x.p === 1).length;
   f.res1 = pr === 1 && (hid || nn.length) ? 1 : 0;
+  // conventions (n° 21) : pas de « coefficient caché » (les facteurs sans nombre y sont la règle) ; le nombre pas dans le 1er facteur : à mettre devant
+  f.cof = Q.conv && F.some(x => Math.abs(x.c) !== 1) && Math.abs(F[0].c) === 1 ? 1 : 0;
+  if (Q.conv){ f.hid = 0; f.hidN = 0; f.res1 = 0; }
   return f;
 }
 function mmScore(Q){ const f = mmFeat(Q); Q.f = f;
+  if (Q.conv && !(f.merge + f.ord + f.cof + f.neg)) return 99;       // conventions : jamais seulement enlever les ∙ (5 ∙ x, 3 ∙ a ∙ b, 2a ∙ b)
   if (!(f.mul + f.merge + f.neg + f.pw2 + f.pw3)) return 99;          // rien à calculer (5 ∙ x, b ∙ a, 3 ∙ a ∙ b, x ∙ 5y) : jamais
   return lwSc(MM_W, Object.assign({}, f, {neg: 0})) + MM_NEGW[Math.min(f.neg, 5)]; }
 const fN2 = (n, i) => n < 0 && i ? '(' + fmtNum(n) + ')' : fmtNum(n);
@@ -4315,12 +4385,13 @@ function mmBuild(Q, lv){
     const h = mDeg(f.m) ? (f.c < 0 ? '−' : '') + lwTH(f.c, f.m, f.rev) : fmtNum(f.c); return i && f.c < 0 ? '(' + h + ')' : h; };
   const qh = F.map(facH).join(' ∙ ');
   return litQ(qh, R, () => mmDet(Q, qh), {con: LITC.red, qe: e => F.reduce((q, f) => q * pEval([[f.c, f.m]], e) ** f.p, 1), rare: pw ? 'mpw' : null,
-    cnt: lv >= 3 ? (pw ? 'mmP' : 'mmS' + (TALLY.mmP || 0)) : null, chk: {lit: true, lw: {k: 'mm', lv, sc: Q.sc, f: Q.f, sep, pw, d: {F}}}});
+    cnt: lv >= 3 ? (pw ? 'mmP' : 'mmS' + (TALLY.mmP || 0)) : null, chk: {lit: true, lw: {k: 'mm', lv, sc: Q.sc, f: Q.f, sep, pw, conv: Q.conv, d: {F}}}});
 }
 function mmGen(lv, form){
   const V = mmVar(lv, form);
-  const Q = lwPick(t => mmDraw(lv, t < 350 ? V : Object.assign({}, V, {hid: t < 450 && V.hid, dec: t < 550 && V.dec, s: t < 500 ? V.s : (NEG ? lwDist(MM_NEG[lv]) : 0)})),
-    mmScore, MM_BAND[lv], 700);
+  const Q = lwPick(t => mmDraw(lv, t < 350 ? V : Object.assign({}, V, {hid: t < 450 && V.hid, dec: t < 550 && V.dec, a2b: t < 650 && V.a2b, s: t < 500 ? V.s : V.conv ? mmS1() : (NEG ? lwDist(MM_NEG[lv]) : 0),
+      n: t < 250 ? V.n : Math.max(V.sep && !V.conv ? 3 : 2, Math.min(MM_LMX[lv], V.n + ri(-1, 1)))})),        // n° 21 : longueur relâchée d'un facteur, dans les bornes
+    mmScore, MM_BAND[lv], 900);
   return Q ? mmBuild(Q, lv) : null;
 }
 
@@ -4331,7 +4402,7 @@ function mmGen(lv, form){
    0,2 (0,1 de plus par autre) ; résultat 1 ou −1 0,15 ; sorte qui s'annule 0,1 (pas forcée) ; trois termes d'une sorte 0,05 ; somme
    au-delà de 10 0,05 ; nombre à virgule 0,5 */
 const MS_W = {term: .12, kind: .3, x2x: .25, xy: .15, two: .1, dis: .1, neg1: .15, negR: .15, trP: .3, trM: .4, hid: .2, hidN: .1, res1: .15, zero: .1,
-  three: .05, big: .05, dec: .5, a2b: .1, sw: .15, e3: .2, d4: .15, rev: .2};
+  three: .05, big: .05, dec: .5, a2b: .1, sw: .15, e3: .2, d4: .15, rev: .2, same: .15};      // same : n° 21, déjà réduit
 // parties littérales (n° 18) : 4a²b et 4ab² (dès ★★), 4a³b, 4ab³, 4a²b² (dès ★★★), décidées d'abord environ une fois sur trois (MS_KA : sortes) ;
 // poids : terme à deux lettres de degré 3 ou plus 0,1 (en plus de xy 0,15), a²b et ab² ensemble (pas semblables) 0,15, exposant 3 dans un terme à
 // deux lettres 0,2, degré 4 ou plus 0,15, un terme « ba » (semblable à ab, dès ★★, une fois sur deux quand c'est possible) 0,2
@@ -4343,16 +4414,46 @@ const MS_BAND = {1: [0, .5], 2: [.5, 1], 3: [1, 1.55], 4: [1.55, 3.2]};
 // décidé d'abord : nombre à virgule 2 fois sur 10 (dès ★★, case « décimaux ») ; coefficient caché 35 % ; pièges (relatifs) : ★★ un 1 fois sur
 // 4 ; ★★★ un 3 fois sur 10, deux 1 fois sur 10 ; ★★★★ un 3 fois sur 10, deux 2 fois sur 10
 const MS_DEC = .2, MS_HID = .35, MS_TR = {2: [.75, .25], 3: [.6, .3, .1], 4: [.5, .3, .2]};
-const MS_N = {1: [2, 3], 2: [3, 4], 3: [4, 5], 4: [5, 6]};
+const MS_N = {1: [2, 3], 2: [2, 4], 3: [3, 5], 4: [4, 5]};                    // n° 21 : bornes (avant ★★ 3–4, ★★★ 4–5, ★★★★ 5–6)
+// n° 21 (08.11.2026) — l'enseignant : « Quand on coche addition et soustraction de monomes, il faudrait que environ une fois sur 4 il y a rien à
+// réduire. Dans ce cas, écris quand même l'égalité mais à droite tu met la même expression, et en dessous écris que c'était déjà réduit. J'ai
+// aussi remarqué que tu te sers trop de la longueur des calculs pour de la difficulté » ; « les règles une fois sur 4 et une fois sur 3 […]
+// comptent seulement pour 1 étoile et 2 étoiles. Pour 3 étoiles tu peux faire ça rarement ». QCM : « Pas de termes semblables ⟹ c'était déjà
+// réduit » sous la réponse ; des pièges qui ressemblent à des semblables (même coefficient, x² et x, a²b et ab², xy et x) ; longueur « un cran
+// de moins ». Déjà réduit (MS_RED0, décidé d'abord) : ★ et ★★ 1 fois sur 4, ★★★ 8 %, jamais à ★★★★ ; un terme par sorte (MS_K0), même
+// coefficient pour deux termes 4 fois sur 10 (poids same) ; sans piège + (−3x), sans « ba », sans virgule ; la réponse = la question, dans le
+// même ordre. Nombre de termes des autres questions décidé d'abord (MS_LEN) : ★ 2–3, ★★ surtout 3, ★★★ 3–4, ★★★★ surtout 4 (5 parfois).
+const MS_RED0 = [0, .25, .25, .08, 0], MS_SAME = .4;
+const MS_LEN = {1: [[2, .5], [3, .5]], 2: [[2, .15], [3, .65], [4, .2]], 3: [[3, .45], [4, .55]], 4: [[4, .65], [5, .35]]};
+const MS_K0 = {1: [[['x', 'c'], 3], [['x', 'y'], 3], [['xy', 'c'], 1], [['x2', 'c'], 1]],
+  2: [[['x2', 'x'], 3], [['x', 'y'], 2], [['xy', 'x'], 2], [['x2y', 'xy2'], 2], [['x2', 'x', 'c'], 2], [['x', 'y', 'c'], 1], [['xy', 'x', 'y'], 1], [['x2', 'c'], 1]],
+  3: [[['x2y', 'xy2', 'xy', 'c'], 2], [['x2y', 'xy2', 'c'], 2], [['x2', 'x', 'c'], 1], [['x3y', 'xy3', 'x2y2'], 1], [['x2', 'xy', 'x', 'c'], 1]]};
 const MS_K = {1: [[['x'], 6], [['x2'], 1], [['xy'], 1], [['x', 'c'], 2]],
   2: [[['x', 'c'], 3], [['x', 'y'], 2], [['x2', 'x'], 2], [['xy', 'x'], 1], [['x'], 1], [['x2', 'c'], 1]],
   3: [[['x2', 'x', 'c'], 3], [['x', 'y', 'c'], 2], [['xy', 'x', 'c'], 1], [['x2', 'x'], 1], [['x', 'c'], 1], [['xy', 'y', 'x'], 1]],
-  4: [[['x2', 'x', 'y', 'c'], 2], [['x2', 'xy', 'x', 'c'], 2], [['xy', 'x', 'y', 'c'], 1], [['x2', 'x', 'c'], 2], [['x2', 'x', 'y'], 1]]};
-function msVar(lv){ return {dec: DEC && lv >= 2 && chance(MS_DEC), tr: NEG && lv >= 2 ? lwDist(MS_TR[lv]) : 0, hid: chance(MS_HID), a2b: lv >= 2 && chance(MS_A2B[lv])}; }
+  4: [[['x2', 'x', 'y', 'c'], 2], [['x2', 'xy', 'x', 'c'], 2], [['xy', 'x', 'y', 'c'], 1], [['x2', 'x', 'c'], 3], [['x2', 'x', 'y'], 2], [['xy', 'x', 'c'], 1]]};
+MS_KA[4].push([['x2y', 'xy2', 'c'], 2], [['x3y', 'xy3', 'xy'], 1], [['x2y2', 'x2y', 'c'], 1]);     // n° 21 : trois sortes (quatre termes)
+function msVar(lv){ const red0 = chance(MS_RED0[lv]);
+  return {red0, n: lwLen(MS_LEN[lv]), dec: !red0 && DEC && lv >= 2 && chance(MS_DEC), tr: !red0 && NEG && lv >= 2 ? lwDist(MS_TR[lv]) : 0, hid: chance(MS_HID),
+    a2b: !red0 && lv >= 2 && chance(MS_A2B[lv]), same: red0 && chance(MS_SAME)}; }
+const msK = (v, w) => ({x: {[v]: 1}, y: {[w]: 1}, x2: {[v]: 2}, xy: {[v]: 1, [w]: 1}, c: {}, x2y: {[v]: 2, [w]: 1}, xy2: {[v]: 1, [w]: 2},
+  x3y: {[v]: 3, [w]: 1}, xy3: {[v]: 1, [w]: 3}, x2y2: {[v]: 2, [w]: 2}});
+// déjà réduit (n° 21) : un terme par sorte ; deux termes de même coefficient (3x + 3, 4a − 4b, 5x² + 5x) si décidé ; la réponse dans le même ordre
+function msDraw0(lv, W){
+  const v = V1(), K = msK(v, other(v)), kinds = wpick(MS_K0[lv], z => z[1])[0];
+  const T = kinds.map(k => ({c: ri(2, 9), m: K[k], k}));
+  let pair = [];
+  if (W.same){ pair = shuffle(T.slice()).slice(0, 2); const c = ri(2, 9); pair.forEach(t => t.c = c); }
+  if (W.hid){ const c = T.filter(t => mDeg(t.m) && !pair.includes(t)); if (c.length) pick(c).c = 1; }
+  const T2 = chance(.5) ? T : shuffle(T.slice());
+  if (NEG) T2.forEach((t, i) => { if (i ? chance(.42) : chance(.2)) t.c = -t.c; });        // sans relatifs : chaque sorte positive (règle des sommes)
+  if (T2.some(t => mDeg(t.m) > LW_DMAX[lv])) return null;
+  return {T: T2, R: T2.map(t => [t.c, t.m]), red0: true};
+}
 function msDraw(lv, W){
-  const v = V1(), w = other(v), K = {x: {[v]: 1}, y: {[w]: 1}, x2: {[v]: 2}, xy: {[v]: 1, [w]: 1}, c: {}, x2y: {[v]: 2, [w]: 1}, xy2: {[v]: 1, [w]: 2},
-    x3y: {[v]: 3, [w]: 1}, xy3: {[v]: 1, [w]: 3}, x2y2: {[v]: 2, [w]: 2}}, cap = LW_SCAP[lv];
-  const kinds = wpick(W.a2b ? MS_KA[lv] : MS_K[lv], z => z[1])[0], n = Math.min(ri(...MS_N[lv]), 3 * kinds.length);
+  if (W.red0) return msDraw0(lv, W);
+  const v = V1(), w = other(v), K = msK(v, w), cap = LW_SCAP[lv];
+  const kinds = wpick(W.a2b ? MS_KA[lv] : MS_K[lv], z => z[1])[0], n = Math.min(W.n, 3 * kinds.length);
   if (n < kinds.length + 1) return null;
   const cnt = kinds.map(() => 1); while (cnt.reduce((a, b) => a + b, 0) < n){ const i = ri(0, kinds.length - 1); if (cnt[i] < 3) cnt[i]++; }
   let T = []; kinds.forEach((k, i) => { for (let j = 0; j < cnt[i]; j++) T.push({c: mDeg(K[k]) && chance(.08) ? 1 : ri(1, 9), m: K[k], k}); });
@@ -4384,6 +4485,7 @@ function msFeat(Q){
   f.dec = T.some(t => !Number.isInteger(t.c) && T.filter(u => lwKey(u.m) === lwKey(t.m)).length > 1) ? 1 : 0;     // un nombre à virgule qui se calcule
   const Ms = T.map(t => t.m); f.a2b = Ms.some(lwA2B) ? 1 : 0; f.sw = lwSw(Ms) ? 1 : 0; f.e3 = Ms.some(lwE3) ? 1 : 0;
   f.d4 = Ms.some(m => mDeg(m) >= 4) ? 1 : 0; f.rev = T.some(t => t.rev) ? 1 : 0;
+  f.same = Q.red0 && T.some(t => T.some(u => u !== t && Math.abs(u.c) === Math.abs(t.c) && Math.abs(t.c) !== 1)) ? 1 : 0;    // déjà réduit : même coefficient (piège)
   return f;
 }
 function msScore(Q){ const f = msFeat(Q); Q.f = f; return lwSc(MS_W, f); }
@@ -4393,6 +4495,8 @@ function msBuild(Q, lv){
     if (t.tr) return (t.tr === 'P' ? ' + ' : ' − ') + '(−' + lwTH(t.c, t.m, t.rev, col) + ')';     // + (−5x) ; − (−5x)
     return (t.c < 0 ? ' − ' : ' + ') + lwTH(t.c, t.m, t.rev, col); }).join('');
   const qh = qT(false);
+  if (Q.red0) return litQ(qh, R, () => steps(qT(true), [ANS(polyH(R))]) + DIV('Pas de termes semblables ⟹ c\'était déjà réduit', 'gr red0'),     // n° 21
+    {con: LITC.red, qe: e => pEval(E, e), chk: {lit: true, lw: {k: 'ms', lv, sc: Q.sc, f: Q.f, red0: true, d: {T}}}});
   return litQ(qh, R, () => { const rows = [];
       if (T.some(t => t.tr)) rows.push(polyH(E, true));            // + (−5x) → − 5x ; − (−5x) → + 5x
       const G2 = grouped(E); if (polyH(G2) !== polyH(E)) rows.push(polyH(G2, true));
@@ -4401,7 +4505,8 @@ function msBuild(Q, lv){
 }
 function msGen(lv){
   const V = msVar(lv);
-  const Q = lwPick(t => msDraw(lv, t < 350 ? V : Object.assign({}, V, {hid: t < 450 && V.hid, dec: t < 550 && V.dec, tr: t < 500 ? V.tr : 0, a2b: t < 600 && V.a2b})), msScore, MS_BAND[lv], 700);
+  const Q = lwPick(t => msDraw(lv, t < 350 ? V : Object.assign({}, V, {hid: t < 450 && V.hid, dec: t < 550 && V.dec, tr: t < 500 ? V.tr : 0, a2b: t < 600 && V.a2b,
+    same: t < 500 && V.same, n: t < 250 ? V.n : Math.max(MS_N[lv][0], Math.min(MS_N[lv][1], V.n + ri(-1, 1)))})), msScore, MS_BAND[lv], 700);     // n° 21 : longueur relâchée d'un terme
   return Q ? msBuild(Q, lv) : null;
 }
 
@@ -8204,8 +8309,40 @@ function triLenSkFig(L, N, k, P, S, hl){          // comme triLenFig, à main le
   P.forEach((p, i) => vtx(f, p, N[i], Cc));
   return f.svg(GK);
 }
+/* « Tous les carrés sont-ils des losanges ? » (l'enseignant, 08.11.2026 ; avant : « Un carré est-il toujours un losange ? », toute la sorte 3) :
+   « environ une chance sur 6 d'avoir une question de ce type, mais jamais deux fois la même combinaison et dans le même sens (on peut avoir q1, q2
+   puis q2, q1) » ; « seulement la question sur q1, q2 si on a coché q1 et q2 » ; détail : « quand c'est oui, justifie par ce qui suffit (tu peux
+   notamment voir le diagramme dans la théorie), et si c'est non donne un dessin en indiquant ce qu'il manque ». QCM : 1 sur 6 des questions de
+   quadrilatères (cases carré … rhomboïde ; triangles et autres blocs pas comptés) ; oui : le X seul, ce qui suffit en orange, « … ⟹ Y » ; non : un X
+   qui n'est pas un Y, ce qui lui manque marqué en orange, et « Certains losanges n'ont pas d'angles droits. » (sa précision).
+   Famille « isa » tirée par geoOne avec le vocabulaire et le nom (TQ_FIX), à toutes les sortes (→ garde la sorte choisie : liée à la sorte 3, elle
+   aurait fait toutes les questions de quadrilatères à la touche 3) ; chance = 1/6 + 0,25 ∙ retard dans la séance (TALLY.tqQ : questions de
+   quadrilatères tirées, TALLY.tqIsa : celles-ci), entre 5 et 85 %, 0 quand il ne reste aucune paire cochée pas encore posée. Clé 'qc' + X + Y :
+   isaQ ne rend qu'une paire pas encore posée (jamais reprise, même par tours). */
+const ISA_P = 1 / 6;
+const QPL = {car: 'carrés', rec: 'rectangles', los: 'losanges', par: 'parallélogrammes', tra: 'trapèzes', rho: 'rhomboïdes'};
+const QUADS = new Set(QORD.map(x => 'q_' + x));
+const isaFree = () => { const on = new Set(objectives(S).map(o => o.id)), K = QORD.filter(x => on.has('q_' + x));
+  return K.flatMap(X => K.filter(Y => Y !== X && !USED.has('qc' + X + Y)).map(Y => [X, Y])); };
+function isaP(){ const F = isaFree(); if (!F.length) return 0;
+  const n = TALLY.tqQ || 0, c = TALLY.tqIsa || 0; return Math.min(.85, Math.max(.05, ISA_P + .25 * (ISA_P * n - c))); }
+// ce qui manque au X pour être un Y (non) : angles droits, côtés isométriques, côtés consécutifs isométriques, côtés opposés parallèles
+const isaMiss = (X, Y) => Y === 'car' ? (X === 'rec' ? 'cot' : 'ang') : Y === 'rec' ? 'ang' : Y === 'los' ? 'cot' : Y === 'rho' ? 'cons' : 'par';
+const isaTxt = (X, m) => 'Certains ' + QPL[X] + ' ' + {ang: 'n\'ont pas d\'angles droits', cot: 'n\'ont pas quatre côtés isométriques',
+  cons: 'n\'ont pas de côtés consécutifs isométriques', par: X === 'tra' ? 'n\'ont qu\'une paire de côtés opposés parallèles' : 'n\'ont aucune paire de côtés opposés parallèles'}[m] + '.';
+const ISA_SHOW = {rec: 'ang', los: 'cot', par: 'par2', tra: 'par1', rho: 'cot'};       // oui : ce qui suffit pour être un Y (QSUF), en orange
+function isaQ(k, lv){
+  const F = isaFree(), mine = F.filter(([X, Y]) => X === k || Y === k), c = mine.length ? mine : F; if (!c.length) return null;   // de préférence une paire avec k
+  const [X, Y] = pick(c), v = QISA[X].includes(Y), a = v ? OUI : NON, miss = v ? null : isaMiss(X, Y);
+  const nw = t => '<span class="nw">' + t + '</span>';       // pas de coupure dans « sont-ils », « cerfs-volants »
+  const q = 'Tous les ' + QPL[X] + (X === 'rho' ? ' ' + nw('(cerfs-volants') + ' et fers de lance)' : '') + ' ' + nw('sont-ils') + ' des ' + QPL[Y] + (Y === 'rho' ? ' ' + nw('(cerfs-volants') + ' ou fers de lance)' : '') + ' ? ';
+  return phrQ('Oui ou non ?', q, a, '', {key: 'qc' + X + Y, cnt: 'tqIsa', chk: {quad: {k, lv, a, X, Y, v, isa: true, miss}}, dfig: () => qIsaDet(X, Y, v)});
+}
+const tqQc = q => q && Object.assign(q, {cnt: [].concat(q.cnt || [], 'tqQ')});      // toutes les questions de quadrilatères : compteur de la séance
 function quadQ(k, lv){
   const fam = tqFam(k); if (fam === 'voc') return tqVocQ(k, lv); if (fam === 'nom') return tqNomQ(k, lv);     // vocabulaire et nom, inclus d'office (31.10.2026, 5e conversation)
+  if (fam === 'isa'){ const q = isaQ(k, lv); if (q) return q; }                                                 // « Tous les X sont-ils des Y ? » (08.11.2026)
+  if (lv === 3) lv = chance(.5) ? 2 : 4;          // sorte 3 : plus « est-il toujours » (08.11.2026) ; vrai ou faux (sorte 2) ou compléter (sorte 4)
   if (lv === 1 && k !== 'tra' && chance(.4)) return quadDiagQ(k);      // d'après les diagonales codées (31.10.2026)
   if (lv === 1){ const N = pick(QNAMES), dart = k === 'rho' && chance(.5), P0 = quadPts(k, dart), lk = !dart && QLOOK[k] && chance(TROMPE_P) ? pick(QLOOK[k]) : null,
       Pl = lk ? quadPts(lk, false) : P0, P = qSketch(dart ? 'dart' : k, Pl, 'cot', !!lk), Pe = lk ? alignTo(P0, P) : P0, S = qSkMake(P), Q = {P, svg: quadSkFig(k, N, dart, P, S)}, fig = Q.svg, a = QN[k] + (k === 'rho' ? (dart ? ' (fer de lance)' : ' (cerf-volant)') : '');
@@ -8214,16 +8351,11 @@ function quadQ(k, lv){
       det: () => skPair(quadSkFig(k, N, dart, P, S, true), quadFig(k, N, dart, Pe, true).svg) + sufLine(QREC[k], a)}); }      // détail : la figure de la question et la figure exacte (31.10.2026, 7e conversation)      // trapèze : « (AB) ∥ (DC) » reste en haut, les deux côtés en orange
   if (lv === 2){ const pi = ri(0, QPROP.length - 1), [pr, ks] = QPROP[pi], v = ks.includes(k), a = v ? 'vrai' : 'faux', why = 'Ceux qui ' + pr.replace(/^a ses /, 'ont leurs ').replace(/^a /, 'ont ') + ' : ' + QORD.filter(x => ks.includes(x)).map(QNL).join(', ') + '.';
     return phrQ('Vrai ou faux ?', cap1(QART[k]) + ' ' + pr.replace(/^a /, 'a toujours ') + '. ', a, '', {key: 'qv' + k + pr, why, chk: {quad: {k, lv, a, pr, v}}, dfig: () => qPropDet(k, pi, v)}); }
-  if (lv === 3){ const y = pick(Object.keys(QN).filter(x => x !== k)), [X, Y] = chance(.5) ? [k, y] : [y, k], v = QISA[X].includes(Y), a = v ? OUI : NON;
-    // ce qui manque à X : de préférence ce qui fait un Y (« Un trapèze n'a pas toujours ses côtés opposés parallèles », 30.10.2026 ; avant : la 1re propriété de QPROP)
-    const mi = QDEFI[Y].concat([...QPROP.keys()]).find(i => QPROP[i][1].includes(Y) && !QPROP[i][1].includes(X)), miss = QPROP[mi];
-    const why = v ? cap1(QART[X]) + ' est ' + QART[Y] + ' particulier.' : cap1(QART[X]) + ' ' + miss[0].replace(/^a /, 'n\'a pas toujours ') + '.';
-    return phrQ('Oui ou non ?', cap1(QART[X]) + ' est-il toujours ' + QART[Y] + ' ? ', a, '', {key: 'qc' + X + Y, why, chk: {quad: {k, lv, a, X, Y, v, mi}}, dfig: () => qIsaDet(X, Y, v, mi)}); }
   const L = QSPEC.filter(([, r]) => r === k).map(([s, , X, fams]) => [s, /^Un (cerf-volant|fer de lance)/.test(s) ? 'un rhomboïde' : QART[k], '.', () => qSpecDet(X, k, fams, s)])
     .concat([QCNT[k].concat([() => qCntDet(k)])]), [b, a, c, dfig] = pick(L);
   return phrQ('Complète', b, a, c, {key: 'qs' + k + b, chk: {quad: {k, lv, a}}, dfig});
 }
-['rho', 'tra', 'par', 'los', 'rec', 'car'].forEach(k => GL('q_' + k, [1, 2, 3, 4], lv => quadQ(k, lv)));
+['rho', 'tra', 'par', 'los', 'rec', 'car'].forEach(k => GL('q_' + k, [1, 2, 3, 4], lv => tqQc(quadQ(k, lv))));
 /* ---------- triangles et quadrilatères : questions ajoutées le 31.10.2026 (4e conversation) ----------
    L'enseignant, à partir d'une liste d'idées (« Je me demande si on peut en rajouter un peu… des trucs importants qui manqueraient ») :
    - triangles : nature d'après les longueurs écrites sur la figure (niveau 1, une fois sur trois : triLenQ ; « Tu peux l'inclure dans les
@@ -8247,7 +8379,8 @@ const TQW = ['POUR', 'LOUP', 'MAIS', 'NOIR', 'GARE', 'TIGE', 'VERS', 'BOIS', 'LU
 // tout le reste est posé. Hors de geoOne (tests), tirée à chaque appel.
 const TQX_P = .11;      // 11 % tirés : environ 10 % affichés, une fois remplacées celles qui suivraient une autre
 let TQ_FIX = null;
-function tqFam(k){ if (NO_RARE.has('tqx')) return 'base';      // une question de vocabulaire ou de nom juste avant : question de base
+function tqFam(k){ if (TQ_FIX === 'isa') return k === 'tri' ? 'base' : 'isa';     // « Tous les X sont-ils des Y ? » (08.11.2026)
+  if (NO_RARE.has('tqx')) return 'base';      // une question de vocabulaire ou de nom juste avant : question de base
   const f = TQ_FIX || (r => r >= TQX_P ? 'base' : r < TQX_P / 2 ? 'voc' : 'nom')(Math.random());
   return f === 'nom' && k === 'tri' ? 'voc' : f; }
 const tqShape = k => { const P = qShape(k).map(p => k === 'rho' ? V2.mul(p, 1.45) : p); return rotAll(P, ri(0, 359) * DEG, V2.cen(P)); };    // cerf-volant agrandi : place pour les angles en P1 et P3
@@ -8777,12 +8910,39 @@ function qPropDet(k, pi, v){ const [, ks] = QPROP[pi], fams = QPF[pi], fig = qPa
   if (v) return qGrid(qCell(fig(k, fams, true)));
   const nP = y => QPROP.filter(([, s]) => s.includes(y)).length, y = QORD.filter(y => ks.includes(y) && QISA[y].includes(k)).sort((a, b) => nP(a) - nP(b))[0];
   return qGrid(qCell(fig(k, fams, false)), qCell(fig(y, fams, true))); }
-// « Un X est-il toujours un Y ? » : oui, ce qui fait un Y, sur les deux ; non, la propriété mi qui manque à X (celle de l'explication)
-// avec, sous les figures, ce qui suffit pour être un Y (l'enseignant, 31.10.2026 : « tu devrais marquer ce qui suffit à dire qu'un quadrilatère est un
-// trapèze […] Tu as déjà surligné en couleurs correctement, mais ce n'est pas expliqué ») ; oui : le Y avec seulement ce qui suffit
-function qIsaDet(X, Y, v, mi){ const fig = qPair(), suf = DIV(QSUF[Y] + ' ⟹ <b class="qyn">' + QN[Y] + '</b>', 'gr phrd qwhy');   // Y en noir : la réponse est « oui » / « non » (l'enseignant, 31.10.2026)
-  if (v){ const fams = [...new Set(QDEFI[Y].flatMap(i => QPF[i]))]; return qGrid(qCell(fig(X, fams, true)), qCell(fig(Y, fams, true, 'qua'))) + suf; }
-  return qGrid(qCell(fig(X, QPF[mi], false)), qCell(fig(Y, QPF[mi], true))) + suf; }
+// « Tous les X sont-ils des Y ? » (l'enseignant, 08.11.2026 ; avant : « Un X est-il toujours un Y ? », X et Y côte à côte) : un seul dessin, le X
+// avec son codage en noir ; oui : ce qui suffit pour être un Y en orange, puis « quatre côtés isométriques ⟹ losange » (Y en noir gras : la
+// réponse est oui / non) ; non : un X qui n'est pas un Y, ce qui lui manque marqué en orange (angles pas droits : secteurs orange ; côtés pas
+// isométriques : leurs codages en orange ; côtés opposés pas parallèles : en couleur, prolongés en pointillés jusqu'à leur croisement ×), puis
+// « Certains losanges n'ont pas d'angles droits. » (sa précision au QCM)
+// kind : 'ang' angles droits, 'cot' codage des côtés, 'par2' deux paires de côtés parallèles, 'par1' une paire (oui) ; 'nang', 'ncot', 'npar' (non)
+function isaFig(X, kind){
+  const k = X === 'rho' && kind === 'npar' ? 'dart' : X, m = chance(.5);       // côtés pas parallèles d'un rhomboïde : le fer de lance (croisements proches)
+  let P = qShape(k); if (m) P = P.map(p => [-p[0], p[1]]);
+  P = rotAll(P, ri(-25, 25) * DEG + (k === 'rho' || k === 'dart' ? pick([90, -90]) * DEG : 0), V2.cen(P));
+  const f = new Fig(), O = QHL, sd = i => [P[i], P[(i + 1) % 4]], dash = {w: 2.4, dash: '9 7', nohit: true};
+  const T = {car: [1, 1, 1, 1], los: [1, 1, 1, 1], rec: [1, 2, 1, 2], par: [1, 2, 1, 2], rho: [1, 2, 2, 1], dart: [1, 2, 2, 1], tra: [1, 2, 3, 4]}[k];   // côtés de même longueur, même codage
+  f.poly(P, {fill: '#eef3fa', stroke: 'none'});
+  if (kind === 'nang') P.forEach((p, i) => { const a1 = V2.ang(V2.sub(P[(i + 1) % 4], p)) / DEG; let d = V2.ang(V2.sub(P[(i + 3) % 4], p)) / DEG - a1;
+    while (d <= -180) d += 360; while (d > 180) d -= 360; const n = 14, R = 30;
+    f.path([p].concat([...Array(n + 1).keys()].map(j => V2.add(p, V2.mul([Math.cos((a1 + d * j / n) * DEG), Math.sin((a1 + d * j / n) * DEG)], R)))), {closed: true, fill: O, op: .42, stroke: 'none', w: 0, nohit: true}); });
+  f.poly(P, {});
+  if (kind === 'par2' || kind === 'par1') [[0, 2], [1, 3]].slice(0, kind === 'par1' ? 1 : 2).forEach((pr, n) => pr.forEach(i => f.seg(...sd(i), {stroke: n ? BLUE : O, w: 5.5})));
+  if (kind === 'npar'){ const cut = (i, j) => interLines(P[i], V2.sub(P[(i + 1) % 4], P[i]), P[j], V2.sub(P[(j + 1) % 4], P[j]));
+    if (k === 'tra'){ const Xc = cut(1, 3); [1, 3].forEach(i => f.seg(...sd(i), {stroke: O, w: 5.5})); [0, 2].forEach(i => f.seg(...sd(i), {stroke: BLUE, w: 5.5}));   // la paire parallèle en bleu
+      f.seg(P[2], Xc, Object.assign({stroke: O}, dash)); f.seg(P[3], Xc, Object.assign({stroke: O}, dash)); xMark(f, Xc, {color: O}); }
+    else { const X1 = cut(0, 2), X2 = cut(1, 3);                                  // fer de lance : creux en P2 ; (P2P3) coupe [P0P1], (P1P2) coupe [P3P0]
+      [0, 2].forEach(i => f.seg(...sd(i), {stroke: O, w: 5.5})); [1, 3].forEach(i => f.seg(...sd(i), {stroke: BLUE, w: 5.5}));
+      f.seg(P[2], X1, Object.assign({stroke: O}, dash)); f.seg(P[2], X2, Object.assign({stroke: BLUE}, dash)); xMark(f, X1, {color: O}); xMark(f, X2, {color: BLUE}); } }
+  const tk = kind === 'cot' || kind === 'ncot';
+  const tkAt = i => kind === 'npar' && k === 'dart' && (i === 0 || i === 3) ? (i === 0 ? [P[0], V2.lerp(P[0], P[1], .5)] : [V2.lerp(P[3], P[0], .5), P[0]]) : sd(i);   // fer de lance : codage au quart des grands côtés depuis la pointe P0, loin des croix (vers 0,4 à 0,52)
+  if (k !== 'tra' && k !== 'rec' || tk) T.forEach((n, i) => ticks(f, ...tkAt(i), n, {color: tk ? O : INK}));    // codage des côtés (pas pour le trapèze ni le rectangle, sauf s'il est demandé)
+  if (k === 'car' || k === 'rec') P.forEach((p, i) => rmC(f, p, P[(i + 1) % 4], P[(i + 3) % 4], 17, kind === 'ang' ? O : INK));
+  return {svg: f.svg(QFK), k, P};
+}
+function qIsaDet(X, Y, v){
+  if (v) return qGrid(qCell(isaFig(X, ISA_SHOW[Y]))) + DIV(QSUF[Y] + ' ⟹ <b class="qyn">' + QN[Y] + '</b>', 'gr phrd qwhy');
+  const m = isaMiss(X, Y); return qGrid(qCell(isaFig(X, {ang: 'nang', cot: 'ncot', cons: 'ncot', par: 'npar'}[m]))) + DIV(isaTxt(X, m), 'gr phrd qwhy'); }
 // « Un carré a 4 axes de symétrie », « Un parallélogramme a 2 paires de côtés opposés parallèles »…
 function qCntDet(k){ const fig = qPair();
   if (k === 'rho') return qGrid(...['rho', 'dart'].map(x => qCell({svg: qFig(x, rotAll(qShape(x), ri(80, 100) * DEG * pick([1, -1]), [0, 0]), ['cnt'], true).svg(QFK), k: x})));
@@ -10998,9 +11158,9 @@ const gkey = (x, l) => x.id + '|' + l;
 const gsig = x => JSON.stringify(flagsOf(x.bl)) + (x.bl === 'sol' ? SOLK.map(k => S.opt[k[0]] ? 1 : 0).join('') : '');
 function geoOne(g0, tiers, side, late){
   const alts = tiers.flat();
-  const fam = (() => { const r = Math.random(); return r >= TQX_P ? 'base' : r < TQX_P / 2 ? 'voc' : 'nom'; })();   // vocabulaire et nom : tirés une fois par question
-  const gen = ([x, l], mode, free) => { TQ_FIX = x.bl === 'tq' && !free ? fam : null;
-    const e = gkey(x, l) + gsig(x) + (x.bl === 'tq' ? (free ? 'free' : fam) : '');
+  const fam = (() => { const r = Math.random(); return r >= TQX_P ? (r < TQX_P + isaP() ? 'isa' : 'base') : r < TQX_P / 2 ? 'voc' : 'nom'; })();   // vocabulaire, nom, « Tous les … ? » (isa) : tirés une fois par question
+  const gen = ([x, l], mode, free) => { const fx = fam === 'isa' && !QUADS.has(x.id) ? 'base' : fam; TQ_FIX = x.bl === 'tq' && !free ? fx : null;      // isa : seulement les quadrilatères
+    const e = gkey(x, l) + gsig(x) + (x.bl === 'tq' ? (free ? 'free' : fx) : '');
     if (mode === 'new' && EXH.has(e)) return null;
     const p = genOne(subOf(x, l, flagsOf(x.bl)), l, flagsOf(x.bl), mode); TQ_FIX = null;
     if (!p && mode === 'new') EXH.add(e); return p; };
@@ -12083,13 +12243,21 @@ function buildSettingsUI(){
   $('optBg').innerHTML = Object.entries(BGS).map(([k, [c, n]]) => '<button data-bg="' + k + '" title="' + n + '" aria-label="' + n + '" style="background:' + c + '"></button>').join('');
   mathify($('oSet'));
 }
+// coche du titre d'un bloc visible seulement s'il a un exercice choisi (08.11.2026). Blocs sans cases (l'enseignant, 08.11.2026 : « tu te trompes pour
+// priorité des opérations et écriture scientifique : on peut bien faire comme les autres blocs ») : Priorités des opérations, ses cases (parenthèses,
+// puissances…) ; Écriture scientifique, un rond choisi (opt.sciSel : un rond choisi, gardé quand on décoche le titre ; pas dans les liens).
+function blkHas(b, d){
+  if (b.items.length) return b.items.some(([j]) => d.it[j]);
+  if (BLOCK_OPTS[b.id]) return BLOCK_OPTS[b.id].some(k => d.opt[k]);
+  return !!(d.on[b.id] || d.opt[b.id + 'Sel']);
+}
 function syncUI(){
   const d = draft, q = s => document.querySelectorAll('#oSet ' + s);
   q('input[data-bl]').forEach(x => x.checked = !!d.on[x.dataset.bl]);
   q('input[data-it]').forEach(x => x.checked = !!d.it[x.dataset.it]);
   q('input[data-nd]').forEach(x => x.checked = !!(d.num[x.dataset.nd] || {})[x.dataset.k]);
   q('input[data-op]').forEach(x => x.checked = !!d.opt[x.dataset.op]);
-  q('input[name=sciNeg]').forEach(x => x.checked = (x.value === '1') === !!d.opt.sciNeg);
+  const sciHas = blkHas(BLOCKS.sci, d); q('input[name=sciNeg]').forEach(x => x.checked = sciHas && (x.value === '1') === !!d.opt.sciNeg);   // aucun rond choisi : les deux vides
   q('input[name=two]').forEach(x => x.checked = x.value === (d.two ? 'two' : 'one')); q('input[name=twoLv]').forEach(x => x.checked = x.value === (d.twoSame ? 'same' : 'hard'));
   $('o_nmin').textContent = d.opt.nmin; $('o_nmax').textContent = d.opt.nmax;
   Object.keys(LIMS).forEach(k => { $('o_' + k + 'nmin').textContent = d.opt[k + 'nmin']; $('o_' + k + 'nmax').textContent = d.opt[k + 'nmax']; });
@@ -12099,6 +12267,12 @@ function syncUI(){
   $('optStars').checked = !!S.hideStars; $('optStarsDet').checked = !!S.starsDet; $('optStarsDet').disabled = !S.hideStars; $('lStarsDet').classList.toggle('dis', !S.hideStars);
   q('#optBg button').forEach(b => b.classList.toggle('on', b.dataset.bg === (S.bg || 'creme')));
   q('.blk').forEach(f => f.classList.toggle('off', !d.on[f.dataset.bl]));
+  // coche du titre d'un bloc (l'enseignant, 08.11.2026 : « quand aucun exercice n'est coché, la coche du titre du bloc n'est pas visible. La coche
+  // apparait quand au moins un exercice est coché (donc si on veut tout cocher, on appuie sur tout, la coche du bloc ne permet plus de cocher tous
+  // les exercices du bloc mais juste de désactiver ou réactiver les exercices déjà cochés) » ; QCM : place gardée, le titre ne bouge pas). Blocs
+  // sans cases (Priorités des opérations, Écriture scientifique) : comme les autres (blkHas).
+  q('.blk').forEach(f => { const b = BLOCKS[f.dataset.bl], none = !blkHas(b, d);
+    f.classList.toggle('noit', none); f.querySelector('input[data-bl]').disabled = none; });
   const O = objectives(d), cnt = {}, per = {};
   O.forEach(o => { const t = BLOCKS[o.bl].tab; cnt[t] = (cnt[t] || 0) + 1; per[o.bl] = (per[o.bl] || 0) + 1; });
   q('.tab').forEach(t => t.querySelector('.nb').textContent = cnt[t.dataset.t] || '');
@@ -12293,7 +12467,8 @@ $('srch').addEventListener('input', doSearch);
 $('oSet').addEventListener('change', e => {
   const x = e.target, d = draft;
   if (x.id === 'srch') return;
-  if (x.dataset.bl){ const b = BLOCKS[x.dataset.bl]; d.on[b.id] = x.checked; if (x.checked){ if (b.items.length && !b.items.some(([j]) => d.it[j])) b.items.forEach(([j]) => d.it[j] = true); fixOpts(b, d); } }
+  if (x.dataset.bl){ const b = BLOCKS[x.dataset.bl];                 // coche du titre : désactive ou réactive les exercices cochés (« Tout » pour tout cocher)
+    if (!blkHas(b, d)) d.on[b.id] = false; else { if (b.id === 'sci') d.opt.sciSel = true; d.on[b.id] = x.checked; if (x.checked) fixOpts(b, d); } }
   else if (x.dataset.it){ const b = BLOCKS[ITEM_BLOCK[x.dataset.it]];
     if (!d.on[b.id]){ d.it[x.dataset.it] = true; d.on[b.id] = true; fixOpts(b, d); }       // bloc décoché (cases grisées) : un clic remet la case, cochée, dans les questions
     else { d.it[x.dataset.it] = x.checked; if (x.checked) fixOpts(b, d); else if (!b.items.some(([j]) => d.it[j])) d.on[b.id] = false; } }
@@ -12302,11 +12477,13 @@ $('oSet').addEventListener('change', e => {
     Object.values(BLOCKS).forEach(b => { if ((b.nd || []).includes(k)) (d.num[b.id] = d.num[b.id] || {})[k] = x.checked; }); }
   else if (x.id === 'optStars'){ S.hideStars = d.hideStars = x.checked; applyLook(); save(); }
   else if (x.id === 'optStarsDet'){ S.starsDet = d.starsDet = x.checked; applyLook(); save(); }
-  else if (x.dataset.op){ const k = x.dataset.op, b = BLOCKS[OPT_BLOCK[k]];
-    if (!d.on[b.id]){ d.opt[k] = true; d.on[b.id] = true; if (b.items.length && !b.items.some(([j]) => d.it[j])) b.items.forEach(([j]) => d.it[j] = true); }   // bloc grisé : un clic le remet, l'option cochée
+  else if (x.dataset.op){ const k = x.dataset.op, b = BLOCKS[OPT_BLOCK[k]], ex = !b.items.length;   // ex : Priorités des opérations, ses cases sont ses exercices
+    // aucun exercice coché (08.11.2026, QCM : « seulement l'option ») : l'option seule (else), sans cocher les exercices ; le titre reste sans coche
+    if (!d.on[b.id] && (ex || blkHas(b, d))){ d.opt[k] = true; d.on[b.id] = true; }   // bloc grisé : un clic le remet, l'option cochée ; une case de Priorités coche le bloc
     else d.opt[k] = x.checked;
-    if (k === 'nest' && d.opt.nest) d.opt.par = true; if (k === 'par' && !d.opt.par) d.opt.nest = false; }
-  else if (x.name === 'sciNeg'){ d.opt.sciNeg = x.value === '1'; d.on.sci = true; }
+    if (k === 'nest' && d.opt.nest) d.opt.par = true; if (k === 'par' && !d.opt.par) d.opt.nest = false;
+    if (ex && !blkHas(b, d)) d.on[b.id] = false; }                     // la dernière case décochée : le bloc se décoche (coche du titre cachée)
+  else if (x.name === 'sciNeg'){ d.opt.sciNeg = x.value === '1'; d.on.sci = true; d.opt.sciSel = true; }
   else if (x.name === 'two') d.two = x.value === 'two';             // deux questions : non (une question) ou oui ; et, à choisir même avec « non » (touche 8),
   else if (x.name === 'twoLv') d.twoSame = x.value === 'same';      // plus difficile à droite ou même difficulté (l'enseignant, 02.11.2026)
   $('setWarn').textContent = ''; syncUI();
@@ -12316,20 +12493,20 @@ $('oSet').addEventListener('click', e => {
   // écriture scientifique, bloc décoché (l'enseignant, 04.11.2026 : « on ne peut pas cliquer directement sur un exercice, on est forcé à faire d'abord
   // un clic sur le bloc ») : le rond déjà choisi ne donne pas d'évènement « change » ; un clic sur un rond remet le bloc, avec ce rond (comme une case grisée)
   const sr = e.target.matches && e.target.matches('input[name=sciNeg]') ? e.target : null;
-  if (sr && !draft.on.sci){ draft.opt.sciNeg = sr.value === '1'; draft.on.sci = true; $('setWarn').textContent = ''; syncUI(); return; }
+  if (sr && !draft.on.sci){ draft.opt.sciNeg = sr.value === '1'; draft.on.sci = true; draft.opt.sciSel = true; $('setWarn').textContent = ''; syncUI(); return; }
   const tr = e.target.closest('button[data-tr]');
   if (tr){ const b = BLOCKS[tr.dataset.b], all = tr.dataset.tr === 'all';             // Tout / Rien : objectifs et options du bloc (pas les cases « nombres »)
-    b.items.forEach(([j]) => draft.it[j] = all); (BLOCK_OPTS[b.id] || []).forEach(k => draft.opt[k] = all); if (b.id === 'sci' && all) draft.opt.sciNeg = true;
+    b.items.forEach(([j]) => draft.it[j] = all); (BLOCK_OPTS[b.id] || []).forEach(k => draft.opt[k] = all); if (b.id === 'sci' && all) draft.opt.sciNeg = true; if (b.id === 'sci') draft.opt.sciSel = all;
     draft.on[b.id] = all; $('setWarn').textContent = ''; syncUI(); return; }
   const bg = e.target.closest('button[data-bg]'); if (bg){ S.bg = draft.bg = bg.dataset.bg; applyLook(); save(); syncUI(); return; }
   const st = e.target.closest('button[data-step]');
   if (st){ const k = st.dataset.step, o = draft.opt, f = LIMS[k[0]] ? k[0] : '', a = f + 'nmin', b = f + 'nmax'; o[k] = Math.min(6, Math.max(2, (o[k] || 2) + Number(st.dataset.d)));
     if (o[a] > o[b]){ if (k === a) o[b] = o[a]; else o[a] = o[b]; }
-    if (f){ draft.on[LIMS[f].bl] = true; draft.it[LIMS[f].it] = true; } else draft.on.pri = true; $('setWarn').textContent = ''; syncUI(); return; }
+    if (f){ draft.on[LIMS[f].bl] = true; draft.it[LIMS[f].it] = true; } else if (blkHas(BLOCKS.pri, draft)) draft.on.pri = true; $('setWarn').textContent = ''; syncUI(); return; }
 });
 // Tout décocher (l'enseignant, 05.11.2026 : « il faudrait que ça décoche les exercices dans les blocs aussi, pas juste les blocs ») :
 // comme « Rien » dans chaque bloc (objectifs et options ; pas les cases « nombres » ni les ronds de l'écriture scientifique)
-$('bNone').onclick = () => { Object.values(BLOCKS).forEach(b => { b.items.forEach(([j]) => draft.it[j] = false); (BLOCK_OPTS[b.id] || []).forEach(k => draft.opt[k] = false); draft.on[b.id] = false; });
+$('bNone').onclick = () => { Object.values(BLOCKS).forEach(b => { b.items.forEach(([j]) => draft.it[j] = false); (BLOCK_OPTS[b.id] || []).forEach(k => draft.opt[k] = false); draft.on[b.id] = false; }); draft.opt.sciSel = false;
   $('setWarn').textContent = ''; syncUI(); };
 $('bApply').onclick = () => {
   const w = checkDraft(draft); if (w){ $('setWarn').textContent = w; return; }
@@ -12574,7 +12751,7 @@ var QR = (function(){
    « dans lien élèves si on clique dessus, ça pourrait permettre de coller un lien d'élève aussi » : champ « Reprendre un lien » (ses exercices
    cochés dans les réglages, son titre, ses étoiles, sa case FR) ; la fenêtre s'ouvre aussi sans exercice coché (pour coller un lien).
    Note du projet : QPC_PROJET_LIENS_ELEVES.md. */
-const QPC_VERSION = '2026-11-07';    // dossier de cette version sur le site (…/qpc/2026-11-07/) : à changer à chaque version mise en ligne
+const QPC_VERSION = '2026-11-08';    // dossier de cette version sur le site (…/qpc/2026-11-07/) : à changer à chaque version mise en ligne
 const QPC_BASE = 'https://outils-maths.github.io/qpc/';    // compte GitHub « outils-maths » (avec un s)
 const QPC_ONLINE = /(^|\.)github\.io$/i.test(location.hostname);    // ouverte depuis le site : seulement le mode élève (sans lien : un message)
 var STU = null;                       // mode élève (page ouverte par un lien élèves) ; null : page de l'enseignant
@@ -12727,7 +12904,7 @@ function linkShow(){                 // la fenêtre d'après LNK.P (null : aucun
 }
 function pToDraft(P){                // les exercices d'un lien dans le brouillon des réglages (avec leurs cases « nombres » et leurs options), rien d'autre
   const s = stateFromP(P), d = draft;
-  Object.values(BLOCKS).forEach(b => { const on = !!s.on[b.id]; d.on[b.id] = on; b.items.forEach(([j]) => d.it[j] = !!s.it[j]);
+  Object.values(BLOCKS).forEach(b => { const on = !!s.on[b.id]; d.on[b.id] = on; b.items.forEach(([j]) => d.it[j] = !!s.it[j]); if (b.id === 'sci') d.opt.sciSel = on;
     (BLOCK_OPTS[b.id] || []).forEach(k => d.opt[k] = on ? s.opt[k] : false);
     if (on){ if (b.nd) d.num[b.id] = clone(s.num[b.id]); (NUM_OPT[b.id] || []).forEach(k => d.opt[k] = s.opt[k]); } });
 }
@@ -12804,18 +12981,20 @@ function linkCheck(){                // ce lien marche-t-il déjà ? (la version
 }
 const CRC_T = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++){ let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
 function crc32(u){ let c = 0xFFFFFFFF; for (let i = 0; i < u.length; i++) c = CRC_T[(c ^ u[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
-function pngDpi(u, dpi){             // bloc pHYs juste après IHDR : la taille d'impression (Word : environ 3,5 cm)
+const QR_CM = 2.5;                   // côté du QR code enregistré en PNG (marge blanche comprise)
+function pngDpi(u, dpi){             // bloc pHYs juste après IHDR : la taille d'impression (Word, Insertion > Image : QR_CM)
   const ch = new Uint8Array(21), v = new DataView(ch.buffer), ppm = Math.round(dpi / .0254);
   v.setUint32(0, 9); ch.set([112, 72, 89, 115], 4); v.setUint32(8, ppm); v.setUint32(12, ppm); ch[16] = 1; v.setUint32(17, crc32(ch.subarray(4, 17)));
   const out = new Uint8Array(u.length + 21); out.set(u.subarray(0, 33)); out.set(ch, 33); out.set(u.subarray(33), 54); return out;
 }
-function qrPNG(q, copy){             // enregistrer : modules entiers, 300 dpi, environ 3,5 cm (413 px), jamais moins de 3 cm (354 px) ;
+function qrPNG(q, copy){             // enregistrer : modules entiers, au moins 300 px, 2,5 cm de côté (l'enseignant, 08.11.2026 : « si t'as la possibilité de faire
+  // plus petit c'est bien » ; avant : environ 3,5 cm) : la résolution (pHYs) donne la taille, l'image reste nette ;
   // copier (l'enseignant, 07.11.2026 : « Quand je copie colle le QR code sur word l'image est vraiment très grande ») : Word colle une image copiée à
   // 96 dpi sans lire sa résolution : une petite image (2 px par module, au moins 113 px = 3 cm), environ 3 à 3,5 cm
-  const n = q.size + 8, px = copy ? Math.max(2, Math.ceil(113 / n)) : Math.max(4, Math.ceil(354 / n), Math.round(413 / n)), c = document.createElement('canvas'); c.width = c.height = n * px;
+  const n = q.size + 8, px = copy ? Math.max(2, Math.ceil(113 / n)) : Math.max(5, Math.ceil(300 / n)), c = document.createElement('canvas'); c.width = c.height = n * px;
   const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.fillStyle = '#000';
   q.mods.forEach((r, y) => r.forEach((b, x) => { if (b) g.fillRect((x + 4) * px, (y + 4) * px, px, px); }));
-  return new Promise((ok, ko) => c.toBlob(b => b ? b.arrayBuffer().then(a => ok(new Blob([pngDpi(new Uint8Array(a), copy ? 96 : 300)], {type: 'image/png'})), ko) : ko(new Error('png')), 'image/png'));
+  return new Promise((ok, ko) => c.toBlob(b => b ? b.arrayBuffer().then(a => ok(new Blob([pngDpi(new Uint8Array(a), copy ? 96 : c.width / (QR_CM / 2.54))], {type: 'image/png'})), ko) : ko(new Error('png')), 'image/png'));
 }
 function flash(b, t){ if (!b.dataset.lab) b.dataset.lab = b.textContent; b.textContent = t; clearTimeout(b._ft); b._ft = setTimeout(() => b.textContent = b.dataset.lab, 1600); }
 function copyOld(t){ const a = document.createElement('textarea'); a.value = t; a.style.position = 'fixed'; a.style.opacity = '0'; document.body.appendChild(a); a.select();

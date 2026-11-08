@@ -4132,12 +4132,15 @@ const mulT = (A, B) => { const M = Object.assign({}, A[1]); Object.keys(B[1]).fo
 const facPar = ([c, m], i) => { const h = polyH([[c, m]]); return c < 0 ? '(' + h + ')' : h; };
 const kH = k => k[0] === 1 && mDeg(k[1]) ? mH(k[1]) : k[0] === -1 ? '−' + (mDeg(k[1]) ? mH(k[1]) : '') : polyH([k]);
 // double développement : flèches et facteurs, 1er terme en marron, 2e en turquoise (générateur : « Calcul littéral par poids » ci-dessous)
-function dev2Arcs(A, B){ const toks = [{t: '('}], ia = [], ib = [];
-  tokTerms(A, toks, ia); toks.push({t: ')'}, {t: '('}); tokTerms(B, toks, ib); toks.push({t: ')'});
+function dev2Arcs(A, B, kf, aft){ const toks = [], ia = [], ib = [];
+  if (kf && kf !== 1 && !aft) toks.push({t: kf === -1 ? '−' : fmtInt(kf)});            // nombre devant (08.11.2026) : écrit, sans flèche
+  toks.push({t: '('}); tokTerms(A, toks, ia); toks.push({t: ')'}, {t: '('}); tokTerms(B, toks, ib); toks.push({t: ')'});
+  if (kf && kf !== 1 && aft) toks.push({t: ' ∙ '}, {t: kf < 0 ? '(' + fmtInt(kf) + ')' : fmtInt(kf)});
   return arcExpr(toks, ib.map(j => [ia[0], j, BROWN]).concat(ib.map(j => [ia[1], j, TEAL]))); }
 /* =====================================================================
    Calcul littéral par poids (07.11.2026) : multiplication de monômes (réduire un monôme compris), addition et soustraction de monômes,
-   addition et soustraction de polynômes, développer (simple et double). Les identités remarquables et Factoriser : plus loin, inchangés.
+   addition et soustraction de polynômes, développer (simple et double) ; identités remarquables (développer) depuis le 08.11.2026, plus loin.
+   Factoriser : plus loin, pas encore par poids.
    L'enseignant (07.11.2026) : « calme un peu les calculs à faire sur les coefficients, à tous les niveaux. Regarde ce que tu as déjà mis en
    place pour la difficulté et améliorons tout ça avec un système de poids. » QCM (ses réponses) :
    - coefficients : les livrets, mais au plus un facteur de 6 à 9 par produit (7 ∙ 3y oui, 7 ∙ 8 non), ∙ 10 permis ; produits au plus 30 à ★,
@@ -4712,15 +4715,46 @@ function mdGen(lv){
   return Q ? mdBuild(Q, lv) : null;
 }
 
+/* ---------- nombre devant un produit de parenthèses (double développement et identités remarquables, 08.11.2026) ----------
+   L'enseignant (08.11.2026) : « on peut le passer à à partir de 3 étoiles : pour la double distributivité (mais qui rajouterai un gros poids),
+   un nombre devant la première parenthèse qui la multiplie (ou après la dernière parenthèse). tu peux en mettre pour les identités remarquables
+   aussi. (à nouveau, gros poids) » (avant : identités seulement, à ★★★★, une fois sur trois). QCM : nombres 2 à 5, et avec les relatifs −2 à −5
+   et un moins seul ; « 3 sur 10 à ★★★, 1 sur 4 à ★★★★ […] considère le comme une limite plutôt qu'une fréquence à suivre » ; détail : le
+   produit d'abord, puis le nombre.
+   Dès ★★★, poids 0,8 (négatif 0,15 de plus, écrit après 0,15 de plus). Limite par séance, stricte (la question comprise) : 30 % des questions
+   de la case à ★★★, 25 % à ★★★★ (identités : les quatre cases ensemble) ; visé environ 20 % et 17 %, chance corrigée d'après la séance (comme
+   fas3Want) ; compté par genOne quand la question est prise (q.cnt : pre + 'n' + niveau, et pre + 'k' + niveau avec un nombre ; pre : 'm2',
+   'ir'). Écrit après une fois sur trois (comme le facteur de Développer), jamais pour un moins seul. Le dernier produit (le nombre fois un
+   coefficient du produit réduit, kfOk) : l'enseignant, 08.11.2026 : « 3*16 ce n'est pas non plus hyper dur donc c'est ok, pareil pour 3*25 ou
+   3*20 par exemple. ou 4*25, 4*20 » ; puis « 5*25 c'est ok » : coefficient au plus 25 (avec un nombre de 2 à 5, produit au plus 125 :
+   3(x + 4)², 5(x + 5)² oui ; avant : les livrets, 3 ∙ 16 refusé). */
+const KF_P = {3: .2, 4: .17}, KF_MAX = {3: .3, 4: .25};
+function kfWant(pre, lv){
+  const p = KF_P[lv]; if (!p) return false;
+  const nk = TALLY[pre + 'k' + lv] || 0, n = TALLY[pre + 'n' + lv] || 0;
+  if (nk + 1 > KF_MAX[lv] * (n + 1) + 1e-9) return false;
+  return chance(Math.min(.95, Math.max(.05, p + .25 * (p * n - nk))));
+}
+const kfDraw = () => { const kf = NEG && chance(.4) ? (chance(.3) ? -1 : -ri(2, 5)) : ri(2, 5); return {kf, aft: kf !== -1 && chance(1 / 3)}; };
+const kfCnt = (pre, lv, has) => lv < 3 ? null : has ? [pre + 'n' + lv, pre + 'k' + lv] : pre + 'n' + lv;
+const kfOk = (R0, kf) => Math.abs(kf) === 1 || R0.every(([c]) => Number.isInteger(c) && Math.abs(c) <= 25);     // 5 ∙ 25 permis (n° 28)
+// écriture avec le nombre : devant, 3(…)(…), −(…)² ; après, (…)(…) ∙ 3, (…)² ∙ (−2) ; inner : une ligne du détail, entre parenthèses
+const kfWrap = (h, kf, aft, inner) => !kf || kf === 1 ? h : aft ? (inner ? '(' + h + ')' : h) + ' ∙ ' + (kf < 0 ? '(' + fmtInt(kf) + ')' : fmtInt(kf))
+  : (kf === -1 ? '−' : fmtInt(kf)) + (inner ? '(' + h + ')' : h);
+
 /* ---------- double développement ----------
-   (A)(B), parfois M0 − (A)(B). Poids : coefficient devant x (ou x²) 0,3 par facteur ; terme négatif 0,15 (au plus trois) ; nombre d'abord
-   (3 + x) 0,1 ; six produits (x + 1)(x² + 2x + 3) 0,8 ; deux lettres 0,8 ; un moins devant le produit 1 ; produit avec un facteur de 6 à 9
-   0,05 ; termes du milieu de signes contraires 0,1 ; somme du milieu au-delà de 10 0,1 ; terme du milieu 1 ou −1 (x² − x − 6) 0,05 */
-const M2_W = {lead: .3, negT: .15, cfirst: .1, six: .8, two: .8, minus: 1, big: .05, opp: .1, msum: .1, res1: .05};
+   (A)(B), parfois M0 − (A)(B) ou k(A)(B), (A)(B) ∙ k. Poids : coefficient devant x (ou x²) 0,3 par facteur ; terme négatif 0,15 (au plus trois) ;
+   nombre d'abord (3 + x) 0,1 ; six produits (x + 1)(x² + 2x + 3) 0,8 ; deux lettres 0,8 ; un moins devant le produit 1 ; produit avec un facteur
+   de 6 à 9 0,05 ; termes du milieu de signes contraires 0,1 ; somme du milieu au-delà de 10 0,1 ; terme du milieu 1 ou −1 (x² − x − 6) 0,05 ;
+   nombre devant ou après le produit 0,8, négatif 0,15 de plus, écrit après 0,15 de plus (08.11.2026) */
+const M2_W = {lead: .3, negT: .15, cfirst: .1, six: .8, two: .8, minus: 1, big: .05, opp: .1, msum: .1, res1: .05, kf: .8, kneg: .15, kaft: .15};
 const M2_BAND = {1: [0, .3], 2: [.3, .7], 3: [.7, 1.15], 4: [1.15, 3.2]};
-// décidé d'abord : six produits 35 % à ★★★ ; à ★★★★ toujours une des trois : six produits, deux lettres ou un moins devant (un tiers chacune)
+// décidé d'abord : un nombre devant (dès ★★★, limite par séance : kfWant) ; sinon six produits 35 % à ★★★ ; à ★★★★ une des trois : six produits,
+// deux lettres ou un moins devant (un tiers chacune)
 const M2_SIX = .35;
-function m2Var(lv){ if (lv < 4) return {six: lv === 3 && chance(M2_SIX)}; const k = pick(['six', 'two', 'minus']); return {[k]: true}; }
+function m2Var(lv){
+  if (lv >= 3 && kfWant('m2', lv)) return kfDraw();
+  if (lv < 4) return {six: lv === 3 && chance(M2_SIX)}; const k = pick(['six', 'two', 'minus']); return {[k]: true}; }
 function m2Draw(lv, W){
   const v = V1(), w = other(v), m = {[v]: 1}, m2 = {[v]: 2}, n = {[w]: 1}, cap = LW_PCAP[lv];
   const sg = p => NEG && chance(p) ? -1 : 1, cb = () => ri(1, lv <= 2 ? 6 : 7), np = [0, .25, .35, .4, .45][lv];
@@ -4739,11 +4773,12 @@ function m2Draw(lv, W){
   // nombre d'abord (3 + x) : dès ★★, 15 % par facteur à deux termes
   const ord = P => P.length === 2 && lv >= 2 && !M0 && !mDeg(P[1][1]) && chance(.15) && (NEG || P[1][0] > 0) ? [P[1], P[0]] : P;
   const Ad = ord(A), Bd = ord(B);
-  const P = Ad.flatMap(a => Bd.map(b => mulT(a, b))), PR = polyNorm(P), E = M0 ? M0.concat(PR.map(([c, mm]) => [-c, mm])) : P, R = polyNorm(E);
-  if (!R.length || NKIND(E) > 4) return null;
+  const kf = W.kf || 1, P = Ad.flatMap(a => Bd.map(b => mulT(a, b))), PR = polyNorm(P), E = M0 ? M0.concat(PR.map(([c, mm]) => [-c, mm])) : P, R0 = polyNorm(E);
+  const R = kf === 1 ? R0 : polyNorm(R0.map(([c, mm]) => [kf * c, mm]));
+  if (!R.length || NKIND(E) > 4 || !kfOk(R0, kf, cap)) return null;
   if (!NEG && (R[0][0] < 0 || (M0 && PR.some(([c]) => c < 0)))) return null;
   if (!lwResAll(P, LW_SCAP[lv]) || (M0 && !lwResAll(E, LW_SCAP[lv]))) return null;     // termes du milieu, puis avec M0 : au plus 15 / 20
-  return {A: Ad, B: Bd, M0, P, E, R};
+  return {A: Ad, B: Bd, M0, P, E, R0, R, kf, aft: !!W.aft};
 }
 function m2Feat(Q){
   const {A, B, M0, P, R} = Q, f = {};
@@ -4751,7 +4786,7 @@ function m2Feat(Q){
   f.lead = lead(A) + lead(B); f.negT = Math.min(3, A.concat(B).filter(([c]) => c < 0).length);
   f.cfirst = [A, B].filter(F => !mDeg(F[0][1])).length;
   f.six = A.length + B.length > 4 ? 1 : 0; f.two = new Set(A.concat(B).flatMap(([, mm]) => Object.keys(mm))).size >= 2 ? 1 : 0;
-  f.minus = M0 ? 1 : 0;
+  f.minus = M0 ? 1 : 0; f.kf = Q.kf !== 1 ? 1 : 0; f.kneg = Q.kf < 0 ? 1 : 0; f.kaft = Q.aft ? 1 : 0;
   f.big = Math.min(3, A.reduce((s, a) => s + B.filter(b => Math.abs(a[0]) !== 1 && Math.abs(b[0]) !== 1 && [a[0], b[0]].some(c => Math.abs(c) >= 6 && Math.abs(c) <= 9)).length, 0));
   const ks = [...new Set(P.map(([, mm]) => lwKey(mm)))].filter(k => P.filter(([, mm]) => lwKey(mm) === k).length > 1);      // sortes qui se réduisent
   const cs = k => P.filter(([, mm]) => lwKey(mm) === k).map(([c]) => c);
@@ -4762,18 +4797,21 @@ function m2Feat(Q){
 }
 function m2Score(Q){ const f = m2Feat(Q); Q.f = f; return lwSc(M2_W, f); }
 function m2Build(Q, lv){
-  const {A, B, M0, P, E, R} = Q, PR = polyNorm(P);
-  const prodH = '(' + polyH(A) + ')(' + polyH(B) + ')', qh = (M0 ? polyH(M0) + ' − ' : '') + prodH;
+  const {A, B, M0, P, E, R0, R, kf, aft} = Q, PR = polyNorm(P), kw = h => kfWrap(h, kf, aft, true);
+  const prodH = '(' + polyH(A) + ')(' + polyH(B) + ')', qh = (M0 ? polyH(M0) + ' − ' : '') + kfWrap(prodH, kf, aft);
   const prods = A.flatMap((a, i) => B.map((b, j) => (i || j ? ' + ' : '') + H(i ? 'cM' : 'cK', facPar(a, 1)) + ' ∙ ' + facPar(b, 1))).join('');
-  return litQ(qh, R, () => { const rows = M0 ? [polyH(M0) + ' − (' + prods + ')', polyH(M0) + ' − (' + polyH(PR) + ')', polyH(E, true)] : [prods, polyH(P, true)];
-      const G = polyH(grouped(E), true); if (G !== rows[rows.length - 1]) rows.push(G);
-      return dev2Arcs(A, B) + steps(qh, rows.filter((r, i, a) => !i || r !== a[i - 1]).concat([ANS(polyH(R))])); },
-    {con: LITC.dev, qe: e => (M0 ? pEval(M0, e) - pEval(A, e) * pEval(B, e) : pEval(A, e) * pEval(B, e)), chk: {lit: true, lw: {k: 'm2', lv, sc: Q.sc, f: Q.f, d: {A, B, M0}}}});
+  return litQ(qh, R, () => { const rows = M0 ? [polyH(M0) + ' − (' + prods + ')', polyH(M0) + ' − (' + polyH(PR) + ')', polyH(E, true)] : [kw(prods), kw(polyH(P, true))];
+      const G = M0 ? polyH(grouped(E), true) : kw(polyH(grouped(E), true)); if (G !== rows[rows.length - 1]) rows.push(G);
+      if (kf !== 1) rows.push(kw(polyH(R0)));                                        // réduit dans la parenthèse, puis le nombre distribué
+      return dev2Arcs(A, B, kf, aft) + steps(qh, rows.filter((r, i, a) => !i || r !== a[i - 1]).concat([ANS(polyH(R))])); },
+    {con: LITC.dev, qe: e => (M0 ? pEval(M0, e) - pEval(A, e) * pEval(B, e) : kf * pEval(A, e) * pEval(B, e)), chk: {lit: true, lw: {k: 'm2', lv, sc: Q.sc, f: Q.f, d: {A, B, M0, kf, aft}}}});
 }
 function m2Gen(lv){
   const V = m2Var(lv);
   const Q = lwPick(t => m2Draw(lv, V), m2Score, M2_BAND[lv], 700);
-  return Q ? m2Build(Q, lv) : null;
+  if (!Q) return null;
+  const q = m2Build(Q, lv), c = kfCnt('m2', lv, Q.kf !== 1); if (c) q.cnt = c;
+  return q;
 }
 GL('l_mulm', [1, 2, 3, 4], lv => mmGen(lv));
 GL('l_mono', [1, 2, 3, 4], lv => mmGen(lv, 'sep'));          // case fondue dans « multiplication » (anciens liens : LINK_ALIAS) : l'écriture séparée
@@ -7010,7 +7048,29 @@ GL('l_sub', [1, 2, 3, 4], lv => {
   }
 });
 
-/* ---------- identités remarquables (développer) ---------- */
+/* ---------- identités remarquables (développer), par points (08.11.2026) ----------
+   L'enseignant (08.11.2026) : un nombre devant la 1re parenthèse (ou après la dernière) dès ★★★, « gros poids » (bloc « Nombre devant un produit »,
+   avec le double développement) ; QCM : identités « par points dès maintenant » (Factoriser plus tard, inchangé) ; proposition de poids et de règles
+   acceptée (« Oui, vas-y ») ; carrés « jusqu'à 15², avec plus de poids pour les grands carrés » (lu ainsi : 7² à 10² 0,3 ; 11² et 12² 0,45 ;
+   13² à 15² 0,6 ; le double 2 ∙ 13 reste permis) ; « pour la présence de virgule et de deux lettres, augmente le poids de 30 % » (0,5 → 0,65 ;
+   0,6 → 0,78).
+   Poids (IR_W) : 2x au lieu de x 0,35, 3x à 5x 0,1 de plus (co, co3) ; écriture pas dans l'ordre de la formule 0,15 ((3 + x)², (x + 4)(4 − x),
+   (3 + x)(x + 5)) ; moins devant 0,4 ((−x − 3)², (−x + 3)², (−2 + x)(x + 7)) ; deux lettres 0,78 ; virgule 0,65 ; carré au-delà de 6² 0,3, de
+   10² 0,15 de plus, de 12² 0,15 de plus ; 2ab au-delà de 20 0,1 ; (x + a)(x + b) : un nombre négatif 0,15, deux 0,2 (n1, n2) ; signes contraires
+   0,15 ; 2x dans les deux facteurs 0,6, 3x 0,1 de plus (k2, k3) ; ab au-delà de 20 0,15 ; terme du milieu au-delà de 10 0,15 ; nombre devant 0,8,
+   négatif 0,15 de plus, écrit après 0,15 de plus.
+   Plages : (a + b)², (a − b)², (a + b)(a − b) : ★ moins de 0,3 ; ★★ 0,3 à 0,7 ; ★★★ 0,7 à 1,15 ; ★★★★ 1,15 et plus (comme le double) ;
+   (x + a)(x + b), qui a moins à gérer : ★ moins de 0,3 ; ★★ 0,3 à 0,6 ; ★★★ 0,6 à 1 ; ★★★★ 1 et plus (sinon sans relatifs, ★★★ et
+   ★★★★ ne s'atteignent pas).
+   Règles à part : virgule dès ★★ (avec la case, 20 %) ; moins devant dès ★★★ (relatifs, 30 %) ; deux lettres dès ★★★ (25 %) ; nombre devant
+   dès ★★★ (limite par séance : kfWant) ; 2x dans (x + a)(x + b) dès ★★★. Décidé d'abord (irVar) : l'ordre (IRV), et à ★★★★ une sorte lourde :
+   nombre devant, sinon deux lettres, moins devant ou virgule ((a + b)², (a − b)², (a + b)(a − b)) ; 2x ((x + a)(x + b) ; aussi à ★★★ sans les
+   relatifs ou une fois sur deux avec).
+   Nombres : coefficient de la lettre 1 à 5, premier avec le nombre ; carrés jusqu'à 15² ; 2ab : le double seul jusqu'à 2 ∙ 15, sinon les livrets
+   (lwProd, au plus 30 / 40 / 60) ; virgule : 0,5 ; 1,5 ; 0,1 ; 0,2 ; 0,3 ; (x + a)(x + b) : a et b au plus 10, ab par les livrets, terme du
+   milieu au plus 15 / 20 ; avec un nombre devant : le dernier produit, coefficient au plus 25 (kfOk ; 5 ∙ 25 permis).
+   Détail : l'écriture de la formule, l'identité, puis le nombre distribué. Réponse : degré décroissant ; un binôme qui commencerait par un moins
+   s'écrit 9 − x² (posFirst). */
 const monoH = (t, par) => { const h = polyH([t]); return par && mDeg(t[1]) && (Math.abs(t[0]) !== 1 || mDeg(t[1]) > 1 || Object.keys(t[1]).filter(v => t[1][v]).length > 1) ? '(' + h + ')' : h; };   // (2x)² ; x² ; 3²
 const GA = H('cA', '<i>a</i>'), GB = H('cB', '<i>b</i>'), SQ2 = '<sup>2</sup>';
 const parH = T => '(' + polyH(T) + ')';
@@ -7018,27 +7078,13 @@ const parH = T => '(' + polyH(T) + ')';
 // formule (termes ou facteurs dans un autre ordre), de plus en plus souvent avec les étoiles ; avec les relatifs, dès ★★★, aussi (−x + 3)², (x + 4)(−4 + x)…
 const IRV = [0, .3, .45, .55, .6];
 const posFirst = R => R.length && R[0][0] < 0 && R.some(t => t[0] > 0) ? R.filter(t => t[0] > 0).concat(R.filter(t => t[0] < 0)) : R;   // 9 − x² plutôt que −x² + 9
-function irQ(kind, A, B, lv, kf){ // 1 : (a + b)², 2 : (a − b)², 3 : (a + b)(a − b) — a, b monômes positifs ; kf : facteur devant (★★★★, 25.10.2026 : 2(x + 3)², −(x − 4)²)
-  kf = kf || 1;
-  if (chance(IRV[lv])) [A, B] = [B, A];                                                       // a = 3, b = x : (3 + x)², (3 − x)², (3 + x)(3 − x)
-  const nA = [-A[0], A[1]], nB = [-B[0], B[1]], sq_ = t => mulT(t, t), AB2 = mulT([2, {}], mulT(A, B));
-  const E = kind === 1 ? [sq_(A), AB2, sq_(B)] : kind === 2 ? [sq_(A), [-AB2[0], AB2[1]], sq_(B)] : [sq_(A), [-sq_(B)[0], sq_(B)[1]]];
-  const R0 = posFirst(polyNorm(E)), R = kf === 1 ? R0 : posFirst(polyNorm(R0.map(([c, m]) => [kf * c, m])));
-  const K_ = kfH(kf), can = K_ + (kind === 3 ? parH([A, B]) + parH([A, nB]) : parH(kind === 1 ? [A, B] : [A, nB]) + SQ2);    // écriture de la formule
-  let qh = can;
-  if (kind === 3){ const f1 = chance(IRV[lv]) ? [B, A] : [A, B], f2 = NEG && lv >= 3 && chance(IRV[lv]) ? [nB, A] : [A, nB];      // (x + 3)(3 − x), (3 − x)(x + 3)…
-    qh = K_ + (chance(.4) ? parH(f2) + parH(f1) : parH(f1) + parH(f2)); }
-  else if (NEG && lv >= 3 && kf === 1 && chance(.3)) qh = (kind === 1 ? parH([nA, nB]) : parH([nB, A])) + SQ2;               // (−x − 3)² = (x + 3)² ; (−x + 3)² = (3 − x)²
-  const a_ = H('cA', monoH(A, true)), b_ = H('cB', monoH(B, true));
-  const gen = kind === 1 ? '(' + GA + ' + ' + GB + ')' + SQ2 + ' = ' + GA + SQ2 + ' + 2' + GA + GB + ' + ' + GB + SQ2 : kind === 2 ? '(' + GA + ' − ' + GB + ')' + SQ2 + ' = ' + GA + SQ2 + ' − 2' + GA + GB + ' + ' + GB + SQ2
-    : '(' + GA + ' + ' + GB + ')(' + GA + ' − ' + GB + ') = ' + GA + SQ2 + ' − ' + GB + SQ2;
-  const r1 = kind === 3 ? a_ + SQ2 + ' − ' + b_ + SQ2 : a_ + SQ2 + (kind === 1 ? ' + ' : ' − ') + '2 ∙ ' + H('cA', monoH(A)) + ' ∙ ' + H('cB', monoH(B)) + ' + ' + b_ + SQ2;
-  const inK = h => kf === 1 ? h : K_ + '(' + h + ')';                                         // l'identité d'abord, dans la parenthèse ; puis on distribue le facteur
-  const rows = (qh !== can ? [can] : []).concat([inK(r1)], polyH(E) !== polyH(R0) ? [inK(polyH(E))] : [], kf !== 1 ? [inK(polyH(R0))] : [], [ANS(polyH(R))]);
-  return {q: '<span>' + qh + '</span>', key: 'ir' + kind + qh, a: polyH(R), poly: R, con: LITC.dev, chk: {lit: true}, det: () => DIV(gen, 'gr') + steps(qh, rows),
-    qe: e => { const a = pEval([A], e), b = pEval([B], e); return kf * (kind === 3 ? (a + b) * (a - b) : (a + (kind === 1 ? b : -b)) ** 2); }};
-}
+const irOrd = R => R.length === 2 ? posFirst(R) : R;                                      // 9 − x² ; mais −2x² + 12x − 18 (pas 12x − 2x² − 18)
+const IR_W = {co: .35, co3: .1, ord: .15, neg: .4, l2: .78, dec: .65, sq7: .3, sq11: .15, sq13: .15, p2: .1,
+  n1: .15, n2: .05, opp: .15, k2: .6, k3: .1, ab: .15, mid: .15, kf: .8, kneg: .15, kaft: .15};
+const IR_BAND = {1: [0, .3], 2: [.3, .7], 3: [.7, 1.15], 4: [1.15, 4]}, IR_BAND4 = {1: [0, .3], 2: [.3, .6], 3: [.6, 1], 4: [1, 4]};
+const IR_DEC = .2, IR_L2 = .25, IR_NEG = .3, IR_K2 = .5;
 const irV = () => pick(['x', 'x', 'y', 'n']), irW = v => v === 'x' ? 'y' : 'x';      // pas a ni b : ce sont les lettres de l'identité
+// Factoriser (firQ) : ses nombres, inchangés (pas encore par points)
 function irAB(lv){ const v = irV(), m = {[v]: 1};
   if (lv === 1) return [[1, m], [ri(1, 6), {}]];
   if (lv === 2) return chance(.6) ? [[1, m], [ri(4, 12), {}]] : [[2, m], pick([[1, {}], [3, {}], [5, {}]])];
@@ -7046,31 +7092,114 @@ function irAB(lv){ const v = irV(), m = {[v]: 1};
   if (DEC && chance(.35)) return [[pick([1, 2]), m], [pick([.5, 1.5, .1, .2, .3]), {}]];
   let a, b; do { a = ri(1, 5); b = ri(1, 6); } while (gcd(a, b) !== 1); return [[a, m], [b, {[irW(v)]: 1}]];
 }
-// ★★★★ : une fois sur trois, un facteur devant l'identité (2(x + 3)², 3(x + 2)(x − 2) ; avec les relatifs −(x − 4)², −2(…)) : on applique l'identité, puis on distribue
-const irKF = lv => lv === 4 && chance(.33) ? pick(NEG ? [2, 3, -1, -2] : [2, 3]) : 1;
-const irAB1 = () => { const v = irV(), a = pick([1, 1, 2]); return [[a, {[v]: 1}], [a === 2 ? pick([1, 3, 5]) : ri(1, 6), {}]]; };
-['l_ir1', 'l_ir2', 'l_ir3'].forEach((id, i) => GL(id, [1, 2, 3, 4], lv => { const kf = irKF(lv), [A, B] = kf === 1 ? irAB(lv) : irAB1(); return irQ(i + 1, A, B, lv, kf); }));
-GL('l_ir4', [1, 2, 3, 4], lv => { // (x + a)(x + b) = x² + (a + b)x + ab ; aussi (3 + x)(x + 5), (−2 + x)(x + 7) ; ★★★★ : (2x + 3)(2x − 5), la même identité avec 2x, ou 2(x + 3)(x + 5)
-  const v = irV(), m = {[v]: 1}; let a, b;
-  if (lv === 1){ a = ri(1, 6); b = ri(1, 6); }
-  else if (lv === 2){ a = ri(1, 9); b = NEG ? -ri(1, 9) : ri(2, 12); }
-  else if (lv === 3){ a = NEG ? -ri(1, 9) : ri(3, 15); b = NEG ? sgn() * ri(1, 12) : ri(3, 15); }
-  else { a = cf(2, 12, .5); b = cf(2, 15, .5); }
-  const kf = irKF(lv), k = lv === 4 && kf === 1 && chance(.4) ? pick([2, 3]) : 1, Xt = [k, m];
-  if (kf !== 1){ a = cf(1, 6, .5); b = cf(1, 7, .5); }
-  if (k > 1){ a = cf(1, 7, .5); b = cf(1, 9, .5); if (gcd(Math.abs(a), k) !== 1 || gcd(Math.abs(b), k) !== 1) return null; }      // pas (2x − 14)
+// décidé d'abord : ordre, nombre devant, sorte lourde
+function irVar(kind, lv){
+  const W = {ord: chance(IRV[lv])};
+  if (lv >= 3 && kfWant('ir', lv)){ Object.assign(W, kfDraw());
+    // (x + a)(x + b) a peu d'autres poids : à ★★★, un nombre négatif s'écrit devant (−2(x + 3)(x + 1) ; écrit après, il dépasserait ★★★) ;
+    // à ★★★★, sans les relatifs (ou 4 fois sur 10 avec), 2x dans les deux facteurs (2(2x + 1)(2x + 3)), sinon il n'atteint pas ★★★★
+    if (kind === 4){ if (lv === 3 && W.kf < 0) W.aft = false; if (lv === 4) W.k2 = !NEG || chance(.4); }
+    return W; }
+  if (kind === 4){
+    if (lv >= 3){ W.k2 = lv === 4 || !NEG || chance(IR_K2); W.neg = NEG && (lv === 3 ? !W.k2 : chance(IR_NEG)); }
+    return W;
+  }
+  if (lv === 4){ const s = pick(['l2'].concat(NEG ? ['neg'] : [], DEC ? ['dec'] : [])); W[s] = true; if (s === 'dec') W.ord = true; }
+  else if (lv >= 2 && DEC && chance(IR_DEC)) W.dec = true;
+  else if (lv === 3){ W.l2 = chance(IR_L2); W.neg = NEG && !W.l2 && chance(IR_NEG); }
+  return W;
+}
+const irB = () => { const r = Math.random(); return r < .55 ? ri(1, 6) : r < .8 ? ri(7, 10) : ri(11, 15); };     // le nombre : surtout 1 à 6
+// (a + b)², (a − b)², (a + b)(a − b) ; X, Y : a et b de la formule (a = 3, b = x pour (3 + x)²)
+function irDraw(kind, lv, W){
+  const v = irV(), m = {[v]: 1}, cap = LW_PCAP[lv], kf = W.kf || 1, neg = !!W.neg;
+  let a, b, B;
+  if (W.dec){ a = pick(lv >= 3 ? [1, 2, 3] : [1, 1, 2]); b = pick([.5, 1.5, .1, .2, .3]); B = [b, {}]; }
+  else if (W.l2){ a = ri(1, 5); b = ri(1, 6); if (gcd(a, b) !== 1) return null; B = [b, {[irW(v)]: 1}]; }
+  else { a = lwDist([.5, .2, .15, .1, .05]) + 1; b = irB(); if (gcd(a, b) !== 1) return null; B = [b, {}]; }
+  if (!W.dec && kind < 3 && a > 1 && !lwProd([2, a, b], cap)) return null;          // 2ab : les livrets (le double seul : jusqu'à 2 ∙ 15)
+  const A = [a, m]; let X = A, Y = B, ord = false, canb, qb;
+  if (kind < 3){
+    const sw = neg ? chance(.5) : !!W.ord; if (sw) [X, Y] = [Y, X];
+    const nX = [-X[0], X[1]], nY = [-Y[0], Y[1]];
+    canb = parH(kind === 1 ? [X, Y] : [X, nY]) + SQ2;
+    qb = neg ? (kind === 1 ? parH([nX, nY]) : parH([nY, X])) + SQ2 : canb;           // (−x − 3)² = (x + 3)² ; (−3 + x)², (−x + 3)²
+    ord = sw && !neg;
+  } else {
+    let sw = false, f1r = false, fo = false;
+    if (neg){ sw = chance(.5); f1r = chance(.5); fo = chance(.4); }
+    else if (W.ord) do { sw = chance(.5); f1r = chance(.5); fo = chance(.5); } while (!sw && !f1r && !fo);
+    if (sw) [X, Y] = [Y, X];
+    const nY = [-Y[0], Y[1]], f1 = f1r ? [Y, X] : [X, Y], f2 = neg ? [nY, X] : [X, nY];      // (x + 3)(3 − x), (3 − x)(x + 3), (−3 + x)(x + 3)…
+    canb = parH([X, Y]) + parH([X, nY]); qb = fo ? parH(f2) + parH(f1) : parH(f1) + parH(f2);
+    ord = !neg && (sw || f1r || fo);
+  }
+  const sq = t => mulT(t, t), XY2 = mulT([2, {}], mulT(X, Y));
+  const E = kind === 1 ? [sq(X), XY2, sq(Y)] : kind === 2 ? [sq(X), [-XY2[0], XY2[1]], sq(Y)] : [sq(X), [-sq(Y)[0], sq(Y)[1]]];
+  const R0 = irOrd(polyNorm(E)), R = kf === 1 ? R0 : irOrd(polyNorm(R0.map(([c, mm]) => [kf * c, mm])));
+  if (!kfOk(R0, kf, cap)) return null;
+  return {kind, X, Y, a, B, n: W.dec || W.l2 ? 0 : b, kf, aft: !!W.aft, neg, ord, l2: !!W.l2, dec: !!W.dec, canb, qb, E, R0, R};
+}
+// (x + a)(x + b) ; k : (2x + 3)(2x − 5)
+const irM = lv => lv === 1 ? ri(1, 6) : chance(.6) ? ri(1, 6) : ri(7, 10);
+function ir4Draw(lv, W){
+  const v = irV(), m = {[v]: 1}, cap = LW_PCAP[lv], kf = W.kf || 1, k = W.k2 ? pick([2, 2, 3]) : 1;
+  let a = irM(lv), b = irM(lv);
+  if (NEG){ if (chance(.4)) a = -a; if (chance(.4)) b = -b; if (W.neg && a > 0 && b > 0){ if (chance(.5)) a = -a; else b = -b; } }
   if (a === b || a + b === 0) return null;
-  const fac = c => chance(IRV[lv]) && (c > 0 || (NEG && lv >= 3)) ? [[c, {}], Xt] : [Xt, [c, {}]];                     // 3 + x, ou x + 3
-  const K_ = kfH(kf), can = K_ + parH([Xt, [a, {}]]) + parH([Xt, [b, {}]]), qh = K_ + parH(fac(a)) + parH(fac(b));
-  const R0 = polyNorm([[k * k, {[v]: 2}], [(a + b) * k, m], [a * b, {}]]), R = kf === 1 ? R0 : polyNorm(R0.map(([c, mm]) => [kf * c, mm])), pa = x => x < 0 ? '(' + fmtInt(x) + ')' : fmtInt(x), X_ = '<i>' + v + '</i>';
+  if (k > 1 && (gcd(a, k) !== 1 || gcd(b, k) !== 1)) return null;                     // pas (2x − 14)
+  if (!lwProd([a, b], cap) || !lwProd([k, a], cap) || !lwProd([k, b], cap) || !lwRes([k * a, k * b], LW_SCAP[lv])) return null;
+  const Xt = [k, m], ng = [a < 0, b < 0], fst = [false, false];                          // fst : le nombre d'abord
+  if (W.neg){ const i = ng[0] && ng[1] ? (chance(.5) ? 0 : 1) : ng[0] ? 0 : 1; fst[i] = true; }      // (−2 + x)
+  if (W.ord){ const ps = [0, 1].filter(i => !ng[i]); ps.forEach(i => { if (chance(.5)) fst[i] = true; }); if (ps.length && !ps.some(i => fst[i])) fst[pick(ps)] = true; }  // (3 + x)
+  const fac = (c, i) => fst[i] ? [[c, {}], Xt] : [Xt, [c, {}]];
+  const R0 = polyNorm([[k * k, {[v]: 2}], [(a + b) * k, m], [a * b, {}]]), R = kf === 1 ? R0 : polyNorm(R0.map(([c, mm]) => [kf * c, mm]));
+  if (!kfOk(R0, kf, cap)) return null;
+  return {kind: 4, v, k, a, b, kf, aft: !!W.aft, neg: fst.some((x, i) => x && ng[i]), ord: fst.some((x, i) => x && !ng[i]),
+    canb: parH([Xt, [a, {}]]) + parH([Xt, [b, {}]]), qb: parH(fac(a, 0)) + parH(fac(b, 1)), R0, R};
+}
+function irFeat(Q){
+  const f = {kf: Q.kf !== 1 ? 1 : 0, kneg: Q.kf < 0 ? 1 : 0, kaft: Q.aft ? 1 : 0, ord: Q.ord ? 1 : 0, neg: Q.neg ? 1 : 0};
+  if (Q.kind === 4){ const {a, b, k} = Q;
+    Object.assign(f, {n1: a < 0 || b < 0 ? 1 : 0, n2: a < 0 && b < 0 ? 1 : 0, opp: a * b < 0 ? 1 : 0, k2: k > 1 ? 1 : 0, k3: k > 2 ? 1 : 0,
+      ab: Math.abs(a * b) > 20 ? 1 : 0, mid: Math.abs(k * (a + b)) > 10 ? 1 : 0});
+    return f; }
+  const {a, n} = Q;
+  return Object.assign(f, {co: a > 1 ? 1 : 0, co3: a > 2 ? 1 : 0, l2: Q.l2 ? 1 : 0, dec: Q.dec ? 1 : 0, sq7: n > 6 ? 1 : 0, sq11: n > 10 ? 1 : 0,
+    sq13: n > 12 ? 1 : 0, p2: Q.kind < 3 && Math.abs(2 * a * Q.B[0]) > 20 ? 1 : 0});
+}
+function irScore(Q){ const f = irFeat(Q); Q.f = f; return lwSc(IR_W, f); }
+function irBuild(Q, lv){
+  const {kind, X, Y, kf, aft, canb, qb, E, R0, R} = Q, w = (h, inner) => kfWrap(h, kf, aft, inner), qh = w(qb), can = w(canb), inK = h => w(h, true);
+  const a_ = H('cA', monoH(X, true)), b_ = H('cB', monoH(Y, true));
+  const gen = kind === 1 ? '(' + GA + ' + ' + GB + ')' + SQ2 + ' = ' + GA + SQ2 + ' + 2' + GA + GB + ' + ' + GB + SQ2 : kind === 2 ? '(' + GA + ' − ' + GB + ')' + SQ2 + ' = ' + GA + SQ2 + ' − 2' + GA + GB + ' + ' + GB + SQ2
+    : '(' + GA + ' + ' + GB + ')(' + GA + ' − ' + GB + ') = ' + GA + SQ2 + ' − ' + GB + SQ2;
+  const r1 = kind === 3 ? a_ + SQ2 + ' − ' + b_ + SQ2 : a_ + SQ2 + (kind === 1 ? ' + ' : ' − ') + '2 ∙ ' + H('cA', monoH(X)) + ' ∙ ' + H('cB', monoH(Y)) + ' + ' + b_ + SQ2;
+  const rows = (qh !== can ? [can] : []).concat([inK(r1)], polyH(E) !== polyH(R0) ? [inK(polyH(E))] : [], kf !== 1 ? [inK(polyH(R0))] : [], [ANS(polyH(R))]);
+  const q = {q: '<span>' + qh + '</span>', key: 'ir' + kind + qh, a: polyH(R), poly: R, con: LITC.dev, det: () => DIV(gen, 'gr') + steps(qh, rows),
+    chk: {lit: true, ir: {kind, lv, sc: Q.sc, f: Q.f, kf, aft, X, Y}},
+    qe: e => { const x = pEval([X], e), y = pEval([Y], e); return kf * (kind === 3 ? (x + y) * (x - y) : (x + (kind === 1 ? y : -y)) ** 2); }};
+  const c = kfCnt('ir', lv, kf !== 1); if (c) q.cnt = c;
+  return q;
+}
+function ir4Build(Q, lv){
+  const {v, k, a, b, kf, aft, canb, qb, R0, R} = Q, w = (h, inner) => kfWrap(h, kf, aft, inner), qh = w(qb), can = w(canb), inK = h => w(h, true);
+  const pa = x => x < 0 ? '(' + fmtInt(x) + ')' : fmtInt(x), X_ = '<i>' + v + '</i>';
   const kx = (k === 1 ? '' : k) + X_, sqX = k === 1 ? X_ + SQ2 : '(' + kx + ')' + SQ2, midX = k === 1 ? ')' + X_ : ') ∙ ' + kx;
-  const inK = h => kf === 1 ? h : K_ + '(' + h + ')';
   const gen = '(' + X_ + ' + ' + GA + ')(' + X_ + ' + ' + GB + ') = ' + X_ + SQ2 + ' + (' + GA + ' + ' + GB + ')' + X_ + ' + ' + GA + GB;
-  return {q: '<span>' + qh + '</span>', key: 'ir4' + qh, a: polyH(R), poly: R, con: LITC.dev, chk: {lit: true},
+  const q = {q: '<span>' + qh + '</span>', key: 'ir4' + qh, a: polyH(R), poly: R, con: LITC.dev, chk: {lit: true, ir: {kind: 4, lv, sc: Q.sc, f: Q.f, kf, aft, k, a, b}},
     det: () => DIV(gen, 'gr') + steps(qh, (qh !== can ? [can] : []).concat([inK(sqX + ' + (' + H('cA', fmtInt(a)) + ' + ' + H('cB', pa(b)) + midX + ' + ' + H('cA', pa(a)) + ' ∙ ' + H('cB', pa(b)))],
       kf !== 1 ? [inK(polyH(R0))] : [], [ANS(polyH(R))])),
     qe: e => kf * (k * e[v] + a) * (k * e[v] + b)};
-});
+  const c = kfCnt('ir', lv, kf !== 1); if (c) q.cnt = c;
+  return q;
+}
+function irGen(kind, lv){
+  const W = irVar(kind, lv), draw = W2 => kind === 4 ? ir4Draw(lv, W2) : irDraw(kind, lv, W2), band = (kind === 4 ? IR_BAND4 : IR_BAND)[lv];
+  const Q = lwPick(t => draw(t < 400 ? W : Object.assign({}, W, {ord: chance(.5)})), irScore, band, 800);      // après 400 essais, l'ordre se relâche
+  return Q ? (kind === 4 ? ir4Build(Q, lv) : irBuild(Q, lv)) : null;
+}
+['l_ir1', 'l_ir2', 'l_ir3', 'l_ir4'].forEach((id, i) => GL(id, [1, 2, 3, 4], lv => irGen(i + 1, lv)));
 
 /* ---------- factoriser : mise en évidence, identité remarquable ---------- */
 // mise en évidence (25.10.2026 : plus à gérer avec les étoiles) : ★ un nombre, 4x + 12 = 4(x + 3) ; ★★ deux lettres (6x + 9y) ou la lettre (x² + 5x = x(x + 5)) ;

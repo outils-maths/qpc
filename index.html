@@ -384,7 +384,7 @@ body.tall .sbox{height:96%}                 /* fenêtre en hauteur (écran parta
 .blk.off .bb{opacity:.5}
 .blk.noit .bn input{visibility:hidden}     /* aucun exercice coché : coche du titre invisible, place gardée (08.11.2026) */
 .blk.noit .bn{cursor:default}
-.blk.noit .nd{opacity:.5}     /* aucun exercice choisi : décimaux, relatifs, fractions grisés (08.11.2026) */
+.blk.noit .nd,.blk.nond .nd{opacity:.5}     /* aucun exercice choisi : décimaux, relatifs, fractions grisés (08.11.2026) ; nond : Priorités des opérations décoché sans case (coche du titre visible, n° 29) */
 .tp input[type=checkbox],.tp input[type=radio]{accent-color:var(--tc, var(--accent))}
 .opts.key,.opts.key .lab2{font-weight:700;color:var(--tk)}
 .searching .tp{display:block}
@@ -733,6 +733,111 @@ label.lexn input{width:1.05em;height:1.05em;margin-top:.15em;flex:none;accent-co
 body.sturnd .lvb{display:none !important}
 .lnote{margin:.6em 0 0;padding:.45em .7em;border-radius:.45em;background:var(--sel-soft);color:var(--sel-k);font-size:.88em;line-height:1.35}
 .lnote:empty{display:none}
+/* fenêtre « Lien/impression élèves » : la feuille à imprimer (n° 30, 08.11.2026 ; préfixe ip) */
+@media (max-width:1100px) and (min-width:701px){ #bLink .lbx{display:none} #bLink{margin-right:.4em} }   /* écran partagé (960 × 1080) : « Lien/impression », le bas des réglages reste sur une ligne */
+.ipsec{grid-column:1 / -1;border-top:1px solid var(--line);padding-top:.7em;display:flex;flex-direction:column;gap:.6em;min-width:0}
+.lempty .ipsec{display:none}
+.ipt{display:flex;flex-wrap:wrap;align-items:center;gap:.5em .8em}
+.ipt h3{margin:0 auto 0 0;font-size:1.05em}
+.ipt .btn{padding:.35em .8em}
+.ipsec.ipnone .ipbody,.ipsec.ipnone .ipt .btn{display:none}
+.ipnone .ipt::after{content:"Coche au moins un exercice.";color:var(--muted);font-size:.9em}
+.ipbody{display:flex;flex-direction:column;gap:.6em;min-width:0}
+.ipo{display:flex;flex-wrap:wrap;align-items:center;gap:.45em 1.4em;font-size:.92em}
+.ipf{display:inline-flex;align-items:center;gap:.4em;white-space:nowrap}
+.ipf input[type="text"]{font:inherit;width:7.5em;padding:.25em .5em;border:1px solid var(--line);border-radius:.4em}
+.ipf input[type="checkbox"]{width:1.05em;height:1.05em;accent-color:var(--sel);margin:0}
+.ipnum{display:inline-flex;align-items:center;gap:.3em}
+.ipnum button,.ipw button{width:1.65em;height:1.65em;border:1px solid var(--line);border-radius:.35em;background:#fff;color:var(--ink);font:inherit;font-weight:700;line-height:1;cursor:pointer;padding:0}
+.ipnum button:hover,.ipw button:hover:not(:disabled){border-color:var(--sel);background:var(--sel-soft)}
+.ipw button:disabled{opacity:.35;cursor:default}
+.ipnum output{min-width:1.3em;text-align:center;font-weight:700}
+.ipl{font-weight:700;color:var(--muted);font-size:.85em}
+.ipx{display:grid;grid-template-columns:minmax(0, 1fr) minmax(9em, 16em) auto;gap:.4em 1em;align-items:center}
+.ipxh{font-weight:700;color:var(--muted);font-size:.85em;border-bottom:1px solid var(--line);padding-bottom:.15em}
+.ipxn{min-width:0;overflow-wrap:anywhere;font-size:.95em;line-height:1.3}
+.ipxq{color:var(--muted);font-size:.82em;margin-left:.5em;white-space:nowrap}
+.ipxq.ipfull{color:#a14f00;white-space:normal}
+.ipw{display:inline-flex;align-items:center;gap:.3em;font-size:.9em;white-space:nowrap}
+.ipw span{min-width:6.3em;text-align:center}
+.ipns{color:var(--muted);font-size:.85em}
+.ipbar{position:relative;height:1.95em;border:1px solid #9aa3ad;border-radius:.35em;background:#fff;touch-action:none;cursor:col-resize;-webkit-user-select:none;user-select:none}
+.ipseg{position:absolute;top:0;bottom:0;display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap;font-size:.76em;font-weight:700;color:#36404c}
+.ipseg .stars{font-size:.92em;letter-spacing:-.04em;color:#7a5a00;line-height:1}
+.ipbs{height:2.55em}
+.ipbs .ipseg{flex-direction:column;line-height:1.05;gap:.05em}
+.iph{position:absolute;top:-.3em;bottom:-.3em;width:0;border-left:2px solid #36404c;margin-left:-1px;pointer-events:none}
+.iph::after{content:"";position:absolute;left:-4px;top:50%;width:6px;height:1em;margin-top:-.5em;border-radius:2px;background:#36404c}
+.ipmsg{color:#a14f00;font-size:.85em}
+.ipmsg:empty{display:none}
+.iphint{color:var(--muted);font-size:.8em;line-height:1.35}
+.ipv{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;gap:16px;padding:12px;background:#e6e9ed;border-radius:.5em;min-height:3em}
+.ip-pw{position:relative;flex:none;overflow:hidden;background:#fff;box-shadow:0 1px 5px rgba(0,0,0,.3);cursor:zoom-in}
+.ipv.ipbig .ip-pw{cursor:zoom-out}
+.ipxr{display:contents}
+@media (max-width:700px){ .ipx{grid-template-columns:minmax(0, 1fr)} .ipxh:nth-child(n+2){display:none}
+  .ipxr{display:grid;grid-template-columns:minmax(0, 1fr) auto;gap:.3em .6em;align-items:center;padding-bottom:.45em;border-bottom:1px solid var(--line)}
+  .ipxr .ipxs{grid-column:1 / -1;grid-row:2} .ipxr .ipw{grid-column:2;grid-row:1} .ipw span{min-width:4.6em} }
+/* la feuille (aperçu, mesures et impression) : mm et pt, comme sur le papier */
+.ip-pg{position:absolute;left:0;top:0;width:210mm;height:296.5mm;background:#fff;color:#000;transform-origin:0 0;overflow:hidden}
+.ip-sheet{font-family:Arial, "Helvetica Neue", Helvetica, "Liberation Sans", sans-serif;font-size:11pt;line-height:1.3;color:#000;text-align:left;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.ip-sheet .ip-a{position:absolute;left:15mm;width:180mm}
+.ip-hdr{display:flex;justify-content:space-between;align-items:flex-end;gap:5mm;height:5.5mm;font-size:9pt;color:#404040;border-bottom:.6pt solid #7f7f7f;padding-bottom:.5mm;white-space:nowrap;overflow:hidden}
+.ip-hdr.ip-h1{border-bottom:0}
+.ip-tb{display:flex;align-items:flex-start;gap:4mm}
+.ip-tt{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;text-align:center;border-top:1.4pt solid #000;border-bottom:1.4pt solid #000;
+  font-family:"Century Gothic", "URW Gothic", "URW Gothic L", "Avenir Next", Avenir, Futura, "Trebuchet MS", Arial, sans-serif;font-weight:700;font-size:16pt;line-height:1.2;padding:1mm 3mm;overflow-wrap:anywhere}
+.ip-qr{flex:none;display:flex;flex-direction:column;align-items:center}
+.ip-qr svg{display:block;width:100%;height:auto}
+.ip-qrc{font-size:7.5pt;line-height:1.15;text-align:center;margin-top:.5mm}
+.ip-h{font-family:"Century Gothic", "URW Gothic", "URW Gothic L", "Avenir Next", Avenir, Futura, "Trebuchet MS", Arial, sans-serif;font-weight:700;font-size:12.5pt;line-height:1.25;border-bottom:.9pt solid #000;padding-bottom:.5mm}
+.ip-hn{margin-right:.15em}
+.ip-cc{padding-top:1.4mm}
+.ip-row{display:flex;column-gap:6mm;align-items:flex-start}
+.ip-row>div{flex:none}
+.ip-cell{display:flex;align-items:flex-start;min-width:0}
+.ip-let{flex:none;font-weight:700;white-space:nowrap;line-height:1.3}
+.ip-let .stars{font-size:6pt;line-height:1;color:#404040;letter-spacing:-.02em;font-weight:400}
+.ip-sheet .qa{display:flex;flex-direction:column;align-items:flex-start;gap:1.3mm;font-size:26pt;width:auto;flex:1 1 auto;min-width:0;line-height:1.3}
+.ip-sheet .qa>.con,.ip-sheet .qa>.dat,.ip-sheet .qa>.calc{font-size:11pt}
+.ip-sheet .con,.ip-sheet .con.big{color:#000;font-weight:400;white-space:normal;max-width:100%}
+.ip-sheet .dat{white-space:normal;max-width:100%}
+.ip-sheet .dat .trp{font-size:1em;max-width:100%}
+.ip-sheet .calc{font-weight:400;column-gap:.28em}
+.ip-sheet .calc .phr{font-size:1em;max-width:75mm;text-align:left;line-height:1.5}
+.ip-sheet .calc .wd{font-size:1em}
+.ip-sheet .frac{font-size:.92em}
+.ip-sheet .qbox{color:transparent;border-bottom:1pt dotted #000;min-width:12mm;line-height:1.3}
+.ip-sheet td .qbox{min-width:8mm}
+.ip-sheet .fig{line-height:0}
+.ip-ans{border:.8pt solid #000;padding:1.6mm 3mm 2mm;font-size:9pt;line-height:1.35}
+.ip-at{font-weight:700;font-size:10pt;margin-bottom:.8mm}
+.ip-acs{display:flex;column-gap:2.5mm;align-items:stretch}
+.ip-ac{flex:none}
+.ip-ac+.ip-ac{border-left:.5pt solid #bfbfbf;padding-left:2.5mm}
+.ip-ag{display:flex;align-items:flex-start}
+.ip-ag+.ip-ag{margin-top:.9mm}
+.ip-an{flex:none;width:5.5mm;font-weight:700}
+.ip-ais{display:flex;flex-wrap:wrap;column-gap:2.5mm;row-gap:.4mm;min-width:0}
+.ip-ai{flex:none;white-space:nowrap}
+.ip-ai>b{margin-right:.6mm}
+.ip-sheet .ip-sd{display:flex;align-items:flex-start;column-gap:4mm}
+.ip-sheet .ip-sl{display:flex;flex-direction:column;align-items:flex-start;gap:1.3mm}
+.ip-sheet .ip-sl>.dat{font-size:11pt}
+.ip-sheet .ip-sr{display:flex;flex-direction:column;align-items:flex-start;gap:1.3mm;min-width:0}
+.ip-sheet .ip-sr>.dat,.ip-sheet .ip-sr>.calc{font-size:11pt}
+.ip-ft{position:absolute;left:0;right:0;text-align:center;font-size:9pt}
+#ipMeas{position:absolute;left:-15000px;top:0;visibility:hidden;pointer-events:none}
+#ipHost{display:none}
+@media print{
+  html.ipprint,html.ipprint body{height:auto !important;min-height:0 !important;overflow:visible !important;background:#fff !important}
+  html.ipprint body{display:block !important}
+  html.ipprint body>*:not(#ipHost){display:none !important}
+  html.ipprint #ipHost{display:block !important}
+  html.ipprint .ip-pw{width:210mm !important;height:296.5mm !important;margin:0 !important;box-shadow:none !important;break-after:page;page-break-after:always}
+  html.ipprint .ip-pw:last-child{break-after:auto;page-break-after:auto}
+  html.ipprint .ip-pg{transform:none !important}
+}
 </style>
 </head>
 <body>
@@ -860,7 +965,7 @@ body.sturnd .lvb{display:none !important}
     </div>
     <div class="boxfoot">
       <span class="warn" id="setWarn"></span>
-      <button class="btn" id="bLink" title="Un lien et un QR code pour que tes élèves s'entraînent sur les exercices cochés">Lien élèves</button>
+      <button class="btn" id="bLink" title="Lien/impression élèves : un lien et un QR code pour que tes élèves s'entraînent sur les exercices cochés, et une feuille à imprimer">Lien/impression<span class="lbx"> élèves</span></button>
       
 <button class="btn" id="bNone" title="Décocher toutes les questions, dans tous les onglets (touche ⟵ effacer)">Tout décocher<span class="kh kbs">⟵</span></button>
       <button class="btn on" id="bApply" title="Nouvelles questions avec ces réglages (touche Entrée)">Nouvelles questions avec ces réglages<span class="kh">Entrée</span></button>
@@ -868,10 +973,10 @@ body.sturnd .lvb{display:none !important}
   </div>
 </div>
 
-<!-- Lien élèves (06.11.2026) : titre, étoiles permises de chaque exercice, QR code et lien -->
+<!-- Lien élèves (06.11.2026) : titre, étoiles permises de chaque exercice, QR code et lien ; feuille à imprimer (n° 30, 08.11.2026) -->
 <div class="over" id="oLink">
-  <div class="box lbox" role="dialog" aria-label="Lien élèves">
-    <div class="boxhead"><h2 class="title">Lien élèves</h2><button class="hbtn" data-close>✕</button></div>
+  <div class="box lbox" role="dialog" aria-label="Lien/impression élèves">
+    <div class="boxhead"><h2 class="title">Lien/impression élèves</h2><button class="hbtn" data-close>✕</button></div>
     <div class="lbody">
       <div class="lleft">
         <label class="ltit"><span class="lab2">Titre</span><input type="text" id="lTitle" maxlength="80" placeholder="Ex. Épreuve 4 : périmètres, aires, Pythagore" autocomplete="off"><button type="button" class="lsug lsoff" id="lSug" title="Écrire ce titre dans la case">Choisir ce titre ?</button></label>
@@ -889,6 +994,24 @@ body.sturnd .lvb{display:none !important}
         <div class="lbtns"><button class="btn on" id="lCopy">Copier le lien</button><button class="btn" id="lTry" title="Ouvrir le mode élève, comme tes élèves le verront">Essayer</button></div>
         <div class="lmsg" id="lMsg"></div>
       </div>
+      <section class="ipsec" id="ipSec" aria-label="Feuille à imprimer">
+        <div class="ipt"><h3>Feuille à imprimer</h3><button type="button" class="btn" id="ipNew" title="D'autres questions sur la feuille">Nouvelles questions</button><button type="button" class="btn on" id="ipPrint" title="La fenêtre d'impression : ton imprimante, ou « Enregistrer au format PDF »">Imprimer / PDF</button></div>
+        <div class="ipbody">
+          <div class="ipo">
+            <label class="ipf">Classe <input type="text" id="ipCls" maxlength="24" placeholder="facultatif" autocomplete="off" spellcheck="false"></label>
+            <span class="ipf">Pages <span class="ipnum"><button type="button" data-ipp="-1" aria-label="Une page de moins">−</button><output id="ipPg">2</output><button type="button" data-ipp="1" aria-label="Une page de plus">+</button></span></span>
+            <label class="ipf"><input type="checkbox" id="ipAns" checked> Réponses à la fin</label>
+            <label class="ipf"><input type="checkbox" id="ipQr" checked> Code QR</label>
+            <label class="ipf"><input type="checkbox" id="ipSt"> Étoiles à côté des questions</label>
+          </div>
+          <div class="ipl" id="ipShareL">Place de chaque exercice sur la feuille <span class="iphint">(glisse les séparations)</span></div>
+          <div id="ipShare"></div>
+          <div class="ipx" id="ipEx"></div>
+          <div class="ipmsg" id="ipMsg"></div>
+          <div class="ipv" id="ipPrev" title="Clic : une page en grand"></div>
+          <div class="iphint">« Imprimer / PDF » ouvre la fenêtre d'impression : choisis ton imprimante, ou « Enregistrer au format PDF ».</div>
+        </div>
+      </section>
     </div>
   </div>
 </div>
@@ -12373,11 +12496,18 @@ function buildSettingsUI(){
   mathify($('oSet'));
 }
 // coche du titre d'un bloc visible seulement s'il a un exercice choisi (08.11.2026). Blocs sans cases (l'enseignant, 08.11.2026 : « tu te trompes pour
-// priorité des opérations et écriture scientifique : on peut bien faire comme les autres blocs ») : Priorités des opérations, ses cases (parenthèses,
-// puissances…) ; Écriture scientifique, un rond choisi (opt.sciSel : un rond choisi, gardé quand on décoche le titre ; pas dans les liens).
+// priorité des opérations et écriture scientifique : on peut bien faire comme les autres blocs ») : Écriture scientifique, un rond choisi (opt.sciSel :
+// un rond choisi, gardé quand on décoche le titre ; pas dans les liens). Priorités des opérations : voir TITLE_OPEN.
+// Coche du titre toujours visible (l'enseignant, 08.11.2026, n° 29 : « Remet la coche à gauche de priorités des opérations. C'est vrai que si on veut
+// ni parenthèse, puissance, racine etc. ce n'était plus possible ») : Priorités des opérations, le bloc seul est déjà un exercice (les quatre
+// opérations), ses cases (parenthèses, puissances…) s'y ajoutent. La coche du titre coche ou décoche le bloc sans toucher aux cases (pas de fixOpts :
+// cochée sans case, des calculs sans parenthèses ni puissances, racines, barre de fraction) ; une case cochée coche le bloc ; la dernière case
+// décochée laisse le bloc coché ; − / + du limiteur cochent le bloc (comme les limiteurs des blocs Fractions et Nombres relatifs) ; cases « nombres »
+// grisées quand le bloc est décoché sans case (classe nond).
+const TITLE_OPEN = new Set(['pri']);
 function blkHas(b, d){
   if (b.items.length) return b.items.some(([j]) => d.it[j]);
-  if (BLOCK_OPTS[b.id]) return BLOCK_OPTS[b.id].some(k => d.opt[k]);
+  if (BLOCK_OPTS[b.id]) return BLOCK_OPTS[b.id].some(k => d.opt[k]) || (TITLE_OPEN.has(b.id) && !!d.on[b.id]);
   return !!(d.on[b.id] || d.opt[b.id + 'Sel']);
 }
 function syncUI(){
@@ -12399,9 +12529,9 @@ function syncUI(){
   // coche du titre d'un bloc (l'enseignant, 08.11.2026 : « quand aucun exercice n'est coché, la coche du titre du bloc n'est pas visible. La coche
   // apparait quand au moins un exercice est coché (donc si on veut tout cocher, on appuie sur tout, la coche du bloc ne permet plus de cocher tous
   // les exercices du bloc mais juste de désactiver ou réactiver les exercices déjà cochés) » ; QCM : place gardée, le titre ne bouge pas). Blocs
-  // sans cases (Priorités des opérations, Écriture scientifique) : comme les autres (blkHas).
-  q('.blk').forEach(f => { const b = BLOCKS[f.dataset.bl], none = !blkHas(b, d);
-    f.classList.toggle('noit', none); f.querySelector('input[data-bl]').disabled = none; });
+  // sans cases : Écriture scientifique comme les autres (blkHas) ; Priorités des opérations : coche toujours visible (TITLE_OPEN, n° 29).
+  q('.blk').forEach(f => { const b = BLOCKS[f.dataset.bl], none = !blkHas(b, d), open = TITLE_OPEN.has(b.id);
+    f.classList.toggle('noit', none && !open); f.classList.toggle('nond', none && open); f.querySelector('input[data-bl]').disabled = none && !open; });
   const O = objectives(d), cnt = {}, per = {};
   O.forEach(o => { const t = BLOCKS[o.bl].tab; cnt[t] = (cnt[t] || 0) + 1; per[o.bl] = (per[o.bl] || 0) + 1; });
   q('.tab').forEach(t => t.querySelector('.nb').textContent = cnt[t.dataset.t] || '');
@@ -12596,8 +12726,9 @@ $('srch').addEventListener('input', doSearch);
 $('oSet').addEventListener('change', e => {
   const x = e.target, d = draft;
   if (x.id === 'srch') return;
-  if (x.dataset.bl){ const b = BLOCKS[x.dataset.bl];                 // coche du titre : désactive ou réactive les exercices cochés (« Tout » pour tout cocher)
-    if (!blkHas(b, d)) d.on[b.id] = false; else { if (b.id === 'sci') d.opt.sciSel = true; d.on[b.id] = x.checked; if (x.checked) fixOpts(b, d); } }
+  if (x.dataset.bl){ const b = BLOCKS[x.dataset.bl], open = TITLE_OPEN.has(b.id);   // coche du titre : désactive ou réactive les exercices cochés (« Tout » pour tout cocher)
+    if (!open && !blkHas(b, d)) d.on[b.id] = false;                  // Priorités des opérations (open) : coche ou décoche le bloc, cases gardées telles quelles
+    else { if (b.id === 'sci') d.opt.sciSel = true; d.on[b.id] = x.checked; if (x.checked && !open) fixOpts(b, d); } }
   else if (x.dataset.it){ const b = BLOCKS[ITEM_BLOCK[x.dataset.it]];
     if (!d.on[b.id]){ d.it[x.dataset.it] = true; d.on[b.id] = true; fixOpts(b, d); }       // bloc décoché (cases grisées) : un clic remet la case, cochée, dans les questions
     else { d.it[x.dataset.it] = x.checked; if (x.checked) fixOpts(b, d); else if (!b.items.some(([j]) => d.it[j])) d.on[b.id] = false; } }
@@ -12606,12 +12737,11 @@ $('oSet').addEventListener('change', e => {
     Object.values(BLOCKS).forEach(b => { if ((b.nd || []).includes(k)) (d.num[b.id] = d.num[b.id] || {})[k] = x.checked; }); }
   else if (x.id === 'optStars'){ S.hideStars = d.hideStars = x.checked; applyLook(); save(); }
   else if (x.id === 'optStarsDet'){ S.starsDet = d.starsDet = x.checked; applyLook(); save(); }
-  else if (x.dataset.op){ const k = x.dataset.op, b = BLOCKS[OPT_BLOCK[k]], ex = !b.items.length;   // ex : Priorités des opérations, ses cases sont ses exercices
+  else if (x.dataset.op){ const k = x.dataset.op, b = BLOCKS[OPT_BLOCK[k]], ex = !b.items.length;   // ex : Priorités des opérations (bloc sans exercices : ses cases s'ajoutent au bloc, TITLE_OPEN)
     // aucun exercice coché (08.11.2026, QCM : « seulement l'option ») : l'option seule (else), sans cocher les exercices ; le titre reste sans coche
     if (!d.on[b.id] && (ex || blkHas(b, d))){ d.opt[k] = true; d.on[b.id] = true; }   // bloc grisé : un clic le remet, l'option cochée ; une case de Priorités coche le bloc
     else d.opt[k] = x.checked;
-    if (k === 'nest' && d.opt.nest) d.opt.par = true; if (k === 'par' && !d.opt.par) d.opt.nest = false;
-    if (ex && !blkHas(b, d)) d.on[b.id] = false; }                     // la dernière case décochée : le bloc se décoche (coche du titre cachée)
+    if (k === 'nest' && d.opt.nest) d.opt.par = true; if (k === 'par' && !d.opt.par) d.opt.nest = false; }   // Priorités : la dernière case décochée laisse le bloc coché (n° 29)
   else if (x.name === 'sciNeg'){ d.opt.sciNeg = x.value === '1'; d.on.sci = true; d.opt.sciSel = true; }
   else if (x.name === 'two') d.two = x.value === 'two';             // deux questions : non (une question) ou oui ; et, à choisir même avec « non » (touche 8),
   else if (x.name === 'twoLv') d.twoSame = x.value === 'same';      // plus difficile à droite ou même difficulté (l'enseignant, 02.11.2026)
@@ -12631,7 +12761,8 @@ $('oSet').addEventListener('click', e => {
   const st = e.target.closest('button[data-step]');
   if (st){ const k = st.dataset.step, o = draft.opt, f = LIMS[k[0]] ? k[0] : '', a = f + 'nmin', b = f + 'nmax'; o[k] = Math.min(6, Math.max(2, (o[k] || 2) + Number(st.dataset.d)));
     if (o[a] > o[b]){ if (k === a) o[b] = o[a]; else o[a] = o[b]; }
-    if (f){ draft.on[LIMS[f].bl] = true; draft.it[LIMS[f].it] = true; } else if (blkHas(BLOCKS.pri, draft)) draft.on.pri = true; $('setWarn').textContent = ''; syncUI(); return; }
+    if (f){ draft.on[LIMS[f].bl] = true; draft.it[LIMS[f].it] = true; } else draft.on.pri = true;   // limiteur de Priorités : coche le bloc (n° 29)
+    $('setWarn').textContent = ''; syncUI(); return; }
 });
 // Tout décocher (l'enseignant, 05.11.2026 : « il faudrait que ça décoche les exercices dans les blocs aussi, pas juste les blocs ») :
 // comme « Rien » dans chaque bloc (objectifs et options ; pas les cases « nombres » ni les ronds de l'écriture scientifique)
@@ -13099,8 +13230,8 @@ function linkEff(){                 // le lien sans les exercices décochés dan
 function linkDraw(){
   const E = LNK.E = linkEff(), ok = pObjs(E).length > 0;
   ['lCopyImg', 'lPng', 'lCopy', 'lTry'].forEach(id => $(id).disabled = !ok);
-  if (!ok){ LNK.url = ''; LNK.qr = null; $('lQr').innerHTML = '<p class="lnone lqn">Coche au moins un exercice.</p>'; $('lUrl').textContent = ''; return; }
-  LNK.url = linkURL(E); LNK.qr = QR.make(LNK.url, 'M'); $('lQr').innerHTML = qrSVG(LNK.qr); $('lUrl').textContent = LNK.url; }
+  if (!ok){ LNK.url = ''; LNK.qr = null; $('lQr').innerHTML = '<p class="lnone lqn">Coche au moins un exercice.</p>'; $('lUrl').textContent = ''; ipSync(); return; }
+  LNK.url = linkURL(E); LNK.qr = QR.make(LNK.url, 'M'); $('lQr').innerHTML = qrSVG(LNK.qr); $('lUrl').textContent = LNK.url; ipSync(); }
 function linkCheck(){                // ce lien marche-t-il déjà ? (la version de cette page en ligne, sinon la dernière version en ligne) ; la place du
                                      // message est réservée (.lmsg) : la fenêtre ne grandit pas quand la réponse arrive (l'enseignant, 07.11.2026)
   const t = Date.now(), img = (u, ok, ko) => { const i = new Image(); i.onload = ok; i.onerror = ko; i.src = u + '?' + t; }, say = m => { if (LNK) $('lMsg').textContent = m; };
@@ -13174,6 +13305,432 @@ $('lPng').onclick = () => qrPNG(LNK.qr).then(b => { const a = document.createEle
   document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 3000); });
 $('lTry').onclick = () => { if (LNK.url) window.open(location.href.split('#')[0] + '#' + linkFrag(LNK.E), '_blank'); };
 $('bLink').onclick = () => linkOpen();
+
+/* =====================================================================
+   Feuille à imprimer (n° 30, 08.11.2026), dans la fenêtre « Lien/impression élèves »
+   L'enseignant : « sur gomaths.ch on peut aussi imprimer des questions … via la fenêtre lien élèves, avoir un bouton qui amène sur
+   une nouvelle fenêtre qui génère un pdf imprimable dont les questions sont celles sélectionnées ? Et où on pourrait choisir le
+   nombre de pages, la présence ou non d'un correctif en bas, la distribution d'étoiles (combien de % d'exos par nombre d'étoile),
+   la distribution des questions (si on a deux exos, combien de place sur le pdf dédiée à chaque exo) ». Puis : pas de nom ni de
+   date dans l'en-tête ; le titre (celui du lien) et la classe, facultative (« si on met pas il n'y aura pas marqué "classe" ») ;
+   les réponses à la fin, dans un encadré comme dans ses fiches de révision (« c'est les réponses, pas un corrigé détaillé ») ;
+   la place pour répondre sans les détails pas essentiels (« par exemple, faire les figures pour les questions de
+   quadrilatères ») ; pas son nom (« ça peut servir aux collègues ») ; un code QR, option cochée par défaut ; « pas besoin de
+   marquer "Exercice" : tu peux marquer 1), 2), 3), etc., le thème (comme dans ma fiche de tutorat) » ; les élèves n'ont pas le
+   PDF, seulement le lien ; le PDF par la fenêtre d'impression du navigateur (« tant que c'est possible sur windows et mac et
+   linux ») ; le bouton devient « Lien/impression élèves » ; « Les options d'impression peuvent être sur la même fenêtre que celle
+   où on choisit les étoiles etc. […] (on peut scroller un peu, pas grave) ».
+   QCM : une répartition des étoiles par exercice ; QR code à droite du titre, avec « Entraîne-toi en ligne » dessous ; barres à
+   glisser (pas de 5 %) ; place pour répondre automatique, avec − / + par exercice.
+   Mise en page : A4, marges de 15 mm ; titre entre deux traits noirs (comme ses fiches) ; « 1) » et le thème, soulignés d'un
+   trait (comme les parties de son tutorat) ; a), b)… en gras ; pointillés de la largeur de la réponse ; encadré « Réponses » en
+   bas de la dernière page (comme ses fiches) ; « Page X sur Y » ; questions d'un exercice de la plus facile à la plus difficile
+   (instructions, A3). Les pages se remplissent : une ligne de questions de plus à l'exercice le plus en retard sur sa part, tant
+   que tout tient, puis la place libre de chaque page va à la place pour répondre de ses lignes.
+   Le tirage se fait dans une séance à part (USED, TALLY… de la classe gardés puis remis : ipRun) : la feuille ne change rien
+   aux questions de la classe. Rien n'est gardé d'une ouverture de la page à l'autre.
+   ===================================================================== */
+const IP_PX = 96 / 25.4;                                         // px CSS par mm
+const IP_W = 210, IP_H = 297, IP_MX = 15, IP_CW = IP_W - 2 * IP_MX;      // A4 ; marges gauche et droite ; largeur utile (mm)
+const IP_HT = 8, IP_TOP2 = 17.5, IP_BOT = IP_H - 17.5;            // en-tête dès 8 mm du bord ; contenu de 17,5 mm à 279,5 mm ; pied de page à 8 mm du bas
+const IP_GX = 5, IP_GR = 2.5, IP_GC = 6, IP_GA = 5;               // écarts (mm) : avant un exercice, sous une ligne de questions, entre deux colonnes, au-dessus des réponses
+const IP_LET = 6.5, IP_LETS = 7.5;                                // colonne de la lettre a) (mm) ; avec les étoiles (sous la lettre)
+const IP_WL = ['aucune', 'petite', 'normale', 'grande', 'très grande'];   // place pour répondre, − / + (−2 à 2)
+const IP_WK = [0, .55, 1, 1.5, 2.1], IP_WMIN = [0, 0, 0, 8, 15];          // facteur ; au moins (mm) pour « grande » et « très grande »
+const IP_WLV = [.85, 1, 1.15, 1.3];                               // la place grandit un peu avec les étoiles
+// place pour répondre sous la question (mm, « normale », vers ★★) : 0 = les pointillés suffisent (de tête, une lecture, un mot).
+// Ce que l'élève écrit, pas le détail de la page (« parfois il y a des détails qui ne sont pas essentiels : par exemple, faire les
+// figures pour les questions de quadrilatères ») ; choisi par Claude, à revoir avec l'enseignant (« Si tu veux je regarderai aussi
+// moi même et te dirai plus tard s'il faut faire des modifs »)
+const IP_WORK = {
+  'p+': 30, 'p−': 28, 'p∙': 36, 'p:': 42,                                     // calculs à poser en colonne
+  rsum: 8, rprio: 20, pri: 20, prm: 4, dcp: 16, pgdc: 14, ppmc: 14, pb_1: 6, pb_2: 14, pb_den: 10,
+  fs: 6, fcmp: 8, fd: 14, 'f+': 14, 'f∙': 12, 'f:': 12, fpow: 8, fprio: 22, fq: 6, fr: 8,
+  pc_ecr: 6, fp: 6, pc_init: 8, pc_var: 14, pc_taux: 10,
+  pwc: 4, pp1: 4, pp2: 4, pp3: 4, pp4: 4, pp5: 10, sci: 4, rp1: 6, rp2: 6, rp3: 8, rp4: 12,
+  q4: 8, pagr: 12, pech: 10, ppen: 12, pvit: 14, pdeb: 12, pmv: 12,
+  l_sub: 10, l_mulm: 4, l_addm: 8, l_addp: 10, l_subp: 14, l_dev: 12, l_dev2: 18, l_ir1: 10, l_ir2: 10, l_ir3: 10, l_ir4: 12,
+  l_fme: 8, l_fir1: 10, l_fir2: 10, l_fir3: 10, l_fir4: 12, l_fvi: 18,
+  e1_1: 12, e1_2: 12, e1_3: 12, e1_4: 18, e1_5: 22, e1_6: 22, e1_7: 26, e1_8: 22,
+  e2_1: 18, e2_2: 18, e2_3: 22, e2_4: 26, e2_5: 30, sy_sub: 36, sy_com: 36,
+  fn_gx: 8, fn_im: 8, fn_pi: 10, fn_tab: 4, d_car: 4, d_col: 6, d_cir: 8, d_bar: 6,
+  cv_vit: 6, cv_mv: 6, cv_deb: 6,
+  f_car: 8, f_rec: 10, f_tri: 12, f_par: 12, f_los: 12, f_tra: 14, f_dis: 12, f_sec: 16,
+  v_cub: 10, v_pav: 12, v_pri: 14, v_cyl: 14, v_pyr: 16, v_con: 16, v_bou: 14,
+  at_cub: 12, at_pav: 18, at_pri: 20, at_cyl: 18, at_pyr: 20, at_bou: 12,
+  py_calc: 20, py_rec: 22, py_con: 22, py_esp: 24, th_calc: 20, th_rec: 22, th_con: 22,
+  q_con: 6, g_tri: 8, g_opp: 6, g_par: 8, g_ins: 6, g_tan: 14, g_tha: 8, g_pol: 8, g_mdn: 4, g_sol: 4
+};
+const IP_NAME = {pgdc: 'Calcul du pgdc', ppmc: 'Calcul du ppmc'};
+const IP_FIGK = {fon: 1.15, rep: 1.15};          // graphiques et repères un peu plus grands (graduations lisibles sur le papier)
+const ipNb = h => String(h).replace(/ ([?!:;»])/g, '\u00a0$1').replace(/« /g, '«\u00a0');   // pas de « ? » seul en début de ligne (instructions, A4)
+const IP_SEGC = ['#dce8f7', '#fde3c7', '#dcefdc', '#f5dce7', '#e6e0f5', '#f6eecb', '#d4eef0', '#efe1d6'];   // morceaux de la barre des exercices
+const IP_STC = ['#fff6d6', '#ffe9a8', '#ffd96f', '#f3c43f'];                                                  // ★ … ★★★★
+let IP = null;        // la feuille : options, réglages des exercices, questions tirées (pool), séance à part (ses), dernière mise en page (L)
+let IPD = null;       // glissement d'une séparation d'une barre
+const ipSes0 = () => ({TALLY: {}, USEDN: 0, U: [], UA: [], UC: [], X: [], RQ: {}, SV: {}});
+function ipInit(){ IP = {sig: '', S: null, E: null, O: [], pages: 2, cls: '', ans: true, qr: true, stars: false, ex: {}, share: {}, pool: {}, keys: new Set(), ses: ipSes0(), ac: new Map(), L: null, t0: null}; }
+function ipReset(){ IP.pool = {}; IP.keys = new Set(); IP.ses = ipSes0(); IP.ac = new Map(); }      // « Nouvelles questions »
+const ipEsc = s => String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'})[c]);
+const ipLetter = i => i < 26 ? String.fromCharCode(97 + i) : String.fromCharCode(97 + Math.floor(i / 26) - 1) + String.fromCharCode(97 + i % 26);
+const ipItal = s => s.replace(/(^|[^A-Za-zÀ-ÿ’'])([abcdmnpqxy]{1,2})(?![A-Za-zÀ-ÿ’'])/g, (m, a, w) => a + [...w].map(c => '<i>' + c + '</i>').join(''));   // lettres des formules en italique
+function ipName(o){           // le thème d'un exercice (« 1) Addition et soustraction de fractions ») : son nom des liens (TNAME)
+  const b = BLOCKS[o.bl]; let t = IP_NAME[o.id] || (b.items.length ? TNAME[o.id] || stuLabel(o, false).replace(/<[^>]+>/g, '') : b.name.replace(/<[^>]+>/g, ''));
+  t = t.charAt(0).toUpperCase() + t.slice(1); return ipItal(t); }
+const ipTitle = () => ((IP.E && IP.E.t) || linkSugT() || '').trim();
+const ipCap = o => isNoStar(o) ? 4 : ((IP.E && IP.E.cap) || {})[o.id] || 4;
+const ipDef = cap => cap <= 1 ? [100, 0, 0, 0] : cap === 2 ? [50, 50, 0, 0] : [40, 35, 25, 0];
+const ipPool = id => IP.pool[id] || (IP.pool[id] = {1: [], 2: [], 3: [], 4: [], x: {}});
+const ipEx = id => IP.ex[id] || (IP.ex[id] = {d: null, w: 0});
+function ipMeas(){ let m = $('ipMeas'); if (!m){ m = document.createElement('div'); m.id = 'ipMeas'; m.className = 'ip-sheet'; document.body.appendChild(m); } return m; }
+
+/* ---------- tirage, dans une séance à part ---------- */
+function ipRun(f){            // f avec les réglages du lien et la séance de la feuille ; ensuite, la séance de la classe telle qu'elle était
+  const put = o => { USED.clear(); o.U.forEach(k => USED.add(k)); USEDAT.clear(); o.UA.forEach(([k, v]) => USEDAT.set(k, v));
+    USECNT.clear(); o.UC.forEach(([k, v]) => USECNT.set(k, v)); EXH.clear(); o.X.forEach(k => EXH.add(k));
+    [REQ, SERV].forEach(m => Object.keys(m).forEach(k => delete m[k])); Object.assign(REQ, o.RQ); Object.assign(SERV, o.SV); };
+  const sv = {S, TALLY, USEDN, NO_RARE, TQ_FIX, TC_FORCE, TH_FORCE, U: [...USED], UA: [...USEDAT], UC: [...USECNT], X: [...EXH], RQ: Object.assign({}, REQ), SV: Object.assign({}, SERV)};
+  const z = IP.ses; S = IP.S; TALLY = z.TALLY; USEDN = z.USEDN; NO_RARE = new Set(); TQ_FIX = null; TC_FORCE = null; TH_FORCE = null; put(z);
+  try { return f(); }
+  finally {
+    Object.assign(z, {TALLY, USEDN, U: [...USED], UA: [...USEDAT], UC: [...USECNT], X: [...EXH], RQ: Object.assign({}, REQ), SV: Object.assign({}, SERV)});
+    S = sv.S; TALLY = sv.TALLY; USEDN = sv.USEDN; NO_RARE = sv.NO_RARE; TQ_FIX = sv.TQ_FIX; TC_FORCE = sv.TC_FORCE; TH_FORCE = sv.TH_FORCE; put(sv);
+  }
+}
+function ipGen(o, lv){        // une question de plus pour l'exercice o, à lv étoiles (sorte lv sans étoiles), pas encore sur la feuille ; false : plus rien
+  const P = ipPool(o.id); if (P.x[lv]) return false;
+  const geo = isGeo(o.id), p = ipRun(() => {
+    const fl = flagsOf(o.bl);
+    for (let t = 0; t < 4; t++){
+      let q = null;
+      try { q = geo ? geoOne([o, lv], [], 'P', null)[0] : genOne(subOf(o, lv, fl), lv, fl); } catch (e) { console.error('feuille', o.id, lv, e); return null; }
+      if (!q) return null;
+      if (q.key == null || !IP.keys.has(q.key)) return q;
+      if (geo) return null;                    // géométrie : rien de nouveau à ce niveau (geoOne reprend une question déjà sur la feuille)
+    }
+    return null; });
+  if (!p){ P.x[lv] = true; return false; }
+  if (p.key != null) IP.keys.add(p.key);
+  if (isNoStar(o)) p.nostar = true;
+  p.level = lv; P[lv].push(p); return true;
+}
+function ipDist(o){           // parts (%) des niveaux 1 à 4 : la barre de l'exercice, dans ses étoiles permises ; sans étoiles : ses quatre sortes (NSW)
+  if (isNoStar(o)) return [30, 30, 20, 20];
+  const cap = ipCap(o), d = (ipEx(o.id).d || ipDef(cap)).slice();
+  for (let l = cap; l < 4; l++){ d[cap - 1] += d[l]; d[l] = 0; }           // au-delà des étoiles permises : à la plus haute permise (comme le mode élève)
+  return d;
+}
+function ipCounts(d, n){      // n questions réparties selon les parts d (plus grands restes)
+  const t = d.reduce((a, b) => a + b, 0) || 1, ex = d.map(v => v * n / t), c = ex.map(v => Math.floor(v + 1e-9));
+  const ord = ex.map((v, i) => [v - c[i], i]).sort((a, b) => b[0] - a[0] || a[1] - b[1]);
+  for (let r = n - c.reduce((a, b) => a + b, 0), j = 0; r > 0; r--, j++) c[ord[j % 4][1]]++;
+  return c;
+}
+function ipQs(o, n){          // les n questions de l'exercice (moins s'il n'y en a plus), de la plus facile à la plus difficile
+  const P = ipPool(o.id), d = ipDist(o), c = ipCounts(d, n), use = [0, 0, 0, 0];
+  const take = l => { if (P[l].length > use[l - 1] || ipGen(o, l)){ use[l - 1]++; return true; } return false; };
+  let short = 0;
+  for (let l = 1; l <= 4; l++) for (let k = 0; k < c[l - 1]; k++) if (!take(l)) short++;
+  if (short){                 // un niveau épuisé (géométrie) : à un autre niveau permis, les plus demandés d'abord
+    const cap = ipCap(o); [1, 2, 3, 4].filter(l => l <= cap).sort((a, b) => d[b - 1] - d[a - 1] || a - b).forEach(l => { while (short && take(l)) short--; }); }
+  const out = []; for (let l = 1; l <= 4; l++) out.push(...P[l].slice(0, use[l - 1]));
+  return out;
+}
+
+/* ---------- une question sur le papier ---------- */
+function ipKey(p){            // la réponse de l'encadré : « 11/12 », « 5,94 dam », « S = {3} », « AC = 8 m », « A = 23,04π m² ≈ 72,38 m² »
+  let a = p.a != null && String(p.a) !== '' ? String(p.a) : '';
+  if (!a){ const m = ipMeas(); m.innerHTML = '<div class="calc">' + qLine(p, true) + '</div>'; a = [...m.querySelectorAll('.ansnum, .ans, .ansbx')].map(e => e.innerHTML).join(' ; '); }
+  const pre = p.pre && /^\s*(<i>)?S(<\/i>)?\s*=\s*$/.test(p.pre) ? p.pre + ' ' : '';
+  let lab = '';
+  if (p.fig && !p.line && !pre){ const m = /^<span class="qq">([\s\S]*?)<\/span><span class="eq">/.exec(qLine(p, false));
+    if (m && m[1].replace(/<[^>]+>/g, '').trim().length <= 4) lab = m[1] + ' ' + (p.sep && p.sep !== '⟹' ? p.sep : '=') + ' '; }
+  return lab + pre + (p.ex ? p.ex + ' ≈ ' : '') + a + (p.post ? ' ' + p.post : '');
+}
+function ipQaHTML(p, line, con, work, side){  // la question : consigne (si con), figure, données, calcul avec ses pointillés, place pour répondre (mm) ;
+  // side : la figure à gauche, données, calcul et place pour répondre à sa droite (figure large dans une case large, comme « fig_et » de ses fiches)
+  // (side 2 : les données restent sous la figure, ex. le titre d'un diagramme)
+  const fk = IP_FIGK[ITEM_BLOCK[p.sub]], c = con && p.con ? '<div class="con">' + ipNb(p.con) + '</div>' : '',
+    f = p.fig ? '<div class="fig"' + (fk ? ' style="font-size:' + (26 * fk).toFixed(1) + 'pt"' : '') + '>' + p.fig + '</div>' : '', d = p.dat ? '<div class="dat">' + ipNb(p.dat) + '</div>' : '',
+    r = '<div class="calc">' + line + '</div>' + (work > .05 ? '<div class="ip-wk" style="height:' + work.toFixed(2) + 'mm"></div>' : '');
+  return '<div class="qa">' + c + (side && f ? '<div class="ip-sd">' + (side === 2 ? '<div class="ip-sl">' + f + d + '</div>' : f) + '<div class="ip-sr">' + (side === 2 ? '' : d) + r + '</div></div>' : f + d + r) + '</div>';
+}
+function ipPrep(p){           // une fois par question : pointillés de la largeur de la réponse, largeur nécessaire, réponse de l'encadré
+  if (p._ip) return p._ip;
+  const m = ipMeas(); m.style.width = '400mm';
+  m.innerHTML = '<div class="qa"><div class="calc">' + qLine(p, true) + '</div></div>'; mathify(m);
+  let A = [...m.querySelectorAll('.calc .ansnum')]; if (!A.length) A = [...m.querySelectorAll('.calc .ans, .calc .ansbx')];
+  const aw = A.map(e => e.getBoundingClientRect().width / IP_PX), q0 = qLine(p, false), parts = q0.split(BOX);
+  m.innerHTML = '<div class="qa"><div class="calc">' + q0 + '</div></div>';
+  const qb = [...m.querySelectorAll('.qbox')], W = qb.map((b, i) => { const a = aw.length === qb.length ? aw[i] : 8;
+    return b.closest('td') ? Math.max(8, a + 3) : b.closest('.phr') ? Math.min(45, Math.max(14, a * 1.25 + 4)) : Math.min(42, Math.max(12, a * 1.3 + 5)); });
+  const line = ipNb(parts.length - 1 === qb.length ? parts.reduce((s, x, i) => s + (i ? '<span class="qbox" style="width:' + W[i - 1].toFixed(1) + 'mm">?</span>' : '') + x, '') : q0);
+  m.innerHTML = ipQaHTML(p, line, false, 0, false); mathify(m);
+  const wd = sel => { const e = m.querySelector(sel); return e ? e.getBoundingClientRect().width / IP_PX : 0; };
+  const key = ipKey(p);
+  const I = {line, key, fw: wd('.fig'), rw: Math.max(wd('.calc'), Math.min(45, wd('.dat'))), cl: (p.con || '').replace(/<[^>]+>/g, '').length, h: {}};
+  I.need = Math.max(I.fw, wd('.calc'), Math.min(50, wd('.dat')));
+  if (p.con && I.cl <= 32){ m.innerHTML = '<div class="qa"><div class="con">' + ipNb(p.con) + '</div></div>'; mathify(m); I.need = Math.max(I.need, wd('.con')); }   // une consigne courte tient sur sa ligne
+  m.innerHTML = '<div class="ip-ans"><span class="ip-ai"><b>mm)</b> ' + key + '</span></div>'; mathify(m);
+  const r = m.querySelector('.ip-ai').getBoundingClientRect(); I.kw = r.width / IP_PX; I.kh = r.height / IP_PX;
+  return p._ip = I;
+}
+const ipCellHTML = (p, let_, x) => '<div class="ip-cell"><span class="ip-let" style="width:' + x.lw + 'mm">' + let_ + ')' +
+  (IP.stars && !p.nostar ? '<br><span class="stars">' + '★'.repeat(p.level) + '</span>' : '') + '</span>' + ipQaHTML(p, ipPrep(p).line, x.con, x.work, x.side) + '</div>';
+const ipCK = x => x.w.toFixed(2) + '|' + (x.con ? 'c' : '') + (x.side || '') + (IP.stars ? '*' : '') + '|' + x.lw + '|' + x.work.toFixed(2);
+function ipMeasCells(list){   // hauteurs (mm) des questions, place pour répondre comprise, en une fois : [{p, w (largeur de la case), con, work, side}]
+  const todo = list.filter(x => ipPrep(x.p).h[ipCK(x)] == null); if (!todo.length) return;
+  const m = ipMeas(); m.style.width = IP_CW + 'mm';
+  m.innerHTML = todo.map(x => '<div style="width:' + x.w.toFixed(2) + 'mm">' + ipCellHTML(x.p, 'm', x) + '</div>').join(''); mathify(m);
+  [...m.children].forEach((e, i) => { const x = todo[i]; x.p._ip.h[ipCK(x)] = e.getBoundingClientRect().height / IP_PX; });
+}
+function ipWork(o, p){        // place pour répondre sous une question (mm)
+  const w = ipEx(o.id).w + 2; return Math.max(IP_WMIN[w], (IP_WORK[o.id] || 0) * IP_WLV[(p.level || 1) - 1] * IP_WK[w]); }
+const IP_TH = new Map();
+function ipTxtH(html, w, cls){    // hauteur (mm) d'un texte de la feuille (titre d'exercice, consigne, titre de la feuille)
+  const k = cls + '|' + w.toFixed(2) + '|' + html; if (IP_TH.has(k)) return IP_TH.get(k);
+  const m = ipMeas(); m.style.width = w + 'mm'; m.innerHTML = '<div class="' + cls + '">' + html + '</div>'; mathify(m);
+  const h = m.firstChild.getBoundingClientRect().height / IP_PX; IP_TH.set(k, h); return h; }
+
+/* ---------- mise en page ---------- */
+function ipBlock(o, idx, rows){   // un exercice : ses questions (rows lignes), colonnes, hauteurs
+  const P = ipPool(o.id); if ([1, 2, 3, 4].reduce((n, l) => n + P[l].length, 0) < 4) ipQs(o, 4);     // un échantillon pour choisir les colonnes
+  const all = [1, 2, 3, 4].flatMap(l => P[l]); all.forEach(ipPrep);
+  const lwOf = n => (n > 26 ? 9 : IP_LET) + (IP.stars ? IP_LETS - IP_LET : 0);      // colonne de la lettre : plus large dès aa)
+  const need = Math.max(0, ...all.map(p => p._ip.need)) + lwOf(rows * 4) + 1.5;
+  const cn = all.map(p => p.con || ''), sameCon = all.length > 1 && cn.every(c => c && c === cn[0]);
+  const cmax = !sameCon && all.some(p => p._ip.cl > 80) ? 2 : all.some(p => p.fig) ? 3 : 4;
+  let c = cmax; while (c > 1 && (IP_CW - (c - 1) * IP_GC) / c < need) c--;
+  let Q = ipQs(o, rows * c); Q.forEach(ipPrep);
+  for (let t = 0; t < 4 && c > 1; t++){        // une question tirée à l'instant est plus large : moins de colonnes
+    const nd = Math.max(...Q.map(p => p._ip.need)) + lwOf(Q.length) + 1.5; if ((IP_CW - (c - 1) * IP_GC) / c >= nd) break;
+    while (c > 1 && (IP_CW - (c - 1) * IP_GC) / c < nd) c--; Q = ipQs(o, rows * c); Q.forEach(ipPrep); }
+  const cons = Q.map(p => p.con || ''), common = Q.length > 1 && cons.every(x => x && x === cons[0]) ? cons[0] : '';
+  const lw = lwOf(Q.length), cw = (IP_CW - (c - 1) * IP_GC) / c;
+  const side = all.some(p => p.fig) && all.every(p => !p.fig || cw - lw - p._ip.fw - 4 >= Math.max(30, p._ip.rw)) ? (o.bl === 'don' ? 2 : 1) : 0;
+  const X = Q.map(p => ({p, w: cw, con: !common, work: ipWork(o, p), side, lw})); ipMeasCells(X);
+  const R = []; for (let i = 0; i < Q.length; i += c){ const xs = X.slice(i, i + c);
+    R.push({qs: xs.map(x => x.p), xs, i, work: Math.max(...xs.map(x => x.work)), h: Math.max(...xs.map(x => x.p._ip.h[ipCK(x)])) + IP_GR}); }
+  const name = '<span class="ip-hn">' + (idx + 1) + ')</span> ' + ipName(o), con = common ? ipNb(common) + (/[.?!:…]\s*$/.test(common.replace(/<[^>]+>/g, '')) ? '' : '.') : '';
+  return {o, idx, Q, c, cw, side, rows: R, name, con, hh: ipTxtH(name, IP_CW, 'ip-h'), hc: con ? ipTxtH(con, IP_CW, 'ip-cc') : 0, short: Q.length < rows * c};
+}
+function ipAnsHTML(B){        // l'encadré « Réponses » (comme ses fiches : « Réponses », les réponses seulement, en rangées alignées) ; colonnes de même
+  // hauteur, faites ici : un exercice coupé reprend son numéro en haut de la colonne suivante
+  const G = B.filter(b => b.Q.length), kmax = Math.max(0, ...G.flatMap(b => b.Q.map(p => p._ip.kw)));
+  const C = kmax + 6 <= (IP_CW - 6 - 2 * 5) / 3 ? 3 : kmax + 6 <= (IP_CW - 6 - 5) / 2 ? 2 : 1, cw = (IP_CW - 6 - (C - 1) * 5) / C, iw = cw - 5.5;
+  const lines = []; G.forEach(b => { const kw = Math.min(iw, Math.max(...b.Q.map(p => p._ip.kw)) + .3), per = Math.max(1, Math.floor((iw + 2.5) / (kw + 2.5)));
+    for (let i = 0; i < b.Q.length; i += per){ const qs = b.Q.slice(i, i + per); lines.push({b, i, qs, kw, h: Math.max(4.3, ...qs.map(p => p._ip.kh)) + .4, g: !i}); } });
+  const tot = lines.reduce((s, l) => s + l.h + (l.g ? .9 : 0), 0), fill = H => { const cols = [[]]; let y = 0;    // colonnes d'au plus H (mm)
+    lines.forEach(l => { const h = l.h + (l.g && cols[cols.length - 1].length ? .9 : 0); if (y + h > H + .01 && cols[cols.length - 1].length){ cols.push([]); y = 0; } cols[cols.length - 1].push(l); y += l.h + (l.g && y ? .9 : 0); });
+    return cols; };
+  let lo = tot / C, hi = tot + 1; for (let t = 0; t < 30; t++){ const mid = (lo + hi) / 2; if (fill(mid).length <= C) hi = mid; else lo = mid; }
+  const cols = fill(hi);
+  return '<div class="ip-ans"><div class="ip-at">Réponses</div><div class="ip-acs">' + cols.map(col => {
+    const ch = []; col.forEach(l => { const last = ch[ch.length - 1]; if (last && last.b === l.b) last.ls.push(l); else ch.push({b: l.b, g: l.g, ls: [l]}); });
+    return '<div class="ip-ac" style="width:' + (cw + (col === cols[0] ? 0 : 2.5)).toFixed(2) + 'mm">' + ch.map(c => '<div class="ip-ag' + (c.g ? '' : ' ip-cont') + '"><span class="ip-an">' + c.b.num + ')</span><div class="ip-ais">' +
+      c.ls.flatMap(l => l.qs.map((p, j) => '<span class="ip-ai" style="width:' + l.kw.toFixed(2) + 'mm"><b>' + ipLetter(l.i + j) + ')</b> ' + p._ip.key + '</span>')).join('') + '</div></div>').join('') + '</div>';
+  }).join('') + '</div></div>';
+}
+function ipAnsH(B){           // hauteur (mm) de l'encadré (gardée pour les mêmes questions)
+  const k = B.map(b => b.o.id + ':' + b.Q.map(p => p.level).join('')).join('|'); if (IP.ac.has(k)) return IP.ac.get(k);
+  const m = ipMeas(); m.style.width = IP_CW + 'mm'; m.innerHTML = ipAnsHTML(B); mathify(m);
+  const h = m.firstChild.getBoundingClientRect().height / IP_PX; IP.ac.set(k, h); return h; }
+function ipHead(){            // en-tête de la 1re page : classe, titre entre deux traits, QR code ; rend le haut du contenu (mm)
+  const qr = IP.qr && LNK && LNK.qr ? LNK.qr : null, qs = qr ? Math.min(28, Math.max(20, (qr.size + 8) * .38)) : 0, cls = IP.cls.trim();
+  const y = cls ? 14 : 10, tw = IP_CW - (qr ? qs + 4 : 0), th = Math.max(15, ipTxtH(ipEsc(ipTitle() || ' '), tw, 'ip-tt') + 2);
+  const tb = Math.max(th, qr ? qs : 0);
+  return {qr, qs, cls, y, tw, tb, top: y + Math.max(tb, qr ? qs + 6.5 : 0) + 5};
+}
+function ipLay(X, r){         // exercices X avec r[i] lignes : pages, place de chaque exercice, tout tient-il ?
+  const N = IP.pages, Hd = ipHead(), B = X.map((x, i) => ipBlock(x.o, i, r[i])); let nb = 0;
+  B.forEach(b => { if (b.Q.length) b.num = ++nb; b.name = '<span class="ip-hn">' + (b.num || 0) + ')</span> ' + ipName(b.o); });   // 1), 2)… sans trou (un exercice sans question)
+  const ansH = IP.ans ? ipAnsH(B) : 0;
+  const top = k => k ? IP_TOP2 : Hd.top, bot = k => k === N - 1 && IP.ans ? IP_BOT - ansH - IP_GA : IP_BOT;
+  const pages = [[]], H = B.map(() => 0); let k = 0, y = top(0), fits = true;
+  B.forEach((b, i) => b.rows.forEach((row, j) => {
+    const head = j ? 0 : (y > top(k) + .01 ? IP_GX : 0) + b.hh + b.hc;
+    if (y + head + row.h > bot(k) + .01 && y > top(k) + .01){ pages[k].end = y; k++; pages.push([]); y = top(k); }
+    if (!j){ if (y > top(k) + .01) y += IP_GX; pages[k].push({t: 'h', b, y}); y += b.hh + b.hc; H[i] += b.hh + b.hc; }
+    pages[k].push({t: 'r', b, row, y}); y += row.h; H[i] += row.h;
+    if (y > bot(k) + .01) fits = false; }));
+  pages[k].end = y;
+  if (pages.length > N) fits = false;
+  return {N, Hd, B, ansH, pages, H, fits, top, bot};
+}
+function ipFit(){             // les lignes de chaque exercice : une de plus à l'exercice le plus en retard sur sa part, tant que tout tient
+  const X = IP.O.map(o => ({o, s: Math.max(1, IP.share[o.id] || 1)})), r = X.map(() => 1), full = X.map(() => false);
+  let L = ipLay(X, r);
+  for (let it = 0; it < 600 && L.fits; it++){
+    const ord = X.map((x, i) => i).filter(i => !full[i] && !L.B[i].short).sort((a, b) => L.H[a] / X[a].s - L.H[b] / X[b].s || a - b);
+    let ok = false;
+    for (const i of ord){ r[i]++; const L2 = ipLay(X, r);
+      if (L2.fits && L2.B[i].rows.length === r[i] && !L2.B[i].short){ L = L2; ok = true; break; }
+      r[i]--; full[i] = true; }
+    if (!ok) break;
+  }
+  return ipFill(L.fits ? L : ipLay(X, r));
+}
+function ipFill(L){           // la place libre de chaque page va à la place pour répondre de ses lignes (au plus 60 % de plus, ou 12 mm)
+  L.pages.forEach((P, k) => {
+    const rows = P.filter(x => x.t === 'r'); if (!rows.length) return;
+    const free = L.bot(Math.min(k, L.N - 1)) - P.end; if (free <= .3 || k >= L.N) return;
+    const wt = rows.map(x => x.row.work + 3), tw = wt.reduce((a, b) => a + b, 0);
+    let left = free; rows.forEach((x, j) => { const e = Math.min(free * wt[j] / tw, Math.max(12, .6 * x.row.h)); x.ex = e; left -= e; });
+    let off = 0; P.forEach(x => { x.y += off; if (x.t === 'r') off += x.ex || 0; }); P.end += off;
+  });
+  return L;
+}
+
+/* ---------- pages (aperçu et impression) ---------- */
+function ipPagesHTML(L){
+  const N = Math.max(L.N, L.pages.length), Hd = L.Hd, t = ipEsc(ipTitle()), cls = Hd.cls ? 'Classe : ' + ipEsc(Hd.cls) : '';
+  let h = '';
+  for (let k = 0; k < N; k++){
+    const P = L.pages[k] || [], a = (y, s) => 'class="ip-a ' + s + '" style="top:' + y.toFixed(2) + 'mm';
+    h += '<div class="ip-pw"><div class="ip-pg ip-sheet">';
+    if (k || cls) h += '<div ' + a(IP_HT, 'ip-hdr' + (k ? '' : ' ip-h1')) + '"><span>' + cls + '</span><span>' + (k ? t : '') + '</span></div>';
+    if (!k) h += '<div ' + a(Hd.y, 'ip-tb') + '"><div class="ip-tt" style="height:' + Hd.tb.toFixed(2) + 'mm">' + t + '</div>' + (Hd.qr ? '<div class="ip-qr" style="width:' +
+      Hd.qs.toFixed(2) + 'mm">' + qrSVG(Hd.qr) + '<div class="ip-qrc">Entraîne-toi<br>en ligne</div></div>' : '') + '</div>';
+    P.forEach(x => {
+      if (x.t === 'h'){ h += '<div ' + a(x.y, 'ip-hb') + '"><div class="ip-h">' + x.b.name + '</div>' + (x.b.con ? '<div class="ip-cc">' + x.b.con + '</div>' : '') + '</div>'; return; }
+      const b = x.b, hh = x.row.h + (x.ex || 0) - IP_GR;
+      h += '<div ' + a(x.y, 'ip-row') + ';height:' + hh.toFixed(2) + 'mm">' + x.row.xs.map((c, j) => '<div style="width:' + b.cw.toFixed(2) + 'mm">' +
+        ipCellHTML(c.p, ipLetter(x.row.i + j), c) + '</div>').join('') + '</div>';
+    });
+    if (k === N - 1 && IP.ans) h += '<div ' + a(IP_BOT - L.ansH, 'ip-answ') + '">' + ipAnsHTML(L.B) + '</div>';
+    h += '<div class="ip-ft" style="top:' + (IP_H - IP_HT - 4.2) + 'mm">Page ' + (k + 1) + ' sur ' + N + '</div></div></div>';
+  }
+  return h;
+}
+function ipScale(){           // l'aperçu : deux pages côte à côte quand elles ont la place ; un clic : une page en grand
+  const v = $('ipPrev'); if (!v || !v.querySelector('.ip-pw') || $('ipHost')) return;
+  const W = v.clientWidth - 24, pw = IP_W * IP_PX, big = v.classList.contains('ipbig'), per = big || W < 2 * 280 + 16 ? 1 : 2;
+  const k = Math.max(.2, Math.min(big ? 1.25 : .62, (W - (per - 1) * 16) / per / pw));
+  v.querySelectorAll('.ip-pw').forEach(w => { w.style.width = pw * k + 'px'; w.style.height = IP_H * IP_PX * k + 'px'; w.firstChild.style.transform = 'scale(' + k + ')'; });
+}
+function ipShow(L){ ipUnprint(); const v = $('ipPrev'); v.innerHTML = ipPagesHTML(L); mathify(v); ipScale(); }
+function ipPrint(){           // la fenêtre d'impression du navigateur (imprimante, ou « Enregistrer au format PDF ») : seulement les pages
+  if (!IP || !IP.L) return;
+  ipUnprint();
+  const v = $('ipPrev'), host = document.createElement('div'); host.id = 'ipHost';
+  [...v.children].forEach(w => host.appendChild(w)); document.body.appendChild(host);
+  const st = document.createElement('style'); st.id = 'ipPageCss'; st.textContent = '@page{size:A4 portrait;margin:0}'; document.head.appendChild(st);
+  document.documentElement.classList.add('ipprint'); IP.t0 = document.title; document.title = fileSafe(ipTitle()) || 'Questions pour des champions';
+  window.addEventListener('afterprint', ipUnprint, {once: true});
+  window.print();
+}
+function ipUnprint(){         // après l'impression : les pages reviennent dans l'aperçu
+  const host = $('ipHost'); if (!host) return;
+  const v = $('ipPrev'); [...host.children].forEach(w => v.appendChild(w)); host.remove();
+  const st = $('ipPageCss'); if (st) st.remove();
+  document.documentElement.classList.remove('ipprint'); if (IP && IP.t0 != null){ document.title = IP.t0; IP.t0 = null; }
+  ipScale();
+}
+
+/* ---------- réglages de la fenêtre ---------- */
+function ipBarHTML(kind, V, min){   // barre à glisser : un morceau par valeur (somme 100), séparations entre eux
+  let x = 0; const segs = V.map((v, i) => { const s = '<span class="ipseg" data-i="' + i + '" style="left:' + x + '%;width:' + v + '%;background:' +
+    (kind === 'share' ? IP_SEGC[i % IP_SEGC.length] : IP_STC[i]) + '"></span>'; x += v; return s; }).join('');
+  x = 0; const hs = V.slice(0, -1).map((v, i) => '<span class="iph" style="left:' + (x += v) + '%"></span>').join('');
+  return '<div class="ipbar' + (kind === 'share' ? '' : ' ipbs') + '" data-k="' + kind + '" data-min="' + (min || 0) + '" title="Glisse les séparations' + (kind === 'share' ? '' :
+    ' (tout à droite : ' + '★'.repeat(V.length) + ')') + '">' + segs + hs + '</div>';
+}
+function ipBarLabels(bar){    // le texte de chaque morceau, d'après sa largeur à l'écran
+  const W = bar.getBoundingClientRect().width, kind = bar.dataset.k;
+  bar.querySelectorAll('.ipseg').forEach(s => { const i = Number(s.dataset.i), v = parseFloat(s.style.width), px = W * v / 100, n = Math.round(v);
+    const st = '<span class="stars">' + '★'.repeat(i + 1) + '</span>';
+    s.innerHTML = kind === 'share' ? (px >= 64 ? (i + 1) + ') ' + n + ' %' : px >= 40 ? n + ' %' : px >= 20 ? String(n) : '')
+      : (px >= 8 + 10 * (i + 1) && px >= 34 ? st + '<span>' + n + ' %</span>' : px >= 34 ? '<span>' + n + ' %</span>' : px >= 19 ? '<span>' + n + '</span>' : '');
+    s.title = (kind === 'share' ? 'Exercice ' + (i + 1) + ' : ' : '★'.repeat(i + 1) + ' : ') + n + ' %'; });
+}
+const ipBarVals = bar => [...bar.querySelectorAll('.ipseg')].map(s => parseFloat(s.style.width));
+function ipBarSet(bar, V){
+  let x = 0; bar.querySelectorAll('.ipseg').forEach((s, i) => { s.style.left = x + '%'; s.style.width = V[i] + '%'; x += V[i]; });
+  x = 0; bar.querySelectorAll('.iph').forEach((h, i) => h.style.left = (x += V[i]) + '%'); ipBarLabels(bar);
+}
+function ipShares(){          // parts des exercices (somme 100) : gardées pour ceux qui restent ; un nouvel exercice reçoit la part moyenne
+  const ids = IP.O.map(o => o.id), old = ids.filter(id => IP.share[id] > 0), avg = old.length ? old.reduce((s, id) => s + IP.share[id], 0) / old.length : 100 / ids.length;
+  const v = ids.map(id => IP.share[id] > 0 ? IP.share[id] : avg), t = v.reduce((a, b) => a + b, 0);
+  const sh = {}; ids.forEach((id, i) => sh[id] = v[i] * 100 / t); IP.share = sh;
+}
+function ipUI(){              // la section de la fenêtre : options, barre des exercices, une ligne par exercice
+  $('ipCls').value !== IP.cls && ($('ipCls').value = IP.cls);
+  $('ipPg').textContent = IP.pages; $('ipAns').checked = IP.ans; $('ipQr').checked = IP.qr; $('ipSt').checked = IP.stars;
+  const O = IP.O, one = O.length < 2;
+  $('ipShareL').hidden = one; $('ipShare').innerHTML = one ? '' : ipBarHTML('share', O.map(o => IP.share[o.id]), 5);
+  $('ipEx').innerHTML = '<div class="ipxh">Exercice</div><div class="ipxh">Étoiles</div><div class="ipxh">Place pour répondre</div>' + O.map((o, i) => {
+    const e = ipEx(o.id), cap = ipCap(o), d = ipDist(o).slice(0, cap);
+    return '<div class="ipxr"><div class="ipxn"><b>' + (i + 1) + ')</b> ' + ipName(o) + '<span class="ipxq" data-q="' + o.id + '"></span></div><div class="ipxs">' +
+      (isNoStar(o) ? '<span class="ipns">sans étoiles</span>' : cap < 2 ? '<span class="ipns">★ seulement</span>' : ipBarHTML('st:' + o.id, d, 0)) + '</div>' +
+      '<div class="ipw"><button type="button" data-ipw="' + o.id + '" data-d="-1"' + (e.w <= -2 ? ' disabled' : '') + ' aria-label="Moins de place">−</button><span>' + IP_WL[e.w + 2] +
+      '</span><button type="button" data-ipw="' + o.id + '" data-d="1"' + (e.w >= 2 ? ' disabled' : '') + ' aria-label="Plus de place">+</button></div></div>'; }).join('');
+  mathify($('ipEx')); document.querySelectorAll('#ipSec .ipbar').forEach(ipBarLabels);
+}
+function ipSync(now){ clearTimeout(ipSync.t); if (now) ipRefresh(); else ipSync.t = setTimeout(ipRefresh, 140); }
+function ipRefresh(){         // après chaque changement de la fenêtre : réglages, questions, pages
+  clearTimeout(ipSync.t);
+  if (!$('oLink').classList.contains('open') || !LNK) return;
+  const E = LNK.E, O = E && LNK.url ? pObjs(E) : [];
+  $('ipSec').classList.toggle('ipnone', !O.length);
+  if (!O.length){ $('ipPrev').innerHTML = ''; return; }
+  if (!IP) ipInit();
+  const sig = JSON.stringify([E.num, E.opt]);
+  if (IP.sig !== sig){ IP.sig = sig; ipReset(); }
+  IP.E = E; IP.O = O; IP.S = Object.assign(stateFromP(E), {two: false, twoSame: false});
+  ipShares(); ipUI();
+  let L = null;
+  try { L = ipFit(); } catch (e) { console.error('feuille', e); $('ipMsg').textContent = 'La feuille n\'a pas pu être préparée.'; return; }
+  IP.L = L; ipShow(L);
+  const need = L.pages.length, msg = [];
+  if (need > L.N) msg.push('Tout ne tient pas sur ' + L.N + (L.N > 1 ? ' pages' : ' page') + ' : il en faut au moins ' + need + '.');
+  L.B.forEach(b => { const q = document.querySelector('#ipEx .ipxq[data-q="' + CSS.escape(b.o.id) + '"]'); if (q){ q.textContent = b.Q.length + (b.Q.length > 1 ? ' questions' : ' question') + (b.short ? ' (toutes celles qui existent)' : ''); q.classList.toggle('ipfull', b.short); } });
+  const last = L.pages[Math.min(L.N, L.pages.length) - 1], free = last ? L.bot(L.N - 1) - last.end : 0;
+  if (need <= L.N && (L.pages.length < L.N || free > 60) && L.B.every(b => b.short)) msg.push('Pas assez de questions différentes pour remplir la feuille : enlève une page ou ajoute des exercices.');
+  $('ipMsg').textContent = msg.join(' ');
+}
+$('ipCls').addEventListener('input', () => { if (!IP) return; IP.cls = $('ipCls').value; ipSync(); });
+$('ipSec').addEventListener('click', e => {
+  const t = e.target; if (!IP) return;
+  const pg = t.closest('button[data-ipp]'); if (pg){ IP.pages = Math.max(1, Math.min(8, IP.pages + Number(pg.dataset.ipp))); $('ipPg').textContent = IP.pages; ipSync(); return; }
+  const w = t.closest('button[data-ipw]'); if (w){ const x = ipEx(w.dataset.ipw); x.w = Math.max(-2, Math.min(2, x.w + Number(w.dataset.d))); ipSync(true); return; }
+  if (t.closest('#ipNew')){ ipReset(); ipSync(true); return; }
+  if (t.closest('#ipPrint')){ ipSync(true); ipPrint(); return; }
+  if (t.closest('.ip-pw')){ $('ipPrev').classList.toggle('ipbig'); ipScale(); }
+});
+$('ipSec').addEventListener('change', e => { const t = e.target; if (!IP) return;
+  if (t.id === 'ipAns') IP.ans = t.checked; else if (t.id === 'ipQr') IP.qr = t.checked; else if (t.id === 'ipSt') IP.stars = t.checked; else return;
+  ipSync(true); });
+// barres à glisser (QCM : « Barres à glisser », pas de 5 %) : une séparation suit le pointeur ; deux séparations au même endroit (un
+// morceau à 0 %) : celle de gauche si on glisse vers la gauche, celle de droite si on glisse vers la droite
+$('ipSec').addEventListener('pointerdown', e => {
+  const bar = e.target.closest('.ipbar'); if (!bar || (e.button || 0) > 0) return;
+  const r = bar.getBoundingClientRect(), V = ipBarVals(bar), x = (e.clientX - r.left) / r.width * 100;
+  let c = 0; const pos = V.slice(0, -1).map(v => c += v), tol = Math.max(1.5, 9 / r.width * 100);
+  const near = pos.map((p, i) => [Math.abs(p - x), i]).filter(n => n[0] <= tol); if (!near.length) return;
+  const dm = Math.min(...near.map(n => n[0])), cand = near.filter(n => n[0] <= dm + .01).map(n => n[1]);
+  IPD = {bar, V, r, cand, h: cand.length === 1 ? cand[0] : null, x0: e.clientX, min: Number(bar.dataset.min) || 0, moved: false};
+  try { bar.setPointerCapture(e.pointerId); } catch (er) {}
+  e.preventDefault();
+});
+$('ipSec').addEventListener('pointermove', e => {
+  const D = IPD; if (!D) return;
+  const dx = e.clientX - D.x0; if (D.h === null){ if (Math.abs(dx) < 2) return; D.h = dx < 0 ? Math.min(...D.cand) : Math.max(...D.cand); }
+  const V = D.V, h = D.h, a = V.slice(0, h).reduce((s, v) => s + v, 0), b = a + V[h] + V[h + 1];
+  let p = Math.round((e.clientX - D.r.left) / D.r.width * 100 / 5) * 5;
+  p = Math.max(a + D.min, Math.min(b - D.min, p));
+  V[h] = p - a; V[h + 1] = b - p; D.moved = true; ipBarSet(D.bar, V);
+});
+function ipBarEnd(){
+  const D = IPD; IPD = null; if (!D || !D.moved || !IP) return;
+  FD_CLICK = true; setTimeout(() => { FD_CLICK = false; }, 400);       // relâché hors de la fenêtre : elle ne se ferme pas
+  const k = D.bar.dataset.k, V = D.V;
+  if (k === 'share') IP.O.forEach((o, i) => IP.share[o.id] = V[i]);
+  else { const id = k.slice(3), d = [0, 0, 0, 0]; V.forEach((v, i) => d[i] = v); ipEx(id).d = d; }
+  ipSync(true);
+}
+$('ipSec').addEventListener('pointerup', ipBarEnd);
+$('ipSec').addEventListener('pointercancel', ipBarEnd);
+window.addEventListener('resize', () => { ipScale(); document.querySelectorAll('#ipSec .ipbar').forEach(ipBarLabels); });
 
 buildSettingsUI();
 applyLook();

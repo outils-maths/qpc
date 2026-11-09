@@ -768,6 +768,16 @@ body.sturnd .lvb{display:none !important}
 .ipbs .ipseg{flex-direction:column;line-height:1.05;gap:.05em}
 .iph{position:absolute;top:-.3em;bottom:-.3em;width:0;border-left:2px solid #36404c;margin-left:-1px;pointer-events:none}
 .iph::after{content:"";position:absolute;left:-4px;top:50%;width:6px;height:1em;margin-top:-.5em;border-radius:2px;background:#36404c}
+.ipbs.ip4{margin-right:4.3em}
+.iptab{position:absolute;left:100%;top:50%;transform:translateY(-50%);margin-left:.4em;display:none;align-items:center;height:2.2em;padding:0 .3em;border:1px dashed #b8901f;border-radius:.35em;background:#fff6d6;font-size:.72em;cursor:col-resize;touch-action:none;white-space:nowrap}
+.iptab .stars{color:#7a5a00;letter-spacing:-.08em}
+.ip4z .iptab{display:inline-flex}
+.ip4z .iph4{display:none}
+.ipmx{grid-column:1 / -1;display:flex;align-items:center;gap:.45em;font-size:.85em;color:var(--muted);cursor:pointer;margin-top:.15em}
+.ipmx input{width:1.05em;height:1.05em;accent-color:var(--sel);margin:0;flex:none}
+.ipmx.on{font-size:.95em;color:var(--ink)}
+.ipmxt{color:var(--muted);font-size:.85em}
+.ipxm .ipxn{padding-left:1.5em;font-size:.9em}
 .ipmsg{color:#a14f00;font-size:.85em}
 .ipmsg:empty{display:none}
 .iphint{color:var(--muted);font-size:.8em;line-height:1.35}
@@ -809,6 +819,7 @@ body.sturnd .lvb{display:none !important}
 .ip-sheet .frac{font-size:.92em}
 .ip-sheet .qbox{color:transparent;border-bottom:1pt dotted #000;min-width:12mm;line-height:1.3}
 .ip-sheet td .qbox{min-width:8mm}
+.ip-sheet .ipnw{white-space:nowrap}
 .ip-sheet .fig{line-height:0}
 .ip-ans{border:.8pt solid #000;padding:1.6mm 3mm 2mm;font-size:9pt;line-height:1.35}
 .ip-at{font-weight:700;font-size:10pt;margin-bottom:.8mm}
@@ -1631,8 +1642,8 @@ function angArc(f, P, U, V, o){
   return f;
 }
 // étiquette au premier emplacement libre (ni trait ni autre étiquette), parmi des décalages candidats
-function freeLab(f, P, cands, s, o){ o = o || {}; const size = o.size || FSZ, w = tw(s, size), segs = segsOf(f);
-  for (const c of cands){ const C = V2.add(P, c), r = [C[0] - w / 2 - 2, C[1] - size / 2, C[0] + w / 2 + 2, C[1] + size / 2];
+function freeLab(f, P, cands, s, o){ o = o || {}; const size = o.size || FSZ, w = tw(s, size), segs = segsOf(f), pd = o.pad || 0;      // pd : marge en plus autour de l'étiquette (09.11.2026)
+  for (const c of cands){ const C = V2.add(P, c), r = [C[0] - w / 2 - 2 - pd, C[1] - size / 2 - pd, C[0] + w / 2 + 2 + pd, C[1] + size / 2 + pd];
     if (!segs.some(([p, q]) => segHitsRect(p, q, r)) && !f.rects.some(R => rectsHit(R, r))) return f.text(C, s, o); }
   return f.text(V2.add(P, cands[0]), s, o); }
 function ticks(f, A, B, n, o){ const M = V2.mid(A, B), d = V2.unit(V2.sub(B, A)), nn = V2.perp(d), L = 9, gap = 7;
@@ -4142,16 +4153,16 @@ function pyrFigA(f, c, h, labC, labA, labH){ const s = 250, H = 230, P = [[0, 0,
   polyhedron(f, P, pyrFaces(4)); const O = proj([s / 2, s / 2, 0]), T = proj(P[4]), Mf = proj([s / 2, 0, 0]);
   f.seg(T, O, {dash: '7 6', w: 2.2}); f.seg(O, Mf, {dash: '7 6', w: 2.2}); f.circle(O, 3, {fill: INK, w: 1}); f.seg(T, Mf, {w: 2.8, stroke: BLUE}); rightMark(f, O, Mf, T, 10);
   lenLab(f, proj(P[1]), proj(P[2]), labC, C);
-  if (labA) smartLab(f, Mf, T, labA, {side: -1, ts: [.2, .25, .15, .3, .55, .62, .48], color: BLUE, gap: 6});
+  if (labA) smartLab(f, Mf, T, labA, {side: -1, ts: [.5, .58, .42, .66, .34, .2, .25, .15], color: BLUE, gap: 5});      // a : à mi-hauteur, à gauche (09.11.2026)
   smartLab(f, O, T, labH, {side: 1, ts: [.55, .62, .48, .7, .4], gap: 6}); }
 // ★★★★ 35 fois sur 100 (25.10.2026) : la hauteur de la pyramide n'est pas donnée ; on la calcule avec Pythagore (hauteur d'une face et demi-côté)
 function pyrPyt(){ const T = pick([[3, 4, 5], [6, 8, 10], [5, 12, 13], [9, 12, 15], [8, 15, 17]]), m = tripK(3); return {c: sc10(2 * T[0], m), h: sc10(T[1], m), a: sc10(T[2], m)}; }   // nombres de ★★★ : la difficulté est dans les étapes
 const pytRows = (hyp, leg, res, u, sq, plus) => steps(sq, [nTxt(hyp) + '<sup>2</sup> ' + (plus ? '+' : '−') + ' ' + nTxt(leg) + '<sup>2</sup>', fmtNum(hyp * hyp / 100) + (plus ? ' + ' : ' − ') + fmtNum(leg * leg / 100), fmtNum(res * res / 100)]);
 GL('v_pyr', [1, 2, 3, 4], lv => {
   if (lv === 4 && chance(.35)){ const u = pick(UNITS), {c, h, a} = pyrPyt(), hc = c / 2, Ab = c * c / 100, val = Ab * h / 30, ap = !Number.isInteger(rnd(val * 100)), qv = qr(c * c * h, 3000);
-    const fig = solidFig(f => pyrFigA(f, c, h, lenTxt(c, u), '', '<tspan font-style="italic">h</tspan>'));
+    const fig = solidFig(f => pyrFigA(f, c, h, lenTxt(c, u), '<tspan font-style="italic">a</tspan>', '<tspan font-style="italic">h</tspan>'));     // nommée a sur la figure (09.11.2026)
     const pre = DIV('demi-côté : ' + nTxt(c) + ' : 2 = ' + H('cA', pt2(hc / 10, u)), 'fin') + pytRows(a, hc, h, u, '<i>h</i><sup>2</sup>') + steps('<i>h</i>', [radH(fmtNum(h * h / 100), 2), H('cA', pt2(h / 10, u))]);
-    return mesQ({sym: 'V', con: 'Volume de la pyramide', dat: 'base carrée ; hauteur d\'une face (en bleu) : ' + lenTxt(a, u), fig, pre, side: true, pre2: steps(AB_, [nTxt(c) + ' ∙ ' + nTxt(c), fmtNum(Ab) + ' ' + u + '²']),
+    return mesQ({sym: 'V', con: 'Volume de la pyramide', dat: 'base carrée ; hauteur d\'une face : <i>a</i> = ' + lenTxt(a, u), fig, pre, side: true, pre2: steps(AB_, [nTxt(c) + ' ∙ ' + nTxt(c), fmtNum(Ab) + ' ' + u + '²']),
       rows: [fracR(AB_ + ' ∙ ' + H_, 3), fracR(fmtNum(Ab) + ' ∙ ' + nTxt(h), 3)], val,
       ex: ap && qv[1] <= 60 ? valHTML(F(qv[0], qv[1])) : null, unit: u + '³', approx: ap, key: 'pyrA' + [c, h, a] + u, data: ['pyr', 'V', [c / 10, h / 10], val], chk: {pyt: [[hc, h, a]], shown: [lenTxt(c, u), lenTxt(a, u)]}}); }
   const u = pick(UNITS); let c, h, e = 0;
@@ -5943,7 +5954,7 @@ function parFig(al, marks){ // marks : [[position, étiquette, couleur, italique
   f.seg([x0, yA], [x1, yA]); f.seg([x0, yB], [x1, yB]);
   const ext = 90, S1 = V2.add(P1, V2.mul(dir, -ext)), S2 = V2.add(P2, V2.mul(dir, ext)); f.seg(S1, S2);
   [[x1 - 60, yA], [x1 - 60, yB]].forEach(p => f.path([[p[0] - 8, p[1] + 8], [p[0], p[1]], [p[0] - 8, p[1] - 8]], {w: 2.4}));   // ⟩ : droites parallèles
-  f.text([x1 + 22, yA], '<tspan font-style="italic">d</tspan>', {size: 22}); f.text([x1 + 22, yB], '<tspan font-style="italic">d</tspan>′', {size: 22});
+  f.text([x1 + 22, yA], 'd', {size: 22}); f.text([x1 + 22, yB], 'd′', {size: 22});
   const ray = {R: [1, 0], L: [-1, 0], U: dir, D: V2.mul(dir, -1)}, real = {};
   marks.forEach(([pos, lab, col, it]) => { const Pt = pos[0] === 'P' ? P1 : P2, U = V2.add(Pt, ray[pos[1]]), V = V2.add(Pt, ray[pos[2]]);
     angArc(f, Pt, U, V, {ccw: true, r: 34, lab, color: col, it}); real[pos] = angleAt(Pt, U, V); });
@@ -5954,13 +5965,13 @@ function parTri(){ // A, B sur d (en bas), C sur d′ : angle entre d′ (vers l
     const gap = 140, A = [0, 0], C = [gap / Math.tan(al * DEG), gap], B = [C[0] + gap / Math.tan(be * DEG), 0], x0 = Math.min(A[0], C[0]) - 110, x1 = Math.max(B[0], C[0]) + 110;
     const draw = det => { const f = new Fig(); f.seg([x0, 0], [x1, 0]); f.seg([x0, gap], [x1, gap]); f.seg(A, C); f.seg(B, C);
       [[x1 - 50, 0], [x1 - 50, gap]].forEach(p => f.path([[p[0] - 8, p[1] + 8], [p[0], p[1]], [p[0] - 8, p[1] - 8]], {w: 2.4}));
-      f.text([x1 + 22, 0], '<tspan font-style="italic">d</tspan>', {size: 22}); f.text([x1 + 22, gap], '<tspan font-style="italic">d</tspan>′', {size: 22});
+      f.text([x1 + 22, 0], 'd', {size: 22}); f.text([x1 + 22, gap], 'd′', {size: 22});
       angArc(f, C, [C[0] - 1, gap], A, {ccw: true, r: 36, lab: al + '°'}); angArc(f, B, C, A, {ccw: true, r: 36, lab: be + '°'});
       angArc(f, C, A, B, {ccw: true, r: 30, lab: det ? x + '°' : XI, color: RED, it: !det, bold: det});
       if (det) angArc(f, A, B, C, {ccw: true, r: 36, lab: al + '°', color: GREEN});
       [[A, 'A'], [B, 'B'], [C, 'C']].forEach(([P, n]) => vLab(f, P, n, n === 'C' ? [C[0], 0] : [C[0], gap / 2])); return f.svg(); };
     const real = {dC: angleAt(C, [C[0] - 1, gap], A), A: angleAt(A, B, C), B: angleAt(B, A, C), C: angleAt(C, A, B)};
-    return angQ({val: x, fig: draw(false), con: '<i>d</i> ' + PLL + ' <i>d</i>′', key: 'gpt' + [al, be].sort((u, v) => u - v), chk: {parT: {al, be, val: x, real}}, figDet: true,
+    return angQ({val: x, fig: draw(false), con: 'd ' + PLL + ' d′', key: 'gpt' + [al, be].sort((u, v) => u - v), chk: {parT: {al, be, val: x, real}}, figDet: true,
       det: () => draw(true) + DIV(angN('CAB') + ' = ' + H('cC', al + '°') + ' ' + RELS(PARREL.alt), 'fin') + DIV(XI + ' = 180° − ' + al + '° − ' + be + '° = ' + ANS(x + '°'), 'fin') + DIV('somme des angles du triangle ABC : 180°', 'gr')}); }
   return null;
 }
@@ -5974,7 +5985,7 @@ GL('g_par', [1, 2, 3, 4], lv => {
   const det = () => { const mids = path.slice(0, -1).map(st => st[1]), D = parFig(al, [[g, gv + '°', INK, false]].concat(mids.map(m => [m, parVal(m, al) + '°', GREEN, false]), [[x, val + '°', RED, false]]));
     return D.svg + path.map(([fr, to, rel], i) => DIV((i === path.length - 1 ? XI + ' = ' : '') + (rel === 'adj' ? '180° − ' + parVal(fr, al) + '° = ' : '') +
       (i === path.length - 1 ? ANS(val + '°') : H('cC', parVal(to, al) + '°')) + ' ' + RELS(PARREL[rel]), 'fin')).join(''); };
-  return angQ({val, fig: F.svg, con: '<i>d</i> ' + PLL + ' <i>d</i>′', key: 'gp' + [want, gv, val], chk: {par: [al, val !== al], par2: {al, g, x, val, real: F.real}}, figDet: true, det});
+  return angQ({val, fig: F.svg, con: 'd ' + PLL + ' d′', key: 'gp' + [want, gv, val], chk: {par: [al, val !== al], par2: {al, g, x, val, real: F.real}}, figDet: true, det});
 });
 // --- angle inscrit et angle au centre
 GL('g_ins', [1, 2, 3, 4], lv => {
@@ -7570,8 +7581,8 @@ GL('fn_gx', [1, 2, 3, 4], lv => {
   }
 });
 // expression → graphique (trois droites ou trois courbes)
-const DLAB = k => '<tspan font-style="italic">d</tspan><tspan dy="6" font-size="15">' + k + '</tspan>';     // d₁ sans parenthèses : nom d'une lettre minuscule (CONVENTIONS.md)
-const DLABH = k => '<i>d</i><sub>' + k + '</sub>';
+const DLAB = k => 'd<tspan dy="6" font-size="15">' + k + '</tspan>';     // d₁ sans parenthèses : nom d'une lettre minuscule (CONVENTIONS.md)
+const DLABH = k => 'd<sub>' + k + '</sub>';      // droits (CONVENTIONS.md ; 09.11.2026, avant en italique)
 const CLAB = k => '<tspan font-style="italic">C</tspan><tspan dy="6" font-size="15">' + k + '</tspan>';    // courbe C₁ : sans parenthèses (CONVENTIONS.md)
 const CLABH = k => '<i>C</i><sub>' + k + '</sub>';
 const fnSame = (G, F) => G.ty === F.ty && G.a[0] === F.a[0] && G.a[1] === F.a[1] && G.b === F.b;
@@ -8013,40 +8024,51 @@ function drtName(kind, N, iv){ const V = N[iv], Q1 = N[(iv + 1) % 3], Q2 = N[(iv
   return kind === 'mtr' ? 'la médiatrice de ' + segN(Q1, Q2) : kind === 'bis' ? 'la bissectrice de l\'angle ' + angN(Q1 + V + Q2)
     : kind === 'mdn' ? 'la médiane issue de ' + V : 'la hauteur issue de ' + V; }
 // la droite rouge : vraie (codage complet) ou presque (fake : 'off' pas au milieu, 'tilt' pas perpendiculaire, 'ang' angles différents)
+// Nom d'une droite (« la droite d ») ou d'un cercle (« le cercle C ») sur la figure (l'enseignant, 09.11.2026 : « Pour les couleurs
+// (notamment droite rouge), je te propose de modifier avec un nom (par exemple "la droite rouge" devient "la droite d" et tu note sur la
+// figure que c'est d » ; QCM : à l'écran aussi) : la feuille à imprimer est en noir et blanc. Posé une fois tout le dessin tracé.
+function lineName(f, A, B, s, col){ const out = [];
+  [[B, A], [A, B]].forEach(([E, F]) => { const u = V2.unit(V2.sub(E, F)), n = V2.perp(u);
+    [[22, 0], [16, 22], [16, -22], [0, 24], [0, -24], [-26, 24], [-26, -24], [-52, 24], [-52, -24], [40, 0]].forEach(([a, b]) => out.push(V2.add(E, V2.add(V2.mul(u, a), V2.mul(n, b))))); });
+  return freeLab(f, [0, 0], out, s, {color: col, size: 26, bold: true, pad: 3}); }
+function circName(f, O, r, s, col){ const out = [];
+  [45, 135, 315, 225, 90, 270, 0, 180, 30, 60, 120, 150, 210, 240, 300, 330].forEach(a => [r + 24, r + 34].forEach(R => out.push([O[0] + R * Math.cos(a * DEG), O[1] + R * Math.sin(a * DEG)])));
+  return freeLab(f, [0, 0], out, s, {color: col, size: 26, bold: true, pad: 4}); }
 function drtFig(T, N, iv, kind, fake, o){
   o = o || {};
   const f = new Fig(), P = T.P, V = P[iv], Q1 = P[(iv + 1) % 3], Q2 = P[(iv + 2) % 3], Cc = V2.cen(P), side = V2.unit(V2.sub(Q2, Q1)), L12 = V2.dist(Q1, Q2);
   f.poly(P, {fill: '#eef3fa'});
-  const red = {stroke: RED, w: 3.2}, info = {};
+  const red = {stroke: RED, w: 3.2}, info = {}, rs = (a, b) => { info.ln = [a, b]; f.seg(a, b, red); };
   if (kind === 'mtr'){
     const t = fake === 'off' ? pick([.3, .7]) : .5, X = V2.lerp(Q1, Q2, t);
     let d = V2.perp(side); if (V2.dot(d, V2.sub(Cc, X)) < 0) d = V2.mul(d, -1);
     if (fake === 'tilt') d = V2.rot(d, sgn() * 24 * DEG);
     const far = Math.max(...P.map(p => V2.dot(V2.sub(p, X), d))) + 60;
-    f.seg(V2.add(X, V2.mul(d, -70)), V2.add(X, V2.mul(d, far)), red);
+    rs(V2.add(X, V2.mul(d, -70)), V2.add(X, V2.mul(d, far)));
     ticks(f, Q1, X, 1); ticks(f, X, Q2, fake === 'off' ? 2 : 1);
     if (fake !== 'tilt') rightMark(f, X, Q2, V2.add(X, V2.mul(d, 30)), 14);
   } else if (kind === 'bis'){
     const u1 = V2.unit(V2.sub(Q1, V)), u2 = V2.unit(V2.sub(Q2, V));
     let u = V2.unit(V2.add(u1, u2)); if (fake === 'ang') u = V2.rot(u, sgn() * ri(5, 8) * DEG);
     const X = interLines(V, u, Q1, side), W = V2.add(V, V2.mul(u, 60));
-    f.seg(V2.sub(V, V2.mul(u, 50)), V2.add(X, V2.mul(u, 55)), red);
+    rs(V2.sub(V, V2.mul(u, 50)), V2.add(X, V2.mul(u, 55)));
     if (o.values){ const a1 = Math.round(angleAt(V, Q1, W)), a2 = T.ang[iv] - a1; info.vals = [a1, a2];
       angArc(f, V, Q1, W, {r: 46, lab: a1 + '°', size: 22}); angArc(f, V, W, Q2, {r: 58, lab: a2 + '°', size: 22}); }
     else { angMark(f, V, Q1, W, 54, 1); angMark(f, V, W, Q2, 54, 1); }
   } else if (kind === 'mdn'){
     const t = fake === 'off' ? pick([.33, .67]) : .5, X = V2.lerp(Q1, Q2, t), u = V2.unit(V2.sub(X, V));
-    f.seg(V2.sub(V, V2.mul(u, 34)), V2.add(X, V2.mul(u, 44)), red);
+    rs(V2.sub(V, V2.mul(u, 34)), V2.add(X, V2.mul(u, 44)));
     if (!o.noTicks){ ticks(f, Q1, X, 1); ticks(f, X, Q2, fake === 'off' ? 2 : 1); }
     if (o.mid){ xMark(f, X); vtx(f, X, o.mid, V); }
   } else {
     const H = proj2(V, Q1, Q2), tH = V2.dot(V2.sub(H, Q1), side) / L12;
     const X = fake === 'tilt' ? V2.add(H, V2.mul(side, (tH < .5 ? 1 : -1) * L12 * .22)) : H, u = V2.unit(V2.sub(X, V));
     if (tH < 0 || tH > 1){ const E = tH < 0 ? Q1 : Q2; f.seg(E, V2.add(H, V2.mul(V2.unit(V2.sub(H, E)), 26)), {w: 2.2, dash: '8 6'}); }
-    f.seg(V2.sub(V, V2.mul(u, 34)), V2.add(X, V2.mul(u, 44)), red);
+    rs(V2.sub(V, V2.mul(u, 34)), V2.add(X, V2.mul(u, 44)));
     if (fake !== 'tilt') rightMark(f, H, V2.dist(H, Q1) > V2.dist(H, Q2) ? Q1 : Q2, V, 15);
   }
-  P.forEach((p, i) => vtx(f, p, N[i], Cc));
+  P.forEach((p, i) => vtx(f, p, N[i], Cc, {pad: 4}));
+  if (info.ln) lineName(f, info.ln[0], info.ln[1], 'd', RED);
   return {svg: f.svg(GK), info};
 }
 const DRT_WHY = {mtr: (N, iv) => 'perpendiculaire à ' + segN(N[(iv + 1) % 3], N[(iv + 2) % 3]) + ' et passe par son milieu',
@@ -8171,7 +8193,7 @@ function drtQ(kind, lv){
   if (lv === 1 || (lv === 4 && kind === 'hau')){        // ★★★★ pour la hauteur : triangle obtusangle (hauteur à l'extérieur)
     const T = lv === 4 ? (() => { const ob = ri(100, 115), b = ri(25, 155 - ob); return tri9(0, 180, 250, [180 - ob - b, ob, b]); })() : tri9(...ACUTE);
     const iv = lv === 4 ? 0 : ri(0, 2), D = drtFig(T, N, iv, kind), a = drtName(kind, N, iv);
-    return geoQ({a, r: a, fig: D.svg, con: 'Quelle est la droite rouge ?', conBig: true, key: kind + 'r' + (lv === 4 ? '4' : ''), figDet: true, chk: {drt: {kind, lv, a, N, iv}},
+    return geoQ({a, r: a, fig: D.svg, con: 'Quelle est la droite d ?', conBig: true, key: kind + 'r' + (lv === 4 ? '4' : ''), figDet: true, chk: {drt: {kind, lv, a, N, iv}},
       det: () => D.svg + DIV(DRT_WHY[kind](N, iv), 'gr') + DIV(ANS(a), 'fin')});
   }
   if (lv === 3){
@@ -8182,7 +8204,7 @@ function drtQ(kind, lv){
     const why = kind === 'mtr' ? ['passe par le milieu de ' + s12 + ok(fake !== 'off'), 'perpendiculaire à ' + s12 + ok(fake !== 'tilt')]
       : kind === 'bis' ? [D.info.vals[0] + '° ' + (real ? '=' : '≠') + ' ' + D.info.vals[1] + '°' + ok(real)]
       : kind === 'mdn' ? ['passe par le milieu de ' + s12 + ok(real)] : ['perpendiculaire à ' + drN(N[(iv + 1) % 3], N[(iv + 2) % 3]) + ok(real)];
-    return geoQ({a, r: a, fig: D.svg, con: 'La droite rouge est-elle ' + nm + ' ?', key: kind + 'q' + a, figDet: true,
+    return geoQ({a, r: a, fig: D.svg, con: 'La droite d est-elle ' + nm + ' ?', key: kind + 'q' + a, figDet: true,
       chk: {drt: {kind, lv, a, fake, vals: D.info.vals, al: T.ang[iv]}}, det: () => D.svg + why.map(w => DIV(w, 'gr')).join('') + DIV(ANS(a), 'fin')});
   }
   // ★★★★ : utiliser une propriété
@@ -8193,9 +8215,9 @@ function drtQ(kind, lv){
     f.seg(A_, B_, {w: 3}); f.seg(V2.sub(M_, V2.mul(n, 60)), V2.add(O_, V2.mul(n, 50)), {stroke: RED, w: 3.2});
     ticks(f, A_, M_, 1); ticks(f, M_, B_, 1); rightMark(f, M_, B_, O_, 14);
     f.seg(O_, A_, {w: 2, dash: '7 6'}); f.seg(O_, B_, {w: 2, dash: '7 6'}); xMark(f, O_); lenLab(f, O_, A_, L + ' ' + u, B_);
-    const C0 = V2.mid(M_, O_); [[A_, A], [B_, B], [O_, O]].forEach(([p, s]) => vtx(f, p, s, C0));
+    const C0 = V2.mid(M_, O_); [[A_, A], [B_, B], [O_, O]].forEach(([p, s]) => vtx(f, p, s, C0)); lineName(f, V2.sub(M_, V2.mul(n, 60)), V2.add(O_, V2.mul(n, 50)), 'd', RED);
     const fig = f.svg(GK), a = L + ' ' + u;
-    return geoQ({pre: O + B + ' =', a, r: L, fig, con: 'La droite rouge est la médiatrice de ' + segN(A, B), key: 'mtr4', chk: {drt: {kind, lv, a, L}},
+    return geoQ({pre: O + B + ' =', a, r: L, fig, con: 'La droite d est la médiatrice de ' + segN(A, B), key: 'mtr4', chk: {drt: {kind, lv, a, L}},
       det: () => fig + DIV(O + ' est sur la médiatrice de ' + segN(A, B) + ' ⟹ ' + O + A + ' = ' + O + B, 'gr') + DIV(O + B + ' = ' + ANS(a), 'fin')});
   }
   if (kind === 'bis'){
@@ -8204,22 +8226,22 @@ function drtQ(kind, lv){
     f.seg(V, U, {w: 3}); f.seg(V, W, {w: 3}); f.seg(V2.mul(b, -.22), b, {stroke: RED, w: 3.2});
     angMark(f, V, U, Cp, 56, 1); angMark(f, V, Cp, W, 56, 1);
     const PA = V2.mul(U, .8), PB = V2.mul(W, .8); [PA, PB, Cp].forEach(p => xMark(f, p));
-    const C0 = V2.mul(V2.unit(b), 120); vtx(f, V, O, C0); vtx(f, PA, A, C0); vtx(f, PB, B, C0); vtx(f, Cp, C, V2.add(Cp, V2.mul(V2.perp(V2.unit(b)), 30)));
+    const C0 = V2.mul(V2.unit(b), 120); vtx(f, V, O, C0); vtx(f, PA, A, C0); vtx(f, PB, B, C0); vtx(f, Cp, C, V2.add(Cp, V2.mul(V2.perp(V2.unit(b)), 30))); lineName(f, V2.mul(b, -.22), b, 'd', RED);
     const fig = f.svg(GK), a = al / 2 + '°';
-    return geoQ({pre: angN(A + O + C) + ' =', a, r: al / 2, fig, dat: angN(A + O + B) + ' = ' + al + '°', con: 'La droite rouge est la bissectrice de l\'angle ' + angN(A + O + B),
+    return geoQ({pre: angN(A + O + C) + ' =', a, r: al / 2, fig, dat: angN(A + O + B) + ' = ' + al + '°', con: 'La droite d est la bissectrice de l\'angle ' + angN(A + O + B),
       key: 'bis4', chk: {drt: {kind, lv, a, al}}, det: () => fig + DIV(angN(A + O + C) + ' = ' + angN(C + O + B), 'gr') + DIV(angN(A + O + C) + ' = ' + al + '° : 2 = ' + ANS(a), 'fin')});
   }
   // médiane : le milieu n'est pas codé, c'est la propriété à utiliser
   const L = 2 * ri(3, 9) + (DEC && chance(.4) ? 1 : 0), T = tri9(...ACUTE), iv = ri(0, 2), Mn = pick(['M', 'I', 'K', 'J'].filter(x => !N.includes(x)));
   const D = drtFig(T, N, iv, 'mdn', null, {noTicks: true, mid: Mn}), [s1, s2] = [N[(iv + 1) % 3], N[(iv + 2) % 3]].sort(), a = fmtNum(L / 2) + ' ' + u;
-  return geoQ({pre: s1 + Mn + ' =', a, r: L / 2, fig: D.svg, dat: s1 + s2 + ' = ' + fmtNum(L) + ' ' + u, con: 'La droite rouge est la médiane issue de ' + N[iv], key: 'mdn4',
+  return geoQ({pre: s1 + Mn + ' =', a, r: L / 2, fig: D.svg, dat: s1 + s2 + ' = ' + fmtNum(L) + ' ' + u, con: 'La droite d est la médiane issue de ' + N[iv], key: 'mdn4',
     chk: {drt: {kind, lv, a, L, half: L / 2}}, det: () => D.svg + DIV(Mn + ' est le milieu de ' + segN(s1, s2), 'gr') + DIV(s1 + Mn + ' = ' + fmtNum(L) + ' : 2 = ' + ANS(a), 'fin')});
 }
 ['mtr', 'bis', 'mdn', 'hau'].forEach(k => GL('g_' + k, [1, 2, 3, 4], lv => drtQ(k, lv)));
 
 /* ---------- cercles circonscrit (centre O) et inscrit (centre I) ---------- */
 const CTN = {cci: 'O', cin: 'I'};
-function cercleFig(T, N, kind, lines, mark){ // lines : les trois médiatrices / bissectrices (en gris) ; mark : un rayon (centre et pied nommés)
+function cercleFig(T, N, kind, lines, mark, nm){ // lines : les trois médiatrices / bissectrices (en gris) ; mark : un rayon (centre et pied nommés)
   const f = new Fig(), P = T.P, Cc = V2.cen(P), O = kind === 'cci' ? circum(...P) : incenter(...P), r = kind === 'cci' ? V2.dist(O, P[0]) : V2.dist(O, proj2(O, P[1], P[2]));
   f.poly(P, {fill: '#eef3fa'});
   if (lines) for (let i = 0; i < 3; i++){ const V = P[i], Q1 = P[(i + 1) % 3], Q2 = P[(i + 2) % 3];
@@ -8233,6 +8255,7 @@ function cercleFig(T, N, kind, lines, mark){ // lines : les trois médiatrices /
   P.forEach((p, i) => vtx(f, p, N[i], Cc));
   if (mark){ vtx(f, O, CTN[kind], V2.add(O, [0, 40]), {size: 22});
     if (kind === 'cin'){ const H = proj2(O, P[mark.i], P[(mark.i + 1) % 3]); vtx(f, H, mark.foot, O); } }
+  if (nm) circName(f, O, r, nm, RED);                // « le cercle C » (09.11.2026)
   return f.svg(GK);
 }
 const CER = {cci: 'le cercle circonscrit au triangle', cin: 'le cercle inscrit dans le triangle'};
@@ -8250,8 +8273,8 @@ const I_CON = (O, s) => O + ' est le centre du cercle inscrit. Distance de ' + O
 function cerQ(kind, lv){
   const N = pick(TNC), T = tri9(42, 85, 240), O = CTN[kind];
   if (lv === 2){ const [b, a, c, dfig] = pick(CER_DEF[kind]); return phrQ('Complète', b, a, c, {key: kind + 'd' + a, chk: {cer: {kind, lv}}, dfig}); }
-  if (lv === 1){ const fig = cercleFig(T, N, kind, true), a = CER[kind];
-    return geoQ({a, r: a, fig, con: 'Quel est le cercle rouge ?', conBig: true, key: kind + 'r', figDet: true, chk: {cer: {kind, lv, a}},
+  if (lv === 1){ const N1 = pick(TNC.filter(n => !n.includes('C'))), fig = cercleFig(T, N1, kind, true, null, 'C'), a = CER[kind];     // pas de sommet C
+    return geoQ({a, r: a, fig, con: 'Quel est le cercle C ?', conBig: true, key: kind + 'r', figDet: true, chk: {cer: {kind, lv, a}},
       det: () => fig + DIV('centre : point où se coupent les ' + (kind === 'cci' ? 'médiatrices' : 'bissectrices'), 'gr') + DIV(ANS(a), 'fin')}); }
   // ★★★ (sorte 3) : le cercle dessiné, phrase à compléter « Pour tracer ce cercle, il faut d'abord tracer … » (l'enseignant, 30.10.2026, 7e conversation ;
   // avant : « Le cercle rouge est-il le cercle circonscrit au triangle ? ») ; détail : la figure avec les trois droites en gris
@@ -8283,7 +8306,7 @@ function notQ(lv){
     const C0 = V2.add(V2.mid(PA, PB), V2.mul(V2.perp(u), 40)); [[PA, A], [PB, B]].forEach(([p, s]) => vtx(f, p, s, C0));
     const a = kind === 'droite' ? '(' + A + B + ')' : kind === 'seg' ? '[' + A + B + ']' : kind === 'long' ? A + B : rev ? '[' + B + A + ')' : '[' + A + B + ')';
     const what = {droite: 'la droite', seg: 'le segment', demi: 'la demi-droite', long: 'la longueur du segment'}[kind], fig = f.svg(GK);
-    return geoQ({a, r: a, fig, con: kind === 'long' ? 'Notation de la longueur du segment rouge' : 'Notation de la figure rouge', key: 'not' + kind, figDet: true, chk: {not: {kind, a}},
+    return geoQ({a, r: a, fig, con: kind === 'long' ? 'Notation de la longueur du segment' : 'Notation de la figure', key: 'not' + kind, figDet: true, chk: {not: {kind, a}},
       det: () => fig + DIV(what + ' : ' + ANS(a), 'fin')});
   }
   if (lv === 3){
@@ -9265,6 +9288,9 @@ function agrFig(sh, A, B, k, labs, al){
   if (sh === 'rec') [P0, P1].forEach(P => rightMark(f, P[0], P[1], P[3], 12));
   const out = {f, P0, P1};
   labs.forEach(([fi, side, txt, col]) => { const P = fi ? P1 : P0, n = P.length, U = P[side], V = P[(side + 1) % n]; lenLab(f, U, V, txt, V2.cen(P), {color: col || INK, bold: !!col}); });
+  // « la figure 2 est un agrandissement de la figure 1 » (09.11.2026 ; avant : « la figure orange … de la bleue ») : le nom au-dessus de chaque figure
+  [[P0, 'figure 1'], [P1, 'figure 2']].forEach(([P, t]) => { const x = (Math.min(...P.map(p => p[0])) + Math.max(...P.map(p => p[0]))) / 2, y = Math.max(...P.map(p => p[1]));
+    freeLab(f, [x, y], [[0, 22], [0, 34], [0, 46], [24, 22], [40, 22], [24, 40], [0, 62], [40, 46]], t, {size: 22}); });
   return out;
 }
 // sortes de questions déjà posées, par générateur : on tire parmi les moins posées (24.10.2026 : à toutes les étoiles, tout ce qu'on peut demander)
@@ -9294,7 +9320,7 @@ GL('pagr', [1, 2, 3, 4], lv => {
     if (Math.max(A, B) * Math.max(1, kv) > 40 || Math.max(A, B) / Math.min(A, B) > 3) continue;
     if (Math.min(A, B) * Math.min(1, kv) * 210 / (Math.max(A, B) * Math.max(1, kv)) < 30) continue;        // la plus petite figure reste bien visible
     const typ = kv > 1 ? 'agrandissement' : 'réduction', conK = cap1(typ) + ' de coefficient ' + coefH(k), L = v => fmtNum(v) + ' cm';
-    const orange = 'La figure orange est ' + (kv > 1 ? 'un agrandissement' : 'une réduction') + ' de la bleue';
+    const orange = 'La figure\u00a02 est ' + (kv > 1 ? 'un agrandissement' : 'une réduction') + ' de la figure\u00a01';
     const chk = ans => ({agr: {kind, A, B, k: kv, kA, kB, ans}}), ar = (x, lab, y) => chainH(x, [[lab, y]]), key = 'agr' + kind + A + ',' + B + ',' + kv;
     const kLine = () => DIV('coefficient : ' + fmtNum(kA) + ' : ' + fmtNum(A) + ' = ' + H('cA', coefH(k)), 'fin');
     const img = () => DIV(fmtNum(A) + ' ∙ ' + coefH(k) + ' = ' + H('cA', L(kA)) + ' &nbsp; ' + fmtNum(B) + ' ∙ ' + coefH(k) + ' = ' + H('cA', L(kB)), 'fin');
@@ -9314,7 +9340,7 @@ GL('pagr', [1, 2, 3, 4], lv => {
       if (ar_ && !Number.isInteger(rnd(Ar * 100))) continue;
       const labs = [[0, 0, L(A)], [0, 1, L(B)]].concat(kind === 'perimK' ? [[1, 0, L(kA)]] : []), fig = agrFig('rec', A, B, k, labs).f.svg(GK), val = ar_ ? Ar : P;
       const sides = kind === 'perimK' ? () => kLine() + DIV(fmtNum(B) + ' ∙ ' + coefH(k) + ' = ' + H('cA', L(kB)), 'fin') : img;
-      return wordQ({pre: (ar_ ? '<i>A</i>' : '<i>P</i>') + ' =', a: fmtNum(val), r: val, post: ar_ ? 'cm²' : 'cm', con: (ar_ ? 'Aire' : 'Périmètre') + ' de la figure orange ?', conBig: true,
+      return wordQ({pre: (ar_ ? '<i>A</i>' : '<i>P</i>') + ' =', a: fmtNum(val), r: val, post: ar_ ? 'cm²' : 'cm', con: (ar_ ? 'Aire' : 'Périmètre') + ' de la figure\u00a02 ?', conBig: true,
         dat: kind === 'perimK' ? orange : conK, fig, key, chk: chk(val),
         det: () => sides() + steps(ar_ ? '<i>A</i>' : '<i>P</i>', [ar_ ? fmtNum(kA) + ' ∙ ' + fmtNum(kB) : '2 ∙ ' + fmtNum(kA) + ' + 2 ∙ ' + fmtNum(kB), ANS(fmtNum(val) + (ar_ ? ' cm²' : ' cm'))])}); }
     if (kind === 'angT'){ // les angles sont conservés, puis la somme des angles du triangle : le 3e angle de l'image
@@ -10298,6 +10324,7 @@ GL('pc_taux', [1, 2, 3, 4], lv => {
    montre les cas favorables). */
 const PB_COL = {rouge: '#d64541', verte: '#3f9a54', jaune: '#e8b923', noire: '#3a3f45'};
 const PB_PL = {rouge: 'rouges', verte: 'vertes', jaune: 'jaunes', noire: 'noires'};
+const PB_INI = {rouge: 'R', verte: 'V', jaune: 'J', noire: 'N'};      // initiales dans les secteurs d'une roue
 const pbAns = (f, n) => { const [a, b] = qr(f, n); return {a: b === 1 ? fmtInt(a) : fracH(fmtInt(a), fmtInt(b)), r: b === 1 ? I(a) : F(a, b)}; };   // événement certain ou impossible : 1 ou 0
 function pbFrac(f, n, words){ // cas favorables / cas possibles = … (simplifiée)
   const g = gcd(f, n) || 1, a = f / g, b = n / g, end = b === 1 ? fmtInt(a) : fracH(fmtInt(a), fmtInt(b));
@@ -10350,8 +10377,11 @@ function pbWheel(secs, fav, o){ // secs : [{c: couleur, a: angle en degrés}] da
   let h = svgOpen(W, Ht, o.k), a0 = -90 + (o.rot || 0), out = '';
   secs.forEach((s, i) => { const a1 = a0 + s.a, on = !o.det || fav(i);
     h += '<path d="' + sec(a0, a1) + '" fill="' + PB_COL[s.c] + '" fill-opacity="' + (on ? 1 : .2) + '" stroke="#ffffff" stroke-width="2"/>';
-    if (o.lab){ const m = (a0 + a1) / 2, lx = cx + R * .6 * Math.cos(m * DEG), ly = cy + R * .6 * Math.sin(m * DEG);
-      h += '<text x="' + rnd(lx) + '" y="' + rnd(ly) + '" font-size="24" font-weight="700" text-anchor="middle" dominant-baseline="central" fill="' + (on ? (s.c === 'jaune' ? INK : '#ffffff') : '#6b7480') + '">' + s.a + '°</text>'; }
+    const m = (a0 + a1) / 2, tc = on ? (s.c === 'jaune' ? INK : '#ffffff') : '#6b7480', lr = .6;
+    if (o.lab){ const lx = cx + R * lr * Math.cos(m * DEG), ly = cy + R * lr * Math.sin(m * DEG);
+      h += '<text x="' + rnd(lx) + '" y="' + rnd(ly) + '" font-size="24" font-weight="700" text-anchor="middle" dominant-baseline="central" fill="' + tc + '">' + s.a + '°</text>'; }
+    { const r2 = o.lab ? .86 : .68, mi = o.lab && s.a >= 80 ? a0 + s.a * .25 : m, lx = cx + R * r2 * Math.cos(mi * DEG), ly = cy + R * r2 * Math.sin(mi * DEG);      // l'initiale de la couleur (09.11.2026 : feuille en noir et blanc) ; grand secteur avec son angle : à côté de l'angle
+      h += '<text x="' + rnd(lx) + '" y="' + rnd(ly) + '" font-size="' + (o.lab ? 22 : Math.min(26, Math.round(2.2 * s.a))) + '" font-weight="700" text-anchor="middle" dominant-baseline="central" fill="' + tc + '">' + PB_INI[s.c] + '</text>'; }
     if (o.det && fav(i)) out += '<path d="' + sec(a0, a1) + '" fill="none" stroke="' + BLUE + '" stroke-width="4" stroke-linejoin="round"/>';
     a0 = a1; });
   return h + out + '<circle cx="' + cx + '" cy="' + cy + '" r="' + R + '" fill="none" stroke="' + INK + '" stroke-width="2.4"/><circle cx="' + cx + '" cy="' + cy + '" r="6" fill="' + INK + '"/>' +
@@ -10408,12 +10438,12 @@ function pbOne(lv){
       const secs = []; for (let i = 0; i < n; i++) secs.push({c: pick(cs), a: 360 / n}); const c0 = pick(cs), f = secs.filter(s => s.c === c0).length;
       if (!f || f === n || cs.some(c => !secs.some(s => s.c === c)) || secs.filter((s, i) => s.c === secs[(i + 1) % n].c).length > n / 3) continue;
       const A = pbAns(f, n), rot = 180 / n * ri(0, 1), nom = c0 === 'verte' ? 'vert' : c0;
-      return wordQ({a: A.a, r: A.r, fig: pbWheel(secs, i => secs[i].c === c0, {rot}), con: 'La roue est partagée en ' + n + ' secteurs égaux. On la fait tourner.<br>Quelle est la probabilité que la flèche montre le ' + nom + ' ?', conBig: true,
+      return wordQ({a: A.a, r: A.r, fig: pbWheel(secs, i => secs[i].c === c0, {rot}), con: 'La roue est partagée en ' + n + ' secteurs égaux. On la fait tourner.<br>Quelle est la probabilité que la flèche montre le ' + nom + ' (' + PB_INI[c0] + ') ?', conBig: true,
         key: 'pb1r' + n + c0[0] + ':' + secs.map(s => s.c[0]).join(''), chk: {pb: {f, n}}, figDet: true, det: () => pbWheel(secs, i => secs[i].c === c0, {rot, det: true, k: 34}) + pbFrac(f, n)}); } return null; }
   // roueA (★★★★) : secteurs d'angles différents : probabilité = angle du secteur : 360°
   for (let t = 0; t < 200; t++){ const as = [pick([90, 60, 120, 45]), pick([90, 120, 150, 135, 30])], rest = 360 - as[0] - as[1]; if (rest < 40 || as[0] === as[1] || as.includes(rest)) continue;
     const secs = shuffle([{c: 'rouge', a: as[0]}, {c: 'verte', a: as[1]}, {c: 'jaune', a: rest}]), i0 = ri(0, 2), c0 = secs[i0].c, A = pbAns(secs[i0].a, 360), nom = c0 === 'verte' ? 'vert' : c0;
-    return wordQ({a: A.a, r: A.r, fig: pbWheel(secs, i => i === i0, {lab: true}), con: 'On fait tourner la roue.<br>Quelle est la probabilité que la flèche montre le ' + nom + ' ?', conBig: true,
+    return wordQ({a: A.a, r: A.r, fig: pbWheel(secs, i => i === i0, {lab: true}), con: 'On fait tourner la roue.<br>Quelle est la probabilité que la flèche montre le ' + nom + ' (' + PB_INI[c0] + ') ?', conBig: true,
       key: 'pb1ra' + c0[0] + ':' + secs.map(s => s.c[0] + s.a).join(''), chk: {pb: {f: secs[i0].a, n: 360}}, figDet: true,
       det: () => pbWheel(secs, i => i === i0, {lab: true, det: true, k: 34}) + pbFrac(secs[i0].a, 360, ['angle du secteur', 'angle plein'])}); }
   return null;
@@ -13011,7 +13041,7 @@ var QR = (function(){
    « dans lien élèves si on clique dessus, ça pourrait permettre de coller un lien d'élève aussi » : champ « Reprendre un lien » (ses exercices
    cochés dans les réglages, son titre, ses étoiles, sa case FR) ; la fenêtre s'ouvre aussi sans exercice coché (pour coller un lien).
    Note du projet : QPC_PROJET_LIENS_ELEVES.md. */
-const QPC_VERSION = '2026-11-08';    // dossier de cette version sur le site (…/qpc/2026-11-07/) : à changer à chaque version mise en ligne
+const QPC_VERSION = '2026-11-09';    // dossier de cette version sur le site (…/qpc/2026-11-07/) : à changer à chaque version mise en ligne
 const QPC_BASE = 'https://outils-maths.github.io/qpc/';    // compte GitHub « outils-maths » (avec un s)
 const QPC_ONLINE = /(^|\.)github\.io$/i.test(location.hostname);    // ouverte depuis le site : seulement le mode élève (sans lien : un message)
 var STU = null;                       // mode élève (page ouverte par un lien élèves) ; null : page de l'enseignant
@@ -13363,13 +13393,20 @@ const IP_WORK = {
 };
 const IP_NAME = {pgdc: 'Calcul du pgdc', ppmc: 'Calcul du ppmc'};
 const IP_FIGK = {fon: 1.15, rep: 1.15};          // graphiques et repères un peu plus grands (graduations lisibles sur le papier)
+// consigne de la feuille : sans « Complète » (l'enseignant, 09.11.2026 : « quand la consigne est "complète", ça me parait moins utile
+// de le mettre dans le pdf (c'est assez clair qu'il faut compléter) ») ; « Complète le tableau » et les autres consignes restent
+const ipCon = p => p.con && !/^\s*Complète\s*\.?\s*$/.test(String(p.con).replace(/<[^>]+>/g, '')) ? p.con : '';
+// pointillés : une largeur d'un nombre impair de px (Chromium dessine sinon deux points collés, un tiret, au début du pointillé : mesuré
+// sur le PDF à 600 dpi) ; le signe qui suit les pointillés reste avec eux (« cercle ……… . » : le point seul en début de ligne)
+const ipQb = mm => '<span class="qbox" style="width:' + (2 * Math.max(4, Math.round((mm * IP_PX - 1) / 2)) + 1) + 'px;min-width:0">?</span>';
+const ipGlue = h => h.replace(/(<span class="qbox"[^>]*>\?<\/span>)([.,;:!?»)\u00a0]*[.,;:!?»)])/g, '<span class="ipnw">$1$2</span>');
 const ipNb = h => String(h).replace(/ ([?!:;»])/g, '\u00a0$1').replace(/« /g, '«\u00a0');   // pas de « ? » seul en début de ligne (instructions, A4)
 const IP_SEGC = ['#dce8f7', '#fde3c7', '#dcefdc', '#f5dce7', '#e6e0f5', '#f6eecb', '#d4eef0', '#efe1d6'];   // morceaux de la barre des exercices
 const IP_STC = ['#fff6d6', '#ffe9a8', '#ffd96f', '#f3c43f'];                                                  // ★ … ★★★★
 let IP = null;        // la feuille : options, réglages des exercices, questions tirées (pool), séance à part (ses), dernière mise en page (L)
 let IPD = null;       // glissement d'une séparation d'une barre
 const ipSes0 = () => ({TALLY: {}, USEDN: 0, U: [], UA: [], UC: [], X: [], RQ: {}, SV: {}});
-function ipInit(){ IP = {sig: '', S: null, E: null, O: [], pages: 2, cls: '', ans: true, qr: true, stars: false, ex: {}, share: {}, pool: {}, keys: new Set(), ses: ipSes0(), ac: new Map(), L: null, t0: null}; }
+function ipInit(){ IP = {sig: '', S: null, E: null, O: [], U: [], mix: {}, pages: 2, cls: '', ans: true, qr: true, stars: false, ex: {}, share: {}, pool: {}, keys: new Set(), ses: ipSes0(), ac: new Map(), L: null, t0: null}; }
 function ipReset(){ IP.pool = {}; IP.keys = new Set(); IP.ses = ipSes0(); IP.ac = new Map(); }      // « Nouvelles questions »
 const ipEsc = s => String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'})[c]);
 const ipLetter = i => i < 26 ? String.fromCharCode(97 + i) : String.fromCharCode(97 + Math.floor(i / 26) - 1) + String.fromCharCode(97 + i % 26);
@@ -13412,7 +13449,7 @@ function ipGen(o, lv){        // une question de plus pour l'exercice o, à lv �
   if (!p){ P.x[lv] = true; return false; }
   if (p.key != null) IP.keys.add(p.key);
   if (isNoStar(o)) p.nostar = true;
-  p.level = lv; P[lv].push(p); return true;
+  p.level = lv; p._o = o; P[lv].push(p); return true;
 }
 function ipDist(o){           // parts (%) des niveaux 1 à 4 : la barre de l'exercice, dans ses étoiles permises ; sans étoiles : ses quatre sortes (NSW)
   if (isNoStar(o)) return [30, 30, 20, 20];
@@ -13450,7 +13487,7 @@ function ipKey(p){            // la réponse de l'encadré : « 11/12 », « 5,9
 function ipQaHTML(p, line, con, work, side){  // la question : consigne (si con), figure, données, calcul avec ses pointillés, place pour répondre (mm) ;
   // side : la figure à gauche, données, calcul et place pour répondre à sa droite (figure large dans une case large, comme « fig_et » de ses fiches)
   // (side 2 : les données restent sous la figure, ex. le titre d'un diagramme)
-  const fk = IP_FIGK[ITEM_BLOCK[p.sub]], c = con && p.con ? '<div class="con">' + ipNb(p.con) + '</div>' : '',
+  const fk = IP_FIGK[ITEM_BLOCK[p.sub]], c = con && ipCon(p) ? '<div class="con">' + ipNb(ipCon(p)) + '</div>' : '',
     f = p.fig ? '<div class="fig"' + (fk ? ' style="font-size:' + (26 * fk).toFixed(1) + 'pt"' : '') + '>' + p.fig + '</div>' : '', d = p.dat ? '<div class="dat">' + ipNb(p.dat) + '</div>' : '',
     r = '<div class="calc">' + line + '</div>' + (work > .05 ? '<div class="ip-wk" style="height:' + work.toFixed(2) + 'mm"></div>' : '');
   return '<div class="qa">' + c + (side && f ? '<div class="ip-sd">' + (side === 2 ? '<div class="ip-sl">' + f + d + '</div>' : f) + '<div class="ip-sr">' + (side === 2 ? '' : d) + r + '</div></div>' : f + d + r) + '</div>';
@@ -13464,13 +13501,13 @@ function ipPrep(p){           // une fois par question : pointillés de la large
   m.innerHTML = '<div class="qa"><div class="calc">' + q0 + '</div></div>';
   const qb = [...m.querySelectorAll('.qbox')], W = qb.map((b, i) => { const a = aw.length === qb.length ? aw[i] : 8;
     return b.closest('td') ? Math.max(8, a + 3) : b.closest('.phr') ? Math.min(45, Math.max(14, a * 1.25 + 4)) : Math.min(42, Math.max(12, a * 1.3 + 5)); });
-  const line = ipNb(parts.length - 1 === qb.length ? parts.reduce((s, x, i) => s + (i ? '<span class="qbox" style="width:' + W[i - 1].toFixed(1) + 'mm">?</span>' : '') + x, '') : q0);
+  const line = ipGlue(ipNb(parts.length - 1 === qb.length ? parts.reduce((s, x, i) => s + (i ? ipQb(W[i - 1]) : '') + x, '') : q0));
   m.innerHTML = ipQaHTML(p, line, false, 0, false); mathify(m);
   const wd = sel => { const e = m.querySelector(sel); return e ? e.getBoundingClientRect().width / IP_PX : 0; };
   const key = ipKey(p);
-  const I = {line, key, fw: wd('.fig'), rw: Math.max(wd('.calc'), Math.min(45, wd('.dat'))), cl: (p.con || '').replace(/<[^>]+>/g, '').length, h: {}};
+  const I = {line, key, fw: wd('.fig'), rw: Math.max(wd('.calc'), Math.min(45, wd('.dat'))), cl: ipCon(p).replace(/<[^>]+>/g, '').length, h: {}};
   I.need = Math.max(I.fw, wd('.calc'), Math.min(50, wd('.dat')));
-  if (p.con && I.cl <= 32){ m.innerHTML = '<div class="qa"><div class="con">' + ipNb(p.con) + '</div></div>'; mathify(m); I.need = Math.max(I.need, wd('.con')); }   // une consigne courte tient sur sa ligne
+  if (ipCon(p) && I.cl <= 32){ m.innerHTML = '<div class="qa"><div class="con">' + ipNb(ipCon(p)) + '</div></div>'; mathify(m); I.need = Math.max(I.need, wd('.con')); }   // une consigne courte tient sur sa ligne
   m.innerHTML = '<div class="ip-ans"><span class="ip-ai"><b>mm)</b> ' + key + '</span></div>'; mathify(m);
   const r = m.querySelector('.ip-ai').getBoundingClientRect(); I.kw = r.width / IP_PX; I.kh = r.height / IP_PX;
   return p._ip = I;
@@ -13493,48 +13530,92 @@ function ipTxtH(html, w, cls){    // hauteur (mm) d'un texte de la feuille (titr
   const h = m.firstChild.getBoundingClientRect().height / IP_PX; IP_TH.set(k, h); return h; }
 
 /* ---------- mise en page ---------- */
-function ipBlock(o, idx, rows){   // un exercice : ses questions (rows lignes), colonnes, hauteurs
-  const P = ipPool(o.id); if ([1, 2, 3, 4].reduce((n, l) => n + P[l].length, 0) < 4) ipQs(o, 4);     // un échantillon pour choisir les colonnes
-  const all = [1, 2, 3, 4].flatMap(l => P[l]); all.forEach(ipPrep);
+// les exercices de la feuille : un par exercice coché, ou un par bloc mélangé (case « mélanger », au moins deux exercices du bloc)
+function ipUnits(){ const U = [], seen = {};
+  IP.O.forEach(o => { const many = IP.O.filter(x => x.bl === o.bl).length > 1;
+    if (many && IP.mix[o.bl]){ if (seen[o.bl]){ seen[o.bl].os.push(o); return; } const u = {id: '@' + o.bl, os: [o], o, bl: o.bl, mix: true}; seen[o.bl] = u; U.push(u); }
+    else U.push({id: o.id, os: [o], o, bl: o.bl, mix: false}); });
+  return U; }
+const ipBlName = bl => { const n = BLOCKS[bl].name.replace(/<[^>]+>/g, ''); return ipItal(n.charAt(0).toUpperCase() + n.slice(1)); };
+const ipUName = u => u.mix ? ipBlName(u.bl) : ipName(u.o);
+function ipQsU(u, n){         // les n questions d'un exercice de la feuille ; bloc mélangé : ses exercices à parts égales, puis par étoiles, et dans
+  // chaque niveau les exercices à tour de rôle, répartis régulièrement ; sans étoiles : leurs sortes (1 à 4) comme des niveaux
+  if (!u.mix) return ipQs(u.o, n);
+  const k = u.os.length, L = u.os.map((o, i) => ipQs(o, Math.floor(n / k) + (i < n % k ? 1 : 0)));
+  for (let t = 0, miss = n - L.reduce((a, q) => a + q.length, 0); miss > 0 && t < 3; t++)     // un exercice sans assez de questions : les autres en donnent plus
+    u.os.forEach((o, i) => { if (miss <= 0) return; const q = ipQs(o, L[i].length + miss); if (q.length > L[i].length){ miss -= q.length - L[i].length; L[i] = q; } });
+  const out = []; let last = -1;          // dans un niveau : chaque exercice réparti régulièrement (place (j + ½) : n), à égalité le suivant du dernier placé
+  for (let l = 1; l <= 4; l++){ const T = [];
+    L.forEach((q, i) => { const R = q.filter(x => x.level === l); R.forEach((x, j) => T.push([(j + .5) / R.length, (i - last - 1 + k) % k, x, i])); });
+    T.sort((a, b) => a[0] - b[0] || a[1] - b[1]).forEach(t => { out.push(t[2]); last = t[3]; }); }
+  return out;
+}
+function ipBlock(u, idx, rows){   // un exercice : ses questions (rows lignes), colonnes, hauteurs
+  u.os.forEach(o => { const P = ipPool(o.id); if ([1, 2, 3, 4].reduce((n, l) => n + P[l].length, 0) < 4) ipQs(o, 4); });     // un échantillon pour choisir les colonnes
+  const all = u.os.flatMap(o => [1, 2, 3, 4].flatMap(l => ipPool(o.id)[l])); all.forEach(ipPrep);
   const lwOf = n => (n > 26 ? 9 : IP_LET) + (IP.stars ? IP_LETS - IP_LET : 0);      // colonne de la lettre : plus large dès aa)
   const need = Math.max(0, ...all.map(p => p._ip.need)) + lwOf(rows * 4) + 1.5;
-  const cn = all.map(p => p.con || ''), sameCon = all.length > 1 && cn.every(c => c && c === cn[0]);
+  const cn = all.map(ipCon), sameCon = all.length > 1 && cn.every(c => c && c === cn[0]);
   const cmax = !sameCon && all.some(p => p._ip.cl > 80) ? 2 : all.some(p => p.fig) ? 3 : 4;
   let c = cmax; while (c > 1 && (IP_CW - (c - 1) * IP_GC) / c < need) c--;
-  let Q = ipQs(o, rows * c); Q.forEach(ipPrep);
+  let Q = ipQsU(u, rows * c); Q.forEach(ipPrep);
   for (let t = 0; t < 4 && c > 1; t++){        // une question tirée à l'instant est plus large : moins de colonnes
     const nd = Math.max(...Q.map(p => p._ip.need)) + lwOf(Q.length) + 1.5; if ((IP_CW - (c - 1) * IP_GC) / c >= nd) break;
-    while (c > 1 && (IP_CW - (c - 1) * IP_GC) / c < nd) c--; Q = ipQs(o, rows * c); Q.forEach(ipPrep); }
-  const cons = Q.map(p => p.con || ''), common = Q.length > 1 && cons.every(x => x && x === cons[0]) ? cons[0] : '';
+    while (c > 1 && (IP_CW - (c - 1) * IP_GC) / c < nd) c--; Q = ipQsU(u, rows * c); Q.forEach(ipPrep); }
+  const cons = Q.map(ipCon), common = Q.length > 1 && cons.every(x => x && x === cons[0]) ? cons[0] : '';
   const lw = lwOf(Q.length), cw = (IP_CW - (c - 1) * IP_GC) / c;
-  const side = all.some(p => p.fig) && all.every(p => !p.fig || cw - lw - p._ip.fw - 4 >= Math.max(30, p._ip.rw)) ? (o.bl === 'don' ? 2 : 1) : 0;
-  const X = Q.map(p => ({p, w: cw, con: !common, work: ipWork(o, p), side, lw})); ipMeasCells(X);
+  const AQ = all.concat(Q.filter(p => !all.includes(p))), side = AQ.some(p => p.fig) && AQ.every(p => !p.fig || cw - lw - p._ip.fw - 4 >= Math.max(30, p._ip.rw)) ? (u.bl === 'don' ? 2 : 1) : 0;
+  const X = Q.map(p => ({p, w: cw, con: !common, work: ipWork(p._o || u.o, p), side, lw})); ipMeasCells(X);
   const R = []; for (let i = 0; i < Q.length; i += c){ const xs = X.slice(i, i + c);
     R.push({qs: xs.map(x => x.p), xs, i, work: Math.max(...xs.map(x => x.work)), h: Math.max(...xs.map(x => x.p._ip.h[ipCK(x)])) + IP_GR}); }
-  const name = '<span class="ip-hn">' + (idx + 1) + ')</span> ' + ipName(o), con = common ? ipNb(common) + (/[.?!:…]\s*$/.test(common.replace(/<[^>]+>/g, '')) ? '' : '.') : '';
-  return {o, idx, Q, c, cw, side, rows: R, name, con, hh: ipTxtH(name, IP_CW, 'ip-h'), hc: con ? ipTxtH(con, IP_CW, 'ip-cc') : 0, short: Q.length < rows * c};
+  const name = '<span class="ip-hn">' + (idx + 1) + ')</span> ' + ipUName(u), con = common ? ipNb(common) + (/[.?!:…]\s*$/.test(common.replace(/<[^>]+>/g, '')) ? '' : '.') : '';
+  return {u, o: u.o, id: u.id, os: u.os, mix: u.mix, idx, Q, c, cw, side, rows: R, name, con, hh: ipTxtH(name, IP_CW, 'ip-h'), hc: con ? ipTxtH(con, IP_CW, 'ip-cc') : 0, short: Q.length < rows * c};
 }
-function ipAnsHTML(B){        // l'encadré « Réponses » (comme ses fiches : « Réponses », les réponses seulement, en rangées alignées) ; colonnes de même
-  // hauteur, faites ici : un exercice coupé reprend son numéro en haut de la colonne suivante
+function ipAnsPrep(B){        // l'encadré « Réponses » (comme ses fiches : les réponses seulement, en rangées alignées par exercice) : colonnes, rangées,
+  // hauteurs (mm) ; cols1 : en un seul morceau, colonnes de même hauteur ; h : sa hauteur mesurée ; oh : titre, cadre et marges
   const G = B.filter(b => b.Q.length), kmax = Math.max(0, ...G.flatMap(b => b.Q.map(p => p._ip.kw)));
   const C = kmax + 6 <= (IP_CW - 6 - 2 * 5) / 3 ? 3 : kmax + 6 <= (IP_CW - 6 - 5) / 2 ? 2 : 1, cw = (IP_CW - 6 - (C - 1) * 5) / C, iw = cw - 5.5;
   const lines = []; G.forEach(b => { const kw = Math.min(iw, Math.max(...b.Q.map(p => p._ip.kw)) + .3), per = Math.max(1, Math.floor((iw + 2.5) / (kw + 2.5)));
     for (let i = 0; i < b.Q.length; i += per){ const qs = b.Q.slice(i, i + per); lines.push({b, i, qs, kw, h: Math.max(4.3, ...qs.map(p => p._ip.kh)) + .4, g: !i}); } });
-  const tot = lines.reduce((s, l) => s + l.h + (l.g ? .9 : 0), 0), fill = H => { const cols = [[]]; let y = 0;    // colonnes d'au plus H (mm)
-    lines.forEach(l => { const h = l.h + (l.g && cols[cols.length - 1].length ? .9 : 0); if (y + h > H + .01 && cols[cols.length - 1].length){ cols.push([]); y = 0; } cols[cols.length - 1].push(l); y += l.h + (l.g && y ? .9 : 0); });
-    return cols; };
-  let lo = tot / C, hi = tot + 1; for (let t = 0; t < 30; t++){ const mid = (lo + hi) / 2; if (fill(mid).length <= C) hi = mid; else lo = mid; }
-  const cols = fill(hi);
-  return '<div class="ip-ans"><div class="ip-at">Réponses</div><div class="ip-acs">' + cols.map(col => {
+  const A = {C, cw, lines};
+  const bal = L => { const tot = L.reduce((a, l) => a + l.h + .9, 0); let lo = tot / C / 2, hi = tot + 1;      // colonnes de même hauteur, au plus C
+    for (let t = 0; t < 30; t++){ const mid = (lo + hi) / 2; if (ipAnsFill(L, C, mid).length <= C) hi = mid; else lo = mid; } return ipAnsFill(L, C, hi); };
+  A.bal = bal; A.cols1 = bal(lines);
+  const k = B.map(b => b.id + ':' + b.Q.map(p => p.key != null ? p.key : p.level).join(',')).join('|');
+  if (!IP.ac.has(k)){ const m = ipMeas(); m.style.width = IP_CW + 'mm'; m.innerHTML = ipAnsBox(A, A.cols1, 'Réponses'); mathify(m); IP.ac.set(k, m.firstChild.getBoundingClientRect().height / IP_PX); }
+  A.h = IP.ac.get(k); A.oh = Math.max(6, A.h - Math.max(...A.cols1.map(ipColH)));
+  return A;
+}
+const ipColH = col => col.reduce((y, l, i) => y + l.h + (l.g && i ? .9 : 0), 0);
+function ipAnsFill(L, C, H){  // les rangées dans des colonnes d'au plus H (mm) ; peut en donner plus que C
+  const cols = [[]]; let y = 0;
+  L.forEach(l => { const h = l.h + (l.g && cols[cols.length - 1].length ? .9 : 0); if (y + h > H + .01 && cols[cols.length - 1].length){ cols.push([]); y = 0; } cols[cols.length - 1].push(l); y += l.h + (l.g && y ? .9 : 0); });
+  return cols;
+}
+function ipAnsBox(A, cols, title){   // un morceau de l'encadré : un exercice coupé reprend son numéro en haut de la colonne suivante
+  return '<div class="ip-ans"><div class="ip-at">' + title + '</div><div class="ip-acs">' + cols.map((col, ci) => {
     const ch = []; col.forEach(l => { const last = ch[ch.length - 1]; if (last && last.b === l.b) last.ls.push(l); else ch.push({b: l.b, g: l.g, ls: [l]}); });
-    return '<div class="ip-ac" style="width:' + (cw + (col === cols[0] ? 0 : 2.5)).toFixed(2) + 'mm">' + ch.map(c => '<div class="ip-ag' + (c.g ? '' : ' ip-cont') + '"><span class="ip-an">' + c.b.num + ')</span><div class="ip-ais">' +
+    return '<div class="ip-ac" style="width:' + (A.cw + (ci ? 2.5 : 0)).toFixed(2) + 'mm">' + ch.map(c => '<div class="ip-ag' + (c.g ? '' : ' ip-cont') + '"><span class="ip-an">' + c.b.num + ')</span><div class="ip-ais">' +
       c.ls.flatMap(l => l.qs.map((p, j) => '<span class="ip-ai" style="width:' + l.kw.toFixed(2) + 'mm"><b>' + ipLetter(l.i + j) + ')</b> ' + p._ip.key + '</span>')).join('') + '</div></div>').join('') + '</div>';
   }).join('') + '</div></div>';
 }
-function ipAnsH(B){           // hauteur (mm) de l'encadré (gardée pour les mêmes questions)
-  const k = B.map(b => b.o.id + ':' + b.Q.map(p => p.level).join('')).join('|'); if (IP.ac.has(k)) return IP.ac.get(k);
-  const m = ipMeas(); m.style.width = IP_CW + 'mm'; m.innerHTML = ipAnsHTML(B); mathify(m);
-  const h = m.firstChild.getBoundingClientRect().height / IP_PX; IP.ac.set(k, h); return h; }
+function ipAnsFlow(A, k, y, N){   // l'encadré trop haut pour une page : il commence sous les questions (ou à la page suivante) et continue sur les pages
+  // suivantes, en morceaux de C colonnes ; le dernier morceau a des colonnes de même hauteur (en haut de sa page, ou en bas s'il est sous les questions)
+  const ch = [], L = A.lines; let i = 0; y += IP_GA;
+  if (IP_BOT - y < A.oh + 14){ k++; y = IP_TOP2; }
+  while (i < L.length){
+    if (k > N + 8) return null;
+    const H = IP_BOT - y - A.oh - 2, cols = []; let j = i;          // 2 mm de marge : les hauteurs des rangées sont estimées
+    for (let c = 0; c < A.C && j < L.length; c++){ const col = []; let h = 0;
+      while (j < L.length){ const dh = L[j].h + (L[j].g && col.length ? .9 : 0); if (h + dh > H + .01 && col.length) break; col.push(L[j]); h += dh; j++; }
+      cols.push(col); }
+    ch.push({k, y, cols, i0: i}); i = j; k++; y = IP_TOP2;
+  }
+  const z = ch[ch.length - 1]; z.cols = A.bal(L.slice(z.i0)); z.h = A.oh + Math.max(...z.cols.map(ipColH)) + 1;
+  if (ch.length === 1 || z.k === ch[0].k) z.y = IP_BOT - z.h;          // sous les questions : en bas de la page
+  ch.forEach((c, n) => c.title = n ? 'Réponses (suite)' : 'Réponses');
+  return ch;
+}
 function ipHead(){            // en-tête de la 1re page : classe, titre entre deux traits, QR code ; rend le haut du contenu (mm)
   const qr = IP.qr && LNK && LNK.qr ? LNK.qr : null, qs = qr ? Math.min(28, Math.max(20, (qr.size + 8) * .38)) : 0, cls = IP.cls.trim();
   const y = cls ? 14 : 10, tw = IP_CW - (qr ? qs + 4 : 0), th = Math.max(15, ipTxtH(ipEsc(ipTitle() || ' '), tw, 'ip-tt') + 2);
@@ -13542,23 +13623,27 @@ function ipHead(){            // en-tête de la 1re page : classe, titre entre d
   return {qr, qs, cls, y, tw, tb, top: y + Math.max(tb, qr ? qs + 6.5 : 0) + 5};
 }
 function ipLay(X, r){         // exercices X avec r[i] lignes : pages, place de chaque exercice, tout tient-il ?
-  const N = IP.pages, Hd = ipHead(), B = X.map((x, i) => ipBlock(x.o, i, r[i])); let nb = 0;
-  B.forEach(b => { if (b.Q.length) b.num = ++nb; b.name = '<span class="ip-hn">' + (b.num || 0) + ')</span> ' + ipName(b.o); });   // 1), 2)… sans trou (un exercice sans question)
-  const ansH = IP.ans ? ipAnsH(B) : 0;
-  const top = k => k ? IP_TOP2 : Hd.top, bot = k => k === N - 1 && IP.ans ? IP_BOT - ansH - IP_GA : IP_BOT;
+  const N = IP.pages, Hd = ipHead(), B = X.map((x, i) => ipBlock(x.u, i, r[i])); let nb = 0;
+  B.forEach(b => { if (b.Q.length) b.num = ++nb; b.name = '<span class="ip-hn">' + (b.num || 0) + ')</span> ' + ipUName(b.u); });   // 1), 2)… sans trou (un exercice sans question)
+  const A = IP.ans ? ipAnsPrep(B) : null, top = k => k ? IP_TOP2 : Hd.top;
+  const one = !A || A.h + IP_GA <= IP_BOT - top(N - 1) + .01;          // l'encadré tient en bas de la dernière page (sinon : sur plusieurs pages)
+  const bq = k => one && A && k === N - 1 ? IP_BOT - A.h - IP_GA : IP_BOT;
   const pages = [[]], H = B.map(() => 0); let k = 0, y = top(0), fits = true;
   B.forEach((b, i) => b.rows.forEach((row, j) => {
     const head = j ? 0 : (y > top(k) + .01 ? IP_GX : 0) + b.hh + b.hc;
-    if (y + head + row.h > bot(k) + .01 && y > top(k) + .01){ pages[k].end = y; k++; pages.push([]); y = top(k); }
+    if (y + head + row.h > bq(k) + .01 && y > top(k) + .01){ pages[k].end = y; k++; pages.push([]); y = top(k); }
     if (!j){ if (y > top(k) + .01) y += IP_GX; pages[k].push({t: 'h', b, y}); y += b.hh + b.hc; H[i] += b.hh + b.hc; }
     pages[k].push({t: 'r', b, row, y}); y += row.h; H[i] += row.h;
-    if (y > bot(k) + .01) fits = false; }));
+    if (y > bq(k) + .01) fits = false; }));
   pages[k].end = y;
-  if (pages.length > N) fits = false;
-  return {N, Hd, B, ansH, pages, H, fits, top, bot};
+  let ans = A && one ? [{k: N - 1, y: IP_BOT - A.h, cols: A.cols1, title: 'Réponses'}] : null, np = Math.max(pages.length, A && one ? N : 0);
+  if (A && !one){ ans = ipAnsFlow(A, k, y, N); if (!ans) fits = false; else np = Math.max(pages.length, ans[ans.length - 1].k + 1); }
+  const bot = k => ans && !one && ans[0].k === k ? ans[0].y - IP_GA : bq(k);     // la place des questions de chaque page (ipFill)
+  if (np > N) fits = false;
+  return {N, Hd, B, A, ans, one, np, pages, H, fits, top, bot};
 }
 function ipFit(){             // les lignes de chaque exercice : une de plus à l'exercice le plus en retard sur sa part, tant que tout tient
-  const X = IP.O.map(o => ({o, s: Math.max(1, IP.share[o.id] || 1)})), r = X.map(() => 1), full = X.map(() => false);
+  const X = IP.U.map(u => ({u, s: Math.max(1, IP.share[u.id] || 1)})), r = X.map(() => 1), full = X.map(() => false);
   let L = ipLay(X, r);
   for (let it = 0; it < 600 && L.fits; it++){
     const ord = X.map((x, i) => i).filter(i => !full[i] && !L.B[i].short).sort((a, b) => L.H[a] / X[a].s - L.H[b] / X[b].s || a - b);
@@ -13583,7 +13668,7 @@ function ipFill(L){           // la place libre de chaque page va à la place po
 
 /* ---------- pages (aperçu et impression) ---------- */
 function ipPagesHTML(L){
-  const N = Math.max(L.N, L.pages.length), Hd = L.Hd, t = ipEsc(ipTitle()), cls = Hd.cls ? 'Classe : ' + ipEsc(Hd.cls) : '';
+  const N = Math.max(L.N, L.np), Hd = L.Hd, t = ipEsc(ipTitle()), cls = Hd.cls ? 'Classe : ' + ipEsc(Hd.cls) : '';
   let h = '';
   for (let k = 0; k < N; k++){
     const P = L.pages[k] || [], a = (y, s) => 'class="ip-a ' + s + '" style="top:' + y.toFixed(2) + 'mm';
@@ -13597,7 +13682,7 @@ function ipPagesHTML(L){
       h += '<div ' + a(x.y, 'ip-row') + ';height:' + hh.toFixed(2) + 'mm">' + x.row.xs.map((c, j) => '<div style="width:' + b.cw.toFixed(2) + 'mm">' +
         ipCellHTML(c.p, ipLetter(x.row.i + j), c) + '</div>').join('') + '</div>';
     });
-    if (k === N - 1 && IP.ans) h += '<div ' + a(IP_BOT - L.ansH, 'ip-answ') + '">' + ipAnsHTML(L.B) + '</div>';
+    (L.ans || []).filter(c => c.k === k).forEach(c => { h += '<div ' + a(c.y, 'ip-answ') + '">' + ipAnsBox(L.A, c.cols, c.title) + '</div>'; });
     h += '<div class="ip-ft" style="top:' + (IP_H - IP_HT - 4.2) + 'mm">Page ' + (k + 1) + ' sur ' + N + '</div></div></div>';
   }
   return h;
@@ -13631,9 +13716,10 @@ function ipUnprint(){         // après l'impression : les pages reviennent dans
 function ipBarHTML(kind, V, min){   // barre à glisser : un morceau par valeur (somme 100), séparations entre eux
   let x = 0; const segs = V.map((v, i) => { const s = '<span class="ipseg" data-i="' + i + '" style="left:' + x + '%;width:' + v + '%;background:' +
     (kind === 'share' ? IP_SEGC[i % IP_SEGC.length] : IP_STC[i]) + '"></span>'; x += v; return s; }).join('');
-  x = 0; const hs = V.slice(0, -1).map((v, i) => '<span class="iph" style="left:' + (x += v) + '%"></span>').join('');
-  return '<div class="ipbar' + (kind === 'share' ? '' : ' ipbs') + '" data-k="' + kind + '" data-min="' + (min || 0) + '" title="Glisse les séparations' + (kind === 'share' ? '' :
-    ' (tout à droite : ' + '★'.repeat(V.length) + ')') + '">' + segs + hs + '</div>';
+  const t4 = kind !== 'share' && V.length === 4;       // ★★★★ permis : à 0 %, une poignée « ★★★★ » au bout de la barre (09.11.2026 ; avant : la séparation collée au bord)
+  x = 0; const hs = V.slice(0, -1).map((v, i) => '<span class="iph' + (t4 && i === 2 ? ' iph4' : '') + '" style="left:' + (x += v) + '%"></span>').join('');
+  return '<div class="ipbar' + (kind === 'share' ? '' : ' ipbs') + (t4 ? ' ip4' + (V[3] ? '' : ' ip4z') : '') + '" data-k="' + kind + '" data-min="' + (min || 0) + '" title="Glisse les séparations">' + segs + hs +
+    (t4 ? '<span class="iptab" title="Tire vers la gauche : des questions à ★★★★"><span class="stars">★★★★</span></span>' : '') + '</div>';
 }
 function ipBarLabels(bar){    // le texte de chaque morceau, d'après sa largeur à l'écran
   const W = bar.getBoundingClientRect().width, kind = bar.dataset.k;
@@ -13646,24 +13732,31 @@ function ipBarLabels(bar){    // le texte de chaque morceau, d'après sa largeur
 const ipBarVals = bar => [...bar.querySelectorAll('.ipseg')].map(s => parseFloat(s.style.width));
 function ipBarSet(bar, V){
   let x = 0; bar.querySelectorAll('.ipseg').forEach((s, i) => { s.style.left = x + '%'; s.style.width = V[i] + '%'; x += V[i]; });
-  x = 0; bar.querySelectorAll('.iph').forEach((h, i) => h.style.left = (x += V[i]) + '%'); ipBarLabels(bar);
+  x = 0; bar.querySelectorAll('.iph').forEach((h, i) => h.style.left = (x += V[i]) + '%'); bar.classList.toggle('ip4z', bar.classList.contains('ip4') && !V[3]); ipBarLabels(bar);
 }
-function ipShares(){          // parts des exercices (somme 100) : gardées pour ceux qui restent ; un nouvel exercice reçoit la part moyenne
-  const ids = IP.O.map(o => o.id), old = ids.filter(id => IP.share[id] > 0), avg = old.length ? old.reduce((s, id) => s + IP.share[id], 0) / old.length : 100 / ids.length;
-  const v = ids.map(id => IP.share[id] > 0 ? IP.share[id] : avg), t = v.reduce((a, b) => a + b, 0);
-  const sh = {}; ids.forEach((id, i) => sh[id] = v[i] * 100 / t); IP.share = sh;
+function ipShares(){          // parts des exercices de la feuille (somme 100) : gardées pour ceux qui restent ; bloc mélangé : la somme des parts de ses
+  // exercices ; exercice d'un bloc qu'on ne mélange plus : sa part du bloc ; nouvel exercice : la part moyenne
+  const U = IP.U, pv = IP.share, v = U.map(u => pv[u.id] > 0 ? pv[u.id] : u.mix ? u.os.reduce((a, o) => a + (pv[o.id] || 0), 0) || null
+    : pv['@' + u.bl] > 0 ? pv['@' + u.bl] / U.filter(x => x.bl === u.bl).length : null);
+  const ok = v.filter(x => x > 0), avg = ok.length ? ok.reduce((a, b) => a + b, 0) / ok.length : 100 / U.length, w = v.map(x => x > 0 ? x : avg), t = w.reduce((a, b) => a + b, 0);
+  const sh = {}; U.forEach((u, i) => sh[u.id] = w[i] * 100 / t); U.forEach(u => { if (u.mix) u.os.forEach(o => { if (pv[o.id] > 0) sh[o.id] = pv[o.id]; }); }); IP.share = sh;
 }
-function ipUI(){              // la section de la fenêtre : options, barre des exercices, une ligne par exercice
+function ipUI(){              // la section de la fenêtre : options, barre des exercices, une ligne par exercice (bloc mélangé : son titre, puis ses exercices)
   $('ipCls').value !== IP.cls && ($('ipCls').value = IP.cls);
   $('ipPg').textContent = IP.pages; $('ipAns').checked = IP.ans; $('ipQr').checked = IP.qr; $('ipSt').checked = IP.stars;
-  const O = IP.O, one = O.length < 2;
-  $('ipShareL').hidden = one; $('ipShare').innerHTML = one ? '' : ipBarHTML('share', O.map(o => IP.share[o.id]), 5);
-  $('ipEx').innerHTML = '<div class="ipxh">Exercice</div><div class="ipxh">Étoiles</div><div class="ipxh">Place pour répondre</div>' + O.map((o, i) => {
-    const e = ipEx(o.id), cap = ipCap(o), d = ipDist(o).slice(0, cap);
-    return '<div class="ipxr"><div class="ipxn"><b>' + (i + 1) + ')</b> ' + ipName(o) + '<span class="ipxq" data-q="' + o.id + '"></span></div><div class="ipxs">' +
+  const U = IP.U, one = U.length < 2, many = bl => IP.O.filter(x => x.bl === bl).length > 1, done = {};
+  $('ipShareL').hidden = one; $('ipShare').innerHTML = one ? '' : ipBarHTML('share', U.map(u => IP.share[u.id]), 5);
+  const row = (o, num) => { const e = ipEx(o.id), cap = ipCap(o), d = ipDist(o).slice(0, cap);
+    return '<div class="ipxr' + (num ? '' : ' ipxm') + '"><div class="ipxn">' + (num ? '<b>' + num + ')</b> ' : '') + ipName(o) + '<span class="ipxq" data-q="' + o.id + '"></span></div><div class="ipxs">' +
       (isNoStar(o) ? '<span class="ipns">sans étoiles</span>' : cap < 2 ? '<span class="ipns">★ seulement</span>' : ipBarHTML('st:' + o.id, d, 0)) + '</div>' +
       '<div class="ipw"><button type="button" data-ipw="' + o.id + '" data-d="-1"' + (e.w <= -2 ? ' disabled' : '') + ' aria-label="Moins de place">−</button><span>' + IP_WL[e.w + 2] +
-      '</span><button type="button" data-ipw="' + o.id + '" data-d="1"' + (e.w >= 2 ? ' disabled' : '') + ' aria-label="Plus de place">+</button></div></div>'; }).join('');
+      '</span><button type="button" data-ipw="' + o.id + '" data-d="1"' + (e.w >= 2 ? ' disabled' : '') + ' aria-label="Plus de place">+</button></div></div>'; };
+  $('ipEx').innerHTML = '<div class="ipxh">Exercice</div><div class="ipxh">Étoiles</div><div class="ipxh">Place pour répondre</div>' + U.map((u, i) => {
+    let h = '';
+    if (many(u.bl) && !done[u.bl]){ done[u.bl] = 1;          // case « mélanger » (QCM du 09.11.2026 : une par bloc, au moins deux exercices du bloc)
+      h += '<label class="ipmx' + (u.mix ? ' on' : '') + '" title="Un seul exercice sur la feuille : les questions de ces exercices mélangées, avec le nom du bloc"><input type="checkbox" data-ipmix="' + u.bl + '"' + (u.mix ? ' checked' : '') + '> ' +
+        (u.mix ? '<span><b>' + (i + 1) + ')</b> ' + ipBlName(u.bl) + ' <span class="ipmxt">(exercices mélangés)</span><span class="ipxq" data-q="' + u.id + '"></span></span>' : '<span>Mélanger les exercices de « ' + ipBlName(u.bl) + ' »</span>') + '</label>'; }
+    return h + (u.mix ? u.os.map(o => row(o, 0)).join('') : row(u.o, i + 1)); }).join('');
   mathify($('ipEx')); document.querySelectorAll('#ipSec .ipbar').forEach(ipBarLabels);
 }
 function ipSync(now){ clearTimeout(ipSync.t); if (now) ipRefresh(); else ipSync.t = setTimeout(ipRefresh, 140); }
@@ -13676,16 +13769,17 @@ function ipRefresh(){         // après chaque changement de la fenêtre : régl
   if (!IP) ipInit();
   const sig = JSON.stringify([E.num, E.opt]);
   if (IP.sig !== sig){ IP.sig = sig; ipReset(); }
-  IP.E = E; IP.O = O; IP.S = Object.assign(stateFromP(E), {two: false, twoSame: false});
+  IP.E = E; IP.O = O; IP.U = ipUnits(); IP.S = Object.assign(stateFromP(E), {two: false, twoSame: false});
   ipShares(); ipUI();
   let L = null;
   try { L = ipFit(); } catch (e) { console.error('feuille', e); $('ipMsg').textContent = 'La feuille n\'a pas pu être préparée.'; return; }
   IP.L = L; ipShow(L);
-  const need = L.pages.length, msg = [];
+  const need = L.np, msg = [];
   if (need > L.N) msg.push('Tout ne tient pas sur ' + L.N + (L.N > 1 ? ' pages' : ' page') + ' : il en faut au moins ' + need + '.');
-  L.B.forEach(b => { const q = document.querySelector('#ipEx .ipxq[data-q="' + CSS.escape(b.o.id) + '"]'); if (q){ q.textContent = b.Q.length + (b.Q.length > 1 ? ' questions' : ' question') + (b.short ? ' (toutes celles qui existent)' : ''); q.classList.toggle('ipfull', b.short); } });
-  const last = L.pages[Math.min(L.N, L.pages.length) - 1], free = last ? L.bot(L.N - 1) - last.end : 0;
-  if (need <= L.N && (L.pages.length < L.N || free > 60) && L.B.every(b => b.short)) msg.push('Pas assez de questions différentes pour remplir la feuille : enlève une page ou ajoute des exercices.');
+  const put = (id, n, sh) => { const q = document.querySelector('#ipEx .ipxq[data-q="' + CSS.escape(id) + '"]'); if (q){ q.textContent = n + (n > 1 ? ' questions' : ' question') + (sh ? ' (toutes celles qui existent)' : ''); q.classList.toggle('ipfull', sh); } };
+  L.B.forEach(b => { put(b.id, b.Q.length, b.short); if (b.mix) b.os.forEach(o => put(o.id, b.Q.filter(p => p._o && p._o.id === o.id).length, false)); });
+  const last = L.pages[Math.min(L.N, L.pages.length) - 1], free = last ? L.bot(Math.min(L.N, L.pages.length) - 1) - last.end : 0;
+  if (need <= L.N && (L.np < L.N || free > 60) && L.B.every(b => b.short)) msg.push('Pas assez de questions différentes pour remplir la feuille : enlève une page ou ajoute des exercices.');
   $('ipMsg').textContent = msg.join(' ');
 }
 $('ipCls').addEventListener('input', () => { if (!IP) return; IP.cls = $('ipCls').value; ipSync(); });
@@ -13698,6 +13792,7 @@ $('ipSec').addEventListener('click', e => {
   if (t.closest('.ip-pw')){ $('ipPrev').classList.toggle('ipbig'); ipScale(); }
 });
 $('ipSec').addEventListener('change', e => { const t = e.target; if (!IP) return;
+  if (t.dataset.ipmix){ IP.mix[t.dataset.ipmix] = t.checked; ipSync(true); return; }
   if (t.id === 'ipAns') IP.ans = t.checked; else if (t.id === 'ipQr') IP.qr = t.checked; else if (t.id === 'ipSt') IP.stars = t.checked; else return;
   ipSync(true); });
 // barres à glisser (QCM : « Barres à glisser », pas de 5 %) : une séparation suit le pointeur ; deux séparations au même endroit (un
@@ -13705,6 +13800,8 @@ $('ipSec').addEventListener('change', e => { const t = e.target; if (!IP) return
 $('ipSec').addEventListener('pointerdown', e => {
   const bar = e.target.closest('.ipbar'); if (!bar || (e.button || 0) > 0) return;
   const r = bar.getBoundingClientRect(), V = ipBarVals(bar), x = (e.clientX - r.left) / r.width * 100;
+  if (e.target.closest('.iptab')){ IPD = {bar, V, V0: V.slice(), r, tab: true, x0: e.clientX, moved: false};       // la poignée ★★★★
+    try { bar.setPointerCapture(e.pointerId); } catch (er) {} e.preventDefault(); return; }
   let c = 0; const pos = V.slice(0, -1).map(v => c += v), tol = Math.max(1.5, 9 / r.width * 100);
   const near = pos.map((p, i) => [Math.abs(p - x), i]).filter(n => n[0] <= tol); if (!near.length) return;
   const dm = Math.min(...near.map(n => n[0])), cand = near.filter(n => n[0] <= dm + .01).map(n => n[1]);
@@ -13714,6 +13811,9 @@ $('ipSec').addEventListener('pointerdown', e => {
 });
 $('ipSec').addEventListener('pointermove', e => {
   const D = IPD; if (!D) return;
+  if (D.tab){ let p = Math.round((e.clientX - D.r.left) / D.r.width * 100 / 5) * 5; p = Math.max(0, Math.min(100, p));      // ★★★★ = ce qui est à droite ; pris aux niveaux de droite d'abord
+    const V = D.V0.slice(); V[3] = 100 - p; let ex = V[0] + V[1] + V[2] - p; for (let i = 2; i >= 0 && ex > 0; i--){ const t = Math.min(V[i], ex); V[i] -= t; ex -= t; }
+    if (Math.abs(e.clientX - D.x0) >= 2) D.moved = true; D.V = V; ipBarSet(D.bar, V); return; }
   const dx = e.clientX - D.x0; if (D.h === null){ if (Math.abs(dx) < 2) return; D.h = dx < 0 ? Math.min(...D.cand) : Math.max(...D.cand); }
   const V = D.V, h = D.h, a = V.slice(0, h).reduce((s, v) => s + v, 0), b = a + V[h] + V[h + 1];
   let p = Math.round((e.clientX - D.r.left) / D.r.width * 100 / 5) * 5;

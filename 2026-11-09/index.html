@@ -693,7 +693,7 @@ body.stumsg .stuM{display:flex;flex:1;align-items:center;justify-content:center;
 .lrate:hover button{color:var(--gold)}
 .lrate button:hover~button{color:#d3d8de}
 .lright{display:flex;flex-direction:column;align-items:center;gap:.6em;max-width:21em}
-.lqr svg{display:block;width:min(13em, 60vw);height:auto;border:1px solid var(--line)}
+.lqr svg{display:block;width:min(8.5em, 50vw);height:auto;border:1px solid var(--line)}   /* n° 32 : 8,5 em (avant 13 em) ; copie et PNG inchangés */
 .lbtns{display:flex;flex-wrap:wrap;justify-content:center;gap:.45em}
 .lbtns .btn{padding:.35em .75em}
 .lurl{font-family:Consolas, "Courier New", monospace;font-size:.7em;word-break:break-all;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:.4em;padding:.35em .5em;user-select:all;max-height:6.5em;overflow:auto}
@@ -764,15 +764,10 @@ body.sturnd .lvb{display:none !important}
 .ipbar{position:relative;height:1.95em;border:1px solid #9aa3ad;border-radius:.35em;background:#fff;touch-action:none;cursor:col-resize;-webkit-user-select:none;user-select:none}
 .ipseg{position:absolute;top:0;bottom:0;display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap;font-size:.76em;font-weight:700;color:#36404c}
 .ipseg .stars{font-size:.92em;letter-spacing:-.04em;color:#7a5a00;line-height:1}
-.ipbs{height:2.55em}
-.ipbs .ipseg{flex-direction:column;line-height:1.05;gap:.05em}
+.ipbs{height:1.75em}   /* n° 32 : une ligne (avant 2,55 em, étoiles au-dessus du %) */
+.ipbs .ipseg{gap:.25em}
 .iph{position:absolute;top:-.3em;bottom:-.3em;width:0;border-left:2px solid #36404c;margin-left:-1px;pointer-events:none}
 .iph::after{content:"";position:absolute;left:-4px;top:50%;width:6px;height:1em;margin-top:-.5em;border-radius:2px;background:#36404c}
-.ipbs.ip4{margin-right:4.3em}
-.iptab{position:absolute;left:100%;top:50%;transform:translateY(-50%);margin-left:.4em;display:none;align-items:center;height:2.2em;padding:0 .3em;border:1px dashed #b8901f;border-radius:.35em;background:#fff6d6;font-size:.72em;cursor:col-resize;touch-action:none;white-space:nowrap}
-.iptab .stars{color:#7a5a00;letter-spacing:-.08em}
-.ip4z .iptab{display:inline-flex}
-.ip4z .iph4{display:none}
 .ipmx{grid-column:1 / -1;display:flex;align-items:center;gap:.45em;font-size:.85em;color:var(--muted);cursor:pointer;margin-top:.15em}
 .ipmx input{width:1.05em;height:1.05em;accent-color:var(--sel);margin:0;flex:none}
 .ipmx.on{font-size:.95em;color:var(--ink)}
@@ -849,6 +844,9 @@ body.sturnd .lvb{display:none !important}
   html.ipprint .ip-pw:last-child{break-after:auto;page-break-after:auto}
   html.ipprint .ip-pg{transform:none !important}
 }
+main{touch-action:pan-y pinch-zoom}   /* swipe (n° 32) : le navigateur garde le défilement vertical et le zoom, la page prend les gestes horizontaux */
+.ipxr.ipoff>*,.ipmx.ipoff{opacity:.45}   /* exercice à 0 % : pas sur la feuille (n° 32 ; .ipxr est en display:contents) */
+.ipxq{white-space:normal}
 </style>
 </head>
 <body>
@@ -11873,13 +11871,14 @@ function fillPane(pane, p){
 // bien pour qu'on n'ait pas envie de les désactiver ») ; les deux questions en même temps (l'enseignant, 01.11.2026 : « Fais en même temps que la question de gauche »). Réponse : chaque réponse rouge apparaît en grandissant un peu (avec un halo qui s'éteint).
 // Détail : le cadre monte un peu en apparaissant. Seulement opacité, translation et agrandissement de la réponse : les tailles mesurées par fitPane
 // (scrollWidth, offsetWidth) et le canvas du pliage (taille affichée) ne changent pas. Rien si le système demande moins d'animations.
-let NAV_DIR = 0;                                                                       // sens du dernier changement de question (go), remis à 0 par render
+let NAV_DIR = 0, SW_IN = false;                                                                       // sens du dernier changement de question (go), remis à 0 par render
 const ANIM_OFF = () => !document.body.animate || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
 function anim(el, kf, o){ if (!el) return; el.getAnimations().forEach(a => a.cancel()); el.animate(kf, Object.assign({fill: 'backwards'}, o)); }
 function paneAnim(pane, p){
   const st = {p, a: !!(p.shown.ans || p.shown.det), d: !!p.shown.det}, old = pane._an; pane._an = st;
   if (ANIM_OFF() || !old) return;
   if (old.p !== p){
+    if (SW_IN) return;                                                   // swipe (n° 32) : la page entière arrive du bord
     const tr = NAV_DIR ? 'translateX(' + (NAV_DIR * 3.5) + 'vw)' : 'translateY(2.5vh)';
     [pane.querySelector('.badge'), pane.querySelector('.qa'), pane.querySelector('.det')].forEach(el =>
       anim(el, [{opacity: 0, transform: tr}, {opacity: 1, transform: 'none'}], {duration: 320, easing: 'cubic-bezier(.2,.7,.3,1)'}));
@@ -12648,6 +12647,78 @@ function checkDraft(d){
 }
 
 /* ---------- événements ---------- */
+/* ---------- swipe (n° 32, 09.11.2026) : au doigt, glisser vers la gauche = question suivante (à la dernière : une de plus, comme « Continuer »),
+   vers la droite = question précédente ; l'enseignant : « sur son téléphone son premier réflexe était de swiper à gauche pour aller à la prochaine
+   question ... (et swipe dans l'autre sens pour aller à la question d'avant). Il y aurait une animation naturelle (un peu comme une gallerie de photo
+   qu'on swipe sur tél) » ; QCM : partout au doigt (téléphone, tablette, mode élève et mode enseignant).
+   Le contenu de main suit le doigt ; relâché après un quart de la largeur ou d'un geste rapide, il sort par le bord et la question suivante arrive de
+   l'autre bord ; sinon il revient. Pas de question de ce côté (1re question, écran de départ, liste du mode élève) : il résiste et revient.
+   Même règle que ◀ ▶ : le swipe fait ce que ferait le bouton, seulement s'il est visible et actif. Rien à la souris, rien quand une fenêtre est
+   ouverte, rien sur un bouton, un curseur (pliage, triangle constructible), le canvas du pliage ou une case.
+   2e version (l'enseignant : « quand on swipe vite, il faut que ça suive ! x swipes rapides doivent changer x questions. Aussi quand on swipe plusieurs
+   rapidement, l'en tête et le pied se swipent avec, ça devrait pas ») : un nouveau toucher termine tout de suite le swipe d'avant (question changée,
+   animation finie) au lieu d'être ignoré ; ce sont les enfants de main qui bougent, main coupe ce qui dépasse (overflow: clip) : la page ne devient
+   jamais plus large que l'écran (sur iPhone, elle se laissait alors déplacer en entier, en-tête et pied compris). ---------- */
+let SW = null, SW_PEND = null, SW_ANS = [];                                // SW_IN : déclaré avec NAV_DIR (render peut venir avant)
+const SW_EASE = 'cubic-bezier(.15,.75,.25,1)';
+const swEls = () => [...$('main').children].filter(e => e.getClientRects().length);
+function swClip(on){ $('main').style.overflow = on ? (window.CSS && CSS.supports && CSS.supports('overflow', 'clip') ? 'clip' : 'hidden') : ''; }
+function swSet(x){ [...$('main').children].forEach(e => e.style.transform = x ? 'translateX(' + x.toFixed(1) + 'px)' : ''); }
+function swAnim(from, to, o){ return swEls().map(e => e.animate([{transform: from}, {transform: to}], o)); }
+function swStop(){ SW_ANS.forEach(a => a.cancel()); SW_ANS = []; }
+function swCan(d){ const b = $(d > 0 ? 'bNext' : 'bPrev'); return !!b && !b.disabled && b.offsetWidth > 0 && getComputedStyle(b).visibility === 'visible'; }
+function swGo(dir, W, inAnim){                                             // la question change ; inAnim : la nouvelle arrive du bord
+  SW_PEND = null; swStop(); swSet(0);
+  SW_IN = true; try { (dir > 0 ? next : back)(); } finally { SW_IN = false; }
+  if (!inAnim || ANIM_OFF()){ swClip(false); return; }
+  SW_ANS = swAnim('translateX(' + (dir * W) + 'px)', 'none', {duration: 260, easing: SW_EASE});
+  if (SW_ANS[0]) SW_ANS[0].onfinish = () => { SW_ANS = []; swClip(false); }; else swClip(false);
+}
+function swFlush(){                                                        // un nouveau toucher : le swipe d'avant se termine tout de suite
+  if (SW_PEND) SW_PEND(false);
+  swStop(); swSet(0); swClip(false);
+}
+function swStart(e){
+  swFlush();
+  if (e.touches.length !== 1 || FDRAG || document.querySelector('.over.open')) { SW = null; return; }
+  const B = document.body; if (B.classList.contains('stu0') || B.classList.contains('stumsg') || B.classList.contains('empty')) { SW = null; return; }
+  if (e.target.closest('button,a,input,select,textarea,label,[contenteditable],.frng,.fold canvas,.mv')) { SW = null; return; }
+  const t = e.touches[0]; SW = {x0: t.clientX, y0: t.clientY, dx: 0, lock: 0, tr: [[performance.now(), t.clientX]], W: $('main').getBoundingClientRect().width || innerWidth};
+}
+function swMove(e){
+  const D = SW; if (!D) return; const t = e.touches[0]; if (!t) return;
+  const dx = t.clientX - D.x0, dy = t.clientY - D.y0;
+  if (!D.lock){
+    if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
+    if (Math.abs(dx) < Math.abs(dy) * 1.2){ SW = null; return; }       // geste vertical : le navigateur défile
+    D.lock = 1; D.x0 = t.clientX - Math.sign(dx) * 10;                     // le contenu part de là, sans saut
+    if (!ANIM_OFF()) swClip(true);
+  }
+  e.preventDefault();
+  D.dx = t.clientX - D.x0; D.tr.push([performance.now(), t.clientX]); if (D.tr.length > 6) D.tr.shift();
+  const can = swCan(D.dx < 0 ? 1 : -1), x = can ? D.dx : D.dx / (1 + Math.abs(D.dx) / (D.W * .12));   // pas de question de ce côté : il résiste
+  D.x = x; if (!ANIM_OFF()) swSet(x);
+}
+function swEnd(e){
+  const D = SW; SW = null; if (!D || !D.lock) return;
+  if (e && e.cancelable) e.preventDefault();                                 // pas de clic après un swipe
+  const dir = D.dx < 0 ? 1 : -1, tr = D.tr, a = tr[0], z = tr[tr.length - 1];
+  const v = z[0] - a[0] > 0 ? (z[1] - a[1]) / (z[0] - a[0]) : 0;          // px par ms, sur les derniers mouvements
+  const go = swCan(dir) && (Math.abs(D.dx) > D.W * .25 || (Math.abs(v) > .45 && Math.abs(D.dx) > 30 && Math.sign(v) === -dir));
+  if (ANIM_OFF()){ if (go) swGo(dir, D.W, false); return; }
+  const cur0 = 'translateX(' + (D.x || 0).toFixed(1) + 'px)'; swSet(0);
+  if (!go){ SW_ANS = swAnim(cur0, 'none', {duration: 220, easing: 'cubic-bezier(.2,.7,.3,1)'});
+    if (SW_ANS[0]) SW_ANS[0].onfinish = () => { SW_ANS = []; swClip(false); }; else swClip(false); return; }
+  const W = D.W, rest = Math.max(0, W - Math.abs(D.x || 0)), ms = Math.max(80, Math.min(180, rest / Math.max(Math.abs(v), 1.6)));
+  SW_ANS = swAnim(cur0, 'translateX(' + (-dir * W) + 'px)', {duration: ms, easing: 'cubic-bezier(.4,0,1,1)', fill: 'forwards'});
+  const pend = inA => swGo(dir, W, inA); SW_PEND = pend;
+  if (SW_ANS[0]) SW_ANS[0].onfinish = () => { if (SW_PEND === pend) pend(true); }; else pend(true);
+}
+$('main').addEventListener('touchstart', swStart, {passive: true});
+$('main').addEventListener('touchmove', swMove, {passive: false});
+$('main').addEventListener('touchend', swEnd, {passive: false});
+$('main').addEventListener('touchcancel', () => { const D = SW; SW = null; if (D && D.lock){ const c = 'translateX(' + (D.x || 0).toFixed(1) + 'px)'; swSet(0);
+  if (!ANIM_OFF()){ SW_ANS = swAnim(c, 'none', {duration: 200}); if (SW_ANS[0]) SW_ANS[0].onfinish = () => { SW_ANS = []; swClip(false); }; } else swClip(false); } });
 $('bPrev').onclick = back;
 $('bNext').onclick = next;                       // dernière question : une de plus (« Continuer », 04.11.2026)
 $('lvBtns').onclick = e => { const b = e.target.closest('button[data-lv]'); if (b && !document.querySelector('.over.open')) (STU ? stuLevel : forceLevel)(Number(b.dataset.lv)); };
@@ -13416,7 +13487,7 @@ function ipName(o){           // le thème d'un exercice (« 1) Addition et sous
   t = t.charAt(0).toUpperCase() + t.slice(1); return ipItal(t); }
 const ipTitle = () => ((IP.E && IP.E.t) || linkSugT() || '').trim();
 const ipCap = o => isNoStar(o) ? 4 : ((IP.E && IP.E.cap) || {})[o.id] || 4;
-const ipDef = cap => cap <= 1 ? [100, 0, 0, 0] : cap === 2 ? [50, 50, 0, 0] : [40, 35, 25, 0];
+const ipDef = cap => cap <= 1 ? [100, 0, 0, 0] : cap === 2 ? [50, 50, 0, 0] : cap === 3 ? [40, 35, 25, 0] : [40, 35, 20, 5];   // jusqu'à ★★★★ : 5 % (QCM du 09.11.2026, 40 / 35 / 20 / 5)
 const ipPool = id => IP.pool[id] || (IP.pool[id] = {1: [], 2: [], 3: [], 4: [], x: {}});
 const ipEx = id => IP.ex[id] || (IP.ex[id] = {d: null, w: 0});
 function ipMeas(){ let m = $('ipMeas'); if (!m){ m = document.createElement('div'); m.id = 'ipMeas'; m.className = 'ip-sheet'; document.body.appendChild(m); } return m; }
@@ -13643,7 +13714,7 @@ function ipLay(X, r){         // exercices X avec r[i] lignes : pages, place de 
   return {N, Hd, B, A, ans, one, np, pages, H, fits, top, bot};
 }
 function ipFit(){             // les lignes de chaque exercice : une de plus à l'exercice le plus en retard sur sa part, tant que tout tient
-  const X = IP.U.map(u => ({u, s: Math.max(1, IP.share[u.id] || 1)})), r = X.map(() => 1), full = X.map(() => false);
+  const X = IP.U.filter(ipOn).map(u => ({u, s: Math.max(1, IP.share[u.id] || 1)})), r = X.map(() => 1), full = X.map(() => false);   // part 0 : pas sur la feuille (n° 32)
   let L = ipLay(X, r);
   for (let it = 0; it < 600 && L.fits; it++){
     const ord = X.map((x, i) => i).filter(i => !full[i] && !L.B[i].short).sort((a, b) => L.H[a] / X[a].s - L.H[b] / X[b].s || a - b);
@@ -13713,54 +13784,61 @@ function ipUnprint(){         // après l'impression : les pages reviennent dans
 }
 
 /* ---------- réglages de la fenêtre ---------- */
-function ipBarHTML(kind, V, min){   // barre à glisser : un morceau par valeur (somme 100), séparations entre eux
+function ipBarHTML(kind, V, min){   // barre à glisser : un morceau par valeur (somme 100), séparations entre eux (n° 32 : plus de poignée ★★★★, l'enseignant :
+  // « le truc que t'as fait pour 4 étoiles est vraiment pas bon .. fais 5% de 4 étoiles par défaut » ; ★★★★ ramené à 0 : sa séparation au bord droit,
+  // et un clic près du bord la ramène)
   let x = 0; const segs = V.map((v, i) => { const s = '<span class="ipseg" data-i="' + i + '" style="left:' + x + '%;width:' + v + '%;background:' +
     (kind === 'share' ? IP_SEGC[i % IP_SEGC.length] : IP_STC[i]) + '"></span>'; x += v; return s; }).join('');
-  const t4 = kind !== 'share' && V.length === 4;       // ★★★★ permis : à 0 %, une poignée « ★★★★ » au bout de la barre (09.11.2026 ; avant : la séparation collée au bord)
-  x = 0; const hs = V.slice(0, -1).map((v, i) => '<span class="iph' + (t4 && i === 2 ? ' iph4' : '') + '" style="left:' + (x += v) + '%"></span>').join('');
-  return '<div class="ipbar' + (kind === 'share' ? '' : ' ipbs') + (t4 ? ' ip4' + (V[3] ? '' : ' ip4z') : '') + '" data-k="' + kind + '" data-min="' + (min || 0) + '" title="Glisse les séparations">' + segs + hs +
-    (t4 ? '<span class="iptab" title="Tire vers la gauche : des questions à ★★★★"><span class="stars">★★★★</span></span>' : '') + '</div>';
+  x = 0; const hs = V.slice(0, -1).map(v => '<span class="iph" style="left:' + (x += v) + '%"></span>').join('');
+  return '<div class="ipbar' + (kind === 'share' ? '' : ' ipbs') + '" data-k="' + kind + '" data-min="' + (min || 0) + '" title="Glisse les séparations, ou clique dans un morceau">' + segs + hs + '</div>';
 }
 function ipBarLabels(bar){    // le texte de chaque morceau, d'après sa largeur à l'écran
-  const W = bar.getBoundingClientRect().width, kind = bar.dataset.k;
+  const W = bar.getBoundingClientRect().width, kind = bar.dataset.k, VV = ipBarVals(bar); let nn = 0; const NB = VV.map(v => v > 0 ? ++nn : 0);
   bar.querySelectorAll('.ipseg').forEach(s => { const i = Number(s.dataset.i), v = parseFloat(s.style.width), px = W * v / 100, n = Math.round(v);
     const st = '<span class="stars">' + '★'.repeat(i + 1) + '</span>';
-    s.innerHTML = kind === 'share' ? (px >= 64 ? (i + 1) + ') ' + n + ' %' : px >= 40 ? n + ' %' : px >= 20 ? String(n) : '')
-      : (px >= 8 + 10 * (i + 1) && px >= 34 ? st + '<span>' + n + ' %</span>' : px >= 34 ? '<span>' + n + ' %</span>' : px >= 19 ? '<span>' + n + '</span>' : '');
-    s.title = (kind === 'share' ? 'Exercice ' + (i + 1) + ' : ' : '★'.repeat(i + 1) + ' : ') + n + ' %'; });
+    s.innerHTML = kind === 'share' ? (px >= 64 ? NB[i] + ') ' + n + ' %' : px >= 40 ? n + ' %' : px >= 20 ? String(n) : '')
+      : (px >= 38 + 9 * (i + 1) ? st + '<span>' + n + ' %</span>' : px >= 34 ? '<span>' + n + ' %</span>' : px >= 19 ? '<span>' + n + '</span>' : '');
+    s.title = (kind === 'share' ? (NB[i] ? 'Exercice ' + NB[i] + ' : ' : 'Pas sur la feuille : ') : '★'.repeat(i + 1) + ' : ') + n + ' %'; });
 }
 const ipBarVals = bar => [...bar.querySelectorAll('.ipseg')].map(s => parseFloat(s.style.width));
 function ipBarSet(bar, V){
   let x = 0; bar.querySelectorAll('.ipseg').forEach((s, i) => { s.style.left = x + '%'; s.style.width = V[i] + '%'; x += V[i]; });
-  x = 0; bar.querySelectorAll('.iph').forEach((h, i) => h.style.left = (x += V[i]) + '%'); bar.classList.toggle('ip4z', bar.classList.contains('ip4') && !V[3]); ipBarLabels(bar);
+  x = 0; bar.querySelectorAll('.iph').forEach((h, i) => h.style.left = (x += V[i]) + '%'); ipBarLabels(bar);
 }
 function ipShares(){          // parts des exercices de la feuille (somme 100) : gardées pour ceux qui restent ; bloc mélangé : la somme des parts de ses
-  // exercices ; exercice d'un bloc qu'on ne mélange plus : sa part du bloc ; nouvel exercice : la part moyenne
-  const U = IP.U, pv = IP.share, v = U.map(u => pv[u.id] > 0 ? pv[u.id] : u.mix ? u.os.reduce((a, o) => a + (pv[o.id] || 0), 0) || null
-    : pv['@' + u.bl] > 0 ? pv['@' + u.bl] / U.filter(x => x.bl === u.bl).length : null);
-  const ok = v.filter(x => x > 0), avg = ok.length ? ok.reduce((a, b) => a + b, 0) / ok.length : 100 / U.length, w = v.map(x => x > 0 ? x : avg), t = w.reduce((a, b) => a + b, 0);
-  const sh = {}; U.forEach((u, i) => sh[u.id] = w[i] * 100 / t); U.forEach(u => { if (u.mix) u.os.forEach(o => { if (pv[o.id] > 0) sh[o.id] = pv[o.id]; }); }); IP.share = sh;
+  // exercices ; exercice d'un bloc qu'on ne mélange plus : sa part du bloc ; nouvel exercice : la part moyenne. Une part peut valoir 0 (n° 32,
+  // l'enseignant : « fais qu'on peut aller jusqu'à 0% (enlevant la question) ») : l'exercice n'est pas sur la feuille
+  const U = IP.U, pv = IP.share, has = x => typeof x === 'number' && isFinite(x) && x >= 0;
+  const v = U.map(u => has(pv[u.id]) ? pv[u.id] : u.mix ? (u.os.some(o => has(pv[o.id])) ? u.os.reduce((a, o) => a + (has(pv[o.id]) ? pv[o.id] : 0), 0) : null)
+    : has(pv['@' + u.bl]) ? pv['@' + u.bl] / U.filter(x => x.bl === u.bl).length : null);
+  const ok = v.filter(x => x != null), avg = ok.length ? ok.reduce((a, b) => a + b, 0) / ok.length : 100 / U.length;
+  let w = v.map(x => x != null ? x : avg), t = w.reduce((a, b) => a + b, 0);
+  if (!(t > 0)){ w = U.map(() => 1); t = U.length; }
+  const sh = {}; U.forEach((u, i) => sh[u.id] = w[i] * 100 / t); U.forEach(u => { if (u.mix) u.os.forEach(o => { if (has(pv[o.id])) sh[o.id] = pv[o.id]; }); }); IP.share = sh;
 }
+const ipOn = u => IP.U.length < 2 || IP.share[u.id] > 0;          // l'exercice est sur la feuille (part plus grande que 0)
+function ipNums(){ const n = {}; let k = 0; IP.U.forEach(u => n[u.id] = ipOn(u) ? ++k : 0); return n; }   // numéros sur la feuille, sans trou
 function ipUI(){              // la section de la fenêtre : options, barre des exercices, une ligne par exercice (bloc mélangé : son titre, puis ses exercices)
   $('ipCls').value !== IP.cls && ($('ipCls').value = IP.cls);
   $('ipPg').textContent = IP.pages; $('ipAns').checked = IP.ans; $('ipQr').checked = IP.qr; $('ipSt').checked = IP.stars;
   const U = IP.U, one = U.length < 2, many = bl => IP.O.filter(x => x.bl === bl).length > 1, done = {};
-  $('ipShareL').hidden = one; $('ipShare').innerHTML = one ? '' : ipBarHTML('share', U.map(u => IP.share[u.id]), 5);
-  const row = (o, num) => { const e = ipEx(o.id), cap = ipCap(o), d = ipDist(o).slice(0, cap);
-    return '<div class="ipxr' + (num ? '' : ' ipxm') + '"><div class="ipxn">' + (num ? '<b>' + num + ')</b> ' : '') + ipName(o) + '<span class="ipxq" data-q="' + o.id + '"></span></div><div class="ipxs">' +
+  $('ipShareL').hidden = one; $('ipShare').innerHTML = one ? '' : ipBarHTML('share', U.map(u => IP.share[u.id]), 0);   // 0 % permis (n° 32)
+  const NUM = ipNums();
+  const row = (o, num, off) => { const e = ipEx(o.id), cap = ipCap(o), d = ipDist(o).slice(0, cap);
+    return '<div class="ipxr' + (num ? '' : ' ipxm') + (off ? ' ipoff' : '') + '"><div class="ipxn">' + (num ? '<b>' + num + ')</b> ' : '') + ipName(o) + '<span class="ipxq" data-q="' + o.id + '"></span></div><div class="ipxs">' +
       (isNoStar(o) ? '<span class="ipns">sans étoiles</span>' : cap < 2 ? '<span class="ipns">★ seulement</span>' : ipBarHTML('st:' + o.id, d, 0)) + '</div>' +
       '<div class="ipw"><button type="button" data-ipw="' + o.id + '" data-d="-1"' + (e.w <= -2 ? ' disabled' : '') + ' aria-label="Moins de place">−</button><span>' + IP_WL[e.w + 2] +
       '</span><button type="button" data-ipw="' + o.id + '" data-d="1"' + (e.w >= 2 ? ' disabled' : '') + ' aria-label="Plus de place">+</button></div></div>'; };
   $('ipEx').innerHTML = '<div class="ipxh">Exercice</div><div class="ipxh">Étoiles</div><div class="ipxh">Place pour répondre</div>' + U.map((u, i) => {
     let h = '';
     if (many(u.bl) && !done[u.bl]){ done[u.bl] = 1;          // case « mélanger » (QCM du 09.11.2026 : une par bloc, au moins deux exercices du bloc)
-      h += '<label class="ipmx' + (u.mix ? ' on' : '') + '" title="Un seul exercice sur la feuille : les questions de ces exercices mélangées, avec le nom du bloc"><input type="checkbox" data-ipmix="' + u.bl + '"' + (u.mix ? ' checked' : '') + '> ' +
-        (u.mix ? '<span><b>' + (i + 1) + ')</b> ' + ipBlName(u.bl) + ' <span class="ipmxt">(exercices mélangés)</span><span class="ipxq" data-q="' + u.id + '"></span></span>' : '<span>Mélanger les exercices de « ' + ipBlName(u.bl) + ' »</span>') + '</label>'; }
-    return h + (u.mix ? u.os.map(o => row(o, 0)).join('') : row(u.o, i + 1)); }).join('');
+      h += '<label class="ipmx' + (u.mix ? ' on' : '') + (u.mix && !ipOn(u) ? ' ipoff' : '') + '" title="Un seul exercice sur la feuille : les questions de ces exercices mélangées, avec le nom du bloc"><input type="checkbox" data-ipmix="' + u.bl + '"' + (u.mix ? ' checked' : '') + '> ' +
+        (u.mix ? '<span>' + (NUM[u.id] ? '<b>' + NUM[u.id] + ')</b> ' : '') + ipBlName(u.bl) + ' <span class="ipmxt">(exercices mélangés)</span><span class="ipxq" data-q="' + u.id + '"></span></span>' : '<span>Mélanger les exercices de « ' + ipBlName(u.bl) + ' »</span>') + '</label>'; }
+    return h + (u.mix ? u.os.map(o => row(o, 0, !ipOn(u))).join('') : NUM[u.id] ? row(u.o, NUM[u.id]) : row(u.o, 0, true).replace('ipxr ipxm', 'ipxr')); }).join('');
   mathify($('ipEx')); document.querySelectorAll('#ipSec .ipbar').forEach(ipBarLabels);
 }
 function ipSync(now){ clearTimeout(ipSync.t); if (now) ipRefresh(); else ipSync.t = setTimeout(ipRefresh, 140); }
-function ipRefresh(){         // après chaque changement de la fenêtre : réglages, questions, pages
+function ipRefresh(live){     // après chaque changement de la fenêtre : réglages, questions, pages ; live : pendant un glissement (n° 32), sans refaire la liste
   clearTimeout(ipSync.t);
   if (!$('oLink').classList.contains('open') || !LNK) return;
   const E = LNK.E, O = E && LNK.url ? pObjs(E) : [];
@@ -13770,14 +13848,19 @@ function ipRefresh(){         // après chaque changement de la fenêtre : régl
   const sig = JSON.stringify([E.num, E.opt]);
   if (IP.sig !== sig){ IP.sig = sig; ipReset(); }
   IP.E = E; IP.O = O; IP.U = ipUnits(); IP.S = Object.assign(stateFromP(E), {two: false, twoSame: false});
-  ipShares(); ipUI();
+  if (!live){ ipShares(); ipUI(); }
   let L = null;
   try { L = ipFit(); } catch (e) { console.error('feuille', e); $('ipMsg').textContent = 'La feuille n\'a pas pu être préparée.'; return; }
   IP.L = L; ipShow(L);
   const need = L.np, msg = [];
   if (need > L.N) msg.push('Tout ne tient pas sur ' + L.N + (L.N > 1 ? ' pages' : ' page') + ' : il en faut au moins ' + need + '.');
-  const put = (id, n, sh) => { const q = document.querySelector('#ipEx .ipxq[data-q="' + CSS.escape(id) + '"]'); if (q){ q.textContent = n + (n > 1 ? ' questions' : ' question') + (sh ? ' (toutes celles qui existent)' : ''); q.classList.toggle('ipfull', sh); } };
-  L.B.forEach(b => { put(b.id, b.Q.length, b.short); if (b.mix) b.os.forEach(o => put(o.id, b.Q.filter(p => p._o && p._o.id === o.id).length, false)); });
+  // à côté du nombre de questions : la part de la feuille (barre du dessus ; n° 32, l'enseignant : « tu as la place de marquer avec le nombre de
+  // questions, également la place que ça prend dans le pdf »)
+  const pc = u => IP.U.length > 1 && u ? ' <span class="nw">· ' + Math.round(IP.share[u.id] || 0) + ' % de la feuille</span>' : '';
+  const put = (id, n, sh, u) => { const q = document.querySelector('#ipEx .ipxq[data-q="' + CSS.escape(id) + '"]'); if (q){
+    q.innerHTML = '<span class="nw">' + n + (n > 1 ? ' questions' : ' question') + '</span>' + (sh ? ' <span class="nw">(toutes celles qui existent)</span>' : '') + pc(u); q.classList.toggle('ipfull', sh); } };
+  L.B.forEach(b => { put(b.id, b.Q.length, b.short, b.u); if (b.mix) b.os.forEach(o => put(o.id, b.Q.filter(p => p._o && p._o.id === o.id).length, false)); });
+  IP.U.filter(u => !ipOn(u)).forEach(u => { put(u.id, 0, false, u); if (u.mix) u.os.forEach(o => put(o.id, 0, false)); });
   const last = L.pages[Math.min(L.N, L.pages.length) - 1], free = last ? L.bot(Math.min(L.N, L.pages.length) - 1) - last.end : 0;
   if (need <= L.N && (L.np < L.N || free > 60) && L.B.every(b => b.short)) msg.push('Pas assez de questions différentes pour remplir la feuille : enlève une page ou ajoute des exercices.');
   $('ipMsg').textContent = msg.join(' ');
@@ -13795,37 +13878,53 @@ $('ipSec').addEventListener('change', e => { const t = e.target; if (!IP) return
   if (t.dataset.ipmix){ IP.mix[t.dataset.ipmix] = t.checked; ipSync(true); return; }
   if (t.id === 'ipAns') IP.ans = t.checked; else if (t.id === 'ipQr') IP.qr = t.checked; else if (t.id === 'ipSt') IP.stars = t.checked; else return;
   ipSync(true); });
-// barres à glisser (QCM : « Barres à glisser », pas de 5 %) : une séparation suit le pointeur ; deux séparations au même endroit (un
-// morceau à 0 %) : celle de gauche si on glisse vers la gauche, celle de droite si on glisse vers la droite
+// barres à glisser (QCM du 08.11.2026 : « Barres à glisser ») : une séparation suit le pointeur, **% par %** (n° 32 ; avant : pas de 5 %) ;
+// deux séparations au même endroit (un morceau à 0 %) : celle de gauche si on glisse vers la gauche, celle de droite si on glisse vers la droite.
+// Clic (ou doigt) dans un morceau (n° 32, l'enseignant : « quand je clique dans le rectangle 40% par exemple ça place le curseur de séparation
+// là où j'ai cliqué ») : la séparation la plus proche vient là, et on peut continuer à glisser ; aussi la barre des exercices (QCM, 5 % au moins chacun).
+function ipBarMove(D, cx){
+  const V = D.V, h = D.h, a = V.slice(0, h).reduce((s, v) => s + v, 0), b = a + V[h] + V[h + 1];
+  let p = Math.round((cx - D.r.left) / D.r.width * 100);
+  p = Math.max(a + D.min, Math.min(b - D.min, p));
+  V[h] = p - a; V[h + 1] = b - p; D.moved = true; ipBarSet(D.bar, V); ipLive();
+}
 $('ipSec').addEventListener('pointerdown', e => {
   const bar = e.target.closest('.ipbar'); if (!bar || (e.button || 0) > 0) return;
   const r = bar.getBoundingClientRect(), V = ipBarVals(bar), x = (e.clientX - r.left) / r.width * 100;
-  if (e.target.closest('.iptab')){ IPD = {bar, V, V0: V.slice(), r, tab: true, x0: e.clientX, moved: false};       // la poignée ★★★★
-    try { bar.setPointerCapture(e.pointerId); } catch (er) {} e.preventDefault(); return; }
+  if (V.length < 2) return;
   let c = 0; const pos = V.slice(0, -1).map(v => c += v), tol = Math.max(1.5, 9 / r.width * 100);
-  const near = pos.map((p, i) => [Math.abs(p - x), i]).filter(n => n[0] <= tol); if (!near.length) return;
-  const dm = Math.min(...near.map(n => n[0])), cand = near.filter(n => n[0] <= dm + .01).map(n => n[1]);
+  const dist = pos.map((p, i) => [Math.abs(p - x), i]), near = dist.filter(n => n[0] <= tol), click = !near.length, pool = click ? dist : near;
+  const dm = Math.min(...pool.map(n => n[0])), cand = pool.filter(n => n[0] <= dm + .01).map(n => n[1]);
   IPD = {bar, V, r, cand, h: cand.length === 1 ? cand[0] : null, x0: e.clientX, min: Number(bar.dataset.min) || 0, moved: false};
+  if (click){ if (IPD.h === null) IPD.h = x < pos[cand[0]] ? Math.min(...cand) : Math.max(...cand); ipBarMove(IPD, e.clientX); }
   try { bar.setPointerCapture(e.pointerId); } catch (er) {}
   e.preventDefault();
 });
 $('ipSec').addEventListener('pointermove', e => {
   const D = IPD; if (!D) return;
-  if (D.tab){ let p = Math.round((e.clientX - D.r.left) / D.r.width * 100 / 5) * 5; p = Math.max(0, Math.min(100, p));      // ★★★★ = ce qui est à droite ; pris aux niveaux de droite d'abord
-    const V = D.V0.slice(); V[3] = 100 - p; let ex = V[0] + V[1] + V[2] - p; for (let i = 2; i >= 0 && ex > 0; i--){ const t = Math.min(V[i], ex); V[i] -= t; ex -= t; }
-    if (Math.abs(e.clientX - D.x0) >= 2) D.moved = true; D.V = V; ipBarSet(D.bar, V); return; }
   const dx = e.clientX - D.x0; if (D.h === null){ if (Math.abs(dx) < 2) return; D.h = dx < 0 ? Math.min(...D.cand) : Math.max(...D.cand); }
-  const V = D.V, h = D.h, a = V.slice(0, h).reduce((s, v) => s + v, 0), b = a + V[h] + V[h + 1];
-  let p = Math.round((e.clientX - D.r.left) / D.r.width * 100 / 5) * 5;
-  p = Math.max(a + D.min, Math.min(b - D.min, p));
-  V[h] = p - a; V[h + 1] = b - p; D.moved = true; ipBarSet(D.bar, V);
+  ipBarMove(D, e.clientX);
 });
-function ipBarEnd(){
-  const D = IPD; IPD = null; if (!D || !D.moved || !IP) return;
-  FD_CLICK = true; setTimeout(() => { FD_CLICK = false; }, 400);       // relâché hors de la fenêtre : elle ne se ferme pas
+function ipBarKeep(D){         // les valeurs de la barre dans l'état de la feuille (barre des exercices : un morceau par exercice de la feuille, bloc mélangé
+  // compris ; avant le n° 32, IP.O : décalé avec un bloc mélangé)
   const k = D.bar.dataset.k, V = D.V;
-  if (k === 'share') IP.O.forEach((o, i) => IP.share[o.id] = V[i]);
+  if (k === 'share') IP.U.forEach((u, i) => { IP.share[u.id] = V[i]; if (u.mix) u.os.forEach(o => IP.share[o.id] = V[i] / u.os.length); });   // démélangé : ses exercices se partagent sa part
   else { const id = k.slice(3), d = [0, 0, 0, 0]; V.forEach((v, i) => d[i] = v); ipEx(id).d = d; }
+}
+// pendant le glissement (n° 32, l'enseignant : « quand on fait glisser les réglettes (mais sans les lacher), tu pourrais actualiser en temps réel (ou presque
+// si c'est trop couteux en performance) ») : feuille et nombres recalculés sans refaire la liste (la barre qu'on tire reste) ; un calcul à la fois, le
+// suivant au plus tôt après une pause aussi longue que le dernier calcul (16 à 300 ms)
+function ipLive(){
+  ipLive.want = true; if (ipLive.t) return;
+  const run = () => { ipLive.want = false; const D = IPD; if (!D || !IP){ ipLive.t = null; return; }
+    const t0 = performance.now(); ipBarKeep(D); try { ipRefresh(true); } catch (e) { console.error('feuille', e); }
+    const dt = performance.now() - t0; ipLive.t = ipLive.want ? setTimeout(run, Math.min(300, Math.max(16, dt))) : null; };
+  ipLive.t = setTimeout(run, 16);
+}
+function ipBarEnd(){
+  const D = IPD; IPD = null; clearTimeout(ipLive.t); ipLive.t = null; ipLive.want = false; if (!D || !D.moved || !IP) return;
+  FD_CLICK = true; setTimeout(() => { FD_CLICK = false; }, 400);       // relâché hors de la fenêtre : elle ne se ferme pas
+  ipBarKeep(D);
   ipSync(true);
 }
 $('ipSec').addEventListener('pointerup', ipBarEnd);

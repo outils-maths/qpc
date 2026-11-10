@@ -1014,6 +1014,22 @@ body.inpok .pane .qbox{cursor:text}
 .kper{display:inline-flex;flex-direction:column;align-items:center;gap:.14em}
 .kper i{display:block;width:.95em;height:.11em;background:currentColor;border-radius:.05em}
 .kper span{display:block;width:.66em;height:.62em;border:.1em solid currentColor;border-radius:.07em}
+
+/* n° 43 : clavier à l'écran (l'enseignant, 10.11.2026 : « réduis un petit peu la taille des boutons du clavier sur tél, augmente la taille de la croix
+   sur tous les écrans et mets un petit fond de couleur pour mieux la voir. descend un peu la croix pour ne pas perdre de l'espace au dessus des touches
+   7, 8, 9 ») : croix ronde sur fond bleu clair, plus grande ; sur téléphone en hauteur, posée à cheval sur le bord du haut du clavier (plus de ligne à
+   elle), touches moins hautes */
+.kkx{width:2.5em;height:2.5em;border-radius:50%;background:color-mix(in srgb, var(--accent) 15%, #fff);border:1px solid color-mix(in srgb, var(--accent) 35%, #fff);color:var(--accent)}
+.kkx:hover{background:color-mix(in srgb, var(--accent) 24%, #fff)}
+.kkx svg{width:1.2em;height:1.2em}
+@media (max-width:700px) and (orientation:portrait){
+  .kb{padding-top:.8em}
+  .kkx{position:absolute;top:0;right:.55em;transform:translateY(-72%);width:2.4em;height:2.4em;box-shadow:0 .1em .35em rgba(0,0,0,.12);z-index:2}
+  .kkx:active{transform:translateY(-72%)}
+  .kbk:not(.kbch){gap:.32em}
+  .kbk:not(.kbch) .kk{height:2.15em;font-size:1.15em}
+  .kbk.kbch{margin-top:.15em}
+}
 </style>
 </head>
 <body>

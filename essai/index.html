@@ -1123,7 +1123,7 @@ body.inpok .pane .qbox{cursor:text}
             <span><kbd>Entrée</kbd> réponse, puis détail, puis question seule · <kbd>8</kbd> une ou deux questions · <kbd>M</kbd> questions multiples</span>
             <span><kbd>→</kbd> suivante · <kbd>←</kbd> précédente · <kbd>R</kbd> réglages · <kbd>F</kbd> plein écran · <kbd>J</kbd> toutes les questions</span>
             <span><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> question à <span class="stars">★</span> … <span class="stars">★★★★</span> · <kbd>7</kbd> <kbd>9</kbd> réponse seulement <span class="kw">à gauche / à droite</span><span class="kt">en haut / en bas</span></span>
-            <span><kbd>Espace</kbd> (ou clic sur le « ? ») taper la réponse · <kbd>Entrée</kbd> vérifier · <kbd>Échap</kbd> (ou clic à côté) fermer la case</span>
+            <span><kbd>Espace</kbd> (ou clic sur le « ? ») ouvrir la case, <kbd>Espace</kbd> encore la fermer · <kbd>Entrée</kbd> vérifier · <kbd>Échap</kbd> (ou clic à côté) fermer la case</span>
             <span>Dans la case : <kbd>←</kbd> <kbd>→</kbd> le curseur · <kbd>↑</kbd> <kbd>↓</kbd> numérateur, dénominateur · <kbd>/</kbd> fraction · <kbd>P</kbd> période</span>
           </div>
 
@@ -12818,6 +12818,7 @@ const qPow10 = r => { if (!r || r[0] <= 0) return null; for (let k = -6; k <= 6;
 // ---------- lecture de ce qui est tapé ----------
 // tampon : chiffres, « , », « − » (au début du nombre ou du dénominateur), « / » (fraction), « ‾ » (début de la période), ou un symbole (<, =, >, lettre)
 function inpParse(b){
+  b = String(b || '').replace(/ /g, '');                               // n° 41 : l'espace des grands nombres (19 000) ne compte pas
   const m = /^(−?)(\d*)(?:,(\d*?)(?:‾(\d+))?)?(?:\/(−?)(\d+))?$/.exec(b || '');
   if (!m) return null;
   const [, sg, ip, fp0, per, sgD, den] = m, fp = fp0 || '', hasC = b.includes(','), hasF = den !== undefined;
@@ -13127,7 +13128,8 @@ function inpEdit(I, sp, c){                                           // une fra
   else if (c === 'end') k = s.length;
   else if (c === '↑'){ if (P === 'd') return go('n', I.n.length); }
   else if (c === '↓'){ if (P === 'n' && I.d !== null) return go('d', I.d.length); }
-  else if (/^\d$/.test(c)){ if ((I.n + (I.d || '')).length >= 12) return; put(c); }
+  else if (/^\d$/.test(c)){ if ((I.n + (I.d || '')).replace(/ /g, '').length >= 12) return; put(c); }
+
   else if (c === ','){                                                 // virgule : une seule, avant la période ; pas dans une fraction
     if (!sp.kb.dec || I.d !== null || s.includes(',')) return; const m = s.indexOf('‾'); if (m >= 0 && k > m) return;
     put(k === 0 || s[k - 1] === '−' ? '0,' : ','); }
@@ -13190,6 +13192,12 @@ function inpChar(e, sp){                                              // la touc
   const dg = /^(?:Digit|Numpad)([0-9])$/.exec(e.code); if (dg) return dg[1];   // AZERTY sans Maj
   return null;
 }
+// n° 41 (l'enseignant, 10.11.2026 : « quand on est en affichage avec bloc de réponse, un appui sur espace sort du bloc réponse ») : un bouton gardait
+// le focus après un clic (Réponse, ▶, étoiles) ; Espace l'active au relâchement de la touche dans certains navigateurs, même si l'appui est
+// empêché : pendant la saisie, le focus est enlevé et le relâchement d'une touche prise par la case est empêché (INP_SWALLOW, keyup en capture)
+let INP_SWALLOW = false;
+function inpNoFocus(){ const a = document.activeElement; if (a && a !== document.body && a.blur && !(a.closest && a.closest('input, textarea, select, [contenteditable]'))) a.blur(); }
+document.addEventListener('keyup', e => { if (INP_SWALLOW){ INP_SWALLOW = false; e.preventDefault(); e.stopPropagation(); } }, true);
 function inpKeyDown(e){                                               // touches pendant la saisie ; rend true si la touche est prise
   if (!INP || e.altKey || e.ctrlKey || e.metaKey) return false;
   if (INP !== inpCur()){ INP = null; return false; }
@@ -13197,8 +13205,8 @@ function inpKeyDown(e){                                               // touches
   // Page préc. / suiv. (et ← → d'une question à choix) : la case se referme, la touche change de question ; ailleurs, ← → ↑ ↓ déplacent le curseur (n° 40)
   if (/^Page(Up|Down)$/.test(k) || (sp.t === 'ch' && /^Arrow(Left|Right)$/.test(k))){ INP = null; return false; }
   if (/^(Shift|CapsLock|NumLock|Dead|Alt|AltGraph|Control|Meta|Tab|F\d+)$/.test(k)) return k !== 'Tab' && !/^F\d+$/.test(k);
-  e.preventDefault();
-  if (k === 'Escape') inpClose();
+  e.preventDefault(); inpNoFocus(); INP_SWALLOW = true;
+  if (k === 'Escape' || k === ' ') inpClose();   // n° 41 : Espace referme aussi la case (l'enseignant : « c'est ce que j'aimerais »)
   else if (k === 'Enter'){ if (!e.repeat) inpCheck(); }
   else { const c = inpChar(e, sp); if (c) inpType(c); }
   return true;
@@ -13212,7 +13220,7 @@ function inpPart(I, P, on){                                           // une par
     if (foc && I.c === i) h += car;
     if (i === s.length) break;
     if (s[i] === '‾'){ h += '<span class="ovl" data-p="' + P + '" data-i="' + i + '">'; ov = true; continue; }   // la période : surlignée
-    h += '<span class="qch" data-p="' + P + '" data-i="' + i + '">' + hEsc(s[i]) + '</span>';
+    h += '<span class="qch" data-p="' + P + '" data-i="' + i + '">' + (s[i] === ' ' ? '\u202f' : hEsc(s[i])) + '</span>';
   }
   if (ov) h += (/‾$/.test(s) ? NBS : '') + '</span>';
   return h;
@@ -13296,7 +13304,7 @@ function repBtn(){
   b.style.bottom = Math.max(8, innerHeight - f.top + 10) + 'px';
 }
 $('bRep').innerHTML = KB_SVG.pen + '<span>Répondre</span>';
-$('bRep').onclick = e => { e.currentTarget.blur(); inpOpen(); };
+$('bRep').onclick = e => { e.currentTarget.blur(); inpNoFocus(); inpOpen(); };
 window.addEventListener('resize', repBtn);
 $('kb').addEventListener('pointerdown', e => { if (e.target.closest('.kk')) e.preventDefault(); });   // le clavier ne prend pas le focus
 $('kb').addEventListener('click', e => { const b = e.target.closest('.kk'); if (!b || !INP) return; inpType(b.dataset.k); });
@@ -13739,7 +13747,7 @@ document.addEventListener('keydown', e => {
   if (STU || STU_MSG()){ stuKey(e); return; }                                       // mode élève : ses touches seulement ; page message : aucune
                                                                                      // (l'enseignant, 07.11.2026 : « Si on appuie sur R on a quand même la page des réglages »)
   if (!open && INP && inpKeyDown(e)) return;                                       // saisie (n° 38) : pendant la saisie, les touches écrivent dans la case
-  if (!open && e.key === ' ' && !typing && !e.altKey && !e.ctrlKey && !e.metaKey && !SEQ && inpCan()){ e.preventDefault(); inpOpen(); return; }   // Espace : ouvrir la case
+  if (!open && e.key === ' ' && !typing && !e.altKey && !e.ctrlKey && !e.metaKey && !SEQ && inpCan()){ e.preventDefault(); inpNoFocus(); INP_SWALLOW = true; inpOpen(); return; }   // Espace : ouvrir la case
   if ((e.key === 'f' || e.key === 'F') && !typing && !e.altKey && !e.ctrlKey && !e.metaKey){ e.preventDefault(); toggleFull(); return; }   // F : plein écran, aussi dans les réglages (02.11.2026, 3e conversation), sauf en tapant dans la recherche
   if ((e.key === 'r' || e.key === 'R') && open === $('oSet') && !typing && !e.altKey && !e.ctrlKey && !e.metaKey){ e.preventDefault(); open.classList.remove('open'); return; }   // R ferme aussi les réglages (comme Échap ; utile en plein écran, où Échap sort du plein écran)
   if (open === $('oSet') && !e.altKey && !e.ctrlKey && !e.metaKey){                 // réglages (l'enseignant, 02.11.2026) :
@@ -14101,7 +14109,7 @@ function stuKey(e){                  // clavier du mode élève : 1 à 4 (étoil
   const dg = /^(?:Digit|Numpad)([1-4])$/.exec(e.code), d = dg ? Number(dg[1]) : /^[1-4]$/.test(e.key) ? Number(e.key) : 0;
   if (STU.start){ if (e.key === 'Enter' && !e.repeat && objectives(S).length){ e.preventDefault(); stuGo(STU.lv); } return; }   // liste : Entrée = « Continuer »
   if (INP && !document.querySelector('.over.open') && inpKeyDown(e)) return;      // saisie (n° 38)
-  if (e.key === ' ' && inpCan()){ e.preventDefault(); inpOpen(); return; }
+  if (e.key === ' ' && inpCan()){ e.preventDefault(); inpNoFocus(); INP_SWALLOW = true; inpOpen(); return; }
   if (d){ e.preventDefault(); if (!STU.rnd) stuLevel(d); return; }
   if (e.key === 'ArrowRight' || e.key === 'PageDown'){ e.preventDefault(); next(); }
   else if (e.key === 'ArrowLeft' || e.key === 'PageUp'){ e.preventDefault(); back(); }

@@ -997,6 +997,18 @@ body.inpok .pane .qbox{cursor:text}
 .dot.mk-ok{--mkc:#2e7d32}
 .dot.mk-mid{--mkc:#c25b00}
 .dot.mk-ko{--mkc:#c0392b}
+
+/* n° 40 : parties d'une fraction (celle du curseur sur fond plus foncé, le curseur dedans), touche de la période enfoncée, bouton « Répondre » */
+.qpt{display:inline-block;min-width:.55em;padding:0 .06em;border-radius:.08em}
+.qpt.on{background:color-mix(in srgb, var(--accent) 18%, transparent)}
+.qpt.qph{min-height:.8em;border:.06em dashed var(--muted);vertical-align:-.1em;padding:0}
+.qpt.qph .qcar{display:block;margin:.05em auto 0}
+.ovl .qch{text-decoration:overline;text-decoration-thickness:.07em}
+.kk.kon{background:color-mix(in srgb, var(--accent) 16%, #fff);border-color:var(--accent);box-shadow:inset 0 0 0 .08em var(--accent)}
+#bRep{position:fixed;right:max(.9em, env(safe-area-inset-right, 0px));z-index:5;display:inline-flex;align-items:center;gap:.4em;font-size:1.05em;
+  padding:.55em 1em;box-shadow:0 .15em .55em rgba(0,0,0,.18)}
+#bRep[hidden]{display:none}
+#bRep svg{width:1.05em;height:1.05em}
 </style>
 </head>
 <body>
@@ -1049,6 +1061,7 @@ body.inpok .pane .qbox{cursor:text}
 <div class="gmeas" id="gmeas" aria-hidden="true"></div>
 
 <div class="kb" id="kb" hidden></div>
+<button class="btn on" id="bRep" type="button" hidden title="Taper la réponse"></button>
 <footer>
   <div class="fl0"><button class="btn side1" id="bSL" title="Question de gauche : réponse, puis détail, puis question seule (touche 7)"><span class="lb">Réponse à gauche</span><span class="kh">7</span></button></div>
   <div class="fmid">
@@ -1111,6 +1124,7 @@ body.inpok .pane .qbox{cursor:text}
             <span><kbd>→</kbd> suivante · <kbd>←</kbd> précédente · <kbd>R</kbd> réglages · <kbd>F</kbd> plein écran · <kbd>J</kbd> toutes les questions</span>
             <span><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> question à <span class="stars">★</span> … <span class="stars">★★★★</span> · <kbd>7</kbd> <kbd>9</kbd> réponse seulement <span class="kw">à gauche / à droite</span><span class="kt">en haut / en bas</span></span>
             <span><kbd>Espace</kbd> (ou clic sur le « ? ») taper la réponse · <kbd>Entrée</kbd> vérifier · <kbd>Échap</kbd> (ou clic à côté) fermer la case</span>
+            <span>Dans la case : <kbd>←</kbd> <kbd>→</kbd> le curseur · <kbd>↑</kbd> <kbd>↓</kbd> numérateur, dénominateur · <kbd>/</kbd> fraction · <kbd>P</kbd> période</span>
           </div>
 
           <div class="lab">Fond</div>
@@ -13086,40 +13100,80 @@ function inpCan(){                                                    // une cas
   if (STU && STU.start) return false;
   const p = inpCur(); return !!(p && !p.shown.ans && !p.shown.det && inpSpec(p) && !document.querySelector('.over.open'));
 }
-function inpOpen(){ if (!inpCan()) return; const p = inpCur(); p.inp = p.inp || {b: '', tries: 0}; INP = p; render(); }
+// n° 40 (l'enseignant, 10.11.2026 : « Pour les fractions, il faudrait pouvoir cliquer d'abord sur le symbole fraction si on veut (avant le
+// numérateur). Aussi quand le curseur est sur le dénominateur il est en dehors du bloc de réponse du dénominateur. Et Il faudrait pouvoir cliquer ou
+// taper sur l'endroit du bloc où on veut déplacer le curseur » ; « La touche "0,3 périodique" : quand on clique dessus il faudrait pouvoir recliquer
+// pour désactiver » ; QCM : ← → déplacent le curseur, ↑ ↓ passent du numérateur au dénominateur) : un vrai curseur. Case : n (le nombre, ou le
+// numérateur), d (le dénominateur, null sans fraction), f (la partie où est le curseur : 'n' ou 'd'), c (place du curseur dans cette partie) ; b (ce
+// qui est tapé, « n/d ») se refait après chaque frappe et sert au jugement.
+const inpNew = () => ({b: '', n: '', d: null, f: 'n', c: 0, tries: 0});
+const inpB = I => { I.b = (I.n || '') + (I.d !== null && I.d !== undefined ? '/' + I.d : ''); };
+function inpOpen(){ if (!inpCan()) return; const p = inpCur(); p.inp = p.inp || inpNew(); INP = p; render(); }
 function inpClose(){ if (!INP) return; INP = null; render(); }
+function inpEdit(I, sp, c){                                           // une frappe dans la case (au curseur)
+  const P = I.f === 'd' && I.d !== null ? 'd' : 'n'; let s = I[P] || '', k = Math.max(0, Math.min(I.c, s.length));
+  const go = (f, c2) => { I.f = f; I.c = c2; };
+  const put = t => { s = s.slice(0, k) + t + s.slice(k); k += t.length; };
+  if (c === '⌫'){
+    if (k > 0){ s = s.slice(0, k - 1) + s.slice(k); k--; }
+    else if (P === 'd'){ if (!s) I.d = null; return go('n', I.n.length); }          // au début du dénominateur : retour au numérateur (fraction vide : enlevée)
+    else if (I.d !== null && !s.replace('−', '') && !I.d){ I.d = null; }
+  }
+  else if (c === 'del'){ if (k < s.length) s = s.slice(0, k) + s.slice(k + 1); }
+  else if (c === 'clr'){ I.n = ''; I.d = null; return go('n', 0); }
+  else if (c === '←'){ if (k > 0) k--; else if (P === 'd') return go('n', I.n.length); }
+  else if (c === '→'){ if (k < s.length) k++; else if (P === 'n' && I.d !== null) return go('d', 0); }
+  else if (c === 'home') k = 0;
+  else if (c === 'end') k = s.length;
+  else if (c === '↑'){ if (P === 'd') return go('n', I.n.length); }
+  else if (c === '↓'){ if (P === 'n' && I.d !== null) return go('d', I.d.length); }
+  else if (/^\d$/.test(c)){ if ((I.n + (I.d || '')).length >= 12) return; put(c); }
+  else if (c === ','){                                                 // virgule : une seule, avant la période ; pas dans une fraction
+    if (!sp.kb.dec || I.d !== null || s.includes(',')) return; const m = s.indexOf('‾'); if (m >= 0 && k > m) return;
+    put(k === 0 || s[k - 1] === '−' ? '0,' : ','); }
+  else if (c === '−'){ if (!sp.kb.neg && s[0] !== '−') return;         // change le signe de la partie où est le curseur
+    if (s[0] === '−'){ s = s.slice(1); k = Math.max(0, k - 1); } else { s = '−' + s; k++; } }
+  else if (c === '/'){                                                 // fraction : avant le numérateur, après lui, ou passer de l'un à l'autre
+    if (!sp.kb.fra) return;
+    if (I.d === null){ if (s.includes(',') || s.includes('‾')) return;
+      I.n = s; I.d = ''; return s.replace('−', '') ? go('d', 0) : go('n', s.length); }
+    return P === 'n' ? go('d', I.d.length) : go('n', I.n.length); }
+  else if (c === '‾'){                                                 // période : la touche l'active, la touche encore l'enlève
+    if (!sp.kb.per || I.d !== null) return;
+    const m = s.indexOf('‾');
+    if (m >= 0){ s = s.slice(0, m) + s.slice(m + 1); if (k > m) k--; }
+    else { const cm = s.indexOf(',');
+      if (cm < 0){ if (!/\d/.test(s)) return; k = s.length; put(',‾'); }       // pas encore de virgule : « 2 » → « 2,‾ »
+      else { k = Math.max(k, cm + 1); put('‾'); } } }
+  else return;
+  I[P] = s; I.c = k;
+}
 function inpType(c){
   const p = INP; if (!p) return; const sp = inpSpec(p); if (!sp) return; const I = p.inp;
   if (c === 'ok') return inpCheck();
   if (c === 'esc') return inpClose();
   if (sp.t === 'ch'){ if (sp.opts.includes(c)){ I.b = c; inpCheck(); } return; }
-  let b = I.b; const di = b.indexOf('/'), head = di < 0 ? '' : b.slice(0, di + 1), part = di < 0 ? b : b.slice(di + 1);
-  if (c === '⌫') b = b.slice(0, -1);
-  else if (c === 'clr') b = '';
-  else if (b.length >= 14) return;
-  else if (/^\d$/.test(c)) b += c;
-  else if (c === ',' && sp.kb.dec && di < 0 && !part.includes(',')) b += (/\d$/.test(part) ? '' : '0') + ',';
-  else if (c === '−' && (sp.kb.neg || part[0] === '−')) b = head + (part[0] === '−' ? part.slice(1) : '−' + part);   // change le signe du nombre (ou du dénominateur)
-  else if (c === '/' && sp.kb.fra && di < 0 && /\d$/.test(b) && !b.includes(',')) b += '/';
-  else if (c === '‾' && sp.kb.per && di < 0 && /,\d*$/.test(b)) b += '‾';
-  else return;
-  I.b = b; render();
+  if (I.n === undefined){ I.n = I.b || ''; I.d = null; I.f = 'n'; I.c = I.n.length; }   // case d'une version d'avant (sécurité)
+  inpEdit(I, sp, c); inpB(I); render();
 }
 function inpCheck(){
   const p = INP; if (!p) return; const I = p.inp; if (!I || !I.b) return;
-  const R = inpJudge(p, I.b); I.fb = R;
+  const sp = inpSpec(p);
+  const R = sp && sp.t === 'num' && I.d !== null && I.d !== undefined && (!I.n.replace('−', '') || !I.d.replace('−', ''))
+    ? {r: 'bad', m: !I.n.replace('−', '') ? 'Il manque le numérateur.' : 'Il manque le dénominateur.'} : inpJudge(p, I.b);
+  I.fb = R;
   if (R.r === 'ok'){ p.mk = !I.tries ? 'ok' : 'mid'; INP = null; p.shown.ans = true; }
   else if (R.r !== 'bad'){ I.tries++; I.last = R.r; }
   render();
   if (R.r === 'ko' || R.r === 'almost'){ const q = document.querySelector('#pL .qin'); if (q && !ANIM_OFF()) anim(q, [{transform: 'translateX(0)'}, {transform: 'translateX(-.12em)'},
     {transform: 'translateX(.12em)'}, {transform: 'translateX(-.08em)'}, {transform: 'translateX(0)'}], {duration: 320}); }
 }
-function inpSync(){                                                   // à chaque affichage (render) : case, marque, clavier
+function inpSync(){                                                   // à chaque affichage (render) : case, marque, clavier, bouton « Répondre »
   const p = inpCur();
   if (INP && INP !== p) INP = null;
   if (p && (p.shown.ans || p.shown.det)){ if (INP === p) INP = null;
     if (!p.mk && p.inp && p.inp.tries) p.mk = p.inp.last === 'almost' ? 'mid' : 'ko'; }
-  if ((STU || inpTouch()) && p && !INP && !p.inp && inpCan()){ p.inp = {b: '', tries: 0}; INP = p; }   // mode élève et écran tactile : la case s'ouvre d'elle-même (une fois)
+  if ((STU || inpTouch()) && p && !INP && !p.inp && inpCan()){ p.inp = inpNew(); INP = p; }   // mode élève et écran tactile : la case s'ouvre d'elle-même (une fois)
   document.body.classList.toggle('inpok', !!(p && !p.shown.ans && !p.shown.det && inpSpec(p)));
   kbDraw();
 }
@@ -13127,6 +13181,8 @@ function inpChar(e, sp){                                              // la touc
   const k = e.key;
   if (/^[0-9]$/.test(k)) return k;
   if (sp.t === 'ch'){ const u = k.length === 1 ? k.toUpperCase() : ''; return sp.opts.includes(k) ? k : sp.opts.includes(u) ? u : null; }
+  const A = {ArrowLeft: '←', ArrowRight: '→', ArrowUp: '↑', ArrowDown: '↓', Home: 'home', End: 'end', Delete: 'del', Backspace: '⌫'};
+  if (A[k]) return A[k];
   if (k === ',' || k === '.' || k === 'Decimal') return ',';
   if (k === '-' || k === '−' || k === 'Subtract') return '−';
   if (k === '/' || k === 'Divide') return '/';
@@ -13138,27 +13194,52 @@ function inpKeyDown(e){                                               // touches
   if (!INP || e.altKey || e.ctrlKey || e.metaKey) return false;
   if (INP !== inpCur()){ INP = null; return false; }
   const k = e.key, sp = inpSpec(INP);
-  if (/^(Arrow(Left|Right)|Page(Up|Down))$/.test(k)){ INP = null; return false; }    // ← → : la case se referme, la touche fait son travail
+  // Page préc. / suiv. (et ← → d'une question à choix) : la case se referme, la touche change de question ; ailleurs, ← → ↑ ↓ déplacent le curseur (n° 40)
+  if (/^Page(Up|Down)$/.test(k) || (sp.t === 'ch' && /^Arrow(Left|Right)$/.test(k))){ INP = null; return false; }
   if (/^(Shift|CapsLock|NumLock|Dead|Alt|AltGraph|Control|Meta|Tab|F\d+)$/.test(k)) return k !== 'Tab' && !/^F\d+$/.test(k);
   e.preventDefault();
   if (k === 'Escape') inpClose();
   else if (k === 'Enter'){ if (!e.repeat) inpCheck(); }
-  else if (k === 'Backspace') inpType('⌫');
-  else if (k === 'Delete') inpType('clr');
   else { const c = inpChar(e, sp); if (c) inpType(c); }
   return true;
 }
 // ---------- affichage de la case et du message ----------
 function inpShown(p){ return !!(p && p.inp && (INP === p || p.inp.b)); }
+function inpPart(I, P, on){                                           // une partie (nombre, numérateur, dénominateur) : chaque caractère se clique
+  const s = (P === 'd' ? I.d : I.n) || '', foc = on && (I.f === P || (P === 'n' && I.d === null)), car = '<span class="qcar"></span>';
+  let h = '', ov = false;
+  for (let i = 0; i <= s.length; i++){
+    if (foc && I.c === i) h += car;
+    if (i === s.length) break;
+    if (s[i] === '‾'){ h += '<span class="ovl" data-p="' + P + '" data-i="' + i + '">'; ov = true; continue; }   // la période : surlignée
+    h += '<span class="qch" data-p="' + P + '" data-i="' + i + '">' + hEsc(s[i]) + '</span>';
+  }
+  if (ov) h += (/‾$/.test(s) ? NBS : '') + '</span>';
+  return h;
+}
 function inpHTML(p){                                                  // ce qui est tapé, écrit comme un nombre (fraction, période), à la place du « ? »
-  const I = p.inp, on = INP === p, b = I.b, car = on ? '<span class="qcar"></span>' : '';
+  const I = p.inp, on = INP === p, b = I.b;
   const st = I.fb && I.fb.r !== 'bad' && I.fb.r !== 'ok' ? ' ' + I.fb.r : '';
-  if (inpSpec(p).t === 'ch') return '<span class="qin' + (on ? ' on' : '') + st + '">' + (b ? hEsc(b) : '') + car + '</span>';
-  const one = s => { const m = /^(−?)([\d,]*)(?:‾(\d*))?$/.exec(s) || [s, '', s];
-    return m[1] + m[2] + (m[3] !== undefined ? '<span class="ovl">' + (m[3] || NBS) + '</span>' : ''); };
-  const i = b.indexOf('/');
-  const h = i < 0 ? one(b) + car : fracH(one(b.slice(0, i)), (b.slice(i + 1) ? one(b.slice(i + 1)) : '<span class="qph"></span>') + car);
+  if (inpSpec(p).t === 'ch') return '<span class="qin' + (on ? ' on' : '') + st + '">' + (b ? hEsc(b) : '') + (on ? '<span class="qcar"></span>' : '') + '</span>';
+  if (I.n === undefined){ I.n = b || ''; I.d = null; I.f = 'n'; I.c = I.n.length; }
+  let h;
+  if (I.d === null) h = inpPart(I, 'n', on);
+  else {                                                               // fraction : deux cases, celle du curseur sur fond clair (le curseur dedans)
+    const box = P => { const s = P === 'd' ? I.d : I.n, foc = on && I.f === P;
+      return '<span class="qpt' + (s ? '' : ' qph') + (foc ? ' on' : '') + '" data-p="' + P + '">' + inpPart(I, P, on) + '</span>'; };
+    h = fracH(box('n'), box('d'));
+  }
   return '<span class="qin' + (on ? ' on' : '') + st + '">' + (b || on ? h : '?') + '</span>';
+}
+function inpClick(e, q){                                              // clic ou toucher dans la case : le curseur va là (avant ou après le caractère)
+  const I = INP && INP.inp; if (!I || I.n === undefined || inpSpec(INP).t !== 'num') return;
+  const t = e.target.closest('[data-p]');
+  if (t){ const P = t.dataset.p === 'd' && I.d !== null ? 'd' : 'n', s = (P === 'd' ? I.d : I.n) || '';
+    let k = s.length;
+    if (t.dataset.i !== undefined){ const i = Number(t.dataset.i), r = t.getBoundingClientRect();
+      k = t.classList.contains('ovl') ? i + 1 : i + (e.clientX > r.left + r.width / 2 ? 1 : 0); }
+    I.f = P; I.c = Math.min(k, s.length); }
+  else { const s = (I.f === 'd' && I.d !== null ? I.d : I.n) || ''; I.c = s.length; }
 }
 const FB_ICO = {ok: '<path d="M2.5 8.5l3.5 3.5 7.5-8"/>', almost: '<path d="M2.5 9c1.8-2.4 3.6-2.4 5.5 0s3.7 2.4 5.5 0"/>', ko: '<path d="M3.5 3.5l9 9M12.5 3.5l-9 9"/>',
   bad: '<path d="M8 3.5v5.5M8 12v.5"/>'};
@@ -13171,7 +13252,8 @@ function inpFbHTML(p, show){                                          // message
 // ---------- clavier à l'écran (adapté à l'exercice) ----------
 const KB_SVG = {
   del: '<svg viewBox="0 0 24 16" aria-hidden="true"><path d="M7.5 1.5h14v13h-14L1.5 8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M11 5l6 6M17 5l-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
-  x: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>'
+  x: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  pen: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13l.6-2.6L10.9 3.1a1.4 1.4 0 0 1 2 2L5.6 12.4z M9.6 4.4l2 2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/></svg>'
 };
 function kbHTML(sp){
   const key = (c, lab, cl, pos, ti) => '<button type="button" class="kk' + (cl ? ' ' + cl : '') + '" data-k="' + hEsc(c) + '"' + (pos ? ' style="' + pos + '"' : '') +
@@ -13182,8 +13264,8 @@ function kbHTML(sp){
     // ordinateur : une ligne (1 … 9, 0, puis les touches en plus) ; téléphone en hauteur : pavé 7 8 9 / 4 5 6 / 1 2 3 / 0 (CSS, --c et --r)
     const D = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'], at = {1: [1, 3], 2: [2, 3], 3: [3, 3], 4: [1, 2], 5: [2, 2], 6: [3, 2], 7: [1, 1], 8: [2, 1], 9: [3, 1], 0: [2, 4]};
     const X = [sp.kb.dec && [',', ',', 'Virgule (touche , ou .)'], sp.kb.neg && ['−', '−', 'Signe moins (touche -)'],
-      sp.kb.fra && ['/', '<span class="kfr"><span></span><i></i><span></span></span>', 'Fraction (touche /)'],
-      sp.kb.per && ['‾', '<span class="pdec">0,<span class="ovl">3</span></span>', 'Période\u00a0: les chiffres qui se répètent (touche P)']].filter(Boolean);
+      sp.kb.fra && ['/', '<span class="kfr"><span></span><i></i><span></span></span>', 'Fraction (touche /) ; encore une fois : passer au numérateur ou au dénominateur'],
+      sp.kb.per && ['‾', '<span class="pdec">0,<span class="ovl">3</span></span>', 'Période\u00a0: les chiffres qui se répètent (touche P) ; encore une fois : plus de période']].filter(Boolean);
     const slots = [[4, 2], [4, 3], [1, 4], [3, 4]];
     h = D.map(d => key(d, d, 'kd', '--c:' + at[d][0] + ';--r:' + at[d][1])).join('') +
       X.map((x, i) => key(x[0], x[1], 'kx', '--c:' + slots[i][0] + ';--r:' + slots[i][1], x[2])).join('') +
@@ -13193,11 +13275,29 @@ function kbHTML(sp){
 }
 function kbDraw(){
   const kb = $('kb'), sp = INP && inpSpec(INP);
+  repBtn();
   if (!sp){ if (!kb.hidden){ kb.hidden = true; kb.innerHTML = ''; kb._sig = ''; } document.body.classList.remove('kbon'); return; }
   const sig = JSON.stringify(sp.t === 'ch' ? sp.opts : sp.kb);
   if (kb._sig !== sig){ kb.innerHTML = kbHTML(sp); kb._sig = sig; }
+  const I = INP.inp, pk = kb.querySelector('.kk[data-k="‾"]');             // touche de la période enfoncée tant qu'il y a une période (n° 40)
+  if (pk) pk.classList.toggle('kon', !!(I && I.n && I.n.includes('‾')));
   kb.hidden = false; document.body.classList.add('kbon');
 }
+// bouton « Répondre » (n° 40 ; l'enseignant, 10.11.2026 : « Ce n'est pas intuitif pour l'utilisateur qu'on peut cliquer sur le point
+// d'interrogation pour ouvrir une boite de réponse. Tu peux garder ce système mais il en faudrait un autre. Peut être un bouton répondre au dessus du
+// choix d'étoiles, mais pas dans le pied de page (au dessus ?) » ; QCM : en bas à droite, juste au-dessus du pied de page ; pas au beamer : seulement
+// en mode élève et sur un écran tactile) : là seulement quand la case est fermée et que la question en a une ; posé au-dessus du pied de page
+// (position fixe, hauteur du pied de page mesurée), il ne bouge pas pendant un swipe
+function repBtn(){
+  const b = $('bRep'), p = inpCur();
+  const on = !!(p && !INP && (STU || inpTouch()) && !(STU && STU.start) && !p.shown.ans && !p.shown.det && inpSpec(p) && !document.body.classList.contains('empty'));
+  b.hidden = !on; if (!on) return;
+  const f = document.querySelector('footer').getBoundingClientRect();
+  b.style.bottom = Math.max(8, innerHeight - f.top + 10) + 'px';
+}
+$('bRep').innerHTML = KB_SVG.pen + '<span>Répondre</span>';
+$('bRep').onclick = e => { e.currentTarget.blur(); inpOpen(); };
+window.addEventListener('resize', repBtn);
 $('kb').addEventListener('pointerdown', e => { if (e.target.closest('.kk')) e.preventDefault(); });   // le clavier ne prend pas le focus
 $('kb').addEventListener('click', e => { const b = e.target.closest('.kk'); if (!b || !INP) return; inpType(b.dataset.k); });
 // n° 39 (l'enseignant, 10.11.2026 : « Sur ordi, cliquer en dehors de la zone de la boite de réponse doit sortir de la zone de réponse (comme
@@ -13207,12 +13307,13 @@ $('kb').addEventListener('click', e => { const b = e.target.closest('.kk'); if (
 let INP_PT = '';
 document.addEventListener('pointerdown', e => { INP_PT = e.pointerType || ''; }, true);
 document.addEventListener('click', e => {
-  if (!INP || INP_PT !== 'mouse' || (e.target.closest && e.target.closest('.qin, #kb, .over.open'))) return;
+  if (!INP || INP_PT !== 'mouse' || (e.target.closest && e.target.closest('.qin, #kb, #bRep, .over.open'))) return;
   inpClose();
 }, true);
-$('main').addEventListener('click', e => {                           // clic sur « ? » (ou sur la case) : ouvrir la case
-  if (!e.target.closest('.pane .qbox, .pane .qin') || INP) return;
-  if (inpCan()) inpOpen();
+$('main').addEventListener('click', e => {                           // clic sur « ? » ou dans la case : ouvrir la case, curseur à l'endroit du clic
+  const q = e.target.closest('.pane .qbox, .pane .qin'); if (!q) return;
+  if (!INP){ if (!inpCan()) return; const p = inpCur(); p.inp = p.inp || inpNew(); INP = p; }
+  inpClick(e, q); render();
 });
 
 function newQuestions(){ PICK = false; LASTG = null; seqEnd(); QS = buildQuestions(); cur = 0; render(); }

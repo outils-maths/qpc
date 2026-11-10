@@ -1030,6 +1030,20 @@ body.inpok .pane .qbox{cursor:text}
   .kbk:not(.kbch) .kk{height:2.15em;font-size:1.15em}
   .kbk.kbch{margin-top:.15em}
 }
+/* n° 45 : saisie, Nombres et opérations (suite) : touches et cases nouvelles */
+.kk.kch.kwd{font-size:1.3em;min-width:3.6em}
+.kexp{display:inline-block;position:relative;width:1em;height:.9em}
+.kexp span{position:absolute;left:0;bottom:0;width:.56em;height:.56em;border:.09em solid currentColor;border-radius:.07em}
+.kexp i{position:absolute;right:0;top:0;width:.3em;height:.3em;border:.08em solid currentColor;border-radius:.05em}
+.ksci{display:inline-flex;align-items:flex-start;font-size:.82em;white-space:nowrap}
+.ksci i{display:inline-block;width:.36em;height:.36em;border:.08em solid currentColor;border-radius:.05em;margin:-.12em 0 0 .06em}
+.krad .rad{font-size:.95em}
+.kbx{display:inline-block;width:.5em;height:.55em;border:.08em solid currentColor;border-radius:.05em;vertical-align:-.05em}
+.qin sup.qsup{font-size:.62em;vertical-align:.75em;line-height:1}
+.qin sup.qsup .qpt.qph{width:.6em;height:.75em}
+.qmk{margin:0 .14em}
+.qstp{white-space:nowrap}
+.fbk.fstep{color:#2e7d32;background:#e3f1e3}
 </style>
 </head>
 <body>
@@ -1145,7 +1159,7 @@ body.inpok .pane .qbox{cursor:text}
             <span><kbd>→</kbd> suivante · <kbd>←</kbd> précédente · <kbd>R</kbd> réglages · <kbd>F</kbd> plein écran · <kbd>J</kbd> toutes les questions</span>
             <span><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> question à <span class="stars">★</span> … <span class="stars">★★★★</span> · <kbd>7</kbd> <kbd>9</kbd> réponse seulement <span class="kw">à gauche / à droite</span><span class="kt">en haut / en bas</span></span>
             <span><kbd>Espace</kbd> (ou clic sur le « ? ») ouvrir la case, <kbd>Espace</kbd> encore la fermer · <kbd>Entrée</kbd> vérifier · <kbd>Échap</kbd> (ou clic à côté) fermer la case</span>
-            <span>Dans la case : <kbd>←</kbd> <kbd>→</kbd> le curseur · <kbd>↑</kbd> <kbd>↓</kbd> numérateur, dénominateur · <kbd>/</kbd> fraction · <kbd>P</kbd> période</span>
+            <span>Dans la case : <kbd>←</kbd> <kbd>→</kbd> le curseur · <kbd>↑</kbd> <kbd>↓</kbd> en haut, en bas · <kbd>/</kbd> fraction · <kbd>P</kbd> période · <kbd>R</kbd> racine · <kbd>*</kbd> ∙</span>
           </div>
 
           <div class="lab">Fond</div>
@@ -12069,7 +12083,9 @@ function fitHeader(){
 const PENCIL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1.2-4.6L16.4 4.2a2 2 0 0 1 2.8 0l.6.6a2 2 0 0 1 0 2.8L8.6 18.8z"/><path d="M14.5 6.1l3.4 3.4"/></svg>';
 const starsHTML = lv => '<span class="stars">' + '★'.repeat(lv) + '</span>';
 function qLine(p, show){
-  if (p.line){ const h = p.line(show); return !show && inpShown(p) ? h.replace(BOX, inpHTML(p)) : h; }   // saisie (n° 38) : ce qui est tapé à la place du « ? »
+  if (p.line){ const h = p.line(show); if (show || !inpShown(p)) return h;
+    const sp = inpSpec(p); if (sp && sp.t === 'enc'){ const L = h.split(BOX); if (L.length > 2) return L[0] + inpHTML(p, 0) + L[1] + inpHTML(p, 1) + L.slice(2).join(BOX); }   // n° 45
+    return h.replace(BOX, inpHTML(p)); }   // saisie (n° 38) : ce qui est tapé à la place du « ? »
   const ans = !show ? (inpShown(p) ? inpHTML(p) : BOX) : p.ex ? '<span class="ansnum">' + p.ex + '</span><span class="op">≈</span><span class="ansnum">' + p.a + '</span>' : '<span class="ansnum">' + p.a + '</span>';
   return '<span class="qq">' + p.q + '</span><span class="eq' + (p.sep === '⟹' ? ' solve' : '') + '"><span class="op">' + (show && p.ex ? '=' : show && p.sepA ? p.sepA : (p.sep || '=')) + '</span>' +
     (p.pre ? '<span>' + p.pre + '</span>' : '') + ans + (p.post ? '<span class="un">' + p.post + '</span>' : '') + '</span>';
@@ -12857,7 +12873,7 @@ function inpParse(b){
 // ---------- description de la réponse attendue (null : exercice pas encore branché) ----------
 // {t: 'num', v: [n, d], form: 'dec' (nombre décimal ou entier), 'frac' (fraction irréductible ou entier), 'eq' (toute écriture de la valeur),
 //  kb: {neg, dec, fra, per} (touches en plus des chiffres), R: règles des erreurs fréquentes} ; {t: 'ch', v: symbole, opts: [symboles]}
-const INP_ARITH = /^(?:[MP](?:nat|dec|rel)[+−∙:]|liv|livd|m10|m10x|mcom|mdis|rsum|pwrel|rprio)$/;
+const INP_ARITH = /^(?:[MP](?:nat|dec|rel)[+−∙:]|liv|livd|m10|m10x|mcom|mdis|rsum|pw(?:nat|dec|rel)|rprio)$/;
 function inpSpec(p){
   if (!p) return null;
   if (p._sp === undefined){ try { p._sp = inpSpec0(p); } catch (e) { console.error(e); p._sp = null; } }
@@ -12869,7 +12885,7 @@ function inpSpec0(p){
     const v = qVal(p.r); if (!v) return null;
     const neg = /rel/.test(s) || ['rsum', 'pwrel', 'rprio'].includes(s);
     const dec = /dec/.test(s) || (!!fl.dec && !/nat/.test(s) && !['liv', 'livd', 'pwrel'].includes(s)) || !qIsInt(v);
-    return {t: 'num', v, form: 'dec', kb: {neg, dec, per: /^Pdec:$/.test(s)}, R: s === 'pwrel' ? rPow : s === 'rprio' ? rPrio : s === 'liv' && ch.mf ? rMf : rArith};
+    return {t: 'num', v, form: 'dec', kb: {neg, dec, per: /^Pdec:$/.test(s)}, R: /^pw/.test(s) ? rPow : s === 'rprio' ? rPrio : s === 'liv' && ch.mf ? rMf : rArith};
   }
   if (['fs', 'Mfra+', 'Mfra−', 'Mfra∙', 'Mfra:', 'pwfra', 'fprio'].includes(s)){
     const v = qVal(p.r); if (!v) return null;
@@ -12893,7 +12909,7 @@ function inpSpec0(p){
     const v = qVal(p.r); if (!v) return null;
     return {t: 'num', v, form: /simplifi/.test(p.con || '') ? 'frac' : 'eq', kb: {fra: true, neg: v[0] < 0 || !!fl.rel}, R: rFax};
   }
-  return null;
+  return inpSpec45(p);                                               // n° 45 : bloc 1, la suite
 }
 
 // ---------- jugement ----------
@@ -12904,6 +12920,7 @@ const INP_MSG = {
 };
 function inpJudge(p, b){                                              // → {r: 'ok' | 'almost' | 'ko' | 'bad', m: message}
   const sp = inpSpec(p); if (!sp) return {r: 'bad', m: INP_MSG.bad};
+  if (isLin(sp)) return linJudge(p, b, sp);                           // n° 45
   if (sp.t === 'ch') return b === sp.v ? {r: 'ok', m: INP_MSG.ok} : {r: 'ko', m: (sp.R && sp.R(p, b, sp)) || INP_MSG.ko};
   const x = inpParse(b);
   if (!x) return {r: 'bad', m: INP_MSG.bad};
@@ -13149,7 +13166,7 @@ function inpEdit(I, sp, c){                                           // une fra
   else if (c === 'end') k = s.length;
   else if (c === '↑'){ if (P === 'd') return go('n', I.n.length); }
   else if (c === '↓'){ if (P === 'n' && I.d !== null) return go('d', I.d.length); }
-  else if (/^\d$/.test(c)){ if ((I.n + (I.d || '')).replace(/ /g, '').length >= 12) return; put(c); }
+  else if (/^\d$/.test(c)){ if ((I.n + (I.d || '')).replace(/ /g, '').length >= 16) return; put(c); }   // n° 45 : 16 (avant 12)
 
   else if (c === ','){                                                 // virgule : une seule, avant la période ; pas dans une fraction
     if (!sp.kb.dec || I.d !== null || s.includes(',')) return; const m = s.indexOf('‾'); if (m >= 0 && k > m) return;
@@ -13176,15 +13193,18 @@ function inpType(c){
   if (c === 'ok') return inpCheck();
   if (c === 'esc') return inpClose();
   if (sp.t === 'ch'){ if (sp.opts.includes(c)){ I.b = c; inpCheck(); } return; }
+  if (isLin(sp)){ linInit(I, sp); linEdit(I, sp, c); I.b = I.s; render(); return; }   // n° 45
   if (I.n === undefined){ I.n = I.b || ''; I.d = null; I.f = 'n'; I.c = I.n.length; }   // case d'une version d'avant (sécurité)
   inpEdit(I, sp, c); inpB(I); render();
 }
 function inpCheck(){
   const p = INP; if (!p) return; const I = p.inp; if (!I || !I.b) return;
   const sp = inpSpec(p);
+  if (isLin(sp)){ linInit(I, sp); const ms = linMissing(I, sp); if (ms === null) return; if (ms){ I.fb = {r: 'bad', m: ms.m}; I.c = ms.c; render(); return; } }   // n° 45
   const R = sp && sp.t === 'num' && I.d !== null && I.d !== undefined && (!I.n.replace('−', '') || !I.d.replace('−', ''))
     ? {r: 'bad', m: !I.n.replace('−', '') ? 'Il manque le numérateur.' : 'Il manque le dénominateur.'} : inpJudge(p, I.b);
   I.fb = R;
+  if (R.r === 'step'){ linStep(I, sp); render(); return; }            // n° 45 : juste, mais à réécrire (pas un essai)
   if (R.r === 'ok'){ p.mk = !I.tries ? 'ok' : 'mid'; INP = null; p.shown.ans = true; }
   else if (R.r !== 'bad'){ I.tries++; I.last = R.r; }
   render();
@@ -13195,7 +13215,7 @@ function inpSync(){                                                   // à chaq
   const p = inpCur();
   if (INP && INP !== p) INP = null;
   if (p && (p.shown.ans || p.shown.det)){ if (INP === p) INP = null;
-    if (!p.mk && p.inp && p.inp.tries) p.mk = p.inp.last === 'almost' ? 'mid' : 'ko'; }
+    if (!p.mk && p.inp && (p.inp.tries || (p.inp.steps && p.inp.steps.length))) p.mk = p.inp.last === 'almost' ? 'mid' : 'ko'; }
   if ((STU || inpTouch()) && p && !INP && !p.inp && inpCan()){ p.inp = inpNew(); INP = p; }   // mode élève et écran tactile : la case s'ouvre d'elle-même (une fois)
   document.body.classList.toggle('inpok', !!(p && !p.shown.ans && !p.shown.det && inpSpec(p)));
   kbDraw();
@@ -13203,7 +13223,9 @@ function inpSync(){                                                   // à chaq
 function inpChar(e, sp){                                              // la touche du clavier de l'ordinateur → un caractère de la case
   const k = e.key;
   if (/^[0-9]$/.test(k)) return k;
-  if (sp.t === 'ch'){ const u = k.length === 1 ? k.toUpperCase() : ''; return sp.opts.includes(k) ? k : sp.opts.includes(u) ? u : null; }
+  if (sp.t === 'ch'){ const u = k.length === 1 ? k.toUpperCase() : ''; return sp.opts.includes(k) ? k : sp.opts.includes(u) ? u
+    : (k.length === 1 && sp.opts.find(o => o.length > 1 && o[0] === k.toLowerCase())) || null; }   // n° 45 : oui, non (O, N)
+  const lk = linChar(k, sp); if (lk) return lk;                       // n° 45
   const A = {ArrowLeft: '←', ArrowRight: '→', ArrowUp: '↑', ArrowDown: '↓', Home: 'home', End: 'end', Delete: 'del', Backspace: '⌫'};
   if (A[k]) return A[k];
   if (k === ',' || k === '.' || k === 'Decimal') return ',';
@@ -13233,7 +13255,7 @@ function inpKeyDown(e){                                               // touches
   return true;
 }
 // ---------- affichage de la case et du message ----------
-function inpShown(p){ return !!(p && p.inp && (INP === p || p.inp.b)); }
+function inpShown(p){ return !!(p && p.inp && (INP === p || p.inp.b || (p.inp.steps && p.inp.steps.length))); }
 function inpPart(I, P, on){                                           // une partie (nombre, numérateur, dénominateur) : chaque caractère se clique
   const s = (P === 'd' ? I.d : I.n) || '', foc = on && (I.f === P || (P === 'n' && I.d === null)), car = '<span class="qcar"></span>';
   let h = '', ov = false;
@@ -13246,8 +13268,9 @@ function inpPart(I, P, on){                                           // une par
   if (ov) h += (/‾$/.test(s) ? NBS : '') + '</span>';
   return h;
 }
-function inpHTML(p){                                                  // ce qui est tapé, écrit comme un nombre (fraction, période), à la place du « ? »
+function inpHTML(p, part){                                            // ce qui est tapé, écrit comme un nombre (fraction, période), à la place du « ? »
   const I = p.inp, on = INP === p, b = I.b;
+  if (isLin(inpSpec(p))) return linBox(p, I, inpSpec(p), on, part);   // n° 45 (part : 1re ou 2e case de l'encadrement)
   const st = I.fb && I.fb.r !== 'bad' && I.fb.r !== 'ok' ? ' ' + I.fb.r : '';
   if (inpSpec(p).t === 'ch') return '<span class="qin' + (on ? ' on' : '') + st + '">' + (b ? hEsc(b) : '') + (on ? '<span class="qcar"></span>' : '') + '</span>';
   if (I.n === undefined){ I.n = b || ''; I.d = null; I.f = 'n'; I.c = I.n.length; }
@@ -13261,6 +13284,7 @@ function inpHTML(p){                                                  // ce qui 
   return '<span class="qin' + (on ? ' on' : '') + st + '">' + (b || on ? h : '?') + '</span>';
 }
 function inpClick(e, q){                                              // clic ou toucher dans la case : le curseur va là (avant ou après le caractère)
+  if (INP && isLin(inpSpec(INP))) return linClick(e, q);              // n° 45
   const I = INP && INP.inp; if (!I || I.n === undefined || inpSpec(INP).t !== 'num') return;
   const t = e.target.closest('[data-p]');
   if (t){ const P = t.dataset.p === 'd' && I.d !== null ? 'd' : 'n', s = (P === 'd' ? I.d : I.n) || '';
@@ -13288,14 +13312,14 @@ function kbHTML(sp){
   const key = (c, lab, cl, pos, ti) => '<button type="button" class="kk' + (cl ? ' ' + cl : '') + '" data-k="' + hEsc(c) + '"' + (pos ? ' style="' + pos + '"' : '') +
     (ti ? ' title="' + ti + '"' : '') + '>' + lab + '</button>';
   let h;
-  if (sp.t === 'ch') h = sp.opts.map(o => key(o, o === '<' ? '&lt;' : o === '>' ? '&gt;' : hEsc(o), 'kch')).join('');
+  if (sp.t === 'ch') h = sp.opts.map(o => key(o, o === '<' ? '&lt;' : o === '>' ? '&gt;' : hEsc(o), 'kch' + (o.length > 1 ? ' kwd' : ''))).join('');
   else {
     // ordinateur : une ligne (1 … 9, 0, puis les touches en plus) ; téléphone en hauteur : pavé 7 8 9 / 4 5 6 / 1 2 3 / 0 (CSS, --c et --r)
     const D = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'], at = {1: [1, 3], 2: [2, 3], 3: [3, 3], 4: [1, 2], 5: [2, 2], 6: [3, 2], 7: [1, 1], 8: [2, 1], 9: [3, 1], 0: [2, 4]};
     const X = [sp.kb.dec && [',', ',', 'Virgule (touche , ou .)'], sp.kb.neg && ['−', '−', 'Signe moins (touche -)'],
       sp.kb.fra && ['/', '<span class="kfr"><span></span><i></i><span></span></span>', 'Fraction (touche /) ; encore une fois : passer au numérateur ou au dénominateur'],
-      sp.kb.per && ['‾', '<span class="kper"><i></i><span></span></span>', 'Période\u00a0: les chiffres qui se répètent (touche P) ; encore une fois : plus de période']].filter(Boolean);
-    const slots = [[4, 2], [4, 3], [1, 4], [3, 4]];
+      sp.kb.per && ['‾', '<span class="kper"><i></i><span></span></span>', 'Période\u00a0: les chiffres qui se répètent (touche P) ; encore une fois : plus de période']].concat(kb45(sp)).filter(Boolean);
+    const slots = [[4, 2], [4, 3], [1, 4], [3, 4]].concat(Array.from({length: 12}, (_, i) => [i % 4 + 1, 5 + Math.floor(i / 4)]));   // n° 45 : plus de 4 touches en plus : d'autres lignes
     h = D.map(d => key(d, d, 'kd', '--c:' + at[d][0] + ';--r:' + at[d][1])).join('') +
       X.map((x, i) => key(x[0], x[1], 'kx', '--c:' + slots[i][0] + ';--r:' + slots[i][1], x[2])).join('') +
       key('⌫', KB_SVG.del, 'kdel', '--c:4;--r:1', 'Effacer (touche ⟵)') + key('ok', '<span>Vérifier</span>', 'kok', '--c:4;--r:4', 'Vérifier (Entrée)');
@@ -13306,10 +13330,11 @@ function kbDraw(){
   const kb = $('kb'), sp = INP && inpSpec(INP);
   repBtn();
   if (!sp){ if (!kb.hidden){ kb.hidden = true; kb.innerHTML = ''; kb._sig = ''; } document.body.classList.remove('kbon'); return; }
-  const sig = JSON.stringify(sp.t === 'ch' ? sp.opts : sp.kb);
-  if (kb._sig !== sig){ kb.innerHTML = kbHTML(sp); kb._sig = sig; }
+  const sig = JSON.stringify([sp.t, sp.t === 'ch' ? sp.opts : sp.kb]);
+  if (kb._sig !== sig){ kb.innerHTML = kbHTML(sp); mathify(kb); kb._sig = sig; }
   const I = INP.inp, pk = kb.querySelector('.kk[data-k="‾"]');             // touche de la période enfoncée tant qu'il y a une période (n° 40)
   if (pk) pk.classList.toggle('kon', !!(I && I.n && I.n.includes('‾')));
+  linKon(kb, I, sp);                                                   // n° 45
   kb.hidden = false; document.body.classList.add('kbon');
 }
 // bouton « Répondre » (n° 40 ; l'enseignant, 10.11.2026 : « Ce n'est pas intuitif pour l'utilisateur qu'on peut cliquer sur le point
@@ -13344,6 +13369,492 @@ $('main').addEventListener('click', e => {                           // clic sur
   if (!INP){ if (!inpCan()) return; const p = inpCur(); p.inp = p.inp || inpNew(); INP = p; }
   inpClick(e, q); render();
 });
+
+/* ---------- n° 45 (10.11.2026) : saisie, Nombres et opérations, la suite ----------
+   L'enseignant, 10.11.2026 : « Je te laisse préparer la suite pour les réponses qu'on peut donner » (bloc 1 de « Reste à faire » : Priorités,
+   Divisibilité et nombres premiers, Probabilités, Pourcentages, Puissances, Écriture scientifique, Racines). QCM : décomposition juste mais sans
+   exposants (2 ∙ 2 ∙ 2 ∙ 5 ∙ 5) : « Dis que c'est juste mais invite l'élève à écrire avec exposants après une nouvelle égalité (dans un nouveau
+   bloc à droite de l'autre peut être) » ; puissances, autre base ou valeur calculée (4⁴ pour 2⁸, 512 pour 2⁹) : « même chose qu'avant, dis que
+   c'est juste mais demande de réécrire correctement (en disant ce qu'il faut corriger) » ; écriture scientifique : « une touche qui met un bloc
+   *10^ » (60,7 ∙ 10³ : « presque », comme proposé) ; racines, valeur arrondie (3,87 pour √15) : « presque » (√12 pour 2√3 : « presque » aussi).
+   - Sortes de case nouvelles (sp.t) : 'pow' (base, exposant), 'sci' (nombre, bloc ∙ 10ⁿ), 'dcp' (produit de facteurs, avec exposants), 'rad'
+     (nombre devant, racine), 'enc' (deux cases : ? < √a < ?) ; 'ch' aussi avec des mots (oui, non : touches O et N).
+   - Pour elles, ce qui est tapé est une chaîne (I.s) avec des marques : ^ (exposant ; en 'sci' : le bloc ∙ 10ⁿ), ∙ (facteur suivant), √ (racine),
+     | (2e case de l'encadrement), / (fraction dans un morceau) ; I.c = place du curseur (entre deux caractères : une marque compte pour un, si bien
+     que « fin de la base » et « début de l'exposant » sont deux places). Une marque ne s'efface que si ce qui la suit est vide (sinon ⟵ fait
+     passer le curseur devant, comme pour le dénominateur).
+   - « Juste, réécris » (r: 'step') : la réponse reste écrite (I.steps), suivie de « = » et d'une case vide ; pas un essai ; marque ✓ si la suite
+     est juste du premier coup, ~ si on regarde la réponse avant. */
+const LIN_T = new Set(['pow', 'sci', 'dcp', 'rad', 'enc']);
+const isLin = sp => !!sp && LIN_T.has(sp.t);
+const LIN_MK = '^∙√|';
+FB_ICO.step = FB_ICO.ok;
+const qTxt = p => String((p.q || '') + ' ' + (p.pre || '') + ' ' + (p.line ? p.line(false) : '')).replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<[^>]+>/g, ' ');
+const nFmt = x => Number.isInteger(x) ? fmtInt(x) : (x < 0 ? '−' : '') + String(Math.abs(x)).replace('.', ',');
+const qNum = v => qRat(Math.round(v * 1e6), 1e6);                     // nombre (peut-être décimal) → rationnel
+function qFromFloat(v){                                               // valeur d'un générateur donnée en nombre (5, 0,666…) → rationnel exact
+  if (typeof v !== 'number' || !isFinite(v)) return null;
+  for (let d = 1; d <= 1000; d++){ const n = Math.round(v * d); if (Math.abs(n / d - v) < 1e-9) return qRat(n, d); }
+  return null;
+}
+function ppKey(k){                                                    // base d'une réponse a^n (r.pw[0]) : lettres, ou nombre exact
+  k = String(k);
+  if (/^[a-z]+$/.test(k)) return {l: k.split('').sort().join(''), v: null};
+  let m = /^(-?\d+)\/(\d+)$/.exec(k); if (m) return {l: '', v: qRat(Number(m[1]), Number(m[2]))};
+  m = /^(-?\d+)e-(\d+)$/.exec(k); if (m) return {l: '', v: qRat(Number(m[1]), 10 ** Number(m[2]))};
+  return /^-?\d+$/.test(k) ? {l: '', v: [Number(k), 1]} : null;
+}
+const bR = q => [BigInt(q[0]), BigInt(q[1])];
+const bPow = (q, e) => { const [n, d] = bR(q); return e >= 0 ? [n ** BigInt(e), d ** BigInt(e)] : [d ** BigInt(-e), n ** BigInt(-e)]; };
+const bEq = (a, b) => a[0] * b[1] === b[0] * a[1];
+function maxPowDiv(R, n){ let k = 1; for (let t = 2; t ** n <= R; t++) if (R % t ** n === 0) k = t; return k; }
+
+// ---------- description (la suite de inpSpec0) ----------
+function inpSpec45(p){
+  const s = p.sub || '', fl = p.fl || {}, ch = p.chk || {}, A = String(p.a || ''), T = qTxt(p);
+  const form = /class="frac"/.test(A) ? 'frac' : 'dec';
+  const num = (v, f, kb, R) => v ? {t: 'num', v, form: f, kb, R} : null;
+  const val = r => typeof r === 'number' ? qFromFloat(r) : qVal(r);
+  if (s === 'prio'){ const v = val(p.r); return v ? num(v, form, {neg: !!fl.rel || v[0] < 0, dec: !!fl.dec || (form === 'dec' && !qIsInt(v)), fra: !!fl.fra || form === 'frac'}, rPrio) : null; }
+  if ((s === 'pgdc' || s === 'ppmc') && ch.pg) return num(val(p.r), 'dec', {}, rPg);
+  if (s === 'dvb' && ch.dvb) return {t: 'ch', v: p.r, opts: ['oui', 'non'], R: rDvb};
+  if (s === 'prm' && ch.prm) return {t: 'ch', v: p.r, opts: ['oui', 'non'], R: rPrm};
+  if (s === 'dcp' && ch.dcp) return {t: 'dcp', v: ch.dcp[0], kb: {exp: true, mul: true}};
+  if (s === 'pb_1' || s === 'pb_2'){ const v = val(p.r); return num(v, ch.pb ? 'frac' : 'dec', {fra: true}, rPb); }
+  if (s === 'pb_den') return num(val(p.r), 'dec', {}, rPbd);
+  if (s === 'pc_ecr' && ch.pce){ const v = val(p.r), k = ch.pce.sort;
+    return k === 'p2f' ? num(v, 'frac', {fra: true}, rPce) : k === 'p2d' ? num(v, 'dec', {dec: true}, rPce) : num(v, 'dec', {dec: !!fl.dec || (v && !qIsInt(v))}, rPce); }
+  if (['fp', 'pc_init', 'pc_var', 'pc_taux'].includes(s)){ const v = val(p.r); return num(v, 'dec', {dec: !!fl.dec || (!!v && !qIsInt(v))}, rPc); }
+  if (s === 'sci' && ch.sci){
+    const [X, k, m, e] = ch.sci, v = val(p.r), neg = !!(S.opt && S.opt.sciNeg) || /−/.test(T);
+    if (k === 'dec') return num(v, 'dec', {dec: true}, null);
+    if (k === 'p10') return {t: 'pow', b: [10, 1], bl: '', e: Math.round(Math.log10(X)), kb: {exp: true, neg}, p10: true};
+    if (k === 'sci' && v) return {t: 'sci', v, m: qNum(m), e, kb: {dec: true, sci: true, neg}};
+    return null;
+  }
+  if (/^pp[1-5]$/.test(s) && p.r && p.r.pw){
+    const b = ppKey(p.r.pw[0]); if (!b) return null;
+    const L = [...new Set([...String(p.q).matchAll(/<i>([a-z]+)<\/i>/g)].map(m => m[1]).join('').split(''))].filter(c => LET.includes(c)).sort();
+    return {t: 'pow', b: b.v, bl: b.l, e: p.r.pw[1], pp: s,
+      kb: {exp: true, lets: L.length ? L : null, neg: !!fl.rel || /−/.test(T), dec: !!fl.dec || /\d,\d/.test(T), fra: !!fl.fra || /class="frac"/.test(String(p.q))}};
+  }
+  const rq = ['rp1', 'rp2', 'rp3', 'rp4'].includes(s), r23 = s === 'r2' || s === 'r3';
+  if (rq || (r23 && extractOn(s === 'r2' ? 2 : 3))){                   // racines : la touche √ (ou ∛) ; réponse exacte, avec ou sans racine
+    const n = (ch.rtv && ch.rtv[1]) || (/class="rad cub"/.test(String(p.q)) ? 3 : 2);
+    let x = null, v = null;
+    if (ch.rtv){ const w = ch.rtv[2], N = Math.round(Math.sign(w) * Math.abs(w) ** n); if (Math.abs(N) > 1 && maxPowDiv(Math.abs(N), n) ** n !== Math.abs(N)) x = {N}; }
+    if (!x){ v = p.r && p.r.sq ? null : val(p.r); if (p.r && p.r.sq) x = {N: p.r.sq[0] ** 2 * p.r.sq[1]}; }
+    if (!x && !v) return null;
+    return {t: 'rad', n, x, v, form, R0: r23 ? rRoot : null,
+      kb: {rad: true, n, dec: true, neg: !!fl.rel || /−/.test(T) || (!!v && v[0] < 0) || (!!x && x.N < 0), fra: !!fl.fra || form === 'frac'}};
+  }
+  if (r23){ const v = val(p.r); return num(v, form, {dec: !!fl.dec || /\d,\d/.test(T) || (!!v && !qIsInt(v) && form === 'dec'),
+    fra: !!fl.fra || form === 'frac', neg: s === 'r3' && (!!fl.rel || (!!v && v[0] < 0))}, rRoot); }
+  if ((s === 'renc2' || s === 'renc3') && ch.enc){ const [a, n, L, H] = ch.enc; return {t: 'enc', a, n, v: [L, H], kb: {neg: n === 3 && (!!fl.rel || L < 0)}}; }
+  return null;
+}
+
+// ---------- erreurs fréquentes (nombres) ----------
+const DVB_MSG = {2: 'Divisible par 2 : le dernier chiffre est pair (0, 2, 4, 6 ou 8).', 5: 'Divisible par 5 : le dernier chiffre est 0 ou 5.',
+  10: 'Divisible par 10 : le dernier chiffre est 0.', 3: 'Divisible par 3 : la somme des chiffres est divisible par 3.',
+  9: 'Divisible par 9 : la somme des chiffres est divisible par 9.', 4: 'Divisible par 4 : le nombre formé par les deux derniers chiffres est divisible par 4.',
+  25: 'Divisible par 25 : le nombre finit par 00, 25, 50 ou 75.', 100: 'Divisible par 100 : le nombre finit par 00.'};
+function rDvb(p, b, sp){ const c = p.chk.dvb; return c ? DVB_MSG[c[1]] || null : null; }
+function rPrm(p, b, sp){ const c = p.chk.prm; if (!c) return null;
+  return c[1] ? 'Un nombre premier n\'a que deux diviseurs : 1 et lui-même. En trouves-tu un autre ?' : 'Cherche un diviseur : essaie 2, 3, 5, 7…'; }
+function rPg(p, x, sp){
+  const c = p.chk.pg; if (!c || !qIsInt(x.q) || x.q[0] <= 0) return null;
+  const [k, ns] = c, X = x.q[0], G = ns.reduce((a, b) => gcd(a, b)), L = ns.reduce((a, b) => lcm(a, b));
+  const list = ns.slice(0, -1).map(fmtInt).join(', ') + ' et ' + fmtInt(ns[ns.length - 1]);
+  if (k === 'pgdc'){
+    if (X === L && L !== G) return 'Ça, c\'est le ppmc. Le pgdc est le plus grand nombre qui divise ' + list + '.';
+    const bad = ns.find(n => n % X); if (bad !== undefined) return fmtInt(bad) + ' n\'est pas divisible par ' + fmtInt(X) + '.';
+    if (X < G) return 'C\'est un diviseur commun, mais pas le plus grand.';
+  } else {
+    if (X === G && L !== G) return 'Ça, c\'est le pgdc. Le ppmc est le plus petit multiple commun de ' + list + '.';
+    const bad = ns.find(n => X % n); if (bad !== undefined) return fmtInt(X) + ' n\'est pas un multiple de ' + fmtInt(bad) + '.';
+    if (X > L) return 'C\'est un multiple commun, mais pas le plus petit.';
+  }
+  return null;
+}
+function rPb(p, x, sp){
+  const X = x.q, c = p.chk.pb;
+  if (sp.v[0] && sp.v[0] !== sp.v[1] && qEq(X, qInv(sp.v))) return 'Tu as inversé : en haut les cas favorables, en bas tous les cas possibles.';
+  if (X[0] < 0 || X[0] > X[1]) return 'Une probabilité est toujours entre 0 et 1.';
+  if (!c || c.n === 360) return null;
+  if (c.n > c.f && qEq(X, qRat(c.n - c.f, c.n))) return 'Tu as compté les cas qui ne conviennent pas. Compte les cas favorables.';
+  if (x.frac && x.num === c.f && x.den !== c.n) return 'En bas, on écrit le nombre de tous les cas possibles.';
+  if (x.frac && x.den === c.n && x.num !== c.f) return 'En haut, on écrit le nombre de cas favorables : compte-les encore.';
+  return null;
+}
+function rPbd(p, x, sp){
+  const c = p.chk.pbd; if (!c || !qIsInt(x.q)) return null; const X = x.q[0];
+  if (c.hs && X === c.hs * (c.hs - 1)) return /match/.test(p.post || '') ? 'Chaque match est compté deux fois : divise par 2.' : 'Chaque poignée de main est comptée deux fois : divise par 2.';
+  if (c.f){ const sum = c.f.reduce((a, b) => a + b, 0);
+    if (X === sum && sum !== sp.v[0]) return 'Tu as additionné. Pense à un arbre : on multiplie les nombres de choix.';
+    if (c.f.some(v => v !== c.f[0]) && X === c.f[0] ** c.f.length) return 'Ce qui est déjà choisi ne peut plus être pris : il y a un choix de moins à chaque fois.'; }
+  return null;
+}
+function rPce(p, x, sp){
+  const c = p.chk.pce; if (!c) return null; const X = x.q, P = qNum(c.p);
+  if ((c.sort === 'f2p' || c.sort === 'd2p') && qEq(X, qDiv(P, [100, 1]))) return 'C\'est l\'écriture décimale : pour l\'écrire en %, multiplie par 100.';
+  if (c.sort === 'p2d' && qEq(X, P)) return 'Pour l\'écriture décimale, divise par 100.';
+  if (c.sort === 'p2f' && qEq(X, P)) return 'Un pourcentage, c\'est une fraction sur 100.';
+  return null;
+}
+function rPc(p, x, sp){
+  const c = p.chk || {}, X = x.q, is = v => qEq(X, qNum(v));
+  if (c.pct){ const [P, N, a] = c.pct; if (is(N * P)) return 'N\'oublie pas de diviser par 100.'; if (N - a !== a && is(N - a)) return 'Ça, c\'est ce qui reste. On cherche ' + nFmt(P) + ' % de ' + nFmt(N) + '.'; }
+  if (c.pct3){ const [p1, p2, N] = c.pct3; if (is(N * (p1 + p2) / 100)) return 'Ça, c\'est ' + nFmt(p1 + p2) + ' %. On cherche ce qui reste.'; }
+  if (c.pci){ const [P, , M] = c.pci; if (is(M * P / 100)) return 'Ici, on cherche le nombre de départ : ' + nFmt(M) + ', c\'est ' + nFmt(P) + ' % de ce nombre.'; }
+  if (c.pctw){ const [P, N, d] = c.pctw, w = N * P / 100;
+    if (is(w)) return d > 0 ? 'Ça, c\'est l\'augmentation : ajoute-la au nombre de départ.' : 'Ça, c\'est la baisse : enlève-la du nombre de départ.';
+    if (is(N - d * w)) return d > 0 ? 'Ça augmente : on ajoute, on n\'enlève pas.' : 'Ça baisse : on enlève, on n\'ajoute pas.'; }
+  if (c.pctw2){ const [N, d1, p1, d2, p2] = c.pctw2;
+    if (is(N * (1 + d1 * p1 / 100 + d2 * p2 / 100))) return 'Le 2e pourcentage se calcule sur le nouveau prix, pas sur le prix de départ.';
+    if (is(N * (1 + d1 * p1 / 100))) return 'Il y a encore un 2e changement.'; }
+  if (c.ptx){ const [a, t] = c.ptx;
+    if (is(t / a * 100)) return 'Divise la partie par le total (pas l\'inverse).';
+    if (is(a / t)) return 'Pour avoir des %, multiplie par 100.';
+    if (/passe de/.test(p.con || '') && is((t + a) / t * 100)) return 'Ça, c\'est le nouveau prix en %. La hausse, c\'est ce qui dépasse 100 %.'; }
+  return null;
+}
+function rRoot(p, x, sp){                                              // racine d'un carré ou d'un cube connu
+  const t = (p.toks || []).find(t => t && t.k === 'rt'); if (!t) return null;
+  const b = qVal(t.b), n = t.n; if (!b) return null;
+  if (qEq(x.q, qDiv(b, [n, 1]))) return 'La racine, ce n\'est pas ' + (n === 2 ? 'la moitié' : 'le tiers') + ' : quel nombre ' + (n === 2 ? 'au carré' : 'au cube') + ' donne ' + valHTML(t.b) + ' ?';
+  if (qEq(x.q, b)) return 'Il faut encore prendre la racine.';
+  return null;
+}
+
+// ---------- jugement des nouvelles sortes de case ----------
+const OK45 = () => ({r: 'ok', m: INP_MSG.ok});
+const BAD45 = m => ({r: 'bad', m: m || INP_MSG.bad});
+function linJudge(p, s, sp){
+  const J = {pow: jPow, sci: jSci, dcp: jDcp, rad: jRad, enc: jEnc}[sp.t];
+  let r = null; try { r = J(p, String(s || ''), sp); } catch (e) { console.error(e); }
+  return r || BAD45();
+}
+function numJ(p, x, sp){                                              // comme inpJudge, pour un nombre déjà lu (racines : réponse rationnelle)
+  if (!x || !x.q) return BAD45(x && x.zero ? INP_MSG.zero : null);
+  if (qEq(x.q, sp.v)){
+    if (sp.form === 'frac'){ if (x.frac && sp.v[1] === 1) return {r: 'almost', m: INP_MSG.ent}; if (x.frac && !x.red) return {r: 'almost', m: INP_MSG.simp};
+      if (!x.frac && x.dec && sp.v[1] !== 1) return {r: 'almost', m: INP_MSG.frac}; }
+    if (sp.form === 'dec' && x.frac) return {r: 'almost', m: sp.v[1] === 1 ? INP_MSG.fin : INP_MSG.dec};
+    return OK45();
+  }
+  let m = null; try { m = sp.R0 ? sp.R0(p, x, sp) : null; } catch (e) { console.error(e); }
+  return {r: 'ko', m: m || inpGeneric(p, x, sp) || INP_MSG.ko};
+}
+const SAME_BASE = 'Juste ! Mais garde la même base que dans la question : réécris le résultat.';
+function ppBaseInQ(p, sp){                                            // la base attendue est-elle écrite dans la question ?
+  if (sp.p10 || ['pp1', 'pp2', 'pp3'].includes(sp.pp)) return true;
+  if (sp.pp === 'pp4') return false;
+  const c = p.chk.pp5; if (c && !c.props.includes('pp4')) return true;
+  const t = qTxt(p).replace(/\s+/g, ' '), b = sp.bl ? null : sp.b;
+  return !!b && qIsInt(b) && new RegExp('(^|[^\\d,])' + Math.abs(b[0]) + '(?![\\d,])').test(t);
+}
+function ppExpMsg(p, e, sp){                                          // la bonne base, un autre exposant : la propriété oubliée
+  if (sp.p10){ if (e === -sp.e) return 'Attention au signe de l\'exposant.';
+    return sp.e >= 0 ? 'Compte les zéros : l\'exposant, c\'est le nombre de zéros.' : 'Compte de combien de rangs la virgule se déplace : c\'est l\'exposant (négatif).'; }
+  const c = p.chk.pp;
+  if (c){ const [k, , ex] = c, sum = Array.isArray(ex) ? ex.reduce((a, b) => a + b, 0) : 0, prod = Array.isArray(ex) ? ex.reduce((a, b) => a * b, 1) : 0;
+    if (k === 'mul'){ if (e === prod) return 'Pour multiplier des puissances de même base, on additionne les exposants.';
+      if (ex.includes(1) && e === sum - ex.filter(v => v === 1).length) return 'N\'oublie pas : un facteur seul compte comme une puissance 1 (<i>a</i> = <i>a</i><sup>1</sup>).'; }
+    if (k === 'div' && (e === ex[0] + ex[1] || e * ex[1] === ex[0])) return 'Pour diviser des puissances de même base, on soustrait les exposants.';
+    if (k === 'pow' && (e === sum || e === ex[0] + ex[1])) return 'Pour une puissance de puissance, on multiplie les exposants.';
+    if (k === 'prod' && e !== sp.e) return 'L\'exposant ne change pas : on multiplie seulement les bases.';
+  }
+  return 'Vérifie l\'exposant : revois la propriété.';
+}
+function jPow(p, s, sp){
+  const i = s.indexOf('^'), B = i < 0 ? s : s.slice(0, i), E = i < 0 ? null : s.slice(i + 1);
+  if (E !== null && !/^−?\d{1,3}$/.test(E)) return BAD45();
+  const e = E === null ? 1 : Number(E.replace('−', '-'));
+  const lets = /^[a-z]+$/.test(B) ? B.split('').sort().join('') : null;
+  if (sp.bl){                                                          // base en lettres
+    if (!lets) return {r: 'ko', m: 'Garde les lettres de la question : la base est en lettres.'};
+    if (lets === sp.bl && e === sp.e) return OK45();
+    if (lets !== sp.bl) return {r: 'ko', m: sp.bl.length > 1 ? 'On multiplie les bases : la base contient toutes les lettres, entre parenthèses.' : 'Garde la même base que dans la question.'};
+    if (i < 0) return {r: 'ko', m: 'Il manque l\'exposant (touche exposant).'};
+    return {r: 'ko', m: ppExpMsg(p, e, sp)};
+  }
+  if (lets || /[a-z]/.test(B)) return {r: 'ko', m: 'La base est un nombre, pas une lettre.'};
+  const xb = inpParse(B); if (!xb) return BAD45(); if (xb.zero) return BAD45(INP_MSG.zero); if (!xb.q || xb.per) return BAD45();
+  if (Math.abs(e) > 300) return {r: 'ko', m: 'Vérifie l\'exposant.'};
+  if (qEq(xb.q, sp.b) && e === sp.e) return OK45();
+  if (xb.q[0] !== 0 || e > 0){
+    if (bEq(bPow(xb.q, e), bPow(sp.b, sp.e))){                         // égal : « juste, réécris » (QCM)
+      if (i < 0) return {r: 'step', m: sp.p10 ? 'Juste ! Écris-le maintenant sous la forme d\'une puissance de 10.' : 'Juste ! Écris-le maintenant sous la forme d\'une puissance (touche exposant).'};
+      return {r: 'step', m: sp.p10 ? 'Juste ! Mais écris-le avec la base 10.' : ppBaseInQ(p, sp) ? SAME_BASE : 'Juste ! Mais garde le même exposant que dans la question : réécris le résultat.'};
+    }
+  }
+  if (qEq(xb.q, sp.b)) return {r: 'ko', m: i < 0 ? 'Il manque l\'exposant (touche exposant).' : ppExpMsg(p, e, sp)};
+  if (qEq(qAbs(xb.q), qAbs(sp.b))) return {r: 'ko', m: 'Attention au signe de la base : garde les parenthèses et le signe −.'};
+  const c = p.chk.pp;
+  if (c && c[0] === 'prod' && Array.isArray(c[1]) && c[1].every(t => typeof t === 'object') && qEq(xb.q, c[1].map(qVal).reduce((a, b) => qAdd(a, b))))
+    return {r: 'ko', m: 'On multiplie les bases (on ne les additionne pas).'};
+  if (i >= 0 && ppBaseInQ(p, sp)) return {r: 'ko', m: 'La base ne change pas : garde la même base que dans la question.'};
+  return {r: 'ko', m: INP_MSG.ko};
+}
+function jSci(p, s, sp){
+  const i = s.indexOf('^'), M = i < 0 ? s : s.slice(0, i), E = i < 0 ? null : s.slice(i + 1);
+  const xm = inpParse(M); if (!xm || !xm.q || xm.frac || xm.per) return BAD45();
+  const SCI = '<i>a</i> ∙ 10<sup><i>n</i></sup>';
+  if (i < 0) return qEq(xm.q, sp.v) ? {r: 'almost', m: 'C\'est le même nombre : écris-le sous la forme ' + SCI + ' (touche ∙ 10<sup><i>n</i></sup>).'}
+    : {r: 'ko', m: 'Écris le nombre sous la forme ' + SCI + ' (touche ∙ 10<sup><i>n</i></sup>).'};
+  if (!/^−?\d{1,2}$/.test(E)) return BAD45();
+  const k = Number(E.replace('−', '-')); if (Math.abs(k) > 15) return {r: 'ko', m: 'Vérifie l\'exposant.'};
+  const V = qMul(xm.q, k >= 0 ? [10 ** k, 1] : [1, 10 ** -k]), a = Math.abs(xm.q[0] / xm.q[1]);
+  if (qEq(V, sp.v)) return a >= 1 && a < 10 ? OK45() : {r: 'almost', m: 'Juste, mais le premier nombre doit être entre 1 et 10.'};
+  if (qPow10(qDiv(V, sp.v)) || qEq(xm.q, sp.m)){
+    if (k === -sp.e && k) return {r: 'ko', m: 'Attention au signe de l\'exposant.'};
+    return {r: 'ko', m: 'Compte de combien de rangs la virgule se déplace : c\'est l\'exposant.'};
+  }
+  return {r: 'ko', m: 'Vérifie les chiffres : ce sont les mêmes que dans le nombre de départ.'};
+}
+function jDcp(p, s, sp){
+  const F = s.split('∙'), fs = [];
+  for (const f of F){ const j = f.indexOf('^'), B = j < 0 ? f : f.slice(0, j), E = j < 0 ? '1' : f.slice(j + 1);
+    if (!/^\d{1,7}$/.test(B) || !/^\d{1,2}$/.test(E)) return BAD45();
+    fs.push([Number(B), Number(E), j >= 0]); }
+  const N = sp.v; let prod = 1n; for (const [b, e] of fs) prod *= BigInt(b) ** BigInt(e);
+  if (fs.length === 1 && fs[0][0] === N && !fs[0][2]) return {r: 'ko', m: 'Écris ' + fmtInt(N) + ' comme un produit de nombres premiers (touche ∙).'};
+  if (prod !== BigInt(N)){
+    if (prod < 10n ** 12n && fs.length > 1) return {r: 'ko', m: 'Ce produit fait ' + fmtInt(Number(prod)) + ', pas ' + fmtInt(N) + '. Vérifie tes facteurs.'};
+    return {r: 'ko', m: 'Ce produit ne fait pas ' + fmtInt(N) + '. Vérifie tes facteurs.'};
+  }
+  const z = fs.find(([, e]) => e === 0); if (z) return {r: 'almost', m: 'Un facteur avec l\'exposant 0 vaut 1 : enlève-le.'};
+  const np = fs.find(([b]) => !isPrime(b));
+  if (np) return {r: 'almost', m: np[0] === 1 ? '1 n\'est pas un nombre premier : enlève-le.' : fmtInt(np[0]) + ' n\'est pas un nombre premier : décompose-le encore.'};
+  const seen = new Set(); let dup = false; for (const [b] of fs){ if (seen.has(b)) dup = true; seen.add(b); }
+  if (dup) return {r: 'step', m: 'Juste ! Écris-le maintenant avec des exposants : regroupe les facteurs égaux.'};
+  return OK45();
+}
+function jRad(p, s, sp){
+  const i = s.indexOf('√'), n = sp.n;
+  const vx = sp.x ? Math.sign(sp.x.N) * Math.abs(sp.x.N) ** (1 / n) : null;
+  if (i < 0){
+    const x = inpParse(s); if (!x) return BAD45(); if (x.zero) return BAD45(INP_MSG.zero); if (!x.q) return BAD45();
+    if (!sp.x) return numJ(p, x, sp);
+    const X = x.q[0] / x.q[1];
+    if (!x.frac && x.fp && !x.per && Math.abs(X - vx) <= 10 ** -x.fp.length + 1e-9) return {r: 'almost', m: 'C\'est une valeur arrondie : donne la valeur exacte, avec la racine.'};
+    if (qIsInt(x.q) && x.q[0] === sp.x.N) return {r: 'ko', m: 'Il manque la racine (touche ' + (n === 3 ? '∛' : '√') + ').'};
+    return {r: 'ko', m: INP_MSG.ko};
+  }
+  const C = s.slice(0, i), Rr = s.slice(i + 1);
+  const xc = C === '' ? {q: [1, 1]} : C === '−' ? {q: [-1, 1]} : inpParse(C), xr = inpParse(Rr);
+  if (!xc || !xc.q || !xr || !xr.q || xc.per || xr.per) return BAD45();
+  if (n === 2 && xr.q[0] < 0) return {r: 'ko', m: 'Sous une racine carrée, le nombre ne peut pas être négatif.'};
+  const Tn = qMul(qPow(xc.q, n), xr.q), W = sp.x ? [sp.x.N, 1] : qPow(sp.v, n);
+  const sg = n % 2 ? 1 : Math.sign(xc.q[0]) || 1, sw = sp.x ? 1 : Math.sign(sp.v[0]) || 1;
+  if (qEq(Tn, W)){
+    if (sg !== sw) return {r: 'ko', m: 'Le nombre est juste, mais pas le signe.'};
+    if (!sp.x) return {r: 'almost', m: 'Juste, mais calcule la racine jusqu\'au bout.'};
+    if (!qIsInt(xr.q) || !qIsInt(xc.q)) return {r: 'almost', m: 'Juste, mais écris des nombres entiers.'};
+    if (maxPowDiv(Math.abs(xr.q[0]), n) > 1) return {r: 'almost', m: 'Juste, mais simplifie encore : sors ' + (n === 2 ? 'les carrés' : 'les cubes') + ' de la racine.'};
+    return OK45();
+  }
+  const c = p.chk || {}, rt = c.rt || c.rtc;
+  if (rt && qIsInt(xr.q) && Math.abs(xc.q[0]) === 1 && xc.q[1] === 1){ const [fs, o] = rt, R = xr.q[0];
+    if (o === '*' && R === fs.reduce((a, b) => a + b, 0)) return {r: 'ko', m: 'On multiplie les nombres sous la racine (on ne les additionne pas).'};
+    if (o === '/' && fs.length === 2 && R === fs[0] - fs[1]) return {r: 'ko', m: 'On divise les nombres sous la racine.'}; }
+  if (c.rt3 && qIsInt(xr.q) && qIsInt(xc.q) && xc.q[0] * xr.q[0] === c.rt3[0] * c.rt3[1]) return {r: 'ko', m: 'Ce qui sort de la racine, c\'est la racine du carré.'};
+  return {r: 'ko', m: INP_MSG.ko};
+}
+function jEnc(p, s, sp){
+  const [A, B] = s.split('|'), xa = inpParse(A), xb = inpParse(B);
+  if (!xa || !xb || !xa.q || !xb.q || !qIsInt(xa.q) || !qIsInt(xb.q)) return BAD45('Écris deux nombres entiers.');
+  const lo = xa.q[0], hi = xb.q[0], [L, H] = sp.v, a = sp.a, n = sp.n;
+  const pw = k => (k < 0 ? '(' + fmtInt(k) + ')' : fmtInt(k)) + '<sup>' + n + '</sup> = ' + fmtInt(k ** n);
+  if (lo === L && hi === H) return OK45();
+  if (lo === H && hi === L) return {r: 'ko', m: 'Le plus petit nombre va à gauche.'};
+  if (hi !== lo + 1) return {r: 'ko', m: 'Deux entiers qui se suivent : le 2e est le 1er plus 1.'};
+  if (lo ** n > a) return {r: 'ko', m: 'Trop grand : ' + pw(lo) + ', c\'est plus que ' + nFmt(a) + '.'};
+  if (hi ** n < a) return {r: 'ko', m: 'Trop petit : ' + pw(hi) + ', c\'est moins que ' + nFmt(a) + '.'};
+  return {r: 'ko', m: INP_MSG.ko};
+}
+
+// ---------- la case : chaîne, curseur, frappe ----------
+function linInit(I, sp){ if (I.s === undefined){ I.s = sp.t === 'enc' ? '|' : ''; I.c = 0; I.b = I.s; } }
+function linParts(s){                                                 // morceaux entre les marques : {a, b (fin), m (la marque qui suit)}
+  const P = []; let a = 0;
+  for (let i = 0; i <= s.length; i++) if (i === s.length || LIN_MK.includes(s[i])){ P.push({a, b: i, m: i < s.length ? s[i] : ''}); a = i + 1; }
+  return P;
+}
+const linAt = (P, c) => Math.max(0, P.findIndex(q => c >= q.a && c <= q.b));
+function linEdit(I, sp, c){
+  let s = I.s, k = Math.max(0, Math.min(I.c, s.length));
+  const P = linParts(s), pi = linAt(P, k), pt = P[pi], kind = pi ? P[pi - 1].m : '', isExp = kind === '^';
+  const tx = s.slice(pt.a, pt.b), j0 = tx.indexOf('/'), J = j0 < 0 ? -1 : pt.a + j0;
+  const sg = J < 0 ? {a: pt.a, b: pt.b} : k <= J ? {a: pt.a, b: J} : {a: J + 1, b: pt.b};     // le nombre où est le curseur (numérateur, dénominateur)
+  const put = t => { s = s.slice(0, k) + t + s.slice(k); k += t.length; };
+  const expTo = () => {                                                // aller dans l'exposant (le créer au besoin) / en sortir
+    if (isExp){ k = P[pi - 1].b; return; }
+    if (pt.m === '^'){ k = P[pi + 1].b; return; }
+    if (!tx.replace('−', '')) return;
+    k = pt.b; put('^');
+  };
+  if (c === '⌫'){
+    if (k > 0){ const ch = s[k - 1];
+      if (LIN_MK.includes(ch) || ch === '/'){
+        const after = ch === '/' ? s.slice(k, pt.b) : s.slice(k, P[pi].b);
+        if (ch !== '|' && !after) s = s.slice(0, k - 1) + s.slice(k);
+        k--;
+      } else { s = s.slice(0, k - 1) + s.slice(k); k--; } }
+  }
+  else if (c === 'del'){
+    if (k < s.length){ const ch = s[k];
+      if (LIN_MK.includes(ch) || ch === '/'){ const nx = ch === '/' ? s.slice(k + 1, pt.b) : s.slice(P[pi + 1].a, P[pi + 1].b); if (ch !== '|' && !nx) s = s.slice(0, k) + s.slice(k + 1); }
+      else s = s.slice(0, k) + s.slice(k + 1); }
+  }
+  else if (c === 'clr'){ s = sp.t === 'enc' ? '|' : ''; k = 0; }
+  else if (c === '←'){ if (k > 0) k--; }
+  else if (c === '→'){ if (k < s.length) k++; }
+  else if (c === 'home') k = pt.a;
+  else if (c === 'end') k = pt.b;
+  else if (c === '↑' || c === '↓'){
+    if (J >= 0){ k = c === '↑' ? J : pt.b; }
+    else if (sp.t === 'pow' || sp.t === 'sci' || sp.t === 'dcp'){ if ((c === '↑') !== isExp) expTo(); }
+  }
+  else if (/^\d$/.test(c)){ if (s.replace(/\D/g, '').length >= 14) return; if (isExp && s.slice(sg.a, sg.b).replace('−', '').length >= (sp.t === 'pow' ? 3 : 2)) return; put(c); }
+  else if (c === ','){
+    if (!(sp.kb && sp.kb.dec) || isExp || sp.t === 'dcp' || sp.t === 'enc' || J >= 0 || tx.includes(',')) return;
+    put(k === sg.a || s[k - 1] === '−' ? '0,' : ',');
+  }
+  else if (c === '−'){
+    if (!(sp.kb && sp.kb.neg)) return;
+    if ((sp.t === 'sci' || sp.p10) && !isExp) return;                 // écriture scientifique : le signe de l'exposant
+    if (sp.t === 'pow' && !sp.p10 && isExp) return;                   // propriétés : exposants naturels
+    if (s[sg.a] === '−'){ s = s.slice(0, sg.a) + s.slice(sg.a + 1); if (k > sg.a) k--; } else { s = s.slice(0, sg.a) + '−' + s.slice(sg.a); k++; }
+  }
+  else if (c === '/'){
+    if (!(sp.kb && sp.kb.fra) || isExp || sp.t === 'dcp' || sp.t === 'sci' || sp.t === 'enc' || (sp.t === 'rad' && kind === '√')) return;
+    if (J >= 0){ k = k <= J ? pt.b : J; }
+    else { if (tx.includes(',') || (sp.t === 'rad' && s.includes('√'))) return;
+      if (!tx.replace('−', '')){ put('/'); k--; } else { k = pt.b; put('/'); } }
+  }
+  else if (c === '^'){ if (sp.t === 'pow' || sp.t === 'dcp') expTo(); }
+  else if (c === 'E'){ if (sp.t === 'sci') expTo(); }
+  else if (c === '∙'){
+    if (sp.t !== 'dcp') return;
+    const base = isExp ? P[pi - 1] : pt, end = isExp ? pt.b : (pt.m === '^' ? P[pi + 1].b : pt.b);
+    if (!s.slice(base.a, base.b)) return;
+    k = end; put('∙');
+  }
+  else if (c === '√'){
+    if (sp.t !== 'rad') return;
+    const r = s.indexOf('√');
+    if (r >= 0) k = k <= r ? s.length : r;
+    else { if (s.includes('/') || s.includes(',')) return; k = s.length; put('√'); }
+  }
+  else if (/^[a-z]$/.test(c)){
+    if (!(sp.kb && sp.kb.lets && sp.kb.lets.includes(c)) || isExp || /[\d,\/]/.test(tx)) return;
+    put(c);
+  }
+  else return;
+  I.s = s; I.c = Math.max(0, Math.min(k, s.length));
+}
+function linMissing(I, sp){                                           // une partie vide → {m, c} ; rien de tapé → null ; sinon false
+  const s = I.s || ''; if (!s.replace(/[|−]/g, '')) return null;
+  const P = linParts(s), msg = (m, c) => ({m, c});
+  for (let i = 0; i < P.length; i++){
+    const q = P[i], t = s.slice(q.a, q.b), kind = i ? P[i - 1].m : '', j = t.indexOf('/');
+    if (j >= 0){ if (!t.slice(0, j).replace('−', '')) return msg('Il manque le numérateur.', q.a + j); if (!t.slice(j + 1).replace('−', '')) return msg('Il manque le dénominateur.', q.b); }
+    if (t.replace('−', '')) continue;
+    if (sp.t === 'rad' && i === 0 && q.m === '√') continue;          // √15 : pas de nombre devant
+    if (sp.t === 'pow') return msg(kind === '^' ? 'Il manque l\'exposant.' : 'Il manque la base.', q.a);
+    if (sp.t === 'sci') return msg(kind === '^' ? 'Il manque l\'exposant.' : 'Il manque le nombre devant ∙ 10.', q.a);
+    if (sp.t === 'dcp') return msg(kind === '^' ? 'Il manque un exposant.' : 'Il manque un facteur.', q.a);
+    if (sp.t === 'rad') return msg('Il manque le nombre sous la racine.', q.a);
+    if (sp.t === 'enc') return msg(i ? 'Il manque le 2e nombre.' : 'Il manque le 1er nombre.', q.a);
+  }
+  return false;
+}
+function linStep(I, sp){                                              // « juste, réécris » : la réponse reste écrite, une case vide après « = »
+  I.steps = (I.steps || []).concat([linRender(I, sp, {st: true})]);
+  I.s = sp.t === 'enc' ? '|' : ''; I.c = 0; I.b = I.s; I.last = 'almost';
+}
+// ---------- affichage de la case ----------
+const QCAR = '<span class="qcar"></span>';
+function linSeg(I, a, b, o){                                          // un morceau (avec sa fraction s'il en a une) ; o : {on, st, opt, hl}
+  const s = I.s, cur = !!o.on && !o.st && I.c >= a && I.c <= b;
+  const chars = (x, y) => { let h = '';
+    for (let i = x; i <= y; i++){ if (cur && I.c === i) h += QCAR; if (i === y) break;
+      const c = s[i], t = /[a-z]/.test(c) ? '<i>' + c + '</i>' : hEsc(c);
+      h += o.st ? t : '<span class="qch" data-g="' + i + '">' + t + '</span>'; }
+    return h; };
+  const box = (x, y, hl) => {
+    if (o.st) return chars(x, y);
+    const on = cur && I.c >= x && I.c <= y;
+    if (x === y && o.opt) return on ? QCAR : '';
+    return '<span class="qpt' + (x === y ? ' qph' : '') + (on && hl ? ' on' : '') + '" data-ge="' + y + '">' + chars(x, y) + '</span>';
+  };
+  const j = s.slice(a, b).indexOf('/');
+  if (j < 0) return box(a, b, o.hl);
+  return fracH(box(a, a + j, true), box(a + j + 1, b, true));
+}
+function linRender(I, sp, o){
+  const s = I.s || ''; if (!s) return o.on && !o.st ? QCAR : '';
+  const P = linParts(s), multi = P.length > 1, seg = (q, x) => linSeg(I, q.a, q.b, Object.assign({hl: multi}, o, x || {}));
+  const MK = '<span class="qmk">∙</span>';
+  if (sp.t === 'pow' || sp.t === 'dcp'){
+    let h = '';
+    for (let i = 0; i < P.length; i++){
+      const q = P[i], kind = i ? P[i - 1].m : '', t = s.slice(q.a, q.b);
+      if (kind === '^'){ h += '<sup class="qsup">' + seg(q) + '</sup>'; continue; }
+      if (kind === '∙') h += MK;
+      let b = seg(q);
+      if (sp.t === 'pow' && q.m === '^'){ if (t.includes('/')) b = BP(b); else if (t.includes('−') || /[a-z]{2}/.test(t)) b = '(' + b + ')'; }
+      h += b;
+    }
+    return h;
+  }
+  if (sp.t === 'sci') return seg(P[0]) + (P[1] ? MK + '10<sup class="qsup">' + seg(P[1]) + '</sup>' : '');
+  if (sp.t === 'rad') return seg(P[0], {opt: !!P[1]}) + (P[1] ? radH(seg(P[1]), sp.n) : '');
+  return P.map(q => seg(q)).join('');
+}
+function linBox(p, I, sp, on, part){                                  // la case (pour 'enc' : une des deux, part 0 ou 1)
+  linInit(I, sp);
+  const st = I.fb && !['bad', 'ok', 'step'].includes(I.fb.r) ? ' ' + I.fb.r : '', cls = 'qin' + (on ? ' on' : '') + st;
+  if (sp.t === 'enc'){
+    const j = I.s.indexOf('|'), a = part ? j + 1 : 0, b = part ? I.s.length : j, typed = I.s.length > 1;
+    return '<span class="' + cls + '" data-ge="' + b + '">' + (typed || on ? linSeg(I, a, b, {on, hl: false}) : '?') + '</span>';
+  }
+  const pre = (I.steps || []).map(h => '<span class="qstp">' + h + '</span><span class="op">=</span>').join('');
+  return pre + '<span class="' + cls + '" data-ge="' + I.s.length + '">' + (I.s || on ? linRender(I, sp, {on}) : '?') + '</span>';
+}
+function linClick(e, q){                                              // clic ou toucher dans la case : le curseur va là
+  const I = INP && INP.inp, sp = INP && inpSpec(INP); if (!I || !isLin(sp)) return; linInit(I, sp);
+  const t = e.target.closest('[data-g]');
+  if (t){ const i = Number(t.dataset.g), r = t.getBoundingClientRect(); I.c = Math.min(I.s.length, i + (e.clientX > r.left + r.width / 2 ? 1 : 0)); return; }
+  const u = e.target.closest('[data-ge]'); if (u){ I.c = Math.min(I.s.length, Number(u.dataset.ge)); return; }
+  if (q && q.classList.contains('qbox') && sp.t === 'enc'){ const pane = q.closest('.pane'), L = pane ? [...pane.querySelectorAll('.qbox')] : [];
+    if (L.indexOf(q) === 1) I.c = I.s.indexOf('|') + 1; }
+}
+function linChar(k, sp){                                              // touche de l'ordinateur → caractère (nouvelles sortes de case)
+  if (!isLin(sp)) return null;
+  if (k === '^') return sp.t === 'pow' || sp.t === 'dcp' ? '^' : sp.t === 'sci' ? 'E' : null;
+  if (k === '*' || k === '×') return sp.t === 'sci' ? 'E' : sp.t === 'dcp' ? '∙' : null;
+  if ((k === 'e' || k === 'E') && sp.t === 'sci') return 'E';
+  if ((k === 'r' || k === 'R') && sp.t === 'rad') return '√';
+  if (k.length === 1 && sp.kb && sp.kb.lets && sp.kb.lets.includes(k.toLowerCase())) return k.toLowerCase();
+  return null;
+}
+function kb45(sp){                                                    // touches en plus des nouvelles sortes de case
+  const kb = sp.kb || {};
+  return [kb.mul && ['∙', '∙', 'Facteur suivant (touche *)'],
+    kb.exp && ['^', '<span class="kexp"><span></span><i></i></span>', 'Exposant (touche ↑) ; encore une fois : revenir à la base'],
+    kb.sci && ['E', '<span class="ksci">∙ 10<i></i></span>', 'Bloc ∙ 10ⁿ (touche *) ; encore une fois : revenir au nombre'],
+    kb.rad && ['√', '<span class="krad">' + radH('<span class="kbx"></span>', kb.n === 3 ? 3 : 2) + '</span>', 'Racine (touche R) ; encore une fois : revenir au nombre devant'],
+    ...(kb.lets || []).map(l => [l, '<i>' + l + '</i>', 'Lettre ' + l])];
+}
+function linKon(kb, I, sp){                                           // touche enfoncée tant que le curseur est dans l'exposant (ou sous la racine)
+  if (!isLin(sp) || !I || I.s === undefined) return;
+  const P = linParts(I.s), pi = linAt(P, I.c), kind = pi ? P[pi - 1].m : '';
+  kb.querySelectorAll('.kk[data-k="^"], .kk[data-k="E"]').forEach(b => b.classList.toggle('kon', kind === '^'));
+  kb.querySelectorAll('.kk[data-k="√"]').forEach(b => b.classList.toggle('kon', kind === '√'));
+}
 
 function newQuestions(){ PICK = false; LASTG = null; seqEnd(); QS = buildQuestions(); cur = 0; render(); }
 function newOrSettings(){ if (objectives(S).length) newQuestions(); else openSet(); }

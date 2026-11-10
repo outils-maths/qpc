@@ -13295,6 +13295,21 @@ const NUM_OPT = {pri: ['nmin', 'nmax'], fra: ['fnmin', 'fnmax'], rel: ['rnmin', 
    les exercices par leur identifiant (nom fixe), jamais par leur place dans les réglages */
 const lnkEnc = s => encodeURIComponent(s).replace(/%20/g, '+').replace(/%2C/gi, ',').replace(/%3A/gi, ':');
 const lnkDec = s => { try { return decodeURIComponent(String(s).replace(/\+/g, ' ')); } catch (e) { return null; } };
+/* n° 44 (10.11.2026) : liens courts, forme q2 (l'enseignant : « Dans le lien du code QR, je trouve dommage que quand on n'a pas changé les
+   proportions ça marque quand même les proportions : ça rallonge le code pour rien. Regarde en même temps si on peut raccourcir autrement le code
+   QR. » ; QCM : la version en ligne (n° 34) complétée pour lire ces liens ; correction d'erreurs M gardée). q2 = q1, sauf :
+   identifiants : + et : tels quels, − écrit -, ∙ écrit . (aucun identifiant n'a - . ~ ni espace) ; titre : ’ écrit ', lettres de U+00A0 à U+00FF
+   écrites ~ et deux chiffres hexadécimaux (é : ~e9), ~ écrit ~7e ; &p= absent : les parts par défaut (q1 sans &p= : comme avant, les blocs à
+   tour de rôle) ; &v= absent : les vidéos de tous les exercices du lien (q1 : aucune), &v=0 : aucune ; &s= : une part vide, ou &s= absent avec
+   &h=1 : les % d'étoiles par défaut (ipDef) ; &n= : seulement les blocs dont les cases ne sont pas celles par défaut (absent : défaut). */
+const lnkDecId = s => { try { return decodeURIComponent(s).replace(/-/g, '\u2212').replace(/\./g, '\u2219'); } catch (e) { return null; } };   // q2 : identifiant
+const lnkDecT = s => { try { return String(s).replace(/~(7e|[a-f][0-9a-f])|['+]|(?:%[0-9a-f]{2})+/gi, m => m[0] === '~' ? String.fromCharCode(parseInt(m.slice(1), 16)) :
+  m === "'" ? '\u2019' : m === '+' ? ' ' : decodeURIComponent(m).replace(/'/g, '\u2019')); } catch (e) { return null; } };          // q2 : titre
+function lnkV2End(P, f){             // q2 : parts, vidéos et % d'étoiles par défaut quand le lien ne les donne pas
+  P.v2 = true; if (f.p === undefined && P.it.length + P.blk.length > 1) P.wd = true;
+  const O = pObjs(P); if (f.v === undefined) P.vid = O.filter(o => VID_OF[o.id]).map(o => o.id);
+  if (P.rnd) O.forEach(o => { if ((P.sd && P.sd[o.id]) || isNoStar(o)) return; const c = P.cap[o.id] || 4; if (c >= 2) (P.sd = P.sd || {})[o.id] = ipDef(c).slice(0, c); });
+}
 function stateFromP(P){              // réglages (comme S) d'après un lien ou une séance
   const s = clone(DEFAULTS); s.on = {};
   (P.it || []).forEach(id => { const b = ITEM_BLOCK[id]; if (b){ s.it[id] = true; s.on[b] = true; } });
@@ -13324,16 +13339,18 @@ function linkFrag(P){
 const linkURL = P => QPC_BASE + QPC_VERSION + '/#' + linkFrag(P);
 const LINK_ALIAS = {l_mono: 'l_mulm', l_subm: 'l_addm'};      // cases fondues dans une autre (07.11.2026) : un ancien lien garde ses exercices
 function linkParse(str){             // un lien entier, ou seulement ce qui suit # ; null s'il n'y a aucun exercice connu de cette version
-  const m = /(?:^|#)(q1(?:&[^#\s]*)?)\s*$/.exec(String(str || '').trim()); if (!m) return null;
+  const m = /(?:^|#)(q[12](?:&[^#\s]*)?)\s*$/.exec(String(str || '').trim()); if (!m) return null;
+  const v2 = m[1][1] === '2', dId = v2 ? lnkDecId : lnkDec;          // n° 44 : forme q2 (liens courts)
   const f = {}; m[1].split('&').slice(1).forEach(kv => { const i = kv.indexOf('='); if (i > 0) f[kv.slice(0, i)] = kv.slice(i + 1); });
   const vm = /\/qpc\/(\d{4}-\d{2}-\d{2})\/(?:index\.html)?#/.exec(String(str || ''));     // la version de la page qui a fait le lien (lien entier seulement)
-  const P = {t: f.t ? (lnkDec(f.t) || '').trim().slice(0, 120) : '', it: [], blk: [], num: {}, opt: {}, cap: {}, fr: f.f === '1', rnd: f.h === '1', ver: vm ? vm[1] : '', lost: 0};
-  (f.x || '').split(',').forEach((e, i) => { const r = /^(.*?)(?:\*([1-3]))?$/.exec(e), id0 = r && lnkDec(r[1]), id = id0 && (LINK_ALIAS[id0] || id0); if (!id) return;
+  const P = {t: f.t ? ((v2 ? lnkDecT : lnkDec)(f.t) || '').trim().slice(0, 120) : '', it: [], blk: [], num: {}, opt: {}, cap: {}, fr: f.f === '1', rnd: f.h === '1', ver: vm ? vm[1] : '', lost: 0};
+  (f.x || '').split(',').forEach((e, i) => { const r = /^(.*?)(?:\*([1-3]))?$/.exec(e), id0 = r && dId(r[1]), id = id0 && (LINK_ALIAS[id0] || id0); if (!id) return;
     if (id[0] === '@'){ const b = id.slice(1); if (BLOCKS[b] && !BLOCKS[b].items.length){ if (!P.blk.includes(b)){ P.blk.push(b); if (r[2]) P.cap[b] = Number(r[2]); lnkWS(P, f, b, i); } } else P.lost++; }
     else if (ITEM_BLOCK[id]){ if (!P.it.includes(id)){ P.it.push(id); if (r[2]) P.cap[id] = Number(r[2]); lnkWS(P, f, id, i); } } else P.lost++; });
   lnkWEnd(P);
   (f.n || '').split(',').forEach(e => { const i = e.indexOf('.'), b = e.slice(0, i), fl = e.slice(i + 1); if (i > 0 && BLOCKS[b] && /^[drf]*$/.test(fl)) P.num[b] = fl; });
   (f.o || '').split(',').forEach(e => { const i = e.indexOf(':'), k = e.slice(0, i), v = e.slice(i + 1); if (i > 0 && k in DEFAULTS.opt && /^\d+$/.test(v)) P.opt[k] = Number(v); });
+  if (v2 && (P.it.length || P.blk.length)) lnkV2End(P, f);
   return P.it.length || P.blk.length ? P : null;
 }
 const pObjs = P => objectives(stateFromP(P));                        // les exercices (objectifs) d'un lien
@@ -13351,7 +13368,7 @@ function stuBoot(){                  // au chargement : true si la page est en m
   const P = linkParse('#' + h), s = P && stateFromP(P), O = s ? objectives(s) : [];
   if (!O.length || checkDraft(s)){ stuMsg('Ce lien ne marche pas. Demande le lien à ton enseignant.'); return true; }
   S = s; Object.assign(S, {two: false, twoSame: false, hideStars: !!P.rnd, starsDet: false, bg: 'creme', accFr: false});   // étoiles cachées : ni boutons ★ ni étoiles sur les questions
-  STU = {P, cap: P.cap || {}, all: O, off: new Set(), lv: 1, start: true, rnd: !!P.rnd, w: !!P.w, sd: P.sd || null, vid: new Set(P.vid || [])}; S.share = P.w ? Object.assign({}, P.w) : {};   // n° 33 : parts et % d'étoiles du lien
+  STU = {P, cap: P.cap || {}, all: O, off: new Set(), lv: 1, start: true, rnd: !!P.rnd, w: !!(P.w || P.wd), sd: P.sd || null, vid: new Set(P.vid || [])}; S.share = P.w ? Object.assign({}, P.w) : {};   // n° 33 : parts et % d'étoiles du lien
   document.body.classList.add('stu'); document.body.classList.toggle('stufr', !!P.fr); document.body.classList.toggle('sturnd', !!P.rnd);   // bouton FR seulement si l'enseignant l'a coché
   if (P.t) document.title = P.t;
   document.querySelector('header .title').textContent = P.t || '';   // lien sans titre : pas de titre (l'enseignant, 07.11.2026)

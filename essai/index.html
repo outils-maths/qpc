@@ -1009,6 +1009,11 @@ body.inpok .pane .qbox{cursor:text}
   padding:.55em 1em;box-shadow:0 .15em .55em rgba(0,0,0,.18)}
 #bRep[hidden]{display:none}
 #bRep svg{width:1.05em;height:1.05em}
+
+/* n° 42 : touche de la période sans chiffre (l'enseignant, 10.11.2026 : « sinon c'est confusant ») : une case, un trait au-dessus (comme la touche fraction) */
+.kper{display:inline-flex;flex-direction:column;align-items:center;gap:.14em}
+.kper i{display:block;width:.95em;height:.11em;background:currentColor;border-radius:.05em}
+.kper span{display:block;width:.66em;height:.62em;border:.1em solid currentColor;border-radius:.07em}
 </style>
 </head>
 <body>
@@ -13273,7 +13278,7 @@ function kbHTML(sp){
     const D = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'], at = {1: [1, 3], 2: [2, 3], 3: [3, 3], 4: [1, 2], 5: [2, 2], 6: [3, 2], 7: [1, 1], 8: [2, 1], 9: [3, 1], 0: [2, 4]};
     const X = [sp.kb.dec && [',', ',', 'Virgule (touche , ou .)'], sp.kb.neg && ['−', '−', 'Signe moins (touche -)'],
       sp.kb.fra && ['/', '<span class="kfr"><span></span><i></i><span></span></span>', 'Fraction (touche /) ; encore une fois : passer au numérateur ou au dénominateur'],
-      sp.kb.per && ['‾', '<span class="pdec">0,<span class="ovl">3</span></span>', 'Période\u00a0: les chiffres qui se répètent (touche P) ; encore une fois : plus de période']].filter(Boolean);
+      sp.kb.per && ['‾', '<span class="kper"><i></i><span></span></span>', 'Période\u00a0: les chiffres qui se répètent (touche P) ; encore une fois : plus de période']].filter(Boolean);
     const slots = [[4, 2], [4, 3], [1, 4], [3, 4]];
     h = D.map(d => key(d, d, 'kd', '--c:' + at[d][0] + ';--r:' + at[d][1])).join('') +
       X.map((x, i) => key(x[0], x[1], 'kx', '--c:' + slots[i][0] + ';--r:' + slots[i][1], x[2])).join('') +

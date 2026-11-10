@@ -734,7 +734,7 @@ body.sturnd .lvb{display:none !important}
 .lnote{margin:.6em 0 0;padding:.45em .7em;border-radius:.45em;background:var(--sel-soft);color:var(--sel-k);font-size:.88em;line-height:1.35}
 .lnote:empty{display:none}
 /* fenêtre « Lien/impression élèves » : la feuille à imprimer (n° 30, 08.11.2026 ; préfixe ip) */
-@media (max-width:1100px) and (min-width:701px){ #bLink .lbx{display:none} #bLink{margin-right:.4em} }   /* écran partagé (960 × 1080) : « Lien/impression », le bas des réglages reste sur une ligne */
+@media (max-width:1100px) and (min-width:701px){ #bLink .lbx{display:none} #bLink{margin-right:.4em} #bApply .lbx2{display:none} }   /* écran partagé (960 × 1080) : « Lien/impression », le bas des réglages reste sur une ligne */
 .ipsec{grid-column:1 / -1;border-top:1px solid var(--line);padding-top:.7em;display:flex;flex-direction:column;gap:.6em;min-width:0}
 .lempty .ipsec{display:none}
 .ipt{display:flex;flex-wrap:wrap;align-items:center;gap:.5em .8em}
@@ -847,6 +847,66 @@ body.sturnd .lvb{display:none !important}
 main{touch-action:pan-y pinch-zoom}   /* swipe (n° 32) : le navigateur garde le défilement vertical et le zoom, la page prend les gestes horizontaux */
 .ipxr.ipoff>*,.ipmx.ipoff{opacity:.45}   /* exercice à 0 % : pas sur la feuille (n° 32 ; .ipxr est en display:contents) */
 .ipxq{white-space:normal}
+
+/* part de chaque exercice (n° 33) : barre et barres d'étoiles du lien ; n° 34 : fenêtre « Proportions » (plus de barre en bas des réglages) */
+.ipseg .ipsn{overflow:hidden;text-overflow:ellipsis;min-width:0;font-weight:600;margin-right:.35em}
+.ipseg .ipsp{flex:none}
+.ipseg[data-n]{padding:0 .3em;box-sizing:border-box}
+.lshw{grid-column:1 / -1;margin-top:.5em}
+.lshl{font-size:.85em;font-weight:700;color:var(--muted);margin-bottom:.25em}
+.lshl .iphint{font-weight:400}
+.lsd{grid-column:1 / -1;display:flex;align-items:center;justify-content:flex-end;gap:.5em;margin:0 0 .3em}
+.lsd .ipbar{width:min(17em, 75%)}
+.lsdl{font-size:.8em;color:var(--muted)}
+.lexn.lzero span{opacity:.42}
+/* n° 34 (10.11.2026) : vidéos et fenêtre « Proportions » */
+.vsvg{display:block;width:1.25em;height:.875em}
+.vico{border:0;background:none;padding:0 .05em;margin:0 -.1em 0 -.08em;color:#56708f;cursor:pointer;line-height:0;display:inline-flex;align-items:center;border-radius:.2em}
+.vico:hover,.vico:focus-visible{color:var(--accent);background:rgba(31,95,168,.1)}
+.vico .vsvg{width:1.1em;height:.77em}
+#oVid .vbox{max-width:none;width:min(96vw, calc((94vh - 4em) * 16 / 9))}
+#oVid .vbox.vq{width:min(94vw, 31em)}
+.vask{padding:1em 1.2em 1.1em}
+.vask p{margin:0 0 .4em;line-height:1.35}
+.vask .vdur{color:var(--muted);white-space:nowrap}
+.vask .vnet{font-size:.85em;color:var(--muted)}
+.vbtns{display:flex;justify-content:flex-end;gap:.7em;margin-top:1em}
+.vbox.vq .vwrap,.vbox:not(.vq) .vask{display:none}
+.vwrap{position:relative;background:#000;border-radius:0 0 .8em .8em;overflow:hidden;min-height:0}
+.vwrap video{display:block;width:100%;aspect-ratio:16 / 9;max-height:calc(94vh - 4em);background:#000}
+.vmsg{position:absolute;left:0;right:0;top:26%;margin:0;padding:0 1em;text-align:center;color:#fff;font-weight:700;pointer-events:none}
+.vmsg:empty{display:none}
+.lex.lexv{grid-template-columns:minmax(0, 1fr) auto auto}
+.lvh{text-align:center}
+.lvid{display:inline-flex;align-items:center;justify-content:center;gap:.3em;color:#56708f;cursor:pointer}
+.lvid input{width:1.05em;height:1.05em;margin:0;accent-color:var(--sel)}
+.lvid.loff{opacity:.42}
+.stuIt{display:flex;align-items:center;justify-content:space-between;gap:.6em;width:100%}
+.stuIt label{min-width:0}
+.stuV{flex:none}
+.stuV{display:inline-flex;align-items:center;gap:.35em;border:1.5px solid var(--accent);background:var(--panel);color:var(--accent);border-radius:.5em;padding:.18em .6em;font:inherit;font-weight:700;font-size:.82em;cursor:pointer}
+.stuV:hover{background:var(--accent);color:#fff}
+.pbox{max-width:min(96vw, 46em)}
+.pbody{display:flex;flex-direction:column;gap:.9em}
+.phint{margin:0;font-size:.85em;color:var(--muted)}
+.pmsg{margin:0;font-weight:700}
+.pmsg:empty{display:none}
+#pBar .ipbar{height:2.6em}
+#pBar .ipseg{font-size:.82em}
+.prows{display:grid;grid-template-columns:auto minmax(0, 1fr) minmax(4em, 11em) auto;gap:.45em .9em;align-items:center}
+.prow{display:contents}
+.prn{display:inline-flex;align-items:center;gap:.4em;font-weight:700}
+.prn i{display:inline-block;width:.95em;height:.95em;border-radius:.2em;box-shadow:inset 0 0 0 1px rgba(0,0,0,.28)}
+.prnm{min-width:0;overflow-wrap:anywhere}
+.prz0{font-size:.85em;color:var(--muted)}
+.prg{display:block;height:.75em;background:#eef1f4;border-radius:.4em;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+.prg>span{display:block;height:100%}
+.prst{display:inline-flex;align-items:center;gap:.35em}
+.prst button{width:1.9em;height:1.9em;border:1.5px solid var(--accent);background:var(--panel);color:var(--accent);border-radius:.45em;font:inherit;font-weight:700;line-height:1;padding:0;cursor:pointer}
+.prst button:disabled{opacity:.3;cursor:default}
+.prv{min-width:3.3em;text-align:center}
+.prow.prz>*{opacity:.5}
+@media (max-width:560px){ .prows{grid-template-columns:auto minmax(0, 1fr) auto} .prg{display:none} }
 </style>
 </head>
 <body>
@@ -977,7 +1037,8 @@ main{touch-action:pan-y pinch-zoom}   /* swipe (n° 32) : le navigateur garde le
       <button class="btn" id="bLink" title="Lien/impression élèves : un lien et un QR code pour que tes élèves s'entraînent sur les exercices cochés, et une feuille à imprimer">Lien/impression<span class="lbx"> élèves</span></button>
       
 <button class="btn" id="bNone" title="Décocher toutes les questions, dans tous les onglets (touche ⟵ effacer)">Tout décocher<span class="kh kbs">⟵</span></button>
-      <button class="btn on" id="bApply" title="Nouvelles questions avec ces réglages (touche Entrée)">Nouvelles questions avec ces réglages<span class="kh">Entrée</span></button>
+      <button class="btn" id="bProp" title="La proportion de chaque exercice quand on joue (la même dans le lien élèves et sur la feuille à imprimer)">Proportions</button>
+      <button class="btn on" id="bApply" title="Nouvelles questions avec ces réglages (touche Entrée)">Nouvelles questions<span class="lbx2"> avec ces réglages</span><span class="kh">Entrée</span></button>
     </div>
   </div>
 </div>
@@ -991,7 +1052,7 @@ main{touch-action:pan-y pinch-zoom}   /* swipe (n° 32) : le navigateur garde le
         <label class="ltit"><span class="lab2">Titre</span><input type="text" id="lTitle" maxlength="80" placeholder="Ex. Épreuve 4 : périmètres, aires, Pythagore" autocomplete="off"><button type="button" class="lsug lsoff" id="lSug" title="Écrire ce titre dans la case">Choisir ce titre ?</button></label>
         <div class="lex" id="lEx"></div>
         <div class="lopth">Options :</div>
-        <label class="lfr"><input type="checkbox" id="lRnd"> <span><b>Étoiles cachées</b> : chaque question a une difficulté au hasard, parmi les étoiles permises</span></label>
+        <label class="lfr"><input type="checkbox" id="lRnd"> <span><b>Étoiles cachées</b> : chaque question a une difficulté au hasard, selon les % d'étoiles de chaque exercice</span></label>
         <label class="lfr lfr2"><input type="checkbox" id="lFr"> <span>Bouton <b>FR</b> pour les élèves (le calcul lu en français)</span></label>
         <div class="lpaste"><span class="lab2">Reprendre un lien</span><input type="text" id="lPaste" placeholder="Colle ici un lien élèves ou l'image de son code QR" autocomplete="off" spellcheck="false"><span class="lpw" id="lPw"></span></div>
         <p class="lnote" id="lNote"></p>
@@ -1034,6 +1095,33 @@ main{touch-action:pan-y pinch-zoom}   /* swipe (n° 32) : le navigateur garde le
       <button class="hbtn" data-close>✕</button>
     </div>
     <div class="boxbody"><div class="gridw" id="grid"></div></div>
+  </div>
+</div>
+
+<!-- Proportions des exercices (n° 34, 10.11.2026) : grande barre + une ligne par exercice -->
+<div class="over" id="oProp">
+  <div class="box pbox" role="dialog" aria-label="Proportions des exercices">
+    <div class="boxhead"><h2 class="title">Proportions des exercices</h2><button class="hbtn" data-close>✕</button></div>
+    <div class="boxbody pbody">
+      <p class="phint">La part de chaque exercice dans les questions, quand on joue (la même dans le lien élèves et sur la feuille à imprimer). À 0 %, l'exercice n'est pas posé. Glisse les séparations, ou utilise − et +.</p>
+      <p class="pmsg" id="pMsg"></p>
+      <div id="pBar"></div>
+      <div class="prows" id="pRows"></div>
+    </div>
+    <div class="boxfoot"><button type="button" class="btn" id="pEq" title="Chaque exercice la même part">Parts égales</button><button type="button" class="btn on" id="pOk">OK<span class="kh">Entrée</span></button></div>
+  </div>
+</div>
+
+<!-- Vidéo (n° 34, 10.11.2026) : confirmation (enseignant), puis la vidéo en ligne -->
+<div class="over" id="oVid">
+  <div class="box vbox vq" role="dialog" aria-label="Vidéo">
+    <div class="boxhead"><h2 class="title" id="vTit">Vidéo</h2><button class="hbtn" data-close>✕</button></div>
+    <div class="vask">
+      <p>Lancer la vidéo « <b id="vAskT"></b> » ? <span class="vdur" id="vDur"></span></p>
+      <p class="vnet">Elle se charge depuis internet.</p>
+      <div class="vbtns"><button type="button" class="btn" data-close>Annuler</button><button type="button" class="btn on" id="vGo">Lancer la vidéo<span class="kh">Entrée</span></button></div>
+    </div>
+    <div class="vwrap"><video id="vEl" controls playsinline preload="none"></video><p class="vmsg" id="vMsg"></p></div>
   </div>
 </div>
 
@@ -11259,7 +11347,7 @@ const BGS = {creme: ['#f7f6f2', 'crème (par défaut)'], blanc: ['#ffffff', 'bla
 const clone = o => JSON.parse(JSON.stringify(o));
 // à chaque ouverture du fichier : rien de coché dans les onglets ; décimaux et relatifs de chaque bloc = ceux de l'onglet Général
 // accFr : bouton « FR » de l'en-tête (le calcul en français) : désactivé à chaque ouverture, gardé d'une question à l'autre (l'enseignant, 27.10.2026)
-const DEFAULTS = {n: 10, pct: {1: 40, 2: 35, 3: 25}, two: false, twoSame: false, order: 'prog', hideStars: true, starsDet: false, bg: 'creme', accFr: false, gnum: {dec: true, rel: true}, on: {}, it: {}, num: {},
+const DEFAULTS = {n: 10, pct: {1: 40, 2: 35, 3: 25}, two: false, twoSame: false, order: 'prog', hideStars: true, starsDet: false, bg: 'creme', accFr: false, gnum: {dec: true, rel: true}, on: {}, it: {}, num: {}, share: {},
   opt: {nmin: 2, nmax: 4, fnmin: 2, fnmax: 3, rnmin: 2, rnmax: 3, sciNeg: false}};
 Object.values(BLOCKS).forEach(b => b.items.forEach(([id]) => DEFAULTS.it[id] = false));
 Object.values(BLOCK_OPTS).forEach(ks => ks.forEach(k => DEFAULTS.opt[k] = false));
@@ -11267,7 +11355,7 @@ const numFrom = g => { const o = {}; Object.values(BLOCKS).forEach(b => { if (b.
 DEFAULTS.num = numFrom(DEFAULTS.gnum);
 const KEY = 'questions-champions-v5', KEY4 = 'questions-champions-v4', KEY3 = 'questions-champions-v3', KEY2 = 'questions-champions-v2', KEY1 = 'questions-champions-v1', SKEY = 'questions-champions-seance';
 const GEN_KEYS = ['two', 'twoSame', 'hideStars', 'starsDet', 'bg', 'gnum'];   // plus de nombre de questions, de % ni d'ordre (05.11.2026, 11e conversation)   // onglet Général (le bouton « FR » n'est pas gardé : désactivé à chaque ouverture, l'enseignant, 27.10.2026) : gardé d'une ouverture à l'autre (navigateur)
-const SES_KEYS = ['on', 'it', 'num', 'opt'];                                 // objectifs : gardés seulement si on recharge la page
+const SES_KEYS = ['on', 'it', 'num', 'opt', 'share'];                                 // objectifs : gardés seulement si on recharge la page
 let S = clone(DEFAULTS);
 const PRIO_ING = {rprio: ['radd', 'rsub', 'rsum', 'rmul', 'rdiv', 'rpow'], fprio: ['f+', 'f∙', 'f:', 'fpow']};      // cases qui deviennent les ingrédients des priorités
 function objectives(s){ const out = [];
@@ -11275,7 +11363,9 @@ function objectives(s){ const out = [];
     if (!b.items.length){ out.push({bl: b.id, id: b.id}); return; }
     const skip = new Set(); Object.entries(PRIO_ING).forEach(([pr, ks]) => { if (s.it[pr] && ITEM_BLOCK[pr] === b.id) ks.forEach(k => skip.add(k)); });
     b.items.forEach(([id]) => { if (s.it[id] && !skip.has(id)) out.push({bl: b.id, id}); }); });
-  return STU && s === S ? out.filter(o => !STU.off.has(o.id)) : out; }     // mode élève : sans les exercices qu'il a décochés
+  if (STU && s === S) return out.filter(o => !STU.off.has(o.id));     // mode élève : sans les exercices qu'il a décochés
+  if (!STU && s === S && s.share){ const f = out.filter(o => s.share[o.id] !== 0); if (f.length) return f; }   // en classe : un exercice à 0 % n'a pas de questions (n° 33)
+  return out; }
 const okPct = p => p && [1, 2, 3].reduce((s, l) => s + (p[l] || 0), 0) === 100 ? p : clone(DEFAULTS.pct);
 try {
   let g = JSON.parse(localStorage.getItem(KEY) || 'null');
@@ -11294,7 +11384,7 @@ try {
   const t = JSON.parse(sessionStorage.getItem(SKEY) || 'null');
   if (t){ S.on = Object.assign({}, t.on); if (S.on.trf){ S.on.sym = true; delete S.on.trf; }     // ancien bloc « Transformations du plan » (fusionné le 24.10.2026)
     S.it = Object.assign({}, DEFAULTS.it, t.it); Object.keys(t.num || {}).forEach(b => { if (S.num[b]) Object.assign(S.num[b], t.num[b]); });
-    S.opt = Object.assign({}, DEFAULTS.opt, t.opt); }
+    S.opt = Object.assign({}, DEFAULTS.opt, t.opt); S.share = Object.assign({}, t.share); }
 } catch (e) {}
 function save(){
   if (STU) return;                   // mode élève : rien n'est gardé (les réglages de l'enseignant dans ce navigateur restent intacts)
@@ -11323,6 +11413,9 @@ const USED = new Set();
 function leastUsed(list, key){ const m = Math.min(...list.map(x => TALLY[key + x] || 0)); return pick(list.filter(x => (TALLY[key + x] || 0) === m)); }
 const bump = key => TALLY[key] = (TALLY[key] || 0) + 1;
 function pickObjective(only){                // only : seulement ces objectifs (par ex. ceux qui ont des étoiles)
+  { const O = objectives(S).filter(only || (() => true)), W = shW(O);     // n° 33 : selon la part de chaque exercice (le moins servi d'après sa part)
+    if (W){ const c = O.map((o, i) => W[i] > 0 ? ((TALLY['i:' + o.id] || 0) + .5) / W[i] : Infinity), m = Math.min(...c);
+      if (m < Infinity){ const o = pick(O.filter((x, i) => c[i] <= m + 1e-9)); bump('b:' + o.bl); bump('i:' + o.id); return {bl: o.bl, id: o.id}; } } }
   const O = objectives(S).filter(only || (() => true)), bls = [...new Set(O.map(o => o.bl))], bl = leastUsed(bls, 'b:'); bump('b:' + bl);
   const ids = O.filter(o => o.bl === bl).map(o => o.id), cmb = ids.find(x => COMB_IDS.includes(x)), rest = ids.filter(x => x !== cmb);
   let id;
@@ -12464,6 +12557,82 @@ function grpAnim(T, G){
   rise(det, 640);
   GFX_T = setTimeout(gfxClear, 700);
 }
+/* ---------- part de chaque exercice (n° 33, 10.11.2026) ----------
+   L'enseignant : « Ce serait bien de pouvoir modifier le % de chaque exercice également dans le code QR proposé aux élèves » ; QCM : la part de
+   chaque exercice (« Quand on clique sur étoiles cachées, les réglettes de % d'étoiles s'affichent ») ; « Deux barres séparées mais quand on change
+   l'une ça change l'autre aussi » ; par défaut, égale par exercice ; l'élève ne voit rien des %. Puis : « ce serait bien d'avoir la réglette quelque
+   part aussi quand on joue en classe » ; « Fais à gauche du bouton lien élève » ; « Et les 3 barres sont jumelées ».
+   Une part par exercice, dans draft.share puis S.share (gardée avec la séance, comme les cases) : la barre du bas des réglages (exercices cochés),
+   celle du lien (sans les exercices décochés dans la fenêtre) et celle de la feuille (bloc mélangé : la somme de ses exercices) en sont trois vues,
+   chacune ramenée à 100 % ; une barre change les parts de ses exercices sans toucher aux autres. Exercice sans part (nouveau, ou recoché) : la part
+   moyenne ; « combiner les propriétés » : autant que les autres exercices de son bloc ensemble (avant : environ la moitié du bloc). 0 % : pas de
+   questions en classe, pas dans le lien, pas sur la feuille.
+   En classe et dans un lien avec des parts : l'exercice le moins servi d'après sa part (avant : les blocs à tour de rôle, puis leurs exercices ; un
+   ancien lien, sans parts, garde cette façon). Lien : &p= (parts entières, dans l'ordre de x) ; étoiles cachées : &s= (% d'étoiles de chaque
+   exercice, « 40.35.20.5 », dans l'ordre de x ; les mêmes barres que la feuille), tirées avec un correcteur d'après la séance (sdPick). */
+const shHas = x => typeof x === 'number' && isFinite(x) && x >= 0;
+const ipIsSh = k => k === 'share' || k === 'lsh' || k === 'cls';
+function shRaw(d, O){                // parts brutes des exercices O (sans part : la moyenne des autres ; « combiner » : les autres de son bloc ensemble)
+  const s = d.share || {}, kn = O.filter(o => shHas(s[o.id])), avg = (kn.length ? kn.reduce((a, o) => a + s[o.id], 0) / kn.length : 1) || 1;
+  return O.map(o => shHas(s[o.id]) ? s[o.id] : COMB_IDS.includes(o.id) ? avg * Math.max(1, O.filter(x => x.bl === o.bl && x.id !== o.id).length) : avg);
+}
+function shView(d, O){ const r = shRaw(d, O), t = r.reduce((a, b) => a + b, 0), v = {}; O.forEach((o, i) => v[o.id] = t > 0 ? r[i] * 100 / t : 100 / O.length); return v; }
+function shWrite(d, O, V){ const r = shRaw(d, O), t = r.reduce((a, b) => a + b, 0) || 100; d.share = d.share || {}; O.forEach((o, i) => d.share[o.id] = (V[i] || 0) * t / 100); }
+function shLR(V, n){                 // n réparti selon V (plus grands restes)
+  const t = V.reduce((a, b) => a + b, 0) || 1, ex = V.map(v => v * n / t), c = ex.map(v => Math.floor(v + 1e-9));
+  const ord = ex.map((v, i) => [v - c[i], i]).sort((a, b) => b[0] - a[0] || a[1] - b[1]);
+  for (let r = n - c.reduce((a, b) => a + b, 0), j = 0; r > 0 && ord.length; r--, j++) c[ord[j % ord.length][1]]++;
+  return c;
+}
+const shName = o => { const b = BLOCKS[o.bl], t = (b.items.length ? TNAME[o.id] || stuLabel(o, false) : b.name).replace(/<svg.*?<\/svg>/g, '√').replace(/<[^>]+>/g, '');
+  return t.charAt(0).toUpperCase() + t.slice(1); };
+function shW(O){                     // parts (%) des exercices O pour le tirage ; null : comme avant (un seul exercice, ou ancien lien sans parts)
+  if (O.length < 2 || (STU && !STU.w)) return null;
+  const v = shView(S, O); return O.map(o => v[o.id]);
+}
+function sdPick(o){                  // étoiles cachées : un niveau selon les % d'étoiles de l'exercice (lien &s=), avec un correcteur d'après la séance
+  const cap = stuCap(o), d0 = STU.sd && STU.sd[o.id]; if (!d0) return 1 + Math.floor(Math.random() * cap);
+  const d = [0, 1, 2, 3].map(i => i < cap ? d0[i] || 0 : 0); for (let i = cap; i < 4; i++) d[cap - 1] += d0[i] || 0;
+  const t = d.reduce((a, b) => a + b, 0); if (!(t > 0)) return 1 + Math.floor(Math.random() * cap);
+  const c = d.map((x, i) => TALLY['sl:' + o.id + (i + 1)] || 0), n = c.reduce((a, b) => a + b, 0);
+  const l = wpick([1, 2, 3, 4].filter(x => d[x - 1] > 0), x => d[x - 1] * Math.max(.15, 1 + d[x - 1] / t * (n + 1) - c[x - 1]));
+  bump('sl:' + o.id + l); return l;
+}
+function psUI(){                     // n° 34 : la fenêtre « Proportions » (bouton à droite de « Tout décocher »), si elle est ouverte
+  if ($('oProp').classList.contains('open')) propUI();
+}
+function lnkWS(P, f, id, i){         // lien : part (&p=) et % d'étoiles (&s=) du i-ème exercice de x
+  if (f.p !== undefined){ const v = f.p.split(',')[i] || ''; if (/^\d{1,3}$/.test(v)) (P.w = P.w || {})[id] = Number(v); }
+  if (f.s !== undefined){ const v = f.s.split(',')[i] || ''; if (/^\d{1,3}(\.\d{1,3}){0,3}$/.test(v)) (P.sd = P.sd || {})[id] = v.split('.').map(Number); }
+  if (f.v !== undefined && /^[01]{1,300}$/.test(f.v)){ P.vid = P.vid || []; if (f.v[i] === '1' && VID_OF[id]) P.vid.push(id); }   // n° 34 : vidéo de l'exercice sur la liste de l'élève
+}
+function lnkWEnd(P){ if (P.w && !(Object.keys(P.w).length > 1 && Object.values(P.w).some(x => x > 0))) P.w = null; }
+function lnkTakeWS(P){               // « Reprendre un lien » : ses parts et ses % d'étoiles (lien sans parts : parts égales)
+  draft.share = {}; if (P.w) pObjs(P).forEach(o => { if (P.w[o.id] != null) draft.share[o.id] = P.w[o.id]; });
+  if (P.sd){ if (!IP) ipInit(); Object.entries(P.sd).forEach(([id, d]) => { const x = [0, 0, 0, 0]; d.slice(0, 4).forEach((v, i) => x[i] = v); ipEx(id).d = x; }); }
+  psUI();
+}
+function lnkDist(id, cap){           // % d'étoiles d'un exercice (la barre de la feuille), dans ses étoiles permises
+  const d = ((IP && IP.ex[id] && IP.ex[id].d) || ipDef(cap)).slice(0, 4); while (d.length < 4) d.push(0);
+  for (let l = cap; l < 4; l++){ d[cap - 1] += d[l]; d[l] = 0; } return d.slice(0, cap);
+}
+function ipBarFill(bar){             // une barre jumelle mise à jour d'après l'état
+  const k = bar.dataset.k, n = bar.querySelectorAll('.ipseg').length; let V = null;
+  if (k === 'lsh' && LNK && LNK.E){ const O = pObjs(LNK.E), v = shView(draft, O); V = O.map(o => v[o.id]); }
+  else if (k === 'share' && IP) V = IP.U.map(u => IP.share[u.id]);
+  else if (k.startsWith('st:') && IP) V = lnkDist(k.slice(3), n);
+  if (V && V.length === n) ipBarSet(bar, V);
+}
+function ipBarAfter(D, live){        // après (ou pendant) un glissement : le lien et son QR code, les barres jumelles, la feuille
+  const k = D.bar.dataset.k; if (k === 'cls'){ propRows(); return; }   // fenêtre « Proportions » : les lignes suivent la barre
+  const lk = $('oLink').classList.contains('open') && LNK && LNK.P;
+  if (lk) linkUrlDraw();
+  if (IP && IP.O.length) ipShares();
+  document.querySelectorAll('#oLink .ipbar').forEach(b => { if (b !== D.bar && (b.dataset.k === k || (ipIsSh(b.dataset.k) && ipIsSh(k)))) ipBarFill(b); });
+  if (live){ if (IP && lk) ipRefresh(true); return; }
+  if (lk){ linkRows(); ipSync(true); }
+  psUI();
+}
 function newQuestions(){ PICK = false; LASTG = null; seqEnd(); QS = buildQuestions(); cur = 0; render(); }
 function newOrSettings(){ if (objectives(S).length) newQuestions(); else openSet(); }
 
@@ -12504,7 +12673,7 @@ function optHTML(kind){
 // lignes d'un bloc ; deux lignes qui se suivent avec {col: 'L'} puis {col: 'R'} (5e élément) : côte à côte, en colonnes (.c2 ; une seule colonne sur téléphone)
 function rowsHTML(b){
   const row = ([t, its, sub, ex, o]) => '<div class="opts' + (sub ? ' sub' : '') + (o && o.col ? ' colv' : '') + '">' + (t ? '<span class="lab2">' + t + '</span>' : '') + (sub ? '<span class="lab3">' + sub + '</span>' : '') +
-    its.map(([id, lab, cls]) => '<label' + (cls ? ' class="' + cls + '"' : '') + '><input type="checkbox" data-it="' + id + '"> <span>' + lab + '</span>' + (NOSTAR.has(id) && !b.hint ? '<span class="nost">(sans étoiles)</span>' : '') + '</label>').join('') + (ex || '') + '</div>';
+    its.map(([id, lab, cls]) => '<label' + (cls ? ' class="' + cls + '"' : '') + '><input type="checkbox" data-it="' + id + '"> ' + vicoHTML(id) + '<span>' + lab + '</span>' + (NOSTAR.has(id) && !b.hint ? '<span class="nost">(sans étoiles)</span>' : '') + '</label>').join('') + (ex || '') + '</div>';
   const rs = b.rows || []; let h = '';
   for (let i = 0; i < rs.length; i++){ const o = rs[i][4], n = rs[i + 1] && rs[i + 1][4];
     if (o && o.col === 'L' && n && n.col === 'R'){ h += '<div class="c2">' + row(rs[i]) + row(rs[i + 1]) + '</div>'; i++; } else h += row(rs[i]); }
@@ -12565,6 +12734,8 @@ function syncUI(){
   O.forEach(o => { const t = BLOCKS[o.bl].tab; cnt[t] = (cnt[t] || 0) + 1; per[o.bl] = (per[o.bl] || 0) + 1; });
   q('.tab').forEach(t => t.querySelector('.nb').textContent = cnt[t.dataset.t] || '');
   $('summary').innerHTML = O.length ? Object.keys(per).map(b => BLOCKS[b].name + (BLOCKS[b].items.length ? ' (' + per[b] + ')' : '')).join(' · ') : '— rien de coché —';
+  d.share = d.share || {}; const ks = new Set(O.map(o => o.id)); Object.keys(d.share).forEach(k => { if (!ks.has(k)) delete d.share[k]; });   // décoché : sa part est oubliée (recoché : la part moyenne)
+  if ($('oSet').classList.contains('open')) psUI();
 }
 // pourcentages (l'enseignant, 25.10.2026, 6e conversation) : le premier % touché reste bloqué quand on en touche un autre juste après ;
 // seul le troisième compense. Débloqué en retouchant le premier, en changeant d'onglet ou en rouvrant les réglages.
@@ -12598,7 +12769,7 @@ function doSearch(){ // au fur et à mesure qu'on tape : les blocs dont le titre
   if (on) $('panes').scrollTop = 0;
 }
 const STU_MSG = () => document.body.classList.contains('stumsg');   // page en ligne sans lien élèves, ou lien qui ne marche pas : seulement le message
-function openSet(){ if (STU || STU_MSG()) return; draft = clone(S); pctReset(); $('setWarn').textContent = ''; $('srch').value = ''; doSearch(); syncUI(); $('oSet').classList.add('open'); fitTwo(); }
+function openSet(){ if (STU || STU_MSG()) return; draft = clone(S); pctReset(); $('setWarn').textContent = ''; $('srch').value = ''; doSearch(); syncUI(); $('oSet').classList.add('open'); psUI(); fitTwo(); }
 // « Deux questions » sur une seule ligne (02.11.2026 : « non », « oui », « 8 passe d'1 question à 2 et inversement », la difficulté à droite) : sinon
 // « même difficulté » passe à la ligne et Général défile (1280 × 800, 1440 × 900) ; on serre en trois étapes, puis on laisse passer à la ligne
 function fpnFit(){ // limiteur du bloc Fractions : sur la ligne de « priorités des opérations cochées » s'il y tient, sinon seul, avec « Opérations : »
@@ -12880,6 +13051,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && !$('tPop').hidden){ timPop(false); return; }           // Échap ferme d'abord la fenêtre du minuteur
   if (e.key === 'Escape' && open && e.target === $('srch') && $('srch').value){ $('srch').value = ''; doSearch(); return; }
   if (e.key === 'Escape' && open){ open.classList.remove('open'); return; }
+  if (open && (open.id === 'oVid' || open.id === 'oProp')){ vpKey(e, open); return; }       // n° 34 : vidéo, proportions (avant le mode élève)
   const typing = e.target.closest && e.target.closest('input[type="text"], input[type="search"], input:not([type]), textarea, [contenteditable]');
   if (STU || STU_MSG()){ stuKey(e); return; }                                       // mode élève : ses touches seulement ; page message : aucune
                                                                                      // (l'enseignant, 07.11.2026 : « Si on appuie sur R on a quand même la page des réglages »)
@@ -13112,7 +13284,7 @@ var QR = (function(){
    « dans lien élèves si on clique dessus, ça pourrait permettre de coller un lien d'élève aussi » : champ « Reprendre un lien » (ses exercices
    cochés dans les réglages, son titre, ses étoiles, sa case FR) ; la fenêtre s'ouvre aussi sans exercice coché (pour coller un lien).
    Note du projet : QPC_PROJET_LIENS_ELEVES.md. */
-const QPC_VERSION = '2026-11-09';    // dossier de cette version sur le site (…/qpc/2026-11-07/) : à changer à chaque version mise en ligne
+const QPC_VERSION = '2026-11-10';    // dossier de cette version sur le site (…/qpc/2026-11-07/) : à changer à chaque version mise en ligne
 const QPC_BASE = 'https://outils-maths.github.io/qpc/';    // compte GitHub « outils-maths » (avec un s)
 const QPC_ONLINE = /(^|\.)github\.io$/i.test(location.hostname);    // ouverte depuis le site : seulement le mode élève (sans lien : un message)
 var STU = null;                       // mode élève (page ouverte par un lien élèves) ; null : page de l'enseignant
@@ -13145,7 +13317,9 @@ function linkFrag(P){
   const cp = id => P.cap && P.cap[id] >= 1 && P.cap[id] <= 3 ? '*' + P.cap[id] : '';
   const x = P.it.map(id => encodeURIComponent(id) + cp(id)).concat(P.blk.map(b => '@' + b + cp(b)));
   const n = Object.entries(P.num || {}).map(([b, f]) => b + '.' + f), o = Object.entries(P.opt || {}).map(([k, v]) => k + ':' + v);
-  return 'q1' + (P.t ? '&t=' + lnkEnc(P.t) : '') + '&x=' + x.join(',') + (n.length ? '&n=' + n.join(',') : '') + (o.length ? '&o=' + o.join(',') : '') + (P.fr ? '&f=1' : '') + (P.rnd ? '&h=1' : '');
+  const ids = P.it.concat(P.blk), pp = P.w && ids.length > 1 ? '&p=' + ids.map(id => Math.round(P.w[id] || 0)).join(',') : '',     // n° 33 : part de chaque exercice (dans l'ordre de x)
+    ss = P.rnd && P.sd ? '&s=' + ids.map(id => (P.sd[id] || []).join('.')).join(',') : '';                                        // % d'étoiles (étoiles cachées)
+  return 'q1' + (P.t ? '&t=' + lnkEnc(P.t) : '') + '&x=' + x.join(',') + (n.length ? '&n=' + n.join(',') : '') + (o.length ? '&o=' + o.join(',') : '') + (P.fr ? '&f=1' : '') + (P.rnd ? '&h=1' : '') + pp + ss + vidFrag(P, ids);
 }
 const linkURL = P => QPC_BASE + QPC_VERSION + '/#' + linkFrag(P);
 const LINK_ALIAS = {l_mono: 'l_mulm', l_subm: 'l_addm'};      // cases fondues dans une autre (07.11.2026) : un ancien lien garde ses exercices
@@ -13154,9 +13328,10 @@ function linkParse(str){             // un lien entier, ou seulement ce qui suit
   const f = {}; m[1].split('&').slice(1).forEach(kv => { const i = kv.indexOf('='); if (i > 0) f[kv.slice(0, i)] = kv.slice(i + 1); });
   const vm = /\/qpc\/(\d{4}-\d{2}-\d{2})\/(?:index\.html)?#/.exec(String(str || ''));     // la version de la page qui a fait le lien (lien entier seulement)
   const P = {t: f.t ? (lnkDec(f.t) || '').trim().slice(0, 120) : '', it: [], blk: [], num: {}, opt: {}, cap: {}, fr: f.f === '1', rnd: f.h === '1', ver: vm ? vm[1] : '', lost: 0};
-  (f.x || '').split(',').forEach(e => { const r = /^(.*?)(?:\*([1-3]))?$/.exec(e), id0 = r && lnkDec(r[1]), id = id0 && (LINK_ALIAS[id0] || id0); if (!id) return;
-    if (id[0] === '@'){ const b = id.slice(1); if (BLOCKS[b] && !BLOCKS[b].items.length){ if (!P.blk.includes(b)){ P.blk.push(b); if (r[2]) P.cap[b] = Number(r[2]); } } else P.lost++; }
-    else if (ITEM_BLOCK[id]){ if (!P.it.includes(id)){ P.it.push(id); if (r[2]) P.cap[id] = Number(r[2]); } } else P.lost++; });
+  (f.x || '').split(',').forEach((e, i) => { const r = /^(.*?)(?:\*([1-3]))?$/.exec(e), id0 = r && lnkDec(r[1]), id = id0 && (LINK_ALIAS[id0] || id0); if (!id) return;
+    if (id[0] === '@'){ const b = id.slice(1); if (BLOCKS[b] && !BLOCKS[b].items.length){ if (!P.blk.includes(b)){ P.blk.push(b); if (r[2]) P.cap[b] = Number(r[2]); lnkWS(P, f, b, i); } } else P.lost++; }
+    else if (ITEM_BLOCK[id]){ if (!P.it.includes(id)){ P.it.push(id); if (r[2]) P.cap[id] = Number(r[2]); lnkWS(P, f, id, i); } } else P.lost++; });
+  lnkWEnd(P);
   (f.n || '').split(',').forEach(e => { const i = e.indexOf('.'), b = e.slice(0, i), fl = e.slice(i + 1); if (i > 0 && BLOCKS[b] && /^[drf]*$/.test(fl)) P.num[b] = fl; });
   (f.o || '').split(',').forEach(e => { const i = e.indexOf(':'), k = e.slice(0, i), v = e.slice(i + 1); if (i > 0 && k in DEFAULTS.opt && /^\d+$/.test(v)) P.opt[k] = Number(v); });
   return P.it.length || P.blk.length ? P : null;
@@ -13176,7 +13351,7 @@ function stuBoot(){                  // au chargement : true si la page est en m
   const P = linkParse('#' + h), s = P && stateFromP(P), O = s ? objectives(s) : [];
   if (!O.length || checkDraft(s)){ stuMsg('Ce lien ne marche pas. Demande le lien à ton enseignant.'); return true; }
   S = s; Object.assign(S, {two: false, twoSame: false, hideStars: !!P.rnd, starsDet: false, bg: 'creme', accFr: false});   // étoiles cachées : ni boutons ★ ni étoiles sur les questions
-  STU = {P, cap: P.cap || {}, all: O, off: new Set(), lv: 1, start: true, rnd: !!P.rnd};
+  STU = {P, cap: P.cap || {}, all: O, off: new Set(), lv: 1, start: true, rnd: !!P.rnd, w: !!P.w, sd: P.sd || null, vid: new Set(P.vid || [])}; S.share = P.w ? Object.assign({}, P.w) : {};   // n° 33 : parts et % d'étoiles du lien
   document.body.classList.add('stu'); document.body.classList.toggle('stufr', !!P.fr); document.body.classList.toggle('sturnd', !!P.rnd);   // bouton FR seulement si l'enseignant l'a coché
   if (P.t) document.title = P.t;
   document.querySelector('header .title').textContent = P.t || '';   // lien sans titre : pas de titre (l'enseignant, 07.11.2026)
@@ -13195,7 +13370,7 @@ function stuBuild(){                 // liste des exercices (au départ, et ☰ 
   const g = {}; STU.all.forEach(o => (g[o.bl] = g[o.bl] || []).push(o));
   $('stuT').textContent = STU.P.t || '';
   $('stuL').innerHTML = Object.entries(g).map(([bl, os]) => '<div class="stuG">' + (BLOCKS[bl].items.length
-    ? '<div class="stuGn">' + BLOCKS[bl].name + '</div><div class="stuGi">' + os.map(o => '<label><input type="checkbox" data-o="' + o.id + '"> <span>' + stuLabel(o, false) + '</span></label>').join('') + '</div>'
+    ? '<div class="stuGn">' + BLOCKS[bl].name + '</div><div class="stuGi">' + os.map(stuItem).join('') + '</div>'
     : '<label class="stuGn"><input type="checkbox" data-o="' + bl + '"> <span>' + BLOCKS[bl].name + '</span></label>') + '</div>').join('');
   mathify($('stuS'));
 }
@@ -13225,7 +13400,7 @@ function stuLevel(lv){               // boutons ★ (et touches 1 à 4) de l'él
 function stuNewPair(lv, only){       // une question à lv étoiles, au plus la limite de son exercice (l'exercice reste, à son maximum) ;
   const o = pickObjective(only); if (!o || !o.id) return null;     // un exercice sans étoiles : toutes ses sortes de questions (les étoiles ne s'y appliquent pas)
   if (isNoStar(o)) return newPair(o, lv, false, x => (!only || only(x)) && isNoStar(x), () => lv, 11);
-  const l = STU.rnd ? 1 + Math.floor(Math.random() * stuCap(o)) : Math.min(lv, stuCap(o));   // étoiles cachées (l'enseignant, 07.11.2026) : une difficulté au hasard parmi celles que l'exercice permet
+  const l = STU.rnd ? (STU.sd ? sdPick(o) : 1 + Math.floor(Math.random() * stuCap(o))) : Math.min(lv, stuCap(o));   // étoiles cachées (l'enseignant, 07.11.2026) : une difficulté au hasard parmi celles que l'exercice permet
   return newPair(o, l, true, x => (!only || only(x)) && !isNoStar(x) && stuCap(x) >= l, () => l, 11);
 }
 function stuUI(){                    // après chaque affichage d'une question : boutons ★ permis, difficulté choisie
@@ -13255,10 +13430,11 @@ $('bNew').onclick = e => { e.currentTarget.blur(); if (STU) stuReset(); else new
 let LNK = null;                      // {P : le lien (d'après les exercices cochés), off : exercices décochés dans la fenêtre, E : le lien sans eux, url, qr}
 function linkOpen(){                 // les exercices cochés ; rien de coché : la fenêtre s'ouvre quand même, pour coller un lien
   const none = !objectives(draft).length, w = none ? '' : checkDraft(draft); if (w){ $('setWarn').textContent = w; return; }
-  LNK = {P: none ? null : pFromState(draft, '', {}), off: new Set()}; $('lPaste').value = ''; $('lPw').textContent = ''; $('lNote').textContent = '';
+  LNK = {P: none ? null : pFromState(draft, '', {}), off: new Set(), voff: new Set()}; $('lPaste').value = ''; $('lPw').textContent = ''; $('lNote').textContent = '';
   linkShow(); $('oLink').classList.add('open'); if (!none) linkCheck();
 }
 function linkShow(){                 // la fenêtre d'après LNK.P (null : aucun exercice, seulement « Reprendre un lien »)
+  if (!IP) ipInit();
   const P = LNK.P; document.querySelector('#oLink .lbox').classList.toggle('lempty', !P); $('lMsg').textContent = '';
   if (!P){ $('lEx').innerHTML = '<p class="lnone">Aucun exercice coché : coche des exercices dans les onglets, ou colle ci-dessous un lien élèves ou l\'image de son code QR.</p>'; return; }
   $('lTitle').value = P.t; $('lFr').checked = !!P.fr; $('lRnd').checked = !!P.rnd; linkRows(); linkDraw();
@@ -13274,8 +13450,8 @@ function linkPaste(){                // « Reprendre un lien » : un lien élèv
   const P = linkParse(v), vm = /\/qpc\/(\d{4}-\d{2}-\d{2})\//.exec(v);
   if (!P || !pObjs(P).length){ $('lPw').textContent = vm && vm[1] > QPC_VERSION ? 'Ce lien a été fait avec une version plus récente de la page (' + verFr(vm[1]) +
     ') : prends la dernière version de « Questions pour des champions ».' : 'Ce n\'est pas un lien de « Questions pour des champions ».'; return; }
-  pToDraft(P); $('setWarn').textContent = ''; syncUI();
-  LNK.P = Object.assign(pFromState(draft, P.t, P.cap), {fr: !!P.fr, rnd: !!P.rnd}); LNK.off = new Set(); $('lPaste').value = ''; $('lPw').textContent = '';
+  pToDraft(P); $('setWarn').textContent = ''; syncUI(); lnkTakeWS(P);
+  LNK.P = Object.assign(pFromState(draft, P.t, P.cap), {fr: !!P.fr, rnd: !!P.rnd}); LNK.off = new Set(); LNK.voff = vidOff(P); $('lPaste').value = ''; $('lPw').textContent = '';
   linkShow(); linkCheck(); $('lNote').textContent = linkNote(P);
 }
 // un lien d'une autre version de la page (l'enseignant, 07.11.2026 : « si on copie colle un ancien code QR dans une version plus récente de qpc, ça
@@ -13299,7 +13475,7 @@ const TNAME = {"m+": "addition en calcul mental", "m−": "soustraction en calcu
 const blTitle = bl => { const n = BLOCKS[bl].name.replace(/<[^>]+>/g, ''); return bl === 'pyt' || bl === 'tha' ? n : n.charAt(0).toLowerCase() + n.slice(1); };
 function linkSugT(){                // le titre proposé d'après les exercices cochés de la fenêtre
   if (!LNK || !LNK.P) return '';
-  const g = new Map(); pObjs(LNK.P).filter(o => !LNK.off.has(o.id)).forEach(o => { if (!g.has(o.bl)) g.set(o.bl, []); g.get(o.bl).push(o); });
+  const g = new Map(); pObjs(LNK.P).filter(o => !LNK.off.has(o.id) && !(LNK.zero && LNK.zero.has(o.id))).forEach(o => { if (!g.has(o.bl)) g.set(o.bl, []); g.get(o.bl).push(o); });
   const ps = [...g].map(([bl, os]) => os.length > 1 || !BLOCKS[bl].items.length ? blTitle(bl)
     : TNAME[os[0].id] || stuLabel(os[0], false).replace(/<svg.*?<\/svg>/g, '√').replace(/<[^>]+>/g, ''));
   return !ps.length ? '' : ps.length > 2 ? 'Révisions' : 'Renfort ' + ps.join(' et ');
@@ -13313,26 +13489,39 @@ const rateHTML = (v, id) => '<span class="lrate" data-o="' + id + '">' + [1, 2, 
   ' title="Jusqu\'à ' + '★'.repeat(l) + '" aria-label="Jusqu\'à ' + l + (l > 1 ? ' étoiles' : ' étoile') + '">★</button>').join('') + '</span>';
 function linkRows(){
   const P = LNK.P, O = pObjs(P), st = O.filter(o => !isNoStar(o)), cv = o => P.cap[o.id] || 4, same = st.length && st.every(o => cv(o) === cv(st[0]));
-  $('lEx').innerHTML = '<div class="lexh">Exercices</div><div class="lexh">Étoiles permises</div>' +
-    (st.length > 1 ? '<div class="lexa">Tous</div><div>' + rateHTML(same ? cv(st[0]) : 0, '*') + '</div>' : '') +
+  const EO = pObjs(linkEff()), v = shView(draft, EO), zero = o => EO.length > 1 && !(v[o.id] > 0);      // n° 33 : part de chaque exercice (0 % : pas dans le lien)
+  const hv = O.some(o => VID_OF[o.id]); $('lEx').classList.toggle('lexv', hv);       // n° 34 : colonne « Vidéo » (cochée par défaut)
+  $('lEx').innerHTML = '<div class="lexh">Exercices</div><div class="lexh">Étoiles permises</div>' + (hv ? '<div class="lexh lvh">Vidéo</div>' : '') +
+    (st.length > 1 ? '<div class="lexa">Tous</div><div>' + rateHTML(same ? cv(st[0]) : 0, '*') + '</div>' + (hv ? '<div></div>' : '') : '') +
     O.map(o => { const off = LNK.off.has(o.id) ? ' loff' : '';           // case : l'exercice dans le lien ou non (l'enseignant, 07.11.2026)
-      return '<label class="lexn' + off + '"><input type="checkbox" data-x="' + o.id + '"' + (off ? '' : ' checked') + '><span>' + stuLabel(o, true) + '</span></label><div class="lexr' + off + '">' +
-        (isNoStar(o) ? '<span class="lns">sans étoiles</span>' : rateHTML(cv(o), o.id)) + '</div>'; }).join('');
+      return '<label class="lexn' + off + (!off && zero(o) ? ' lzero' : '') + '"><input type="checkbox" data-x="' + o.id + '"' + (off ? '' : ' checked') + '><span>' + stuLabel(o, true) + '</span></label><div class="lexr' + off + '">' +
+        (isNoStar(o) ? '<span class="lns">sans étoiles</span>' : rateHTML(cv(o), o.id)) + '</div>' + (hv ? lvidHTML(o, !!off || zero(o)) : '') +
+        (P.rnd && !off && !zero(o) && !isNoStar(o) && cv(o) >= 2 ? '<div class="lsd"><span class="lsdl">Étoiles :</span>' + ipBarHTML('st:' + o.id, lnkDist(o.id, cv(o)), 0) + '</div>' : ''); }).join('') +
+    (EO.length > 1 ? '<div class="lshw"><div class="lshl">Part de chaque exercice <span class="iphint">(glisse les séparations ; la même en classe et sur la feuille)</span></div>' +
+      ipBarHTML('lsh', EO.map(o => v[o.id]), 0, EO.map(shName)) + '</div>' : '');
   mathify($('lEx')); linkSug();
+  const bars = () => $('lEx').querySelectorAll('.ipbar').forEach(ipBarLabels); bars(); requestAnimationFrame(bars);
 }
 function qrSVG(q){ const n = q.size + 8; let d = '';
   q.mods.forEach((r, y) => r.forEach((b, x) => { if (b) d += 'M' + (x + 4) + ' ' + (y + 4) + 'h1v1h-1z'; }));
   return '<svg viewBox="0 0 ' + n + ' ' + n + '" shape-rendering="crispEdges" role="img" aria-label="QR code du lien"><rect width="' + n + '" height="' + n + '" fill="#fff"/><path d="' + d + '" fill="#000"/></svg>'; }
-function linkEff(){                 // le lien sans les exercices décochés dans la fenêtre (ni ceux qu'un exercice décoché remplaçait : PRIO_ING)
-  const P = LNK.P; if (!LNK.off.size) return P;
+function linkEff(off){              // le lien sans les exercices décochés dans la fenêtre (ni ceux qu'un exercice décoché remplaçait : PRIO_ING) ; off : d'autres exercices à enlever
+  off = off || LNK.off; const P = LNK.P; if (!off.size) return P;
   const s = stateFromP(P), vis = new Set(pObjs(P).map(o => o.id)), drop = id => { if (ITEM_BLOCK[id]) s.it[id] = false; else if (BLOCKS[id]) s.on[id] = false; };
-  LNK.off.forEach(drop); objectives(s).forEach(o => { if (!vis.has(o.id)) drop(o.id); });
+  off.forEach(drop); objectives(s).forEach(o => { if (!vis.has(o.id)) drop(o.id); });
   return Object.assign(pFromState(s, P.t, P.cap), {fr: P.fr, rnd: P.rnd}); }
-function linkDraw(){
-  const E = LNK.E = linkEff(), ok = pObjs(E).length > 0;
+function linkDraw(){ linkUrlDraw(); ipSync(); }
+function linkUrlDraw(){             // le lien et son QR code (n° 33 : avec la part de chaque exercice ; à 0 %, l'exercice n'est pas dans le lien)
+  const E = LNK.E = linkEff(), O = pObjs(E), ok = O.length > 0;
   ['lCopyImg', 'lPng', 'lCopy', 'lTry'].forEach(id => $(id).disabled = !ok);
-  if (!ok){ LNK.url = ''; LNK.qr = null; $('lQr').innerHTML = '<p class="lnone lqn">Coche au moins un exercice.</p>'; $('lUrl').textContent = ''; ipSync(); return; }
-  LNK.url = linkURL(E); LNK.qr = QR.make(LNK.url, 'M'); $('lQr').innerHTML = qrSVG(LNK.qr); $('lUrl').textContent = LNK.url; ipSync(); }
+  if (!ok){ LNK.url = ''; LNK.qr = null; LNK.U = null; LNK.zero = null; $('lQr').innerHTML = '<p class="lnone lqn">Coche au moins un exercice.</p>'; $('lUrl').textContent = ''; return; }
+  const v = shView(draft, O), Z = O.length > 1 ? O.filter(o => !(v[o.id] > 0)).map(o => o.id) : [];
+  LNK.zero = new Set(Z);
+  const U = LNK.U = Object.assign({}, Z.length ? linkEff(new Set([...LNK.off, ...Z])) : E), UO = pObjs(U);
+  if (UO.length > 1){ const n = shLR(UO.map(o => v[o.id]), 100); U.w = {}; UO.forEach((o, i) => U.w[o.id] = Math.max(1, n[i])); }
+  if (U.rnd){ U.sd = {}; UO.forEach(o => { const cap = (U.cap || {})[o.id] || 4; if (!isNoStar(o) && cap >= 2) U.sd[o.id] = shLR(lnkDist(o.id, cap), 100); }); }
+  U.vid = UO.filter(o => VID_OF[o.id] && !LNK.voff.has(o.id)).map(o => o.id);      // n° 34 : vidéos sur la liste de l'élève
+  LNK.url = linkURL(U); LNK.qr = QR.make(LNK.url, 'M'); $('lQr').innerHTML = qrSVG(LNK.qr); $('lUrl').textContent = LNK.url; linkSug(); }
 function linkCheck(){                // ce lien marche-t-il déjà ? (la version de cette page en ligne, sinon la dernière version en ligne) ; la place du
                                      // message est réservée (.lmsg) : la fenêtre ne grandit pas quand la réponse arrive (l'enseignant, 07.11.2026)
   const t = Date.now(), img = (u, ok, ko) => { const i = new Image(); i.onload = ok; i.onerror = ko; i.src = u + '?' + t; }, say = m => { if (LNK) $('lMsg').textContent = m; };
@@ -13362,14 +13551,15 @@ function copyOld(t){ const a = document.createElement('textarea'); a.value = t; 
   let ok = false; try { ok = document.execCommand('copy'); } catch (e) {} a.remove(); return ok; }
 const copyText = t => navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(t).then(() => true, () => copyOld(t)) : Promise.resolve(copyOld(t));
 const fileSafe = s => String(s || '').replace(/[\\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 60);
-$('lEx').onchange = e => { const x = e.target.closest('input[data-x]'); if (!x || !LNK) return;
+$('lEx').onchange = e => { const y = e.target.closest('input[data-v]'); if (y && LNK){ if (y.checked) LNK.voff.delete(y.dataset.v); else LNK.voff.add(y.dataset.v); linkUrlDraw(); return; }   // n° 34
+  const x = e.target.closest('input[data-x]'); if (!x || !LNK) return;
   if (x.checked) LNK.off.delete(x.dataset.x); else LNK.off.add(x.dataset.x); linkRows(); linkDraw(); };
 $('lEx').onclick = e => { const b = e.target.closest('.lrate button'); if (!b || !LNK) return;
   const id = b.parentNode.dataset.o, v = Number(b.dataset.v), P = LNK.P, set = oid => { if (v >= 4) delete P.cap[oid]; else P.cap[oid] = v; };
   if (id === '*') pObjs(P).filter(o => !isNoStar(o)).forEach(o => set(o.id)); else set(id);
   linkRows(); linkDraw(); };
 $('lFr').onchange = () => { if (!LNK) return; LNK.P.fr = $('lFr').checked; linkDraw(); };
-$('lRnd').onchange = () => { if (!LNK) return; LNK.P.rnd = $('lRnd').checked; linkDraw(); };
+$('lRnd').onchange = () => { if (!LNK) return; LNK.P.rnd = $('lRnd').checked; linkRows(); linkDraw(); };   // n° 33 : les barres d'étoiles s'affichent
 $('lTitle').addEventListener('input', () => { if (!LNK) return; LNK.P.t = $('lTitle').value.trim(); linkDraw(); linkSug(); });
 $('lSug').onclick = e => { e.preventDefault(); if (!LNK || !LNK.P || !LNK.sug) return; const i = $('lTitle');   // « Choisir ce titre ? » : le titre proposé dans la case, à modifier si besoin
   i.value = LNK.sug; LNK.P.t = LNK.sug; linkDraw(); linkSug(); i.focus(); i.setSelectionRange(i.value.length, i.value.length); };
@@ -13404,7 +13594,14 @@ $('lCopyImg').onclick = () => { try { navigator.clipboard.write([new ClipboardIt
   catch (e) { $('lMsg').textContent = 'Copie de l\'image impossible ici : utilise « Enregistrer en PNG ».'; } };
 $('lPng').onclick = () => qrPNG(LNK.qr).then(b => { const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'QR ' + (fileSafe(LNK.P.t) || 'lien élèves') + '.png';
   document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 3000); });
-$('lTry').onclick = () => { if (LNK.url) window.open(location.href.split('#')[0] + '#' + linkFrag(LNK.E), '_blank'); };
+// « Essayer » : le mode élève de ce fichier, dans un nouvel onglet ; téléphone et tablette (n° 32, l'enseignant : « sur mon tél dans le qpc enseignant
+// [...] je clique sur essayer, ça me met une page sur chrome : "impossible d'accéder à votre fichier" ») : un fichier ouvert sur le téléphone ne s'ouvre
+// pas dans un nouvel onglet (Chrome Android) ; dans le même onglet (le fragment change, la page repart en mode élève), la flèche retour du téléphone
+// ramène au mode enseignant (exercices cochés gardés : sessionStorage)
+const TRY_SAME = () => location.protocol === 'content:' || !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
+$('lTry').onclick = () => { if (!LNK.url) return; const h = '#' + linkFrag(LNK.U);
+  if (TRY_SAME()){ location.hash = h; return; }
+  window.open(location.href.split('#')[0] + h, '_blank'); };
 $('bLink').onclick = () => linkOpen();
 
 /* =====================================================================
@@ -13612,9 +13809,9 @@ const ipUName = u => u.mix ? ipBlName(u.bl) : ipName(u.o);
 function ipQsU(u, n){         // les n questions d'un exercice de la feuille ; bloc mélangé : ses exercices à parts égales, puis par étoiles, et dans
   // chaque niveau les exercices à tour de rôle, répartis régulièrement ; sans étoiles : leurs sortes (1 à 4) comme des niveaux
   if (!u.mix) return ipQs(u.o, n);
-  const k = u.os.length, L = u.os.map((o, i) => ipQs(o, Math.floor(n / k) + (i < n % k ? 1 : 0)));
+  const k = u.os.length, sw = u.os.map(o => IP.share[o.id] || 0), pos = sw.some(x => x > 0), N0 = shLR(pos ? sw : sw.map(() => 1), n), L = u.os.map((o, i) => ipQs(o, N0[i]));   // n° 33 : selon la part de chaque exercice
   for (let t = 0, miss = n - L.reduce((a, q) => a + q.length, 0); miss > 0 && t < 3; t++)     // un exercice sans assez de questions : les autres en donnent plus
-    u.os.forEach((o, i) => { if (miss <= 0) return; const q = ipQs(o, L[i].length + miss); if (q.length > L[i].length){ miss -= q.length - L[i].length; L[i] = q; } });
+    u.os.forEach((o, i) => { if (miss <= 0 || (pos && !(sw[i] > 0))) return; const q = ipQs(o, L[i].length + miss); if (q.length > L[i].length){ miss -= q.length - L[i].length; L[i] = q; } });
   const out = []; let last = -1;          // dans un niveau : chaque exercice réparti régulièrement (place (j + ½) : n), à égalité le suivant du dernier placé
   for (let l = 1; l <= 4; l++){ const T = [];
     L.forEach((q, i) => { const R = q.filter(x => x.level === l); R.forEach((x, j) => T.push([(j + .5) / R.length, (i - last - 1 + k) % k, x, i])); });
@@ -13784,18 +13981,22 @@ function ipUnprint(){         // après l'impression : les pages reviennent dans
 }
 
 /* ---------- réglages de la fenêtre ---------- */
-function ipBarHTML(kind, V, min){   // barre à glisser : un morceau par valeur (somme 100), séparations entre eux (n° 32 : plus de poignée ★★★★, l'enseignant :
+function ipBarHTML(kind, V, min, names){   // barre à glisser : un morceau par valeur (somme 100), séparations entre eux (n° 32 : plus de poignée ★★★★, l'enseignant :
   // « le truc que t'as fait pour 4 étoiles est vraiment pas bon .. fais 5% de 4 étoiles par défaut » ; ★★★★ ramené à 0 : sa séparation au bord droit,
   // et un clic près du bord la ramène)
-  let x = 0; const segs = V.map((v, i) => { const s = '<span class="ipseg" data-i="' + i + '" style="left:' + x + '%;width:' + v + '%;background:' +
-    (kind === 'share' ? IP_SEGC[i % IP_SEGC.length] : IP_STC[i]) + '"></span>'; x += v; return s; }).join('');
+  let x = 0; const segs = V.map((v, i) => { const s = '<span class="ipseg" data-i="' + i + '"' + (names ? ' data-n="' + ipEsc(names[i]) + '"' : '') + ' style="left:' + x + '%;width:' + v + '%;background:' +
+    (ipIsSh(kind) ? IP_SEGC[i % IP_SEGC.length] : IP_STC[i]) + '"></span>'; x += v; return s; }).join('');
   x = 0; const hs = V.slice(0, -1).map(v => '<span class="iph" style="left:' + (x += v) + '%"></span>').join('');
-  return '<div class="ipbar' + (kind === 'share' ? '' : ' ipbs') + '" data-k="' + kind + '" data-min="' + (min || 0) + '" title="Glisse les séparations, ou clique dans un morceau">' + segs + hs + '</div>';
+  return '<div class="ipbar' + (ipIsSh(kind) ? '' : ' ipbs') + '" data-k="' + kind + '" data-min="' + (min || 0) + '" title="Glisse les séparations, ou clique dans un morceau">' + segs + hs + '</div>';
 }
 function ipBarLabels(bar){    // le texte de chaque morceau, d'après sa largeur à l'écran
   const W = bar.getBoundingClientRect().width, kind = bar.dataset.k, VV = ipBarVals(bar); let nn = 0; const NB = VV.map(v => v > 0 ? ++nn : 0);
-  bar.querySelectorAll('.ipseg').forEach(s => { const i = Number(s.dataset.i), v = parseFloat(s.style.width), px = W * v / 100, n = Math.round(v);
+  const RR = ipIsSh(kind) ? shLR(VV, 100) : null;      // n° 34 : parts arrondies qui font 100 % (comme les lignes de « Proportions » et &p=)
+  bar.querySelectorAll('.ipseg').forEach(s => { const i = Number(s.dataset.i), v = parseFloat(s.style.width), px = W * v / 100, n = RR ? RR[i] : Math.round(v);
     const st = '<span class="stars">' + '★'.repeat(i + 1) + '</span>';
+    if (kind === 'lsh' || kind === 'cls'){ const nm = (kind === 'cls' ? (i + 1) + ') ' : '') + (s.dataset.n || '');     // n° 33 : le nom de l'exercice, puis sa part ; n° 34 : son numéro (fenêtre « Proportions »)
+      s.innerHTML = px >= 96 && nm ? '<span class="ipsn">' + ipEsc(nm) + '</span><span class="ipsp">' + n + ' %</span>' : kind === 'cls' ? (px >= 56 ? (i + 1) + ') ' + n + ' %' : px >= 24 ? (i + 1) + ')' : '') : px >= 40 ? n + ' %' : px >= 20 ? String(n) : '';
+      s.title = nm + ' : ' + n + ' %'; return; }
     s.innerHTML = kind === 'share' ? (px >= 64 ? NB[i] + ') ' + n + ' %' : px >= 40 ? n + ' %' : px >= 20 ? String(n) : '')
       : (px >= 38 + 9 * (i + 1) ? st + '<span>' + n + ' %</span>' : px >= 34 ? '<span>' + n + ' %</span>' : px >= 19 ? '<span>' + n + '</span>' : '');
     s.title = (kind === 'share' ? (NB[i] ? 'Exercice ' + NB[i] + ' : ' : 'Pas sur la feuille : ') : '★'.repeat(i + 1) + ' : ') + n + ' %'; });
@@ -13805,16 +14006,9 @@ function ipBarSet(bar, V){
   let x = 0; bar.querySelectorAll('.ipseg').forEach((s, i) => { s.style.left = x + '%'; s.style.width = V[i] + '%'; x += V[i]; });
   x = 0; bar.querySelectorAll('.iph').forEach((h, i) => h.style.left = (x += V[i]) + '%'); ipBarLabels(bar);
 }
-function ipShares(){          // parts des exercices de la feuille (somme 100) : gardées pour ceux qui restent ; bloc mélangé : la somme des parts de ses
-  // exercices ; exercice d'un bloc qu'on ne mélange plus : sa part du bloc ; nouvel exercice : la part moyenne. Une part peut valoir 0 (n° 32,
-  // l'enseignant : « fais qu'on peut aller jusqu'à 0% (enlevant la question) ») : l'exercice n'est pas sur la feuille
-  const U = IP.U, pv = IP.share, has = x => typeof x === 'number' && isFinite(x) && x >= 0;
-  const v = U.map(u => has(pv[u.id]) ? pv[u.id] : u.mix ? (u.os.some(o => has(pv[o.id])) ? u.os.reduce((a, o) => a + (has(pv[o.id]) ? pv[o.id] : 0), 0) : null)
-    : has(pv['@' + u.bl]) ? pv['@' + u.bl] / U.filter(x => x.bl === u.bl).length : null);
-  const ok = v.filter(x => x != null), avg = ok.length ? ok.reduce((a, b) => a + b, 0) / ok.length : 100 / U.length;
-  let w = v.map(x => x != null ? x : avg), t = w.reduce((a, b) => a + b, 0);
-  if (!(t > 0)){ w = U.map(() => 1); t = U.length; }
-  const sh = {}; U.forEach((u, i) => sh[u.id] = w[i] * 100 / t); U.forEach(u => { if (u.mix) u.os.forEach(o => { if (has(pv[o.id])) sh[o.id] = pv[o.id]; }); }); IP.share = sh;
+function ipShares(){          // parts des exercices de la feuille (somme 100) : celles du lien et de la classe (n° 33, barres jumelées : draft.share) ;
+  // bloc mélangé : la somme des parts de ses exercices. Une part peut valoir 0 (n° 32) : l'exercice n'est pas sur la feuille
+  const v = shView(draft, IP.O), sh = {}; IP.O.forEach(o => sh[o.id] = v[o.id]); IP.U.forEach(u => sh[u.id] = u.os.reduce((a, o) => a + (v[o.id] || 0), 0)); IP.share = sh;
 }
 const ipOn = u => IP.U.length < 2 || IP.share[u.id] > 0;          // l'exercice est sur la feuille (part plus grande que 0)
 function ipNums(){ const n = {}; let k = 0; IP.U.forEach(u => n[u.id] = ipOn(u) ? ++k : 0); return n; }   // numéros sur la feuille, sans trou
@@ -13834,7 +14028,7 @@ function ipUI(){              // la section de la fenêtre : options, barre des 
     if (many(u.bl) && !done[u.bl]){ done[u.bl] = 1;          // case « mélanger » (QCM du 09.11.2026 : une par bloc, au moins deux exercices du bloc)
       h += '<label class="ipmx' + (u.mix ? ' on' : '') + (u.mix && !ipOn(u) ? ' ipoff' : '') + '" title="Un seul exercice sur la feuille : les questions de ces exercices mélangées, avec le nom du bloc"><input type="checkbox" data-ipmix="' + u.bl + '"' + (u.mix ? ' checked' : '') + '> ' +
         (u.mix ? '<span>' + (NUM[u.id] ? '<b>' + NUM[u.id] + ')</b> ' : '') + ipBlName(u.bl) + ' <span class="ipmxt">(exercices mélangés)</span><span class="ipxq" data-q="' + u.id + '"></span></span>' : '<span>Mélanger les exercices de « ' + ipBlName(u.bl) + ' »</span>') + '</label>'; }
-    return h + (u.mix ? u.os.map(o => row(o, 0, !ipOn(u))).join('') : NUM[u.id] ? row(u.o, NUM[u.id]) : row(u.o, 0, true).replace('ipxr ipxm', 'ipxr')); }).join('');
+    return h + (u.mix ? u.os.map(o => row(o, 0, !ipOn(u) || !(IP.share[o.id] > 0))).join('') : NUM[u.id] ? row(u.o, NUM[u.id]) : row(u.o, 0, true).replace('ipxr ipxm', 'ipxr')); }).join('');
   mathify($('ipEx')); document.querySelectorAll('#ipSec .ipbar').forEach(ipBarLabels);
 }
 function ipSync(now){ clearTimeout(ipSync.t); if (now) ipRefresh(); else ipSync.t = setTimeout(ipRefresh, 140); }
@@ -13848,7 +14042,7 @@ function ipRefresh(live){     // après chaque changement de la fenêtre : régl
   const sig = JSON.stringify([E.num, E.opt]);
   if (IP.sig !== sig){ IP.sig = sig; ipReset(); }
   IP.E = E; IP.O = O; IP.U = ipUnits(); IP.S = Object.assign(stateFromP(E), {two: false, twoSame: false});
-  if (!live){ ipShares(); ipUI(); }
+  ipShares(); if (!live) ipUI();
   let L = null;
   try { L = ipFit(); } catch (e) { console.error('feuille', e); $('ipMsg').textContent = 'La feuille n\'a pas pu être préparée.'; return; }
   IP.L = L; ipShow(L);
@@ -13886,9 +14080,9 @@ function ipBarMove(D, cx){
   const V = D.V, h = D.h, a = V.slice(0, h).reduce((s, v) => s + v, 0), b = a + V[h] + V[h + 1];
   let p = Math.round((cx - D.r.left) / D.r.width * 100);
   p = Math.max(a + D.min, Math.min(b - D.min, p));
-  V[h] = p - a; V[h + 1] = b - p; D.moved = true; ipBarSet(D.bar, V); ipLive();
+  V[h] = p - a; V[h + 1] = b - p; [h, h + 1].forEach(j => { if (Math.abs(V[j]) < .01) V[j] = 0; }); D.moved = true; ipBarSet(D.bar, V); ipLive();   // n° 33 : 0 exact (sinon 1e-14 : l'exercice restait dans le lien)
 }
-$('ipSec').addEventListener('pointerdown', e => {
+function ipBarDown(e){
   const bar = e.target.closest('.ipbar'); if (!bar || (e.button || 0) > 0) return;
   const r = bar.getBoundingClientRect(), V = ipBarVals(bar), x = (e.clientX - r.left) / r.width * 100;
   if (V.length < 2) return;
@@ -13899,37 +14093,153 @@ $('ipSec').addEventListener('pointerdown', e => {
   if (click){ if (IPD.h === null) IPD.h = x < pos[cand[0]] ? Math.min(...cand) : Math.max(...cand); ipBarMove(IPD, e.clientX); }
   try { bar.setPointerCapture(e.pointerId); } catch (er) {}
   e.preventDefault();
-});
-$('ipSec').addEventListener('pointermove', e => {
+}
+function ipBarPMove(e){
   const D = IPD; if (!D) return;
   const dx = e.clientX - D.x0; if (D.h === null){ if (Math.abs(dx) < 2) return; D.h = dx < 0 ? Math.min(...D.cand) : Math.max(...D.cand); }
   ipBarMove(D, e.clientX);
-});
-function ipBarKeep(D){         // les valeurs de la barre dans l'état de la feuille (barre des exercices : un morceau par exercice de la feuille, bloc mélangé
-  // compris ; avant le n° 32, IP.O : décalé avec un bloc mélangé)
-  const k = D.bar.dataset.k, V = D.V;
-  if (k === 'share') IP.U.forEach((u, i) => { IP.share[u.id] = V[i]; if (u.mix) u.os.forEach(o => IP.share[o.id] = V[i] / u.os.length); });   // démélangé : ses exercices se partagent sa part
-  else { const id = k.slice(3), d = [0, 0, 0, 0]; V.forEach((v, i) => d[i] = v); ipEx(id).d = d; }
+}
+function ipBarKeep(D){         // les valeurs d'une barre dans l'état : parts (n° 33 : draft.share, une part par exercice, pour les trois barres jumelées) ou étoiles
+  const k = D.bar.dataset.k, V = D.V.map(x => x < .01 ? 0 : x);
+  if (k === 'cls') shWrite(draft, objectives(draft), V);                // bas des réglages : les exercices cochés
+  else if (k === 'lsh') shWrite(draft, pObjs(LNK.E), V);                // lien : ses exercices (sans ceux décochés dans la fenêtre)
+  else if (k === 'share'){ const v = shView(draft, IP.O), nv = {};      // feuille : un morceau par exercice de la feuille ; bloc mélangé : ses exercices gardent leurs proportions
+    IP.U.forEach((u, i) => { if (!u.mix){ nv[u.o.id] = V[i]; return; } const t = u.os.reduce((a, o) => a + v[o.id], 0); u.os.forEach(o => nv[o.id] = t > 0 ? V[i] * v[o.id] / t : V[i] / u.os.length); });
+    shWrite(draft, IP.O, IP.O.map(o => nv[o.id])); }
+  else { const id = k.slice(3), d = [0, 0, 0, 0]; V.forEach((v, i) => d[i] = v); ipEx(id).d = d; }   // étoiles : la même barre dans la feuille et dans le lien
 }
 // pendant le glissement (n° 32, l'enseignant : « quand on fait glisser les réglettes (mais sans les lacher), tu pourrais actualiser en temps réel (ou presque
 // si c'est trop couteux en performance) ») : feuille et nombres recalculés sans refaire la liste (la barre qu'on tire reste) ; un calcul à la fois, le
-// suivant au plus tôt après une pause aussi longue que le dernier calcul (16 à 300 ms)
+// suivant au plus tôt après une pause aussi longue que le dernier calcul (16 à 300 ms) ; n° 33 : aussi les barres jumelles, le lien et son QR code
 function ipLive(){
   ipLive.want = true; if (ipLive.t) return;
-  const run = () => { ipLive.want = false; const D = IPD; if (!D || !IP){ ipLive.t = null; return; }
-    const t0 = performance.now(); ipBarKeep(D); try { ipRefresh(true); } catch (e) { console.error('feuille', e); }
+  const run = () => { ipLive.want = false; const D = IPD; if (!D){ ipLive.t = null; return; }
+    const t0 = performance.now(); try { ipBarKeep(D); ipBarAfter(D, true); } catch (e) { console.error('barre', e); }
     const dt = performance.now() - t0; ipLive.t = ipLive.want ? setTimeout(run, Math.min(300, Math.max(16, dt))) : null; };
   ipLive.t = setTimeout(run, 16);
 }
 function ipBarEnd(){
-  const D = IPD; IPD = null; clearTimeout(ipLive.t); ipLive.t = null; ipLive.want = false; if (!D || !D.moved || !IP) return;
+  const D = IPD; IPD = null; clearTimeout(ipLive.t); ipLive.t = null; ipLive.want = false; if (!D || !D.moved) return;
   FD_CLICK = true; setTimeout(() => { FD_CLICK = false; }, 400);       // relâché hors de la fenêtre : elle ne se ferme pas
-  ipBarKeep(D);
-  ipSync(true);
+  ipBarKeep(D); ipBarAfter(D, false);
 }
-$('ipSec').addEventListener('pointerup', ipBarEnd);
-$('ipSec').addEventListener('pointercancel', ipBarEnd);
-window.addEventListener('resize', () => { ipScale(); document.querySelectorAll('#ipSec .ipbar').forEach(ipBarLabels); });
+['ipSec', 'lEx', 'pBar'].forEach(id => { const el = $(id); el.addEventListener('pointerdown', ipBarDown); el.addEventListener('pointermove', ipBarPMove);
+  el.addEventListener('pointerup', ipBarEnd); el.addEventListener('pointercancel', ipBarEnd); });
+window.addEventListener('resize', () => { ipScale(); document.querySelectorAll('#oLink .ipbar, #pBar .ipbar').forEach(ipBarLabels); });
+
+/* ---------- vidéos (n° 34, 10.11.2026) ----------
+   L'enseignant : « J'aimerais qu'on ajoute la possibilité de montrer les vidéos via questions pour des champions. L'idée serait d'avoir une coche
+   cochée par défaut quand on choisit un exercice lié à une vidéo, dans la fenêtre de liens élèves. Les vidéos sont cliquables en suivant le code QR
+   par les élèves, dans le menu d'accueil (là où ils choisissent les exercices). Mets aussi dans le bloc de choix de questions (pour enseignants) un
+   petit logo (pas grand, mais juste visible) qui redirige à la vidéo (par exemple pour cercle circonscrit, juste à côté de la coche pour cocher
+   l'exercice […]). Il faut confirmer pour lancer la vidéo. » QCM : en ligne seulement (« Internet suffit ») ; ces 10 vidéos, reliées telles quelles ;
+   élèves : seulement sur la liste d'accueil.
+   Les vidéos sont en ligne une seule fois, pour toutes les versions de la page : QPC_BASE + 'videos/' + f + '.mp4' (dépôt outils-maths/qpc,
+   dossier videos/). Ajouter une vidéo : le fichier dans videos/ (nom en minuscules, sans accents ni espaces, jamais renommé ensuite), puis une
+   ligne ici (f : nom du fichier sans .mp4 ; t : titre ; d : durée en secondes ; x : les exercices, par leur identifiant). Un exercice : une vidéo.
+   Lien : &v= un chiffre par exercice de x (1 : sa vidéo sur la liste de l'élève), seulement si un exercice du lien a une vidéo. */
+const VIDEOS = [
+  {f: 'mediatrice-segment', t: 'Médiatrice d’un segment', d: 88, x: ['g_mtr']},
+  {f: 'bissectrice-angle', t: 'Bissectrice d’un angle', d: 98, x: ['g_bis']},
+  {f: 'hauteur-triangle', t: 'Hauteur d’un triangle', d: 201, x: ['g_hau']},
+  {f: 'cercle-circonscrit', t: 'Cercle circonscrit à un triangle', d: 86, x: ['g_cci']},
+  {f: 'cercle-inscrit', t: 'Cercle inscrit dans un triangle', d: 98, x: ['g_cin']},
+  {f: 'mesurer-angle', t: 'Mesurer un angle aigu ou obtus', d: 200, x: ['g_type']},
+  {f: 'somme-angles-triangle', t: 'Somme des angles d’un triangle', d: 279, x: ['g_tri']},
+  {f: 'fractions-addition-soustraction', t: 'Additionner et soustraire des fractions', d: 248, x: ['f+']},
+  {f: 'fractions-multiplication', t: 'Multiplier des fractions', d: 219, x: ['f∙']},
+  {f: 'fractions-division', t: 'Diviser des fractions', d: 201, x: ['f:']},
+];
+const VID_OF = {}; VIDEOS.forEach(v => v.x.forEach(id => { if (!VID_OF[id]) VID_OF[id] = v; }));
+const vidURL = v => QPC_BASE + 'videos/' + v.f + '.mp4';
+const vidDur = d => d < 60 ? d + ' s' : Math.floor(d / 60) + ' min' + (d % 60 ? ' ' + d % 60 + ' s' : '');
+const VSVG = '<svg class="vsvg" viewBox="0 0 20 14" aria-hidden="true"><rect x="1" y="1" width="18" height="12" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 4v6l5.2-3z" fill="currentColor"/></svg>';
+function vicoHTML(id){               // réglages : le petit logo, juste à côté de la coche de l'exercice
+  const v = VID_OF[id]; return v ? '<button type="button" class="vico" data-vid="' + id + '" title="Vidéo : ' + v.t + ' (' + vidDur(v.d) + ')" aria-label="Vidéo : ' + v.t + '">' + VSVG + '</button>' : '';
+}
+function lvidHTML(o, dis){           // fenêtre « Lien/impression élèves » : la vidéo sur la liste de l'élève (cochée par défaut)
+  const v = VID_OF[o.id]; if (!v) return '<div></div>';
+  return '<label class="lvid' + (dis ? ' loff' : '') + '" title="Vidéo « ' + v.t + ' » (' + vidDur(v.d) + ') sur la liste de l\'élève"><input type="checkbox" data-v="' + o.id + '"' +
+    (LNK.voff.has(o.id) ? '' : ' checked') + (dis ? ' disabled' : '') + '>' + VSVG + '</label>';
+}
+function vidFrag(P, ids){            // &v= : un chiffre par exercice de x (vidéo sur la liste de l'élève) ; seulement pour un lien qui a des vidéos possibles
+  if (!P.vid || !ids.some(id => VID_OF[id])) return '';
+  return '&v=' + (ids.map(id => P.vid.includes(id) ? '1' : '0').join('').replace(/0+$/, '') || '0');
+}
+const vidOff = P => new Set(P.vid ? pObjs(P).filter(o => VID_OF[o.id] && !P.vid.includes(o.id)).map(o => o.id) : []);   // « Reprendre un lien » : ses vidéos décochées
+function stuItem(o){                 // liste du mode élève : l'exercice, et le bouton « Vidéo » si le lien la donne
+  const lab = '<label><input type="checkbox" data-o="' + o.id + '"> <span>' + stuLabel(o, false) + '</span></label>', v = STU.vid.has(o.id) && VID_OF[o.id];
+  return v ? '<span class="stuIt">' + lab + '<button type="button" class="stuV" data-v="' + o.id + '" title="Vidéo : ' + v.t + ' (' + vidDur(v.d) + ')">' + VSVG + '<span>Vidéo</span></button></span>' : lab;
+}
+let VID = null;                      // la vidéo de la fenêtre
+function vidOpen(v, ask){            // ask : l'enseignant confirme d'abord (« Il faut confirmer pour lancer la vidéo ») ; élève : la vidéo tout de suite
+  if (!v) return; VID = v;
+  $('vTit').textContent = 'Vidéo : ' + v.t; $('vAskT').textContent = v.t; $('vDur').textContent = '(' + vidDur(v.d) + ')'; $('vMsg').textContent = '';
+  $('oVid').querySelector('.vbox').classList.toggle('vq', !!ask); $('oVid').classList.add('open');
+  if (ask) $('vGo').focus({preventScroll: true}); else vidPlay();
+}
+function vidPlay(){
+  if (!VID) return; const el = $('vEl'); $('oVid').querySelector('.vbox').classList.remove('vq'); $('vGo').blur();
+  $('vMsg').textContent = 'Chargement…'; el.src = vidURL(VID);
+  const p = el.play(); if (p && p.catch) p.catch(() => {});
+}
+function vidStop(){ const el = $('vEl'); try { el.pause(); } catch (e) {} if (el.getAttribute('src')){ el.removeAttribute('src'); el.load(); } VID = null; }
+['playing', 'canplay', 'loadeddata'].forEach(k => $('vEl').addEventListener(k, () => { $('vMsg').textContent = ''; }));
+$('vEl').addEventListener('error', () => { if ($('oVid').classList.contains('open') && $('vEl').getAttribute('src')) $('vMsg').textContent = 'La vidéo ne se charge pas : vérifie la connexion à internet.'; });
+$('vGo').onclick = () => vidPlay();
+new MutationObserver(() => { if (!$('oVid').classList.contains('open')) vidStop(); }).observe($('oVid'), {attributes: true, attributeFilter: ['class']});   // fermée (✕, Échap, clic à côté) : la vidéo s'arrête
+document.addEventListener('click', e => {                          // logo des réglages : sans cocher l'exercice
+  const b = e.target.closest && e.target.closest('.vico'); if (!b) return;
+  e.preventDefault(); e.stopPropagation(); b.blur(); vidOpen(VID_OF[b.dataset.vid], true);
+}, true);
+$('stuL').addEventListener('click', e => { const b = e.target.closest('.stuV'); if (!b) return; e.preventDefault(); b.blur(); vidOpen(VID_OF[b.dataset.v], false); });
+function vpKey(e, open){             // touches des fenêtres « Vidéo » et « Proportions » : F plein écran ; Entrée lance la vidéo, ou OK
+  if (e.altKey || e.ctrlKey || e.metaKey) return;
+  if (e.key === 'f' || e.key === 'F'){ e.preventDefault(); toggleFull(); return; }
+  if (e.key !== 'Enter' || e.repeat) return;
+  if (open === $('oVid')){ if (open.querySelector('.vbox').classList.contains('vq')){ e.preventDefault(); vidPlay(); } return; }
+  if (!e.target.closest('button')){ e.preventDefault(); $('pOk').click(); }
+}
+
+/* ---------- fenêtre « Proportions » (n° 34, 10.11.2026) ----------
+   L'enseignant : « la réglette à gauche de "lien élèves" n'est finalement pas si bien, par contre tu peux faire un bouton à droite de "tout
+   décocher" pour ajuster si on veut la proportion que chaque exercice quand on joue qui ouvre une fenêtre où c'est mieux présenté et lisible. »
+   QCM : « Les deux » : la grande barre en haut (on glisse les séparations ; jumelée avec celles du lien et de la feuille), puis une ligne par
+   exercice (numéro, nom entier, jauge, − / + par 5 %, les autres s'ajustent en gardant leurs proportions) ; « Parts égales » ; OK. Les parts sont
+   celles des exercices cochés (draft.share), appliquées avec « Nouvelles questions avec ces réglages », comme avant. */
+const IP_SEGD = ['#6f9fd8', '#e59a4f', '#6fb56f', '#d97ea6', '#9a89d6', '#c9ac3f', '#4fb2bb', '#c2916b'];   // jauges : la couleur de chaque morceau, plus foncée
+function propUI(){
+  const O = objectives(draft), many = O.length > 1;
+  $('pMsg').textContent = many ? '' : O.length ? 'Un seul exercice coché : toutes les questions viennent de lui. Coche au moins deux exercices pour choisir leurs proportions.'
+    : 'Aucun exercice coché.';
+  $('pEq').disabled = !many;
+  if (!many){ $('pBar').innerHTML = ''; $('pRows').innerHTML = ''; return; }
+  const v = shView(draft, O); $('pBar').innerHTML = ipBarHTML('cls', O.map(o => v[o.id]), 0, O.map(shName));
+  const bar = $('pBar').querySelector('.ipbar'); ipBarLabels(bar); requestAnimationFrame(() => ipBarLabels(bar));
+  propRows();
+}
+function propRows(){
+  const O = objectives(draft); if (O.length < 2) return;
+  const v = shView(draft, O), V = O.map(o => v[o.id]), R = shLR(V, 100);
+  $('pRows').innerHTML = O.map((o, i) => { const x = V[i], z = !(x > .005);
+    return '<div class="prow' + (z ? ' prz' : '') + '"><span class="prn"><i style="background:' + IP_SEGC[i % IP_SEGC.length] + '"></i>' + (i + 1) + ')</span>' +
+      '<span class="prnm">' + ipEsc(shName(o)) + (z ? ' <span class="prz0">(pas posé)</span>' : '') + '</span>' +
+      '<span class="prg"><span style="width:' + x + '%;background:' + IP_SEGD[i % IP_SEGD.length] + '"></span></span>' +
+      '<span class="prst"><button type="button" data-pd="-1" data-pi="' + i + '"' + (z ? ' disabled' : '') + ' aria-label="5 % de moins">−</button><b class="prv">' + R[i] + ' %</b>' +
+      '<button type="button" data-pd="1" data-pi="' + i + '"' + (x > 99.995 ? ' disabled' : '') + ' aria-label="5 % de plus">+</button></span></div>'; }).join('');
+}
+function propSet(O, V){ V = V.map(x => x < 1e-9 ? 0 : x); shWrite(draft, O, V); const bar = $('pBar').querySelector('.ipbar'); if (bar) ipBarSet(bar, V); propRows(); }
+function propStep(i, d){             // − / + : au multiple de 5 % suivant ; les autres gardent leurs proportions entre eux
+  const O = objectives(draft); if (O.length < 2) return;
+  const v = shView(draft, O), V = O.map(o => v[o.id]), x = V[i];
+  const nx = Math.max(0, Math.min(100, d > 0 ? Math.floor(x / 5 + 1e-6) * 5 + 5 : Math.ceil(x / 5 - 1e-6) * 5 - 5)); if (Math.abs(nx - x) < 1e-9) return;
+  const rest = 100 - x, nr = 100 - nx;
+  propSet(O, V.map((y, j) => j === i ? nx : rest > 1e-9 ? y * nr / rest : nr / (O.length - 1)));
+}
+$('bProp').onclick = e => { e.currentTarget.blur(); propUI(); $('oProp').classList.add('open'); };
+$('pRows').onclick = e => { const b = e.target.closest('button[data-pd]'); if (!b || b.disabled) return; propStep(Number(b.dataset.pi), Number(b.dataset.pd)); };
+$('pEq').onclick = () => { const O = objectives(draft); if (O.length > 1) propSet(O, O.map(() => 100 / O.length)); };
+$('pOk').onclick = () => $('oProp').classList.remove('open');
 
 buildSettingsUI();
 applyLook();

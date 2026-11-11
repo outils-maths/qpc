@@ -1044,6 +1044,15 @@ body.inpok .pane .qbox{cursor:text}
 .qmk{margin:0 .14em}
 .qstp{white-space:nowrap}
 .fbk.fstep{color:#2e7d32;background:#e3f1e3}
+/* n° 46 : réponse en vert quand l'élève l'a trouvée (aussi le détail) ; bouton « Répondre » discret à l'ordinateur */
+.qgood{--red:#2e7d32}
+.qgood text[fill="#c0392b"]{fill:#2e7d32}
+.repkb{display:none}
+#bRep.repk{background:color-mix(in srgb, var(--bg) 88%, transparent);color:var(--muted);border-color:var(--line);box-shadow:none;font-size:.85em;padding:.4em .75em;opacity:.85}
+#bRep.repk:hover{opacity:1;color:var(--accent);border-color:var(--accent)}
+#bRep.repk .repkb{display:inline-block;font-size:.85em;font-weight:600;color:var(--muted)}
+.con .cprec{display:block;font-size:.78em;font-weight:600;margin-top:.15em}   /* n° 46, 4e version : précision demandée */
+.kb{touch-action:pan-y pinch-zoom}   /* n° 47 : swipe aussi depuis le clavier à l'écran (comme main) */
 </style>
 </head>
 <body>
@@ -1096,7 +1105,7 @@ body.inpok .pane .qbox{cursor:text}
 <div class="gmeas" id="gmeas" aria-hidden="true"></div>
 
 <div class="kb" id="kb" hidden></div>
-<button class="btn on" id="bRep" type="button" hidden title="Taper la réponse"></button>
+<button class="btn on" id="bRep" type="button" hidden title="Taper la réponse (Espace)"></button>
 <footer>
   <div class="fl0"><button class="btn side1" id="bSL" title="Question de gauche : réponse, puis détail, puis question seule (touche 7)"><span class="lb">Réponse à gauche</span><span class="kh">7</span></button></div>
   <div class="fmid">
@@ -11665,6 +11674,7 @@ function genOne0(sub, lv, fl, mode){
   USED.add(p.key); USEDAT.set(p.key, ++USEDN); USECNT.set(p.key, (USECNT.get(p.key) || 0) + 1);
   if (p.cnt) [].concat(p.cnt).forEach(bump);      // limites par séance (écriture décimale : 1/3, 1/9, autres tiers et neuvièmes ; 03.11.2026) ; une liste : puissance d'une fraction (04.11.2026)
   p.level = lv; p.sub = sub; p.fl = fl; p.shown = {ans: false, det: false};
+  precPost(p);                                                         // n° 46, 4e version : valeur exacte, puis arrondie au dixième ou au centième
   return p;
 }
 function makePairFor(o, lv, kind){ // lv : nombre d'étoiles ; objectif sans étoiles : une sorte de question (kind : la sorte lv, touches 1 à 4), et la suivante à droite
@@ -12084,9 +12094,9 @@ const PENCIL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strok
 const starsHTML = lv => '<span class="stars">' + '★'.repeat(lv) + '</span>';
 function qLine(p, show){
   if (p.line){ const h = p.line(show); if (show || !inpShown(p)) return h;
-    const sp = inpSpec(p); if (sp && sp.t === 'enc'){ const L = h.split(BOX); if (L.length > 2) return L[0] + inpHTML(p, 0) + L[1] + inpHTML(p, 1) + L.slice(2).join(BOX); }   // n° 45
+    const sp = inpSpec(p); if (sp && sp.t === 'enc'){ const L = h.split(BOX); if (L.length > 2) return L.map((x, i) => i ? inpHTML(p, i - 1) + x : x).join(''); }   // n° 46 : 2 ou 3 cases   // n° 45
     return h.replace(BOX, inpHTML(p)); }   // saisie (n° 38) : ce qui est tapé à la place du « ? »
-  const ans = !show ? (inpShown(p) ? inpHTML(p) : BOX) : p.ex ? '<span class="ansnum">' + p.ex + '</span><span class="op">≈</span><span class="ansnum">' + p.a + '</span>' : '<span class="ansnum">' + p.a + '</span>';
+  const ans = !show ? inpAns(p) : p.ex ? '<span class="ansnum">' + p.ex + '</span><span class="op">≈</span><span class="ansnum">' + p.a + '</span>' : '<span class="ansnum">' + p.a + '</span>';
   return '<span class="qq">' + p.q + '</span><span class="eq' + (p.sep === '⟹' ? ' solve' : '') + '"><span class="op">' + (show && p.ex ? '=' : show && p.sepA ? p.sepA : (p.sep || '=')) + '</span>' +
     (p.pre ? '<span>' + p.pre + '</span>' : '') + ans + (p.post ? '<span class="un">' + p.post + '</span>' : '') + '</span>';
 }
@@ -12099,7 +12109,8 @@ function fillPane(pane, p){
   pane.classList.toggle('hide', !p);
   if (!p) return;
   pane.classList.toggle('dopen', p.shown.det);
-  pane.classList.toggle('qfig', !!(p.fig && !p.figDet));                         // une figure dans la question (réponse plus petite avec le détail)
+  pane.classList.toggle('qfig', !!(p.fig && !p.figDet));
+  pane.classList.toggle('qgood', inpGood(p));                                    // n° 46 : trouvée par l'élève → réponse en vert                         // une figure dans la question (réponse plus petite avec le détail)
   pane.querySelector('.badge').innerHTML = (p.nostar ? '' : starsHTML(p.level)) + (p.paper ? '<span class="paper">' + PENCIL + 'en colonne</span>' : '');
   const fr = frOn() ? frOf(p, p.shown.ans || p.shown.det) : null;                     // classe d'accueil : le calcul en français
   pane.querySelector('.qa').innerHTML = qaHTML(p, p.shown.ans || p.shown.det) + inpFbHTML(p, p.shown.ans || p.shown.det) + (fr ? '<div class="frl" lang="fr">' + fr + '</div>' : '');
@@ -12234,8 +12245,8 @@ function render(){
   gfxClear(); GRZ = null;
   document.body.classList.remove('grpm', 'grpz');
   const s = PICK ? null : QS[cur]; if (s) s.vis = true;
+  document.body.classList.toggle('empty', !s);                                    // n° 46 : avant inpSync (bouton « Répondre »)
   inpSync();                                                                     // saisie (n° 38) : case, marque du rond, clavier à l'écran                        // vue (les touches 1 à 4 ne remplacent pas une question déjà vue) ; PICK : après un groupe (M)
-  document.body.classList.toggle('empty', !s);
   document.body.classList.toggle('ready', !s && objectives(S).length > 0);      // séance commencée, pas encore de question : choisir la difficulté
   document.body.classList.toggle('pick', PICK && !!QS[cur]); document.body.classList.toggle('pnext', PICK && cur < QS.length - 1);
   document.body.classList.toggle('two', !!(s && s.R));
@@ -12913,8 +12924,10 @@ function inpSpec0(p){
 }
 
 // ---------- jugement ----------
+// n° 47 (l'enseignant, 11.11.2026 : « Quand le message affiché est "juste !" (sans rien d'autre de mentionné), tu pourrais plutôt marquer
+// "bravo !" ») : ok = « Bravo ! » ; les messages qui disent plus (« Juste ! Mais … », « Juste, mais … », « Juste ! Maintenant … ») ne changent pas
 const INP_MSG = {
-  ok: 'Juste\u00a0!', bad: 'Je ne comprends pas cette écriture.', zero: 'Le dénominateur ne peut pas être 0.', ko: 'Pas encore juste. Réessaie.',
+  ok: 'Bravo\u00a0!', bad: 'Je ne comprends pas cette écriture.', zero: 'Le dénominateur ne peut pas être 0.', ko: 'Pas encore juste. Réessaie.',
   simp: 'Juste, mais simplifie encore.', ent: 'Juste, mais simplifie\u00a0: c\'est un nombre entier.', frac: 'Juste, mais donne une fraction.',
   dec: 'Juste, mais écris un nombre décimal.', fin: 'Juste, mais calcule jusqu\'au bout.'
 };
@@ -12932,7 +12945,7 @@ function inpJudge(p, b){                                              // → {r:
       if (!x.frac && x.dec && sp.v[1] !== 1) return {r: 'almost', m: INP_MSG.frac};
     }
     if (sp.form === 'dec' && x.frac) return {r: 'almost', m: sp.v[1] === 1 ? INP_MSG.fin : INP_MSG.dec};
-    return {r: 'ok', m: INP_MSG.ok};
+    return {r: 'ok', m: (sp.okm && sp.okm(p, x, sp)) || INP_MSG.ok};   // n° 46 : sp.okm
   }
   let m = null; try { m = sp.R ? sp.R(p, x, sp) : null; } catch (e) { console.error(e); }
   return {r: 'ko', m: m || inpGeneric(p, x, sp) || INP_MSG.ko};
@@ -13204,7 +13217,7 @@ function inpCheck(){
   const R = sp && sp.t === 'num' && I.d !== null && I.d !== undefined && (!I.n.replace('−', '') || !I.d.replace('−', ''))
     ? {r: 'bad', m: !I.n.replace('−', '') ? 'Il manque le numérateur.' : 'Il manque le dénominateur.'} : inpJudge(p, I.b);
   I.fb = R;
-  if (R.r === 'step'){ linStep(I, sp); render(); return; }            // n° 45 : juste, mais à réécrire (pas un essai)
+  if (R.r === 'step'){ if (R.keep){ I.c = R.c; I.last = 'almost'; I.two = true; } else if (R.after) linAfter(I, sp); else linStep(I, sp); render(); return; }            // n° 45 : juste, mais à réécrire (pas un essai)
   if (R.r === 'ok'){ p.mk = !I.tries ? 'ok' : 'mid'; INP = null; p.shown.ans = true; }
   else if (R.r !== 'bad'){ I.tries++; I.last = R.r; }
   render();
@@ -13215,7 +13228,7 @@ function inpSync(){                                                   // à chaq
   const p = inpCur();
   if (INP && INP !== p) INP = null;
   if (p && (p.shown.ans || p.shown.det)){ if (INP === p) INP = null;
-    if (!p.mk && p.inp && (p.inp.tries || (p.inp.steps && p.inp.steps.length))) p.mk = p.inp.last === 'almost' ? 'mid' : 'ko'; }
+    if (!p.mk && p.inp && (p.inp.tries || (p.inp.steps && p.inp.steps.length) || p.inp.after || p.inp.two)) p.mk = p.inp.last === 'almost' ? 'mid' : 'ko'; }
   if ((STU || inpTouch()) && p && !INP && !p.inp && inpCan()){ p.inp = inpNew(); INP = p; }   // mode élève et écran tactile : la case s'ouvre d'elle-même (une fois)
   document.body.classList.toggle('inpok', !!(p && !p.shown.ans && !p.shown.det && inpSpec(p)));
   kbDraw();
@@ -13255,7 +13268,7 @@ function inpKeyDown(e){                                               // touches
   return true;
 }
 // ---------- affichage de la case et du message ----------
-function inpShown(p){ return !!(p && p.inp && (INP === p || p.inp.b || (p.inp.steps && p.inp.steps.length))); }
+function inpShown(p){ return !!(p && p.inp && (INP === p || p.inp.b || (p.inp.steps && p.inp.steps.length) || p.inp.after || p.inp.two)); }
 function inpPart(I, P, on){                                           // une partie (nombre, numérateur, dénominateur) : chaque caractère se clique
   const s = (P === 'd' ? I.d : I.n) || '', foc = on && (I.f === P || (P === 'n' && I.d === null)), car = '<span class="qcar"></span>';
   let h = '', ov = false;
@@ -13344,12 +13357,13 @@ function kbDraw(){
 // (position fixe, hauteur du pied de page mesurée), il ne bouge pas pendant un swipe
 function repBtn(){
   const b = $('bRep'), p = inpCur();
-  const on = !!(p && !INP && (STU || inpTouch()) && !(STU && STU.start) && !p.shown.ans && !p.shown.det && inpSpec(p) && !document.body.classList.contains('empty'));
+  const on = !!(p && !INP && !(STU && STU.start) && !p.shown.ans && !p.shown.det && inpSpec(p) && !document.body.classList.contains('empty'));
   b.hidden = !on; if (!on) return;
+  b.classList.toggle('repk', !(STU || inpTouch()));                    // n° 46 : à l'ordinateur aussi, discret, avec la touche Espace
   const f = document.querySelector('footer').getBoundingClientRect();
   b.style.bottom = Math.max(8, innerHeight - f.top + 10) + 'px';
 }
-$('bRep').innerHTML = KB_SVG.pen + '<span>Répondre</span>';
+$('bRep').innerHTML = KB_SVG.pen + '<span>Répondre</span><kbd class="repkb">Espace</kbd>';
 $('bRep').onclick = e => { e.currentTarget.blur(); inpNoFocus(); inpOpen(); };
 window.addEventListener('resize', repBtn);
 $('kb').addEventListener('pointerdown', e => { if (e.target.closest('.kk')) e.preventDefault(); });   // le clavier ne prend pas le focus
@@ -13385,7 +13399,7 @@ $('main').addEventListener('click', e => {                           // clic sur
      passer le curseur devant, comme pour le dénominateur).
    - « Juste, réécris » (r: 'step') : la réponse reste écrite (I.steps), suivie de « = » et d'une case vide ; pas un essai ; marque ✓ si la suite
      est juste du premier coup, ~ si on regarde la réponse avant. */
-const LIN_T = new Set(['pow', 'sci', 'dcp', 'rad', 'enc']);
+const LIN_T = new Set(['pow', 'sci', 'dcp', 'rad', 'enc', 'mes', 'two']);   // n° 46 : 'mes'
 const isLin = sp => !!sp && LIN_T.has(sp.t);
 const LIN_MK = '^∙√|';
 FB_ICO.step = FB_ICO.ok;
@@ -13451,7 +13465,7 @@ function inpSpec45(p){
   if (r23){ const v = val(p.r); return num(v, form, {dec: !!fl.dec || /\d,\d/.test(T) || (!!v && !qIsInt(v) && form === 'dec'),
     fra: !!fl.fra || form === 'frac', neg: s === 'r3' && (!!fl.rel || (!!v && v[0] < 0))}, rRoot); }
   if ((s === 'renc2' || s === 'renc3') && ch.enc){ const [a, n, L, H] = ch.enc; return {t: 'enc', a, n, v: [L, H], kb: {neg: n === 3 && (!!fl.rel || L < 0)}}; }
-  return null;
+  return inpSpec46(p);                                               // n° 46 : Grandeurs et mesures
 }
 
 // ---------- erreurs fréquentes (nombres) ----------
@@ -13531,7 +13545,7 @@ function rRoot(p, x, sp){                                              // racine
 const OK45 = () => ({r: 'ok', m: INP_MSG.ok});
 const BAD45 = m => ({r: 'bad', m: m || INP_MSG.bad});
 function linJudge(p, s, sp){
-  const J = {pow: jPow, sci: jSci, dcp: jDcp, rad: jRad, enc: jEnc}[sp.t];
+  const J = sp.J || {pow: jPow, sci: jSci, dcp: jDcp, rad: jRad, enc: jEnc}[sp.t];   // n° 46 : sp.J
   let r = null; try { r = J(p, String(s || ''), sp); } catch (e) { console.error(e); }
   return r || BAD45();
 }
@@ -13638,7 +13652,7 @@ function jRad(p, s, sp){
     const x = inpParse(s); if (!x) return BAD45(); if (x.zero) return BAD45(INP_MSG.zero); if (!x.q) return BAD45();
     if (!sp.x) return numJ(p, x, sp);
     const X = x.q[0] / x.q[1];
-    if (!x.frac && x.fp && !x.per && Math.abs(X - vx) <= 10 ** -x.fp.length + 1e-9) return {r: 'almost', m: 'C\'est une valeur arrondie : donne la valeur exacte, avec la racine.'};
+    if (!x.frac && !x.per && (x.fp || (p.inp && p.inp.after))){ const a = approxJ(p, sp, x.fp ? decRule(X, x.fp.length, vx, false) : null); if (a) return a; }   // n° 46, 2e version
     if (qIsInt(x.q) && x.q[0] === sp.x.N) return {r: 'ko', m: 'Il manque la racine (touche ' + (n === 3 ? '∛' : '√') + ').'};
     return {r: 'ko', m: INP_MSG.ko};
   }
@@ -13676,7 +13690,7 @@ function jEnc(p, s, sp){
 }
 
 // ---------- la case : chaîne, curseur, frappe ----------
-function linInit(I, sp){ if (I.s === undefined){ I.s = sp.t === 'enc' ? '|' : ''; I.c = 0; I.b = I.s; } }
+function linInit(I, sp){ if (I.s === undefined){ I.s = (sp.t === 'enc' || sp.t === 'two') ? '|'.repeat((sp.np || 2) - 1) : ''; I.c = 0; I.b = I.s; } }
 function linParts(s){                                                 // morceaux entre les marques : {a, b (fin), m (la marque qui suit)}
   const P = []; let a = 0;
   for (let i = 0; i <= s.length; i++) if (i === s.length || LIN_MK.includes(s[i])){ P.push({a, b: i, m: i < s.length ? s[i] : ''}); a = i + 1; }
@@ -13695,6 +13709,8 @@ function linEdit(I, sp, c){
     if (!tx.replace('−', '')) return;
     k = pt.b; put('^');
   };
+  if (sp.t === 'two') return twoEdit(I, sp, c);                     // n° 46, 4e version : deux cases
+  if (sp.t === 'mes' && ['π', '+', ',', '/'].includes(c)){ if (mesEdit(I, sp, c) !== false) return; }   // n° 46
   if (c === '⌫'){
     if (k > 0){ const ch = s[k - 1];
       if (LIN_MK.includes(ch) || ch === '/'){
@@ -13708,7 +13724,7 @@ function linEdit(I, sp, c){
       if (LIN_MK.includes(ch) || ch === '/'){ const nx = ch === '/' ? s.slice(k + 1, pt.b) : s.slice(P[pi + 1].a, P[pi + 1].b); if (ch !== '|' && !nx) s = s.slice(0, k) + s.slice(k + 1); }
       else s = s.slice(0, k) + s.slice(k + 1); }
   }
-  else if (c === 'clr'){ s = sp.t === 'enc' ? '|' : ''; k = 0; }
+  else if (c === 'clr'){ s = (sp.t === 'enc' || sp.t === 'two') ? '|'.repeat((sp.np || 2) - 1) : ''; k = 0; }
   else if (c === '←'){ if (k > 0) k--; }
   else if (c === '→'){ if (k < s.length) k++; }
   else if (c === 'home') k = pt.a;
@@ -13719,7 +13735,7 @@ function linEdit(I, sp, c){
   }
   else if (/^\d$/.test(c)){ if (s.replace(/\D/g, '').length >= 14) return; if (isExp && s.slice(sg.a, sg.b).replace('−', '').length >= (sp.t === 'pow' ? 3 : 2)) return; put(c); }
   else if (c === ','){
-    if (!(sp.kb && sp.kb.dec) || isExp || sp.t === 'dcp' || sp.t === 'enc' || J >= 0 || tx.includes(',')) return;
+    if (!(sp.kb && sp.kb.dec) || isExp || sp.t === 'dcp' || (sp.t === 'enc' && !sp.edec) || J >= 0 || tx.includes(',')) return;
     put(k === sg.a || s[k - 1] === '−' ? '0,' : ',');
   }
   else if (c === '−'){
@@ -13767,13 +13783,13 @@ function linMissing(I, sp){                                           // une par
     if (sp.t === 'sci') return msg(kind === '^' ? 'Il manque l\'exposant.' : 'Il manque le nombre devant ∙ 10.', q.a);
     if (sp.t === 'dcp') return msg(kind === '^' ? 'Il manque un exposant.' : 'Il manque un facteur.', q.a);
     if (sp.t === 'rad') return msg('Il manque le nombre sous la racine.', q.a);
-    if (sp.t === 'enc') return msg(i ? 'Il manque le 2e nombre.' : 'Il manque le 1er nombre.', q.a);
+    if (sp.t === 'enc') return msg(sp.lab ? 'Il manque ' + sp.lab[i] + '.' : i ? 'Il manque le 2e nombre.' : 'Il manque le 1er nombre.', q.a);
   }
   return false;
 }
 function linStep(I, sp){                                              // « juste, réécris » : la réponse reste écrite, une case vide après « = »
   I.steps = (I.steps || []).concat([linRender(I, sp, {st: true})]);
-  I.s = sp.t === 'enc' ? '|' : ''; I.c = 0; I.b = I.s; I.last = 'almost';
+  I.s = (sp.t === 'enc' || sp.t === 'two') ? '|'.repeat((sp.np || 2) - 1) : ''; I.c = 0; I.b = I.s; I.last = 'almost';
 }
 // ---------- affichage de la case ----------
 const QCAR = '<span class="qcar"></span>';
@@ -13781,7 +13797,7 @@ function linSeg(I, a, b, o){                                          // un morc
   const s = I.s, cur = !!o.on && !o.st && I.c >= a && I.c <= b;
   const chars = (x, y) => { let h = '';
     for (let i = x; i <= y; i++){ if (cur && I.c === i) h += QCAR; if (i === y) break;
-      const c = s[i], t = /[a-z]/.test(c) ? '<i>' + c + '</i>' : hEsc(c);
+      const c = s[i], t = /[a-zπ]/.test(c) ? '<i>' + c + '</i>' : c === '+' ? '\u2009+\u2009' : hEsc(c);   // n° 46 : π, +
       h += o.st ? t : '<span class="qch" data-g="' + i + '">' + t + '</span>'; }
     return h; };
   const box = (x, y, hl) => {
@@ -13792,6 +13808,8 @@ function linSeg(I, a, b, o){                                          // un morc
   };
   const j = s.slice(a, b).indexOf('/');
   if (j < 0) return box(a, b, o.hl);
+  const pl = s.lastIndexOf('+', a + j);                               // n° 46 : 6 + 3π/2 : la fraction, seulement le dernier terme
+  if (pl >= a) return (o.st ? chars(a, pl) + '\u2009+\u2009' : '<span class="qpt" data-ge="' + pl + '">' + chars(a, pl) + '</span><span class="qch" data-g="' + pl + '">\u2009+\u2009</span>') + fracH(box(pl + 1, a + j, true), box(a + j + 1, b, true));
   return fracH(box(a, a + j, true), box(a + j + 1, b, true));
 }
 function linRender(I, sp, o){
@@ -13817,23 +13835,26 @@ function linRender(I, sp, o){
 function linBox(p, I, sp, on, part){                                  // la case (pour 'enc' : une des deux, part 0 ou 1)
   linInit(I, sp);
   const st = I.fb && !['bad', 'ok', 'step'].includes(I.fb.r) ? ' ' + I.fb.r : '', cls = 'qin' + (on ? ' on' : '') + st;
+  if (sp.t === 'two') return twoBox(p, I, sp, on, part);               // n° 46, 4e version
   if (sp.t === 'enc'){
-    const j = I.s.indexOf('|'), a = part ? j + 1 : 0, b = part ? I.s.length : j, typed = I.s.length > 1;
+    const bs = [-1].concat([...I.s].map((c, i) => c === '|' ? i : -1).filter(i => i >= 0), [I.s.length]), pt = part || 0, a = bs[pt] + 1, b = bs[pt + 1], typed = I.s.replace(/\|/g, '').length > 0;   // n° 46 : 2 ou 3 cases
     return '<span class="' + cls + '" data-ge="' + b + '">' + (typed || on ? linSeg(I, a, b, {on, hl: false}) : '?') + '</span>';
   }
   const pre = (I.steps || []).map(h => '<span class="qstp">' + h + '</span><span class="op">=</span>').join('');
-  return pre + '<span class="' + cls + '" data-ge="' + I.s.length + '">' + (I.s || on ? linRender(I, sp, {on}) : '?') + '</span>';
+  return pre + '<span class="' + cls + '" data-ge="' + I.s.length + '">' + (I.s || on ? linRender(I, sp, {on}) : '?') + '</span>' +
+    (I.after ? inpUnit(p) + '<span class="op">≈</span><span class="qstp">' + I.after + '</span>' : '');   // n° 46, 2e version : valeur arrondie à droite
 }
 function linClick(e, q){                                              // clic ou toucher dans la case : le curseur va là
   const I = INP && INP.inp, sp = INP && inpSpec(INP); if (!I || !isLin(sp)) return; linInit(I, sp);
   const t = e.target.closest('[data-g]');
   if (t){ const i = Number(t.dataset.g), r = t.getBoundingClientRect(); I.c = Math.min(I.s.length, i + (e.clientX > r.left + r.width / 2 ? 1 : 0)); return; }
   const u = e.target.closest('[data-ge]'); if (u){ I.c = Math.min(I.s.length, Number(u.dataset.ge)); return; }
-  if (q && q.classList.contains('qbox') && sp.t === 'enc'){ const pane = q.closest('.pane'), L = pane ? [...pane.querySelectorAll('.qbox')] : [];
-    if (L.indexOf(q) === 1) I.c = I.s.indexOf('|') + 1; }
+  if (q && q.classList.contains('qbox') && (sp.t === 'enc' || sp.t === 'two')){ const pane = q.closest('.pane'), L = pane ? [...pane.querySelectorAll('.qbox')] : [];
+    const ix = L.indexOf(q); if (ix > 0){ let c = -1; for (let n = 0; n < ix; n++) c = I.s.indexOf('|', c + 1); if (c >= 0) I.c = c + 1; } }   // n° 46 : 2 ou 3 cases
 }
 function linChar(k, sp){                                              // touche de l'ordinateur → caractère (nouvelles sortes de case)
   if (!isLin(sp)) return null;
+  if (sp.t === 'mes' || sp.t === 'two'){ if ((k === 'p' || k === 'P') && sp.kb.pi) return 'π'; if (k === '+' && sp.kb.plus) return '+'; if ((k === 'r' || k === 'R') && sp.kb.rad) return '√'; }   // n° 46
   if (k === '^') return sp.t === 'pow' || sp.t === 'dcp' ? '^' : sp.t === 'sci' ? 'E' : null;
   if (k === '*' || k === '×') return sp.t === 'sci' ? 'E' : sp.t === 'dcp' ? '∙' : null;
   if ((k === 'e' || k === 'E') && sp.t === 'sci') return 'E';
@@ -13843,7 +13864,8 @@ function linChar(k, sp){                                              // touche 
 }
 function kb45(sp){                                                    // touches en plus des nouvelles sortes de case
   const kb = sp.kb || {};
-  return [kb.mul && ['∙', '∙', 'Facteur suivant (touche *)'],
+  return [kb.pi && ['π', '<i>π</i>', 'Pi (touche P)'], kb.plus && ['+', '+', 'Plus (touche +)'],   // n° 46
+    kb.mul && ['∙', '∙', 'Facteur suivant (touche *)'],
     kb.exp && ['^', '<span class="kexp"><span></span><i></i></span>', 'Exposant (touche ↑) ; encore une fois : revenir à la base'],
     kb.sci && ['E', '<span class="ksci">∙ 10<i></i></span>', 'Bloc ∙ 10ⁿ (touche *) ; encore une fois : revenir au nombre'],
     kb.rad && ['√', '<span class="krad">' + radH('<span class="kbx"></span>', kb.n === 3 ? 3 : 2) + '</span>', 'Racine (touche R) ; encore une fois : revenir au nombre devant'],
@@ -13856,6 +13878,408 @@ function linKon(kb, I, sp){                                           // touche 
   kb.querySelectorAll('.kk[data-k="√"]').forEach(b => b.classList.toggle('kon', kind === '√'));
 }
 
+// ---------- n° 46 : saisie, bloc 2 : Grandeurs et mesures (10.11.2026) ----------
+// L'enseignant, 10.11.2026 : « Tu peux faire la suite des réponses à mettre dans blocs comme on a fait déjà pour NO » (bloc 2 de « Reste à faire »,
+// QPC_SAISIE.md). QCM (ses réponses priment) : réponses arrondies (π, racines de Pythagore) : « Aussi la valeur exacte » : au centième ou plus
+// précis = juste ; moins précis, mal arrondi ou calculé avec 3,14 = « presque » ; 20π, 256π/3, √85 aussi justes (touches π et √) ; arrondis :
+// 24 pour 24,0 « Juste », puis « Juste mais précise que c'est mieux de garder 24,0 pour la précision demandée » (message vert, compté juste).
+// Choix faits sans QCM (dits à l'enseignant) : durées en plusieurs unités (9 h 54 min) : une case par « ? », comme l'encadrement ; encadrer : deux
+// cases, virgule permise ; réciproque et contraposée : oui / non ; l'unité reste écrite après la case (prise dans la réponse quand la question n'en a
+// pas) ; valeur exacte acceptée sous n'importe quelle forme égale (√72 ou 6√2 ; fraction pas simplifiée : « presque »).
+const TEN_OK = (X, v) => { if (!v || !X) return 0; const k = Math.log10(Math.abs(X / v)), r = Math.round(k); return r && Math.abs(k - r) < 1e-7 ? r : 0; };
+const fNum = q => q[0] / q[1];
+const fin2 = q => !!q && 100 % q[1] === 0;
+const ratOf = v => qFromFloat(v) || (qFromFloat(3 * v) ? qDiv(qFromFloat(3 * v), [3, 1]) : null);   // 13,1² ∙ 5,3 : 3 = 909 533/3000                          // au plus deux décimales : la page l'écrit telle quelle
+const decs = x => (x && x.fp ? String(x.fp).length : 0);
+function cvNum(t){                                                     // le premier nombre d'un texte affiché (« 98 500&nbsp;mm » → 98500)
+  const m = /[−-]?\d[\d\s\u00a0\u202f\u2009]*(?:,\d+)?/.exec(String(t || '').replace(/&nbsp;|&#8239;|&thinsp;/g, ' ').replace(/<[^>]+>/g, ' '));
+  return m ? Number(m[0].replace(/[\s\u00a0\u202f\u2009]/g, '').replace(',', '.').replace('−', '-')) : NaN;
+}
+const unitOf = a => { const m = /[^\d\s\u00a0\u202f\u2009,.−-][\s\S]*$/.exec(String(a || '').replace(/&nbsp;/g, ' ').trim()); return m ? m[0].trim() : ''; };
+const tgtOf = p => { const m = /(?:rrondis|ncadre) (à la [^\s<,]+|à l['’][^\s<,]+|au [^\s<,]+)/.exec(String(p.con || '').replace(/<[^>]+>/g, ' ')); return m ? m[1] : ''; };
+const ROUND_MSG = {cent: 'Juste, mais donne la valeur au centième (deux chiffres après la virgule).', arr: 'Presque\u00a0: vérifie l\'arrondi (regarde le chiffre suivant).',
+  pi: 'Utilise la touche <i>π</i> de ta calculatrice\u00a0: 3,14 n\'est qu\'une valeur approchée de <i>π</i>.'};
+// une valeur décimale tapée pour une réponse arrondie (π, racine) : au centième ou plus précis = juste
+function decRule(X, dx, val, pi){
+  const tol = d => .5 * 10 ** -d + 1e-9 * Math.max(1, Math.abs(val));
+  if (Math.abs(X - val) <= tol(dx)) return dx >= 2 ? OK45() : {r: 'almost', m: ROUND_MSG.cent};
+  if (pi && dx >= 1){ const w = val * 3.14 / Math.PI; if (Math.abs(X - w) <= 1.0001 * 10 ** -dx) return {r: 'almost', m: ROUND_MSG.pi}; }   // n° 46, 3e version : 3,1416 enlevé (trop proche de π : 407,1 pris pour 3,14)
+  if (dx >= 1 && Math.abs(X - val) <= 3 * 10 ** -dx + 1e-9 * Math.max(1, Math.abs(val))) return {r: 'almost', m: ROUND_MSG.arr};   // jusqu'à 3 unités du dernier chiffre (407,14 pour 407,15)
+  return null;
+}
+const altHit = (X, dx, w) => isFinite(w) && Math.abs(X - w) <= (dx === null ? 1e-9 * Math.max(1, Math.abs(w)) : dx >= 1 ? 1.0001 * 10 ** -dx : .5001);
+function altMsg(L, X, dx, val){                                        // la première erreur connue qui donne ce que l'élève a tapé
+  for (const a of L) if (a && Math.abs(a[0] - val) > 1e-9 * Math.max(1, Math.abs(val)) && altHit(X, dx, a[0])) return a[1];
+  return null;
+}
+// ---------- périmètres, aires, volumes, aires totales ----------
+const IV = c => '<i>' + c + '</i>';
+const M_VOL = 'Ça, c\'est le volume. On cherche l\'aire.', M_AIR = 'Ça, c\'est l\'aire. On cherche le périmètre (le tour).',
+  M_PER = 'Ça, c\'est le périmètre. On cherche l\'aire.', M_DIAM = 'Attention\u00a0: le rayon, c\'est la moitié du diamètre.', M_D3 = 'N\'oublie pas de diviser par 3.';
+function mesAlts(p, sp){
+  const [k, q, d] = sp.mes, PI = Math.PI, [a, b, c, e] = d, r = a, dS = sp.dS;
+  const i = IV, A3 = ' ∙ ', key = k + q;
+  switch (key){
+    case 'carP': return [[a * a, M_AIR], [2 * a, 'Le carré a 4 côtés\u00a0: ' + i('P') + ' = 4' + A3 + i('c') + '.']];
+    case 'carA': return [[4 * a, M_PER], [2 * a, 'L\'aire du carré, c\'est ' + i('c') + A3 + i('c') + ' (pas 2' + A3 + i('c') + ').']];
+    case 'recP': return [[a * b, M_AIR], [a + b, 'Le rectangle a 4 côtés\u00a0: ' + i('P') + ' = 2' + A3 + '(' + i('L') + ' + ' + i('l') + ').']];
+    case 'recA': return [[2 * (a + b), M_PER], [a + b, 'L\'aire, c\'est ' + i('L') + A3 + i('l') + '\u00a0: on multiplie.']];
+    case 'triA': return [[a * b, 'N\'oublie pas de diviser par 2\u00a0: ' + i('A') + ' = ' + i('b') + A3 + i('h') + ' : 2.'], [a + b, 'L\'aire, c\'est ' + i('b') + A3 + i('h') + ' : 2.']];
+    case 'parP': return [[a + b, 'Le parallélogramme a 4 côtés\u00a0: ' + i('P') + ' = 2' + A3 + '(' + i('a') + ' + ' + i('b') + ').'], [a * b, M_AIR]];
+    case 'parA': return [[a * b / 2, 'Le parallélogramme\u00a0: ' + i('A') + ' = ' + i('b') + A3 + i('h') + ', sans diviser par 2.']];
+    case 'losP': return [[2 * a, 'Le losange a 4 côtés égaux\u00a0: ' + i('P') + ' = 4' + A3 + i('c') + '.'], [a * a, M_AIR]];
+    case 'losA': return [[a * b, 'N\'oublie pas de diviser par 2\u00a0: ' + i('A') + ' = ' + i('D') + A3 + i('d') + ' : 2.']];
+    case 'traA': return [[(a + b) * c, 'N\'oublie pas de diviser par 2\u00a0: ' + i('A') + ' = (' + i('B') + ' + ' + i('b') + ')' + A3 + i('h') + ' : 2.'],
+      [a * b * c / 2, 'On additionne les deux bases\u00a0: ' + i('A') + ' = (' + i('B') + ' + ' + i('b') + ')' + A3 + i('h') + ' : 2.']];
+    case 'disP': return [[PI * r * r, 'Ça, c\'est l\'aire du disque. Le périmètre, c\'est 2' + A3 + i('π') + A3 + i('r') + '.'],
+      [PI * r, 'Le périmètre du cercle, c\'est 2' + A3 + i('π') + A3 + i('r') + '.'], dS && [4 * PI * r, M_DIAM]];
+    case 'disA': return [[2 * PI * r, 'Ça, c\'est le périmètre. L\'aire du disque, c\'est ' + i('π') + A3 + i('r') + '².'],
+      [PI * r, 'L\'aire, c\'est ' + i('π') + A3 + i('r') + '² (' + i('r') + ' au carré).'], dS && [4 * PI * r * r, M_DIAM]];
+    case 'secP': { const al = b, arc = 2 * PI * r * al / 360;
+      return [[arc, 'N\'oublie pas les deux rayons\u00a0: ' + i('P') + ' = ' + i('r') + ' + ' + i('r') + ' + l\'arc.'],
+        [2 * r + 2 * PI * r, 'Ce n\'est qu\'une partie du cercle\u00a0: multiplie par ' + nFmt(al) + '/360.'],
+        [2 * r + 2 * PI * r * (360 - al) / 360, 'Ça, c\'est l\'autre partie du cercle.'], [2 * r + PI * r * r * al / 360, M_AIR]]; }
+    case 'secA': { const al = b;
+      return [[PI * r * r, 'Ce n\'est qu\'une partie du disque\u00a0: multiplie par ' + nFmt(al) + '/360.'],
+        [PI * r * r * (360 - al) / 360, 'Ça, c\'est l\'autre partie du disque.'], [2 * PI * r * al / 360, 'Ça, c\'est la longueur de l\'arc. On cherche l\'aire.']]; }
+    case 'cubV': return [[6 * a * a, 'Ça, c\'est l\'aire totale. Le volume, c\'est ' + i('c') + A3 + i('c') + A3 + i('c') + '.'],
+      [a * a, 'Le volume, c\'est ' + i('c') + A3 + i('c') + A3 + i('c') + ' (trois fois).'], [3 * a, 'Le volume, c\'est ' + i('c') + A3 + i('c') + A3 + i('c') + '\u00a0: on multiplie.']];
+    case 'pavV': return [[2 * (a * b + b * c + a * c), 'Ça, c\'est l\'aire totale. Le volume, c\'est ' + i('L') + A3 + i('l') + A3 + i('h') + '.'],
+      [a + b + c, 'Le volume, c\'est ' + i('L') + A3 + i('l') + A3 + i('h') + '\u00a0: on multiplie.']];
+    case 'priV': return [[a * b * c, 'La base est un triangle rectangle\u00a0: son aire, c\'est ' + i('a') + A3 + i('b') + ' : 2.']];
+    case 'pyrV': return [[a * a * b, 'N\'oublie pas de diviser par 3\u00a0: ' + i('V') + ' = ' + i('A') + '<sub>base</sub>' + A3 + i('h') + ' : 3.'],
+      [a * b / 3, 'La base est un carré\u00a0: ' + i('A') + '<sub>base</sub> = ' + i('c') + A3 + i('c') + '.']];
+    case 'cylV': return [[PI * r * r * b / 3, 'Le cylindre n\'est pas un cône\u00a0: ne divise pas par 3.'],
+      [2 * PI * r * b, 'Ça, c\'est l\'aire latérale. ' + i('V') + ' = ' + i('π') + A3 + i('r') + '²' + A3 + i('h') + '.'], dS && [4 * PI * r * r * b, M_DIAM]];
+    case 'conV': return [[PI * r * r * b, 'N\'oublie pas de diviser par 3\u00a0: ' + i('V') + ' = ' + i('π') + A3 + i('r') + '²' + A3 + i('h') + ' : 3.'], dS && [4 * PI * r * r * b / 3, M_DIAM]];
+    case 'bouV': return [[4 * PI * r ** 3, 'N\'oublie pas de diviser par 3\u00a0: ' + i('V') + ' = 4' + A3 + i('π') + A3 + i('r') + '³ : 3.'],
+      [4 * PI * r * r, 'Ça, c\'est l\'aire de la sphère. ' + i('V') + ' = 4' + A3 + i('π') + A3 + i('r') + '³ : 3.'], dS && [32 * PI * r ** 3 / 3, M_DIAM]];
+    case 'bou2V': return [[4 * PI * r ** 3 / 3, 'C\'est une demi-boule\u00a0: divise encore par 2.'], [2 * PI * r ** 3, M_D3], dS && [16 * PI * r ** 3 / 3, M_DIAM]];
+    case 'atcubA': return [[a ** 3, M_VOL], [4 * a * a, 'Le cube a 6 faces\u00a0: ' + i('A') + ' = 6' + A3 + i('c') + '².'], [a * a, 'Il y a 6 faces carrées\u00a0: ' + i('A') + ' = 6' + A3 + i('c') + '².'],
+      [5 * a * a, 'Le cube a 6 faces.']];
+    case 'atcub5A': return [[6 * a * a, 'La boîte n\'a pas de couvercle\u00a0: 5 faces seulement.'], [a ** 3, M_VOL]];
+    case 'atpavA': return [[a * b * c, M_VOL], [a * b + b * c + a * c, 'Chaque face est là deux fois\u00a0: ' + i('A') + ' = 2' + A3 + '(' + i('L') + A3 + i('l') + ' + ' + i('L') + A3 + i('h') + ' + ' + i('l') + A3 + i('h') + ').']];
+    case 'atpav5A': return [[2 * (a * b + b * c + a * c), 'La boîte n\'a pas de couvercle\u00a0: une face de moins.'], [a * b * c, M_VOL]];
+    case 'atpriA': return [[(a + b + c) * e, 'N\'oublie pas les deux bases (les triangles).'], [a * b / 2 + (a + b + c) * e, 'Il y a deux bases\u00a0: deux triangles.'],
+      [a * b * e / 2, M_VOL]];
+    case 'atcylA': return [[2 * PI * r * b, 'N\'oublie pas les deux disques (les bases).'], [PI * r * r + 2 * PI * r * b, 'Il y a deux disques\u00a0: en haut et en bas.'], [PI * r * r * b, M_VOL],
+      dS && [8 * PI * r * r + 4 * PI * r * b, M_DIAM]];
+    case 'atcyl1A': return [[2 * PI * r * r + 2 * PI * r * b, 'Pas de couvercle\u00a0: un seul disque.'], [2 * PI * r * b, 'N\'oublie pas le disque du fond.'], [PI * r * r * b, M_VOL]];
+    case 'atpyrA': return [[2 * a * b, 'N\'oublie pas la base carrée.'], [a * a + 4 * a * b, 'Chaque face est un triangle\u00a0: ' + i('c') + A3 + i('h') + ' : 2.'], [a * a * b / 3, M_VOL]];
+    case 'atbouA': return [[PI * r * r, 'L\'aire de la sphère, c\'est 4' + A3 + i('π') + A3 + i('r') + '².'], [4 * PI * r ** 3 / 3, 'Ça, c\'est le volume. On cherche l\'aire.'], dS && [16 * PI * r * r, M_DIAM]];
+    case 'atbou2A': return [[2 * PI * r * r, 'N\'oublie pas le disque\u00a0: demi-sphère + disque.'], [4 * PI * r * r, 'C\'est une demi-sphère\u00a0: la moitié de 4' + A3 + i('π') + A3 + i('r') + '², plus le disque.'],
+      [5 * PI * r * r, 'C\'est une demi-sphère\u00a0: la moitié de 4' + A3 + i('π') + A3 + i('r') + '², plus le disque.']];
+  }
+  return [];
+}
+const MES_PI = new Set(['dis', 'sec', 'cyl', 'con', 'bou', 'bou2', 'atcyl', 'atcyl1', 'atbou', 'atbou2']);
+function mixMsg(p, X, val){                                            // une donnée dans une autre unité, pas convertie
+  const mx = p.chk && p.chk.mix; if (!mx || !mx.length || !TEN_OK(X, val)) return null;
+  const [g, u, , ut] = mx[0]; return 'Attention\u00a0: ' + nFmt(g) + '\u00a0' + u + ', ce n\'est pas en ' + ut + '. Convertis d\'abord.';
+}
+function mesErr(p, X, dx, sp){
+  let L = []; try { L = mesAlts(p, sp); } catch (e) { console.error(e); }
+  return altMsg(L, X, dx, sp.val) || mixMsg(p, X, sp.val);
+}
+function rMes(p, x, sp){ return mesErr(p, fNum(x.q), decs(x), sp); }
+function mesParse(s){                                                  // « 256π/3 », « 6 + 3π/2 », « 62,83 » → {a, b} : a + b π (la fraction : le dernier terme)
+  s = String(s || '').replace(/\s/g, ''); if (!s) return null;
+  const j = s.indexOf('/'), nS = j < 0 ? s : s.slice(0, j), dS = j < 0 ? null : s.slice(j + 1);
+  let a = [0, 1], b = [0, 1], hasPi = false, dx = 0, red = true; const T = nS.split('+');
+  if (T.some(t => !t)) return null;
+  let d = [1, 1];
+  if (dS !== null){ if (dS.includes('π') || dS.includes('+')) return null; const y = inpParse(dS); if (!y || !y.q || y.frac || y.per) return null; if (!y.q[0]) return {zero: true}; d = y.q; }
+  for (let i = 0; i < T.length; i++){
+    const t = T[i], n = (t.match(/π/g) || []).length; if (n > 1 || (n && !/π$/.test(t))) return null;
+    const c = t.replace('π', ''), x = c === '' ? (n ? {q: [1, 1]} : null) : c === '−' ? (n ? {q: [-1, 1]} : null) : inpParse(c);
+    if (!x || !x.q || x.frac || x.per) return null;
+    let v = x.q; if (i === T.length - 1 && dS !== null){ if (qIsInt(v) && qIsInt(d) && gcd(v[0], d[0]) > 1) red = false; v = qDiv(v, d); }
+    if (n){ b = qAdd(b, v); hasPi = true; } else { a = qAdd(a, v); dx = Math.max(dx, decs(x)); }
+  }
+  return {a, b, hasPi, frac: j >= 0, terms: T.length, dx, red};
+}
+function jMes(p, s, sp){
+  const P = mesParse(s); if (!P) return BAD45(); if (P.zero) return BAD45(INP_MSG.zero);
+  const val = sp.val;
+  if (P.hasPi || P.frac || P.terms > 1){                               // valeur exacte
+    if (P.hasPi && !sp.pi) return {r: 'ko', m: 'Il n\'y a pas de <i>π</i> dans ce calcul.'};
+    const ea = P.a, eb = P.b, Y = fNum(ea) + Math.PI * fNum(eb);
+    const same = sp.A ? qEq(ea, sp.A) && qEq(eb, sp.B) : Math.abs(Y - val) <= 1e-9 * Math.max(1, Math.abs(val));
+    if (same) return P.red ? OK45() : {r: 'almost', m: INP_MSG.simp};
+    return {r: 'ko', m: mesErr(p, Y, null, sp) || INP_MSG.ko};
+  }
+  const X = fNum(P.a), dx = P.dx;
+  return (sp.A ? approxJ(p, sp, decRule(X, dx, val, sp.pi)) : decRule(X, dx, val, sp.pi)) || {r: 'ko', m: mesErr(p, X, dx, sp) || (TEN_OK(X, val) ? 'Attention à la virgule\u00a0: vérifie sa place.' : INP_MSG.ko)};
+}
+// ---------- Pythagore ----------
+const M_ROOT = 'N\'oublie pas la racine carrée à la fin.', M_SQ = 'Avec Pythagore, on additionne (ou soustrait) les carrés des longueurs, puis on prend la racine.';
+function pyAlts(p){
+  const c = p.chk || {}, L = [];
+  if (c.py){ const [a, b, h, k, val] = c.py;
+    if (k === 'h') L.push([Math.sqrt(Math.abs(a * a - b * b)), 'On cherche l\'hypoténuse (le plus long côté)\u00a0: additionne les carrés.'], [a * a + b * b, M_ROOT], [a + b, M_SQ]);
+    else { const o = Math.abs(a - val) < 1e-9 ? b : a;
+      L.push([Math.sqrt(h * h + o * o), 'On cherche un côté de l\'angle droit\u00a0: hypoténuse² − côté², on soustrait.'], [h * h - o * o, M_ROOT], [h - o, M_SQ]); } }
+  if (c.pyf){ const f = c.pyf; L.push([f.val * f.val, M_ROOT]);
+    if (f.k === 'rec') L.push([f.L + f.l, M_SQ], [Math.sqrt(Math.abs(f.L * f.L - f.l * f.l)), 'La diagonale est l\'hypoténuse\u00a0: additionne les carrés.']); }
+  if (c.pye){ const [a, b, d, val] = c.pye, M3 = 'Dans le pavé, il faut les trois dimensions\u00a0: ' + IV('d') + '² = ' + IV('a') + '² + ' + IV('b') + '² + ' + IV('c') + '².';
+    L.push([Math.sqrt(a * a + b * b), M3], [Math.sqrt(a * a + d * d), M3], [Math.sqrt(b * b + d * d), M3], [a * a + b * b + d * d, M_ROOT], [a + b + d, M_SQ]); }
+  return L;
+}
+function rPyN(p, x, sp){ return altMsg(pyAlts(p), fNum(x.q), decs(x), sp.val !== undefined ? sp.val : fNum(sp.v)); }
+function jPy(p, s, sp){
+  const i = s.indexOf('√'), val = sp.val;
+  if (i < 0){ const x = inpParse(s); if (!x) return BAD45(); if (x.zero) return BAD45(INP_MSG.zero); if (!x.q || x.per) return BAD45();
+    const X = fNum(x.q), dx = x.frac ? 6 : decs(x);
+    return approxJ(p, sp, decRule(X, dx, val, false)) || {r: 'ko', m: altMsg(pyAlts(p), X, dx, val) || INP_MSG.ko}; }
+  const C = s.slice(0, i), R = s.slice(i + 1), xc = C === '' ? {q: [1, 1]} : inpParse(C), xr = inpParse(R);
+  if (!xc || !xc.q || !xr || !xr.q || xc.per || xr.per) return BAD45();
+  if (xr.q[0] < 0) return {r: 'ko', m: 'Sous une racine carrée, le nombre ne peut pas être négatif.'};
+  const T = qMul(qMul(xc.q, xc.q), xr.q);
+  if (qEq(T, sp.x.q) && xc.q[0] > 0) return OK45();
+  const Y = Math.abs(fNum(xc.q)) * Math.sqrt(fNum(xr.q));
+  return {r: 'ko', m: altMsg(pyAlts(p), Y, null, val) || INP_MSG.ko};
+}
+// ---------- Thalès ----------
+const TH_PART = {AM: 'AB', AN: 'AC', MN: 'BC', AB: 'AM', AC: 'AN', BC: 'MN'};
+function rTh(p, x, sp){
+  const c = p.chk && p.chk.th; if (!c) return null; const [L, k, val] = c, X = fNum(x.q), dx = decs(x);
+  const u = /Donne la réponse en ([a-zµ]+)/.exec(String(p.con || '')); if (u && TEN_OK(X, val)) return 'Attention à l\'unité\u00a0: la réponse est demandée en ' + u[1] + '.';
+  const A = [];
+  if (TH_PART[k] && L[TH_PART[k]]) A.push([L[TH_PART[k]] ** 2 / val, 'Vérifie tes rapports\u00a0: en haut le petit triangle, en bas le grand, chaque longueur avec celle qui lui correspond.']);
+  if (k === 'BM' || k === 'CN'){ const W = 'Attention\u00a0: on cherche seulement un morceau du segment.'; A.push([k === 'BM' ? L.AB : L.AC, W], [k === 'BM' ? L.AM : L.AN, W]); }
+  if (k === 'AB' || k === 'AC'){ const W = 'Attention\u00a0: on cherche le segment entier.'; A.push([k === 'AB' ? L.BM : L.CN, W]); }
+  return altMsg(A, X, dx, val);
+}
+// ---------- conversions ----------
+function rCv(p, x, sp){
+  const c = p.chk || {}, X = fNum(x.q), v = fNum(sp.v);
+  if (c.rate){ const [g, , [a, b], [cc, d]] = c.rate, A = [[g * a / cc, 'Convertis aussi l\'unité du bas (après le /).'], [g * d / b, 'Convertis aussi l\'unité du haut (avant le /).'],
+      [g * a * b / (cc * d), 'Attention au sens pour l\'unité du bas\u00a0: réfléchis à ce qu\'on a en une plus grande ou une plus petite unité.']];
+    return altMsg(A, X, decs(x), v); }
+  if (c.tem) return rTem(p, X, decs(x), v);
+  const g = cvNum(p.q), u = String(p.post || ''); if (!g || !isFinite(g)) return null;
+  const F = v / g, near = w => Math.abs(X - w) <= 1e-9 * Math.max(1, Math.abs(w));
+  if (Math.abs(F - 1) > 1e-12 && near(g / F)) return F > 1 ? 'On passe à une unité plus petite\u00a0: le nombre devient plus grand.' : 'On passe à une unité plus grande\u00a0: le nombre devient plus petit.';
+  const qu = unitOf(String(p.q || '').replace(/<[^>]+>/g, '')), isA = w => /²/.test(w) || /^h?a$/.test(w), area = isA(u) && isA(qu), vol = /³/.test(u) && /³/.test(qu);
+  if (area && near(g * Math.sqrt(F))) return 'Pour les aires, 1 unité vaut 100 fois l\'unité plus petite\u00a0: 2 chiffres par colonne.';
+  if (vol && near(g * Math.cbrt(F))) return 'Pour les volumes, 1 unité vaut 1000 fois l\'unité plus petite\u00a0: 3 chiffres par colonne.';
+  return null;
+}
+const TIM_S = {h: 3600, min: 60, s: 1}, TIM_B = {h: 10000, min: 100, s: 1}, TIM_LAB = {h: 'les heures', min: 'les minutes', s: 'les secondes'};
+function temParse(t){ const R = []; String(t || '').replace(/&nbsp;/g, ' ').replace(/(\d+(?:,\d+)?)\s*(h|min|s)\b/g, (m, n, u) => { R.push([Number(n.replace(',', '.')), u, n]); return m; }); return R; }
+function rTem(p, X, dx, v){
+  const c = p.chk.tem, Q = temParse(c.q), tu = c.ans[0][1];
+  const A = [[Q.reduce((s, [n, u]) => s + n * TIM_B[u], 0) / TIM_B[tu], '1\u00a0h = 60\u00a0min et 1\u00a0min = 60\u00a0s (pas 100).']];
+  if (Q.length === 1 && /,/.test(Q[0][2]) && Q[0][1] !== 's'){ const [n, u, raw] = Q[0], ip = Math.floor(n), dp = raw.split(',')[1], nu = u === 'h' ? 'min' : 's';
+    A.push([(ip * TIM_S[u] + Number(dp) * TIM_S[nu]) / TIM_S[tu], raw + '\u00a0' + u + ', ce n\'est pas ' + ip + '\u00a0' + u + ' ' + dp + '\u00a0' + nu + '\u00a0: 0,' + dp + '\u00a0' + u + ' = 0,' + dp + ' ∙ 60\u00a0' + nu + '.']); }
+  return altMsg(A, X, dx, v);
+}
+function jTim(p, s, sp){                                               // durée en plusieurs cases : 9 h 54 min
+  const P = s.split('|'), X = P.map(t => inpParse(t));
+  if (X.some(x => !x || !x.q || !qIsInt(x.q) || x.q[0] < 0)) return BAD45('Écris des nombres entiers.');
+  const n = X.map(x => x.q[0]), U = sp.u, tot = n.reduce((t, k, i) => t + k * TIM_S[U[i]], 0), T = sp.v.reduce((t, k, i) => t + k * TIM_S[U[i]], 0);
+  if (n.every((k, i) => k === sp.v[i])) return OK45();
+  if (tot === T) return {r: 'almost', m: 'Juste, mais les minutes et les secondes doivent rester plus petites que 60\u00a0: convertis encore.'};
+  const Q = temParse(p.chk.tem.q), Tq = Q.reduce((t, [k, u]) => t + k * TIM_B[u], 0); let r = Tq; const B = U.map(u => { const k = Math.floor(r / TIM_B[u]); r -= k * TIM_B[u]; return k; });
+  if (n.every((k, i) => k === B[i])) return {r: 'ko', m: '1\u00a0h = 60\u00a0min et 1\u00a0min = 60\u00a0s (pas 100).'};
+  if (tot > T) return {r: 'ko', m: 'C\'est trop\u00a0: vérifie tes calculs.'};
+  return {r: 'ko', m: 'Ce n\'est pas assez\u00a0: vérifie tes calculs.'};
+}
+// ---------- arrondis et encadrements ----------
+function rAro(p, x, sp){
+  const c = p.chk.aro, [N, d, e, R] = c, X = fNum(x.q), t = tgtOf(p), sc = 10 ** d, st = 10 ** (e + d);
+  if (st < 1) return null;
+  const dn = Math.floor(N / st) * st, up = dn + st, is = w => Math.abs(X - w / sc) <= 1e-9 * Math.max(1, Math.abs(w / sc));
+  const cv = c && p.chk.calc ? (p.chk.calc.op === ':' ? p.chk.calc.a / p.chk.calc.b : p.chk.calc.a * p.chk.calc.b) : N / sc;
+  if (is(N) || (decs(x) > Math.max(0, -e) && Math.abs(X - cv) < 10 ** e)) return 'Il faut arrondir ' + t + '.';
+  if (is(R === up ? dn : up)) return R === up ? 'Regarde le chiffre juste après\u00a0: 5 ou plus, on arrondit par excès (vers le haut).' : 'Regarde le chiffre juste après\u00a0: moins de 5, on arrondit par défaut (vers le bas).';
+  for (let f = -4; f <= 6; f++) if (f !== e && 10 ** (f + d) >= 1){ const s2 = 10 ** (f + d), w = Math.round(N / s2) * s2; if (is(w) && w !== R) return 'Attention\u00a0: on arrondit ' + t + '.'; }
+  return null;
+}
+function okAro(p, x, sp){                                              // 24 pour 24,0 : juste, avec un conseil (l'enseignant, 10.11.2026)
+  const e = p.chk.aro[2], need = Math.max(0, -e);
+  return decs(x) < need ? 'Juste\u00a0! Mais écris plutôt ' + p.a + '\u00a0: on voit que tu as arrondi ' + tgtOf(p) + '.' : null;
+}
+function jEncR(p, s, sp){                                              // encadrer : deux nombres, virgule permise
+  const [A, B] = s.split('|'), xa = inpParse(A), xb = inpParse(B);
+  if (!xa || !xb || !xa.q || !xb.q || xa.per || xb.per) return BAD45('Écris deux nombres.');
+  const lo = xa.q, hi = xb.q, [L, H] = sp.v, X = sp.a, t = tgtOf(p);
+  if (qEq(lo, L) && qEq(hi, H)) return OK45();
+  if (qEq(lo, H) && qEq(hi, L)) return {r: 'ko', m: 'Le plus petit nombre va à gauche.'};
+  const fl = fNum(lo), fh = fNum(hi), st = fNum(H) - fNum(L), ex = !!(p.chk && p.chk.calc);
+  if (!(fl <= X && X <= fh)) return {r: 'ko', m: ex ? 'Le résultat du calcul doit être entre les deux nombres.' : 'Le nombre ' + nFmt(X) + ' doit être entre les deux.'};
+  if (Math.abs(fh - fl - st) > 1e-9 * Math.max(1, st)) return {r: 'ko', m: 'Encadre ' + t + '\u00a0: les deux nombres sont à ' + nFmt(st) + ' l\'un de l\'autre.'};
+  return {r: 'ko', m: 'Encadre ' + t + '\u00a0: prends les deux nombres les plus proches, juste en dessous et juste au-dessus.'};
+}
+// ---------- description ----------
+function inpSpec46(p){
+  const s = p.sub || '', fl = p.fl || {}, ch = p.chk || {}, A = String(p.a || ''), T = qTxt(p), u = unitOf(A);
+  const val = r => typeof r === 'number' ? qFromFloat(r) : r && r.k ? qVal(r) : null;
+  const num = (v, R, kb, o) => v ? Object.assign({t: 'num', v, form: 'dec', kb: Object.assign({dec: !!fl.dec || !qIsInt(v)}, kb || {}), R, u: p.post ? '' : u}, o || {}) : null;
+  const oui = (R) => ({t: 'ch', v: p.r ? 'oui' : 'non', opts: ['oui', 'non'], R});
+  if (/^cv_/.test(s)){
+    if (Array.isArray(p.r) && ch.tem){ const U = ch.tem.ans.map(a => a[1]); return {t: 'enc', np: U.length, v: p.r, u: U, lab: U.map(x => TIM_LAB[x]), J: jTim, kb: {}}; }
+    return num(val(p.r), rCv);
+  }
+  if (s === 'aro' && ch.aro){ const v = qRat(ch.aro[3], 10 ** ch.aro[1]); return num(v, rAro, {dec: !!fl.dec || ch.aro[2] < 0}, {okm: okAro}); }
+  if (s === 'enc' && ch.enc2){ const [X, d, e, lo, hi] = ch.enc2, c = ch.calc, sc = 10 ** d;
+    const L = c ? qNum(c.lo) : qRat(lo, sc), H = c ? qNum(c.hi) : qRat(hi, sc), a = c ? (c.op === ':' ? c.a / c.b : c.a * c.b) : X / sc;
+    return {t: 'enc', np: 2, v: [L, H], a, J: jEncR, edec: true, kb: {dec: !!fl.dec || e < 0}}; }
+  if (s === 'py_rec' || s === 'py_con') return oui((p2) => 'Compare le carré du plus grand côté avec la somme des carrés des deux autres.' +
+    (p2.chk && p2.chk.pyu ? ' Attention\u00a0: les longueurs ne sont pas toutes dans la même unité.' : ''));
+  if (s === 'th_rec' || s === 'th_con') return oui(() => 'Compare les rapports\u00a0: chaque longueur du petit triangle sur celle qui lui correspond dans le grand.');
+  if ((s === 'py_calc' || s === 'py_esp') && typeof p.r === 'number'){
+    const q = qFromFloat(p.r);
+    if (fin2(q)) return num(q, rPyN, {dec: !!fl.dec || !qIsInt(q)}, {val: p.r});
+    const s0 = {t: 'rad', n: 2, x: {q: qNum(p.r * p.r)}, v: null, val: p.r, J: jPy, u, kb: {rad: true, n: 2, dec: true}};
+    return p.rd ? twoSpec(p, s0) : s0;
+  }
+  if (s === 'th_calc'){ const q = val(p.r); return fin2(q) ? num(q, rTh, {dec: !!fl.dec || !qIsInt(q)}) : q ? {t: 'mes', val: fNum(q), A: q, B: [0, 1], pi: false, mes: ['', '', []], J: jMes, u, kb: {dec: true, fra: true}} : null; }
+  if (/^(f|v|at)_/.test(s)){
+    if (ch.inv){ const q = val(p.r); return q && qFin(q) ? num(q, null) : null; }
+    const m = ch.mes; if (!m) return null; const [k, Q, d, v] = m, pi = MES_PI.has(k);
+    const sh = (ch.shown || []).join(' ') + ' ' + (String(p.fig || '').match(/>[^<]{1,14}<\/t/g) || []).join(' '), dS = pi && d.length && new RegExp('>?\\b' + nFmt(2 * d[0]).replace(/[^\d,]/g, '.') + '\\s').test(sh.replace(/&nbsp;|\u00a0/g, ' '));
+    const base = {mes: m, val: v, dS, pi};
+    if (!pi){ const q = ratOf(v);
+      if (fin2(q)) return num(q, rMes, {}, base);
+      return Object.assign({t: 'mes', A: q, B: q ? [0, 1] : null, J: jMes, u, kb: {dec: true, fra: true}}, base); }
+    let Aa = [0, 1], B = ratOf(v / Math.PI);
+    if (k === 'sec' && Q === 'P'){ Aa = qNum(2 * d[0]); B = ratOf((v - 2 * d[0]) / Math.PI); }
+    const s0 = Object.assign({t: 'mes', A: B ? Aa : null, B, J: jMes, u, kb: {dec: true, fra: true, pi: true, plus: k === 'sec' && Q === 'P'}}, base);
+    return p.rd ? twoSpec(p, s0) : s0;
+  }
+  return null;
+}
+// ---------- la case de la sorte 'mes' (valeur exacte avec π, ou valeur arrondie) ----------
+function mesEdit(I, sp, c){                                            // π, +, virgule (une par terme), fraction (aussi avec une virgule)
+  let s = I.s, k = Math.max(0, Math.min(I.c, s.length)); const J = s.indexOf('/');
+  const put = t => { s = s.slice(0, k) + t + s.slice(k); k += t.length; };
+  const t0 = Math.max(s.lastIndexOf('+', k - 1), J >= 0 && J < k ? J : -1) + 1, t1 = (() => { const a = s.indexOf('+', k), b = J >= k ? J : -1; return [a, b, s.length].filter(x => x >= 0).sort((x, y) => x - y)[0]; })();
+  const term = s.slice(t0, t1);
+  if (c === 'π'){ if (!sp.kb.pi || term.includes('π') || (J >= 0 && k > J)) return; k = t1; put('π'); }
+  else if (c === '+'){ if (!sp.kb.plus || (J >= 0 && k > J) || !term || s[k - 1] === '+') return; k = t1; put('+'); }
+  else if (c === ','){ if (!sp.kb.dec || term.includes(',') || term.includes('π') && k > t0 + term.indexOf('π')) return; put(k === t0 ? '0,' : ','); }
+  else if (c === '/'){ if (!sp.kb.fra) return;
+    if (J >= 0){ k = k <= J ? s.length : J; }
+    else if (!s){ put('/'); k--; }
+    else { k = s.length; put('/'); } }
+  else return false;
+  I.s = s; I.c = k; return true;
+}
+// ---------- réponse en vert (l'enseignant, 10.11.2026 : « ce serait bien que les réponses s'affichent en vert plutôt que rouge pour les questions
+// que l'élève a répondu juste » ; QCM : « Trouvée, détail en vert aussi » : ✓, ou ~ quand il a fini par taper juste ; rouge s'il a regardé la réponse)
+function inpGood(p){ return !!(p && p.inp && p.inp.fb && p.inp.fb.r === 'ok'); }
+function inpUnit(p){ const sp = inpSpec(p); return sp && sp.u && !p.post && !p.line ? '<span class="un">' + sp.u + '</span>' : ''; }   // l'unité reste écrite après la case
+
+// ---------- n° 46, 2e version : valeur exacte demandée après une valeur arrondie juste (10.11.2026) ----------
+// L'enseignant : « après dans les réponses de calculs de racine on demande plutôt la valeur exacte, donc je compterais faux si on donne pas la valeur
+// exacte » ; QCM : racines (bloc Nombres), Pythagore, aires et volumes avec π, volumes en fraction, avec sa réponse libre : « Plutôt compte juste mais
+// tu peux demander la valeur exacte (fais décaler le bloc dans lequel il a marqué l'arrondi vers la droite, et met le dans un bloc avant où on attend
+// la valeur exacte) ». Lu ainsi : valeur arrondie au centième (ou plus précise) = pas un essai, message vert, elle reste écrite à droite après « ≈ »,
+// une case vide avant elle pour la valeur exacte (✓ si la valeur exacte est juste du premier coup) ; une valeur décimale tapée ensuite = faux ;
+// moins précise, mal arrondie ou avec 3,14 : « presque », comme avant (QCM : « Presque »).
+const EXACT_ASK = {rad: 'Juste ! Maintenant, donne la valeur exacte, avec la racine.', pi: 'Juste ! Maintenant, donne la valeur exacte, avec <i>π</i>.',
+  fra: 'Juste ! Maintenant, donne la valeur exacte, en fraction.'};
+const EXACT_KO = {rad: 'On demande la valeur exacte : garde la racine.', pi: 'On demande la valeur exacte : garde <i>π</i>.', fra: 'On demande la valeur exacte : écris une fraction.'};
+const EXACT_ALM = {rad: 'C\'est une valeur arrondie\u00a0: donne la valeur exacte, avec la racine.', pi: 'C\'est une valeur arrondie\u00a0: donne la valeur exacte, avec <i>π</i>.',
+  fra: 'C\'est une valeur arrondie\u00a0: donne la valeur exacte, en fraction.'};
+const EXACT_WITH = {rad: 'avec la racine', pi: 'avec <i>π</i>', fra: 'en fraction'};
+const EXACT_ARR = k => 'Presque\u00a0: l\'arrondi est presque correct (regarde le chiffre suivant). Tu peux aussi donner tout de suite la valeur exacte, ' + EXACT_WITH[k] + '.';   // n° 46, 3e version
+const EXACT_PI = k => 'Presque\u00a0: 3,14 n\'est qu\'une valeur approchée de <i>π</i>. Utilise la touche <i>π</i> de ta calculatrice, ou donne tout de suite la valeur exacte, ' + EXACT_WITH[k] + '.';
+function exactKind(sp){ return sp.t === 'rad' ? 'rad' : sp.pi ? 'pi' : 'fra'; }
+function approxJ(p, sp, d){                                            // une valeur décimale tapée là où la valeur exacte est attendue (d : decRule)
+  const k = exactKind(sp);
+  if (p.inp && p.inp.after) return {r: 'ko', m: EXACT_KO[k]};
+  if (d && d.r === 'ok') return {r: 'step', after: true, m: EXACT_ASK[k]};
+  if (d && d.m === ROUND_MSG.cent) return {r: 'almost', m: EXACT_ALM[k]};
+  if (d && d.m === ROUND_MSG.arr) return {r: 'almost', m: EXACT_ARR(k)};
+  if (d && d.m === ROUND_MSG.pi) return {r: 'almost', m: EXACT_PI(k)};      // juste, mais moins précis qu'au centième : la valeur exacte directement
+  return d;
+}
+function linAfter(I, sp){ I.after = linRender(I, sp, {st: true}); I.s = ''; I.c = 0; I.b = ''; I.last = 'almost'; }   // la valeur arrondie passe à droite
+
+// ---------- n° 46, 4e version : valeur exacte puis arrondie au dixième ou au centième (10.11.2026) ----------
+// L'enseignant (capture : 407,1 pour 129,6π ≈ 407,15) : « là ça peut être un élève qui a arrondi au dixième, ce qui n'est pas faux vu que pas indiqué
+// dans la consigne ... Tu pourrais demander dans la consigne de donner la valeur exacte, puis arrondie au centième, ou au dixième ? (alterne un peu les
+// précisions demandées) » ; QCM : exercices avec π et Pythagore avec racine (pas la pyramide en fraction) ; dixième ou centième une fois sur deux, à tous
+// les niveaux ; consigne sous le titre ; saisie : « les deux blocs sont ouverts, si l'élève en a complété un ça compte comme juste en l'invitant à
+// compléter l'autre » (lu ainsi : une case juste et l'autre vide = pas un essai, message vert ; ✓ si l'autre est juste du premier coup).
+const RD_SUBS = new Set(['f_dis', 'f_sec', 'v_cyl', 'v_con', 'v_bou', 'at_cyl', 'at_bou', 'py_calc', 'py_esp']);
+const RD_TXT = {1: 'au dixième', 2: 'au centième'};
+function precPost(p){                                                  // à la fin de genOne0 : la précision demandée, la réponse et le détail arrondis
+  if (!p || p.rd || !RD_SUBS.has(p.sub) || typeof p.r !== 'number') return;
+  const c = p.chk || {}, pi = !!(c.mes && MES_PI.has(c.mes[0]) && p.ex), py = (p.sub === 'py_calc' || p.sub === 'py_esp') && !fin2(qFromFloat(p.r));
+  if (!pi && !py) return;
+  const a = TALLY.rd1 || 0, b = TALLY.rd2 || 0, d = a - b >= 2 ? 2 : b - a >= 2 ? 1 : chance(.5) ? 1 : 2;   // une fois sur deux, sans longue série
+  bump('rd' + d);
+  const A = String(p.a || ''), m = /^\s*[−-]?[\d\s   ]*,\d+/.exec(A); if (!m) return;
+  const old = m[0].trim(), nw = fmtR(p.r, d);
+  p.rd = d; p.a = A.replace(old, nw);
+  p.con = (p.con || '') + '<span class="cprec">Valeur exacte, puis arrondie ' + RD_TXT[d] + '</span>';
+  if (p.key) p.key += '|rd' + d;
+  const d0 = p.det; if (typeof d0 === 'function') p.det = function(){ const h = d0.apply(this, arguments), i = h.lastIndexOf(old); return i < 0 ? h : h.slice(0, i) + nw + h.slice(i + old.length); };
+}
+// la case à deux parties : valeur exacte | valeur arrondie (sorte 'two')
+function twoSpec(p, sp0){
+  const kb = Object.assign({}, sp0.kb, {dec: true});
+  return {t: 'two', parts: [sp0, {t: 'mes', kb: {dec: true}}], d: p.rd, val: sp0.val, u: sp0.u, mes: sp0.mes, dS: sp0.dS, pi: sp0.pi, kb, J: jTwo};
+}
+function twoEdit(I, sp, c){
+  const j = I.s.indexOf('|'), part = I.c <= j ? 0 : 1;
+  if (c === 'clr'){ I.s = '|'; I.c = 0; return; }
+  if (c === '→' && !part && I.c === j){ I.c = j + 1; return; }
+  if (c === '←' && part && I.c === j + 1){ I.c = j; return; }
+  const sub = {s: part ? I.s.slice(j + 1) : I.s.slice(0, j), c: part ? I.c - j - 1 : I.c};
+  linEdit(sub, sp.parts[part], c);
+  I.s = part ? I.s.slice(0, j + 1) + sub.s : sub.s + I.s.slice(j); I.c = part ? j + 1 + sub.c : sub.c;
+}
+function twoBox(p, I, sp, on, part){
+  const j = I.s.indexOf('|'), a = part ? j + 1 : 0, b = part ? I.s.length : j, cur = on && (part ? I.c > j : I.c <= j);
+  const f = I.fbp && I.fbp[part], st = f && !['ok', 'bad', 'step'].includes(f) ? ' ' + f : '';
+  let inner;
+  if (a === b && !on) inner = '?';
+  else if (!part && sp.parts[0].t === 'rad'){ const r = I.s.indexOf('√');
+    inner = r < 0 || r > j ? linSeg(I, 0, j, {on: cur, hl: false}) : linSeg(I, 0, r, {on: cur, opt: true, hl: false}) + radH(linSeg(I, r + 1, j, {on: cur, hl: false}), 2); }
+  else inner = linSeg(I, a, b, {on: cur, hl: false});
+  return '<span class="qin' + (cur ? ' on' : '') + st + '" data-ge="' + b + '">' + inner + '</span>';
+}
+const TWO_ASK = (k, d) => 'Juste ! Complète maintenant l\'autre case : ' + (k === 'r' ? 'la valeur arrondie ' + RD_TXT[d] : 'la valeur exacte, ' + EXACT_WITH[k]) + '.';
+function twoRound(p, B, sp){                                           // la case de la valeur arrondie
+  if (/[π√\/+]/.test(B)) return {r: 'ko', m: 'Dans cette case, la valeur arrondie ' + RD_TXT[sp.d] + '.'};
+  const x = inpParse(B); if (!x || !x.q || x.frac || x.per) return BAD45();
+  const X = fNum(x.q), dx = decs(x), d = sp.d, val = sp.val, tol = k => .5 * 10 ** -k + 1e-9 * Math.max(1, Math.abs(val));
+  if (Math.abs(X - Number(fmtR(val, d).replace(',', '.').replace('−', '-'))) < 1e-9 * Math.max(1, Math.abs(val)) && dx === d) return OK45();
+  if (Math.abs(X - val) <= tol(dx)) return {r: 'almost', m: dx > d ? 'Presque : arrondis ' + RD_TXT[d] + ' (' + (d === 1 ? 'un chiffre' : 'deux chiffres') + ' après la virgule).'
+    : 'Presque : donne la valeur ' + RD_TXT[d] + ' (' + (d === 1 ? 'un chiffre' : 'deux chiffres') + ' après la virgule).'};
+  if (sp.pi && dx >= 1){ const w = val * 3.14 / Math.PI; if (Math.abs(X - w) <= 1.0001 * 10 ** -dx) return {r: 'almost', m: ROUND_MSG.pi}; }
+  if (dx >= 1 && Math.abs(X - val) <= 3 * 10 ** -dx + 1e-9 * Math.max(1, Math.abs(val))) return {r: 'almost', m: 'Presque : l\'arrondi est presque correct (regarde le chiffre suivant).'};
+  const L = sp.mes ? (() => { try { return mesAlts(p, sp); } catch (e) { return []; } })() : pyAlts(p);
+  return {r: 'ko', m: altMsg(L, X, dx, val) || (sp.mes && mixMsg(p, X, val)) || INP_MSG.ko};
+}
+function twoExact(p, A, sp){                                           // la case de la valeur exacte
+  const s0 = sp.parts[0], k = exactKind(s0);
+  if (!/[π√\/+]/.test(A)){ const x = inpParse(A);
+    if (x && x.q && !x.frac && Math.abs(fNum(x.q) - sp.val) <= .5 * 10 ** -decs(x) + 1e-9 * Math.max(1, sp.val)) return {r: 'ko', m: 'Ça, c\'est une valeur arrondie : elle va dans l\'autre case. Ici, la valeur exacte, ' + EXACT_WITH[k] + '.'};
+    return x && x.q ? {r: 'ko', m: EXACT_KO[k]} : BAD45(); }
+  let r = null; try { r = s0.J(p, A, s0); } catch (e) { console.error(e); }
+  return r || BAD45();
+}
+function jTwo(p, s, sp){
+  const j = s.indexOf('|'), A = s.slice(0, j), B = s.slice(j + 1), k = exactKind(sp.parts[0]);
+  const rA = A ? twoExact(p, A, sp) : null, rB = B ? twoRound(p, B, sp) : null, I = p.inp || {};
+  I.fbp = [rA && rA.r, rB && rB.r];
+  for (const r of [rA, rB]) if (r && r.r === 'bad') return r;
+  for (const r of [rA, rB]) if (r && r.r === 'ko') return r;
+  for (const r of [rA, rB]) if (r && r.r === 'almost') return r;
+  if (rA && rB) return OK45();
+  return rA ? {r: 'step', keep: true, c: j + 1, m: TWO_ASK('r', sp.d)} : {r: 'step', keep: true, c: 0, m: TWO_ASK(k, sp.d)};
+}
+function inpAns(p){                                                    // la réponse en attente (qLine) : une case, ou deux pour « exacte ≈ arrondie »
+  const sp = inpSpec(p), ap = '<span class="op">≈</span>';
+  if (sp && sp.t === 'two') return inpShown(p) ? inpHTML(p, 0) + inpUnit(p) + ap + inpHTML(p, 1) + inpUnit(p) : BOX + ap + BOX;
+  return inpShown(p) ? inpHTML(p) + inpUnit(p) : BOX;
+}
+
 function newQuestions(){ PICK = false; LASTG = null; seqEnd(); QS = buildQuestions(); cur = 0; render(); }
 function newOrSettings(){ if (objectives(S).length) newQuestions(); else openSet(); }
 
@@ -13864,7 +14288,7 @@ function renderGrid(){ // questions présentées, puis les 12 à venir en 4 lign
   const A = $('allAns').checked;
   const card = (s, at, num, cls, fut) => '<button class="card' + cls + '" ' + at + '>' +
     '<div class="top"><span>' + num + '</span><span>' + (s.L.nostar ? (fut ? '<span class="nst">sans étoiles</span>' : '') : starsHTML(s.L.level)) + (s.L.paper ? ' ✎' : '') + '</span></div>' +
-    '<div class="qa">' + qaHTML(s.L, A) + '</div>' + (s.R ? '<div class="qa r">' + qaHTML(s.R, A) + '</div>' : '') + '</button>';
+    '<div class="qa' + (inpGood(s.L) ? ' qgood' : '') + '">' + qaHTML(s.L, A) + '</div>' + (s.R ? '<div class="qa r' + (inpGood(s.R) ? ' qgood' : '') + '">' + qaHTML(s.R, A) + '</div>' : '') + '</button>';
   let h = '';
   // un groupe à sa place : ses questions côte à côte, dans un cadre « Groupe » ; un clic le ramène tel qu'on l'avait laissé (QCM, 05.11.2026, 13e conversation)
   const gcard = (G, i) => '<button class="card gall' + (i === cur ? ' cur' : '') + '" data-i="' + i + '"><div class="top"><span>' + (i + 1) + ' · Groupe</span><span>' +
@@ -14076,16 +14500,17 @@ function swStart(e){
   swFlush();
   if (e.touches.length !== 1 || FDRAG || document.querySelector('.over.open')) { SW = null; return; }
   const B = document.body; if (B.classList.contains('stu0') || B.classList.contains('stumsg') || B.classList.contains('empty')) { SW = null; return; }
-  if (e.target.closest('button,a,input,select,textarea,label,[contenteditable],.frng,.fold canvas,.mv')) { SW = null; return; }
-  const t = e.touches[0]; SW = {x0: t.clientX, y0: t.clientY, dx: 0, lock: 0, tr: [[performance.now(), t.clientX]], W: $('main').getBoundingClientRect().width || innerWidth};
+  const onKb = e.currentTarget === $('kb');                                // n° 47 : depuis le clavier à l'écran, touches comprises
+  if (!onKb && e.target.closest('button,a,input,select,textarea,label,[contenteditable],.frng,.fold canvas,.mv')) { SW = null; return; }
+  const t = e.touches[0]; SW = {x0: t.clientX, y0: t.clientY, dx: 0, lock: 0, th: onKb ? 14 : 10, tr: [[performance.now(), t.clientX]], W: $('main').getBoundingClientRect().width || innerWidth};
 }
 function swMove(e){
   const D = SW; if (!D) return; const t = e.touches[0]; if (!t) return;
   const dx = t.clientX - D.x0, dy = t.clientY - D.y0;
   if (!D.lock){
-    if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
+    if (Math.abs(dx) < D.th && Math.abs(dy) < D.th) return;
     if (Math.abs(dx) < Math.abs(dy) * 1.2){ SW = null; return; }       // geste vertical : le navigateur défile
-    D.lock = 1; D.x0 = t.clientX - Math.sign(dx) * 10;                     // le contenu part de là, sans saut
+    D.lock = 1; D.x0 = t.clientX - Math.sign(dx) * D.th;                   // le contenu part de là, sans saut
     if (!ANIM_OFF()) swClip(true);
   }
   e.preventDefault();
@@ -14111,8 +14536,17 @@ function swEnd(e){
 $('main').addEventListener('touchstart', swStart, {passive: true});
 $('main').addEventListener('touchmove', swMove, {passive: false});
 $('main').addEventListener('touchend', swEnd, {passive: false});
-$('main').addEventListener('touchcancel', () => { const D = SW; SW = null; if (D && D.lock){ const c = 'translateX(' + (D.x || 0).toFixed(1) + 'px)'; swSet(0);
-  if (!ANIM_OFF()){ SW_ANS = swAnim(c, 'none', {duration: 200}); if (SW_ANS[0]) SW_ANS[0].onfinish = () => { SW_ANS = []; swClip(false); }; } else swClip(false); } });
+function swCancel(){ const D = SW; SW = null; if (D && D.lock){ const c = 'translateX(' + (D.x || 0).toFixed(1) + 'px)'; swSet(0);
+  if (!ANIM_OFF()){ SW_ANS = swAnim(c, 'none', {duration: 200}); if (SW_ANS[0]) SW_ANS[0].onfinish = () => { SW_ANS = []; swClip(false); }; } else swClip(false); } }
+$('main').addEventListener('touchcancel', swCancel);
+// n° 47 (l'enseignant, 11.11.2026 : « sur tél c'est dommage qu'on ne peut pas scroller à la prochaine question au niveau du clavier ») : le swipe part
+// aussi du clavier à l'écran, touches comprises ; le clavier reste en place (comme l'en-tête et le pied de page), seule la question bouge. Un toucher
+// sans glisser tape toujours la touche ; sur le clavier, le geste ne se décide qu'après 14 px (10 sur la question), pour qu'une touche tapée en
+// bougeant un peu le doigt ne soit pas perdue ; après un swipe, aucune touche n'est tapée (touchend empêché : pas de clic)
+$('kb').addEventListener('touchstart', swStart, {passive: true});
+$('kb').addEventListener('touchmove', swMove, {passive: false});
+$('kb').addEventListener('touchend', swEnd, {passive: false});
+$('kb').addEventListener('touchcancel', swCancel);
 $('bPrev').onclick = back;
 $('bNext').onclick = next;                       // dernière question : une de plus (« Continuer », 04.11.2026)
 $('lvBtns').onclick = e => { const b = e.target.closest('button[data-lv]'); if (b && !document.querySelector('.over.open')) (STU ? stuLevel : forceLevel)(Number(b.dataset.lv)); };
@@ -14509,7 +14943,7 @@ var QR = (function(){
    « dans lien élèves si on clique dessus, ça pourrait permettre de coller un lien d'élève aussi » : champ « Reprendre un lien » (ses exercices
    cochés dans les réglages, son titre, ses étoiles, sa case FR) ; la fenêtre s'ouvre aussi sans exercice coché (pour coller un lien).
    Note du projet : QPC_PROJET_LIENS_ELEVES.md. */
-const QPC_VERSION = '2026-11-10';    // dossier de cette version sur le site (…/qpc/2026-11-07/) : à changer à chaque version mise en ligne
+const QPC_VERSION = '2026-11-11';    // dossier de cette version sur le site (…/qpc/2026-11-07/) : à changer à chaque version mise en ligne
 const QPC_BASE = 'https://outils-maths.github.io/qpc/';    // compte GitHub « outils-maths » (avec un s)
 const QPC_ONLINE = /(^|\.)github\.io$/i.test(location.hostname);    // ouverte depuis le site : seulement le mode élève (sans lien : un message)
 var STU = null;                       // mode élève (page ouverte par un lien élèves) ; null : page de l'enseignant

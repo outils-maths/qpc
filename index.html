@@ -1095,9 +1095,9 @@ body.inpok .pane .qbox{cursor:text}
 .sncL input{accent-color:var(--sel);margin:0;flex:none}
 .sncL.off{color:var(--muted)}
 .sncL.off .sncN{text-decoration:line-through;text-decoration-color:rgba(0,0,0,.25)}
-.sncSq{flex:none;width:.85em;height:.85em;border-radius:.18em;border:1px solid #9aa3ad;background:#fff}
+.sncP.sncPst{box-shadow:inset 0 0 0 1px rgba(0,0,0,.1)}   /* n° 61 : pastille de la couleur de son morceau de la réglette (plus de carré à côté de la case) */
 .sncN{flex:1;min-width:0}
-.sncP{flex:none;font-weight:700;color:#36404c;font-variant-numeric:tabular-nums;min-width:3em;text-align:right}
+.sncP{flex:none;font-weight:700;color:#36404c;font-variant-numeric:tabular-nums;min-width:3.4em;text-align:center;padding:.05em .45em;border-radius:1em;box-sizing:border-box}
 .sncL.off .sncP{font-weight:400}
 .sncBarW{margin:.35em 0 .05em 2.45em}
 .sncBarW .ipbar{height:2.15em}
@@ -1132,6 +1132,44 @@ body.inpok .pane .qbox{cursor:text}
 @media (max-width:1400px){ #bSnc .lbx3{display:none} }   /* bas des réglages sur une ligne (1280 × 720, 960 × 1080) : « Séances » */
 @media (max-width:1100px) and (min-width:701px){ #oSet .boxfoot{gap:.4em;padding-left:.6em;padding-right:.6em} #oSet .boxfoot .btn{padding-left:.55em;padding-right:.55em} #bSnc .sncPlB{display:none} #setWarn:empty{display:none} }
 @media (max-width:700px){ #bLink .lbx{display:none} }    /* téléphone : « Séances » et « Lien/impression » sur la même ligne */
+/* n° 54 : boutons de choix (géométrie) : numéro de la touche à l'ordinateur, libellés longs ; ° collé au nombre */
+.kk.kch .knb{display:inline-block;font-size:.5em;font-weight:700;color:var(--muted);margin-right:.55em;vertical-align:.45em}
+.kk.kch.kopt{font-size:1.05em;min-width:0;height:auto;min-height:2.3em;padding:.3em .8em;white-space:normal;line-height:1.2;max-width:15em}
+.kk.kch .kl{display:inline}
+.kk.kch.kopt .knb{font-size:.68em;vertical-align:.2em}
+.eq .un.udeg{margin-left:-.3em}
+@media (hover:none) and (pointer:coarse){ .kk.kch .knb{display:none} }
+@media (max-width:700px) and (orientation:portrait){ .kbk.kbch.kbopt{display:grid;grid-template-columns:1fr 1fr;gap:.35em;width:100%} .kbk.kbch.kbopt .kk{max-width:none;width:100%;font-size:.98em} }
+/* n° 55 : mode enseignant à l'ordinateur : boutons 1★ … 4★ en bas à droite, comme le mode élève (couleur : lvbMark) */
+@media (min-width:701px) and (min-height:501px){
+  body:not(.stu) .lvb{display:inline-flex;gap:.3em;align-items:center}
+  body:not(.stu) .lvb .btn{padding:.45em .55em;font-weight:700}
+  body:not(.stu) .fend{justify-content:flex-end;padding-right:clamp(.6em, 3.5vw, 5em)}
+  body:not(.stu).lv2 .fend{grid-column:1 / -1;justify-content:center;padding-right:0}
+  body.two:not(.stu) .lvb{display:none}         /* deux questions : pas de case, les touches 1 à 4 suffisent ; le pied de page reste sur une ligne */
+}
+body.nostars:not(.stu) #lvBtns .btn:not(.on):hover{background:var(--panel)}   /* étoiles cachées : rien qui montre au tableau le bouton sous la souris */
+/* n° 56 : deux questions : bouton « Une question » (touche 8), plein, en couleur */
+#bOneQ{display:none;background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+body.two:not(.stu) #bOneQ{display:inline-block}
+#bOneQ:hover{background:color-mix(in srgb, var(--accent) 82%, #000)}
+body.two:not(.stu) header.hc1 .hbtn{padding-left:.5em;padding-right:.5em}   /* écran partagé : l'en-tête reste sur une ligne avec ce bouton en plus */
+/* n° 58 (l'enseignant, 11.11.2026 : « quand tu es en mode bloc réponse il faut enlever l'affichage des touches flèche gauche et droite sur
+   les boutons du bas (vu qu'ils ne marchent pas) ») : case ouverte (body.kbon), pas de repère des touches qui ne marchent pas pendant la saisie :
+   ← → (sauf question à choix, body.inpch : elles y changent de question), et de même Entrée (elle vérifie), 7, 9, 8 ; n° 59 : M, J, R, F
+   seulement quand la case se sert de la lettre (sinon elles gardent leur rôle : body.kbf-m… posés par kbDraw) */
+body.kbon #bOneQ .kh, body.kbon:not(.kbf-m) #bGrp .kh, body.kbon:not(.kbf-j) #bAll .kh, body.kbon:not(.kbf-r) #bSet .kh, body.kbon:not(.kbf-f) #bFull .kh,
+body.kbon #bSL .kh, body.kbon #bSR .kh, body.kbon #bAns .kh, body.kbon #bDet .kh,
+body.kbon:not(.inpch) #bPrev .kh, body.kbon:not(.inpch) #bNext .kh{display:none}
+/* n° 59 (l'enseignant, 11.11.2026 : « tu peux marquer que pour le bouton vérifier on peut utiliser la touche entrée aussi ») : repère « Entrée »
+   sur le coin de « Vérifier » du clavier à l'écran, comme sur les boutons du bas (caché sur téléphone et écran tactile, comme tous les .kh) ;
+   taille des boutons du bas (.6em ramené à la police des touches, 1,25 em ; « .kk.kok span » le mettait à .84em) ; moins haut que les autres
+   (top -.5em) : il ne touche ni le bord du clavier ni la touche du dessus quand les touches sont sur deux lignes (960 × 1080, trouvé en testant) */
+.kk.kok{position:relative}
+.kk.kok .kh{font-size:.48em;font-weight:700;top:-.5em;right:-.6em}
+/* n° 62 : saisie, Fonctions et algèbre (radicande vide dans un ensemble de solutions) */
+.s62rq{display:inline-block;min-width:.45em;height:.9em}
+.calc.wrap63{flex-wrap:wrap;justify-content:center;row-gap:.15em}   /* n° 63 */
 </style>
 </head>
 <body>
@@ -1140,6 +1178,7 @@ body.inpok .pane .qbox{cursor:text}
   <h1 class="title">Questions pour des champions</h1>
   <div class="progress"><span class="count" id="count">1 / 10</span><div class="dots" id="dots"></div></div>
   <div class="hbtns">
+    <button class="hbtn" id="bOneQ" title="Revenir à une question (touche 8)"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="3.5" width="12" height="17" rx="2"/><path d="M9.5 9h5M9.5 12.5h5M9.5 16h3" stroke-linecap="round"/></svg><span class="long"> Une question</span><span class="kh">8</span></button>
     <button class="hbtn" id="bTim" title="Minuteur" aria-haspopup="dialog"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13.5" r="7.8"/><path d="M12 9.2v4.6l2.9 2M9.5 2.6h5M12 2.6v3.1M19.2 5.9l1.5 1.5"/></svg><span class="tim" id="timTxt"></span></button>
     <button class="hbtn" id="bStu" title="Revenir à la liste des exercices">☰<span class="long"> Exercices</span></button>
     
@@ -1247,7 +1286,7 @@ body.inpok .pane .qbox{cursor:text}
             <span><kbd>→</kbd> suivante · <kbd>←</kbd> précédente · <kbd>R</kbd> réglages · <kbd>F</kbd> plein écran · <kbd>J</kbd> toutes les questions</span>
             <span><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> question à <span class="stars">★</span> … <span class="stars">★★★★</span> · <kbd>7</kbd> <kbd>9</kbd> réponse seulement <span class="kw">à gauche / à droite</span><span class="kt">en haut / en bas</span></span>
             <span><kbd>Espace</kbd> (ou clic sur le « ? ») ouvrir la case, <kbd>Espace</kbd> encore la fermer · <kbd>Entrée</kbd> vérifier · <kbd>Échap</kbd> (ou clic à côté) fermer la case</span>
-            <span>Dans la case : <kbd>←</kbd> <kbd>→</kbd> le curseur · <kbd>↑</kbd> <kbd>↓</kbd> en haut, en bas · <kbd>/</kbd> fraction · <kbd>P</kbd> période · <kbd>R</kbd> racine · <kbd>*</kbd> ∙</span>
+            <span>Dans la case : <kbd>←</kbd> <kbd>→</kbd> le curseur · <kbd>↑</kbd> <kbd>↓</kbd> en haut, en bas · <kbd>/</kbd> fraction · <kbd>P</kbd> période · <kbd>*</kbd> ∙</span>
           </div>
 
           <div class="lab">Fond</div>
@@ -6086,7 +6125,7 @@ function raysQ(lv){
     // angle si tu demandes l'angle rentrant ») : seul l'angle rentrant demandé a un arc, du côté du grand angle ; aucun autre arc.
     const arcs = tgt.rx ? [{i: tgt.i, j: tgt.j, rx: true}] : [];
     // lettres
-    const V = pick(ANGV), st = pick(ANGL), ab = 'ABCDEFGHJKLMNPRSTUVWXYZ'.split('').filter(c => c !== V), k0 = ab.indexOf(st);
+    const V = pick(ANGV), st = pick(ANGL), ab = 'ABCDEFGHJKLMNPRSTUVWXYZ'.split('').filter(c => c !== V && !(V === 'P' && c === 'D')), k0 = Math.max(0, ab.indexOf(st));   // n° 55 : jamais « PD »
     let names = ab.slice(k0, k0 + n + 1); if (names.length < n + 1) names = ab.slice(0, n + 1);
     const extra = names[n]; names = names.slice(0, n); if (lv === 4) names = shuffle(names.slice());
     // figure
@@ -8524,7 +8563,7 @@ function drtQ(kind, lv){
   if (lv === 1 || (lv === 4 && kind === 'hau')){        // ★★★★ pour la hauteur : triangle obtusangle (hauteur à l'extérieur)
     const T = lv === 4 ? (() => { const ob = ri(100, 115), b = ri(25, 155 - ob); return tri9(0, 180, 250, [180 - ob - b, ob, b]); })() : tri9(...ACUTE);
     const iv = lv === 4 ? 0 : ri(0, 2), D = drtFig(T, N, iv, kind), a = drtName(kind, N, iv);
-    return geoQ({a, r: a, fig: D.svg, con: 'Quelle est la droite d ?', conBig: true, key: kind + 'r' + (lv === 4 ? '4' : ''), figDet: true, chk: {drt: {kind, lv, a, N, iv}},
+    return geoQ({a, r: a, fig: D.svg, con: 'Quelle est la droite d ?', conBig: true, key: kind + 'r' + (lv === 4 ? '4' : ''), figDet: true, chk: {drt: {kind, lv, a, N, iv, P: T.P}},
       det: () => D.svg + DIV(DRT_WHY[kind](N, iv), 'gr') + DIV(ANS(a), 'fin')});
   }
   if (lv === 3){
@@ -8626,7 +8665,7 @@ function cerQ(kind, lv){
 
 /* ---------- notations et codage ---------- */
 function notQ(lv){
-  const nm = shuffle(PNAMES.slice()).slice(0, 3), [A, B, C] = nm, f = new Fig(), th = ri(-60, 60) * DEG, R = p => V2.rot(p, th, [0, 0]);
+  const nm = noPD(shuffle(PNAMES.slice()).slice(0, 3)), [A, B, C] = nm, f = new Fig(), th = ri(-60, 60) * DEG, R = p => V2.rot(p, th, [0, 0]);
   if (lv <= 2){
     const kind = lv === 1 ? pick(['droite', 'seg']) : pick(['demi', 'demi', 'droite', 'seg', 'long']);
     const PA = R([0, 0]), PB = R([200, 0]), u = V2.unit(V2.sub(PB, PA)), rev = kind === 'demi' && chance(.5), red = {stroke: RED, w: 3.2};
@@ -9358,7 +9397,7 @@ function tqVocQ0(k, lv){
   const P = tqShape(k), N = lv === 4 ? pick(TQW).split('') : pick(QNAMES), nmw = N.join(''), sg = (i, j) => tqSeg(nmw, N[i % 4], N[j % 4]);
   const fig = tqVocFig(k, P, N, {}), base = {fig, figDet: true};
   if (lv === 1){ const g = ri(0, 3), a = sg(g + 2, g + 3);
-    return geoQ(Object.assign(base, {a, r: a, con: 'Quel est le côté opposé à ' + sg(g, g + 1) + ' ?', conBig: true, key: 'qvo', chk: {tqvoc: {k, a}},
+    return geoQ(Object.assign(base, {a, r: a, con: 'Quel est le côté opposé à ' + sg(g, g + 1) + ' ?', conBig: true, key: 'qvo', chk: {tqvoc: {k, a, nm: nmw}},
       det: () => tqVocFig(k, P, N, {segs: [[g, (g + 1) % 4, BLUE], [(g + 2) % 4, (g + 3) % 4, RED]]})})); }
   if (lv === 2){ const g = ri(0, 3), con = chance(.5), h = con ? (g + pick([1, 3])) % 4 : (g + 2) % 4, pr = shuffle([g, h]), a = con ? 'consécutifs' : 'opposés';
     const com = con ? N[h === (g + 1) % 4 ? h : g] : '';
@@ -9372,7 +9411,7 @@ function tqVocQ0(k, lv){
     return Object.assign(phrQ('Complète', N[pr[0]] + ' et ' + N[pr[1]] + ' sont deux sommets ', a, '.', {key: 'qvp', chk: {tqvoc: {k, a}}}), base,
       {det: () => tqVocFig(k, P, N, {segs: [[g, (g + 1) % 4, ORANGE]], pts: [[g, ORANGE], [(g + 1) % 4, ORANGE]]}) + tqSuf(sg(g, g + 1) + ' est un côté', ANS(a))}); }
   const a = sg(0, 2) + ' et ' + sg(1, 3);
-  return geoQ(Object.assign(base, {a, r: a, con: 'Quelles sont les diagonales de ce quadrilatère ?', conBig: true, key: 'qvq', chk: {tqvoc: {k, a}},
+  return geoQ(Object.assign(base, {a, r: a, con: 'Quelles sont les diagonales de ce quadrilatère ?', conBig: true, key: 'qvq', chk: {tqvoc: {k, a, nm: nmw}},
     det: () => tqVocFig(k, P, N, {segs: [[0, 2, RED], [1, 3, RED]]})}));
 }
 
@@ -10078,7 +10117,7 @@ GL('d_bar', [1, 2, 3, 4], lv => {
 
 /* ---------- cercle de Thalès : [AB] diamètre, M sur le cercle ⟹ angle droit en M ---------- */
 GL('g_tha', [1, 2, 3, 4], lv => {
-  const R = 140, th = ri(0, 359) * DEG, O = [0, 0], [a, b, m] = pick([['A', 'B', 'M'], ['E', 'F', 'G'], ['R', 'S', 'T'], ['C', 'D', 'P']]);
+  const R = 140, th = ri(0, 359) * DEG, O = [0, 0], [a, b, m] = pick([['A', 'B', 'M'], ['E', 'F', 'G'], ['R', 'S', 'T'], ['C', 'D', 'N']]);
   let al = ri(25, 65); if (Math.abs(al - 45) < 5) al += 9;                                  // angle en A (en degrés) ; ni trop petit (étiquettes serrées) ni proche de 45°
   let c = 180 - 2 * al;                                                                      // angle au centre AOM
   if (lv === 4){ c = DEC && chance(.5) ? 2 * ri(28, 60) + 1 : 2 * ri(28, 60); al = (180 - c) / 2; }
@@ -12190,7 +12229,7 @@ const starsHTML = lv => '<span class="stars">' + '★'.repeat(lv) + '</span>';
 function qLine(p, show){
   if (p.line){ const h = p.line(show); if (show || !inpShown(p)) return h;
     const sp = inpSpec(p); if (sp && sp.t === 'enc'){ const L = h.split(BOX); if (L.length > 2) return L.map((x, i) => i ? inpHTML(p, i - 1) + x : x).join(''); }   // n° 46 : 2 ou 3 cases   // n° 45
-    return h.replace(BOX, inpHTML(p)); }   // saisie (n° 38) : ce qui est tapé à la place du « ? »
+    return h.replace(BOX, inpHTML(p) + inpUnitL(p)); }   // saisie (n° 38) : ce qui est tapé à la place du « ? »
   const ans = !show ? inpAns(p) : p.ex ? '<span class="ansnum">' + p.ex + '</span><span class="op">≈</span><span class="ansnum">' + p.a + '</span>' : '<span class="ansnum">' + p.a + '</span>';
   return '<span class="qq">' + p.q + '</span><span class="eq' + (p.sep === '⟹' ? ' solve' : '') + '"><span class="op">' + (show && p.ex ? '=' : show && p.sepA ? p.sepA : (p.sep || '=')) + '</span>' +
     (p.pre ? '<span>' + p.pre + '</span>' : '') + ans + (p.post ? '<span class="un">' + p.post + '</span>' : '') + '</span>';
@@ -12274,13 +12313,16 @@ function repRatio(pane, inn){
 }
 function fitPane(pane){
   if (pane.classList.contains('hide')) return;
-  const qa = pane.querySelector('.qa'), calc = qa.querySelector('.calc'); qa.style.fontSize = ''; if (calc) calc.style.fontSize = '';
+  const qa = pane.querySelector('.qa'), calc = qa.querySelector('.calc'); qa.style.fontSize = ''; if (calc){ calc.style.fontSize = ''; calc.style.maxWidth = ''; calc.classList.remove('wrap63'); }
   const cs = getComputedStyle(pane), open = pane.classList.contains('dopen');
   const W = pane.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 6;
   const Hh = pane.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - 4;
   const f0 = parseFloat(getComputedStyle(qa).fontSize), qw = qa.scrollWidth, qh = qa.scrollHeight;
   const box = open ? pane.querySelector('.dbox') : null, inn = box && box.querySelector('.detin');
-  if (!inn){ const s = Math.min(1, W / qw, Hh / qh); if (s < 1) qa.style.fontSize = (f0 * s * .99) + 'px'; return; }
+  if (!inn){ let s = Math.min(1, W / qw, Hh / qh);
+    // n° 63 : une expression tapée trop longue (téléphone) : « = » et la case passent sous la question, si elle y gagne en taille
+    if (s < .8 && calc && calc.querySelector('.e63r')){ calc.classList.add('wrap63'); calc.style.maxWidth = W + 'px'; const wq = Math.max(qa.scrollWidth, ...[...calc.children].map(c => c.getBoundingClientRect().width)), s2 = Math.min(1, W / wq, Hh / qa.scrollHeight); if (s2 > s * 1.1) s = s2; else { calc.classList.remove('wrap63'); calc.style.maxWidth = ''; } }
+    if (s < 1) qa.style.fontSize = (f0 * s * .99) + 'px'; return; }
   inn.style.transform = ''; box.style.width = box.style.height = '';
   const ui = parseFloat(getComputedStyle(document.body).fontSize), px = Math.min(ui * .9, W * .025), py = Math.min(ui * .55, Hh * .015), lab = ui * .55;   // marges du cadre, étiquette « Détail »
   const dw = inn.offsetWidth, dh = inn.offsetHeight, gap = parseFloat(cs.rowGap) || 0;
@@ -12370,8 +12412,8 @@ function render(){
   const last = cur === QS.length - 1;
   $('bPrev').disabled = cur === 0; $('bNext').disabled = false;
   $('bNext').classList.toggle('more', last); $('bNext').classList.toggle('on', last); navTitles();
-  if (STU) stuUI();
-  fitHeader(); sideUI(); fitAll(); requestAnimationFrame(fitAll);
+  if (STU) stuUI(); else lvbMark();                                   // n° 55
+  fitHeader(); sideUI(); repBtn(); fitAll(); requestAnimationFrame(fitAll);   // n° 55 : « Répondre » au-dessus du pied de page, après fitFooter (deux lignes)
   [$('pL'), $('pR')].forEach((pane, i) => qFlip(pane, qFrom[i]));
 }
 function qFlip(pane, r0){ // la question glisse de son ancienne place (r0) à la nouvelle, en passant de l'ancienne taille à la nouvelle (420 ms)
@@ -12928,6 +12970,14 @@ var INP = null;                                                    // la questio
 // En arrivant sur une question (kbTrack) : nouvelle question, la case s'ouvre si elle est activée ; question déjà vue, elle reprend l'état qu'elle
 // avait quand on l'a quittée (p.kbm), et cet état continue sur les questions suivantes. Repère : var KB_ON = .
 var KB_ON = null, KB_AT = null, KB_NEW = false;     // KB_AT : la question affichée (seule) ; KB_NEW : on vient d'y arriver
+// n° 57 (l'enseignant, 11.11.2026 : « quand je suis en mode enseignant sur ordi, quand une question n'est pas en mode affichage bloc réponse, passer
+// à une nouvelle question ne doit pas afficher le mode bloc réponse si la question d'avant ne l'avait pas au moment où on a passé à la nouvelle
+// question » ; QCM : après une réponse juste, la case revient à la question suivante) : à l'ordinateur en mode enseignant, une case fermée par un
+// clic à côté qui ne change pas de question (bouton « Réponse », fond de la page, minuteur…) la désactive (KB_ON = false), comme Échap ; un clic qui
+// change de question (▶, ◀, « Continuer », rond, 1★ … 4★) la garde : elle était affichée au moment de passer. Décidé après le clic (setTimeout :
+// après tous les écouteurs du clic) ; KB_CK = la question dont la case vient de se fermer ainsi. Inchangé : réponse juste, Page préc. / suiv.
+// (la case revient), mode élève et écran tactile. Repère : var KB_CK = .
+var KB_CK = null;
 function kbOn(){ return KB_ON === null ? !!(STU || inpTouch()) : KB_ON; }
 function kbTrack(p){                                // à chaque affichage : la question seule affichée (null : aucune, deux questions, groupe, liste de l'élève)
   if (p === KB_AT) return;
@@ -13048,7 +13098,8 @@ const INP_MSG = {
 function inpJudge(p, b){                                              // → {r: 'ok' | 'almost' | 'ko' | 'bad', m: message}
   const sp = inpSpec(p); if (!sp) return {r: 'bad', m: INP_MSG.bad};
   if (isLin(sp)) return linJudge(p, b, sp);                           // n° 45
-  if (sp.t === 'ch') return b === sp.v ? {r: 'ok', m: INP_MSG.ok} : {r: 'ko', m: (sp.R && sp.R(p, b, sp)) || INP_MSG.ko};
+  if (sp.t === 'ch'){ if (b === sp.v) return {r: 'ok', m: INP_MSG.ok}; if (sp.alm && sp.alm[b]) return {r: 'almost', m: sp.alm[b]};   // n° 54 : sp.alm
+    return {r: 'ko', m: (sp.R && sp.R(p, b, sp)) || INP_MSG.ko}; }
   const x = inpParse(b);
   if (!x) return {r: 'bad', m: INP_MSG.bad};
   if (x.zero) return {r: 'bad', m: INP_MSG.zero};
@@ -13351,9 +13402,9 @@ function inpSync(){                                                   // à chaq
 }
 function inpChar(e, sp){                                              // la touche du clavier de l'ordinateur → un caractère de la case
   const k = e.key;
+  if (sp.t === 'ch' && sp.nk){ const d = /^[1-9]$/.test(k) ? k : (/^(?:Digit|Numpad)([1-9])$/.exec(e.code) || [])[1]; return d ? (sp.opts[Number(d) - 1] || null) : null; }   // n° 54
   if (/^[0-9]$/.test(k)) return k;
-  if (sp.t === 'ch'){ const u = k.length === 1 ? k.toUpperCase() : ''; return sp.opts.includes(k) ? k : sp.opts.includes(u) ? u
-    : (k.length === 1 && sp.opts.find(o => o.length > 1 && o[0] === k.toLowerCase())) || null; }   // n° 45 : oui, non (O, N)
+  if (sp.t === 'ch'){ const u = k.length === 1 ? k.toUpperCase() : ''; return sp.opts.includes(k) ? k : sp.opts.includes(u) ? u : null; }   // n° 60 : plus de O, N pour oui, non (ni V, F pour vrai, faux) ; les lettres des points restent
   const lk = linChar(k, sp); if (lk) return lk;                       // n° 45
   const A = {ArrowLeft: '←', ArrowRight: '→', ArrowUp: '↑', ArrowDown: '↓', Home: 'home', End: 'end', Delete: 'del', Backspace: '⌫'};
   if (A[k]) return A[k];
@@ -13370,12 +13421,23 @@ function inpChar(e, sp){                                              // la touc
 let INP_SWALLOW = false;
 function inpNoFocus(){ const a = document.activeElement; if (a && a !== document.body && a.blur && !(a.closest && a.closest('input, textarea, select, [contenteditable]'))) a.blur(); }
 document.addEventListener('keyup', e => { if (INP_SWALLOW){ INP_SWALLOW = false; e.preventDefault(); e.stopPropagation(); } }, true);
+// n° 59 (l'enseignant, 11.11.2026 : « pas besoin de désactiver les raccourcis comme M, J, R et F quand on est en bloc réponse et qu'il n'y a pas
+// besoin de lettres dans la réponse ») : pendant la saisie, M (questions multiples), J (toutes les questions), R (réglages), F (plein écran) gardent
+// leur rôle quand la case de cette question ne se sert pas de la lettre (inpChar ne la prend ni en minuscule ni en majuscule : les lettres des
+// points ou des bases, P la période ou π, E le bloc ∙ 10ⁿ ; n° 60 : plus R pour la racine, ni O, N pour oui, non) ; mode élève : F seulement (ses seules touches).
+// M ferme d'abord la case (comme un clic sur le bouton : sinon les étoiles 1 à 4 iraient dans la case). Repère : function inpFree(
+function inpFree(k, sp){
+  if (!sp || !/^[mjrf]$/i.test(k) || (STU && !/^f$/i.test(k))) return false;
+  const code = 'Key' + k.toUpperCase();
+  return !inpChar({key: k.toLowerCase(), code}, sp) && !inpChar({key: k.toUpperCase(), code}, sp);
+}
 function inpKeyDown(e){                                               // touches pendant la saisie ; rend true si la touche est prise
   if (!INP || e.altKey || e.ctrlKey || e.metaKey) return false;
   if (INP !== inpCur()){ INP = null; return false; }
   const k = e.key, sp = inpSpec(INP);
   // Page préc. / suiv. (et ← → d'une question à choix) : la case se referme, la touche change de question ; ailleurs, ← → ↑ ↓ déplacent le curseur (n° 40)
   if (/^Page(Up|Down)$/.test(k) || (sp.t === 'ch' && /^Arrow(Left|Right)$/.test(k))){ INP = null; return false; }
+  if (inpFree(k, sp)){ if (/^m$/i.test(k)){ inpClose(); if (!inpTouch()) KB_ON = false; } return false; }   // n° 59 : M, J, R, F gardent leur rôle (M : comme un clic sur le bouton)
   if (/^(Shift|CapsLock|NumLock|Dead|Alt|AltGraph|Control|Meta|Tab|F\d+)$/.test(k)) return k !== 'Tab' && !/^F\d+$/.test(k);
   e.preventDefault(); inpNoFocus(); INP_SWALLOW = true;
   if (k === 'Escape' || k === ' '){ KB_ON = false; inpClose(); }    // n° 48 : fermée exprès (n° 49 : KB_ON) ; n° 41 : Espace referme aussi la case (l'enseignant : « c'est ce que j'aimerais »)
@@ -13401,7 +13463,8 @@ function inpHTML(p, part){                                            // ce qui 
   const I = p.inp, on = INP === p, b = I.b;
   if (isLin(inpSpec(p))) return linBox(p, I, inpSpec(p), on, part);   // n° 45 (part : 1re ou 2e case de l'encadrement)
   const st = I.fb && I.fb.r !== 'bad' && I.fb.r !== 'ok' ? ' ' + I.fb.r : '';
-  if (inpSpec(p).t === 'ch') return '<span class="qin' + (on ? ' on' : '') + st + '">' + (b ? hEsc(b) : '') + (on ? '<span class="qcar"></span>' : '') + '</span>';
+  if (inpSpec(p).t === 'ch'){ const sl = inpSpec(p).lab;              // n° 54 : libellé (sp.lab)
+    return '<span class="qin' + (on ? ' on' : '') + st + '">' + (b ? (sl && sl[b] ? sl[b] : hEsc(b)) : '') + (on ? '<span class="qcar"></span>' : '') + '</span>'; }
   if (I.n === undefined){ I.n = b || ''; I.d = null; I.f = 'n'; I.c = I.n.length; }
   let h;
   if (I.d === null) h = inpPart(I, 'n', on);
@@ -13441,7 +13504,8 @@ function kbHTML(sp){
   const key = (c, lab, cl, pos, ti) => '<button type="button" class="kk' + (cl ? ' ' + cl : '') + '" data-k="' + hEsc(c) + '"' + (pos ? ' style="' + pos + '"' : '') +
     (ti ? ' title="' + ti + '"' : '') + '>' + lab + '</button>';
   let h;
-  if (sp.t === 'ch') h = sp.opts.map(o => key(o, o === '<' ? '&lt;' : o === '>' ? '&gt;' : hEsc(o), 'kch' + (o.length > 1 ? ' kwd' : ''))).join('');
+  const chL = o => sp.lab && sp.lab[o] ? sp.lab[o] : o === '<' ? '&lt;' : o === '>' ? '&gt;' : hEsc(o), chLg = sp.t === 'ch' && !!sp.g47 && sp.opts.some(o => stripTags(chL(o)).length > 13);   // n° 54
+  if (sp.t === 'ch') h = sp.opts.map((o, i) => key(o, (sp.nk ? '<span class="knb">' + (i + 1) + '</span>' : '') + (sp.g47 ? '<span class="kl">' + chL(o) + '</span>' : chL(o)), 'kch' + (chLg ? ' kopt' : o.length > 1 ? ' kwd' : ''), '', sp.nk && i < 9 ? 'Touche ' + (i + 1) : '')).join('');
   else {
     // ordinateur : une ligne (1 … 9, 0, puis les touches en plus) ; téléphone en hauteur : pavé 7 8 9 / 4 5 6 / 1 2 3 / 0 (CSS, --c et --r)
     const D = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'], at = {1: [1, 3], 2: [2, 3], 3: [3, 3], 4: [1, 2], 5: [2, 2], 6: [3, 2], 7: [1, 1], 8: [2, 1], 9: [3, 1], 0: [2, 4]};
@@ -13451,15 +13515,17 @@ function kbHTML(sp){
     const slots = [[4, 2], [4, 3], [1, 4], [3, 4]].concat(Array.from({length: 12}, (_, i) => [i % 4 + 1, 5 + Math.floor(i / 4)]));   // n° 45 : plus de 4 touches en plus : d'autres lignes
     h = D.map(d => key(d, d, 'kd', '--c:' + at[d][0] + ';--r:' + at[d][1])).join('') +
       X.map((x, i) => key(x[0], x[1], 'kx', '--c:' + slots[i][0] + ';--r:' + slots[i][1], x[2])).join('') +
-      key('⌫', KB_SVG.del, 'kdel', '--c:4;--r:1', 'Effacer (touche ⟵)') + key('ok', '<span>Vérifier</span>', 'kok', '--c:4;--r:4', 'Vérifier (Entrée)');
+      key('⌫', KB_SVG.del, 'kdel', '--c:4;--r:1', 'Effacer (touche ⟵)') + key('ok', '<span>Vérifier</span><span class="kh">Entrée</span>', 'kok', '--c:4;--r:4', 'Vérifier (Entrée)');
   }
-  return '<div class="kbk' + (sp.t === 'ch' ? ' kbch' : '') + '">' + h + '</div>' + '<button type="button" class="kk kkx" data-k="esc" title="Fermer le clavier (Échap)">' + KB_SVG.x + '</button>';
+  return '<div class="kbk' + (sp.t === 'ch' ? ' kbch' + (chLg ? ' kbopt' : '') : '') + '">' + h + '</div>' + '<button type="button" class="kk kkx" data-k="esc" title="Fermer le clavier (Échap)">' + KB_SVG.x + '</button>';
 }
 function kbDraw(){
   const kb = $('kb'), sp = INP && inpSpec(INP);
   repBtn();
+  document.body.classList.toggle('inpch', !!(sp && sp.t === 'ch'));   // n° 58 : question à choix (← → y changent de question)
+  ['m', 'j', 'r', 'f'].forEach(l => document.body.classList.toggle('kbf-' + l, !!(sp && inpFree(l, sp))));   // n° 59 : lettre libre, repère gardé
   if (!sp){ if (!kb.hidden){ kb.hidden = true; kb.innerHTML = ''; kb._sig = ''; } document.body.classList.remove('kbon'); return; }
-  const sig = JSON.stringify([sp.t, sp.t === 'ch' ? sp.opts : sp.kb]);
+  const sig = JSON.stringify([sp.t, sp.t === 'ch' ? [sp.opts, sp.lab || null] : sp.kb]);   // n° 54 : les libellés changent d'une question à l'autre
   if (kb._sig !== sig){ kb.innerHTML = kbHTML(sp); mathify(kb); kb._sig = sig; }
   const I = INP.inp, pk = kb.querySelector('.kk[data-k="‾"]');             // touche de la période enfoncée tant qu'il y a une période (n° 40)
   if (pk) pk.classList.toggle('kon', !!(I && I.n && I.n.includes('‾')));
@@ -13492,7 +13558,9 @@ let INP_PT = '';
 document.addEventListener('pointerdown', e => { INP_PT = e.pointerType || ''; }, true);
 document.addEventListener('click', e => {
   if (!INP || INP_PT !== 'mouse' || (e.target.closest && e.target.closest('.qin, #kb, #bRep, .over.open'))) return;
-  inpClose();
+  const q = INP; inpClose();
+  if (!STU && !inpTouch()){ KB_CK = q;                                // n° 57 : pas de changement de question → case désactivée
+    setTimeout(() => { if (KB_CK === q && KB_AT === q && INP !== q) KB_ON = false; KB_CK = null; }, 0); }
 }, true);
 $('main').addEventListener('click', e => {                           // clic sur « ? » ou dans la case : ouvrir la case, curseur à l'endroit du clic
   const q = e.target.closest('.pane .qbox, .pane .qin'); if (!q) return;
@@ -13515,7 +13583,7 @@ $('main').addEventListener('click', e => {                           // clic sur
      passer le curseur devant, comme pour le dénominateur).
    - « Juste, réécris » (r: 'step') : la réponse reste écrite (I.steps), suivie de « = » et d'une case vide ; pas un essai ; marque ✓ si la suite
      est juste du premier coup, ~ si on regarde la réponse avant. */
-const LIN_T = new Set(['pow', 'sci', 'dcp', 'rad', 'enc', 'mes', 'two']);   // n° 46 : 'mes'
+const LIN_T = new Set(['pow', 'sci', 'dcp', 'rad', 'enc', 'mes', 'two', 'set', 'exp']);   // n° 63 : 'exp'   // n° 46 : 'mes'
 const isLin = sp => !!sp && LIN_T.has(sp.t);
 const LIN_MK = '^∙√|';
 FB_ICO.step = FB_ICO.ok;
@@ -13825,6 +13893,8 @@ function linEdit(I, sp, c){
     if (!tx.replace('−', '')) return;
     k = pt.b; put('^');
   };
+  if (sp.t === 'set') return setEdit62(I, sp, c);
+  if (sp.t === 'exp') return expEdit63(I, sp, c);                 // n° 63 : une expression littérale                // n° 62 : l'ensemble des solutions (équations)
   if (sp.t === 'two') return twoEdit(I, sp, c);                     // n° 46, 4e version : deux cases
   if (sp.t === 'mes' && ['π', '+', ',', '/'].includes(c)){ if (mesEdit(I, sp, c) !== false) return; }   // n° 46
   if (c === '⌫'){
@@ -13888,6 +13958,8 @@ function linEdit(I, sp, c){
   I.s = s; I.c = Math.max(0, Math.min(k, s.length));
 }
 function linMissing(I, sp){                                           // une partie vide → {m, c} ; rien de tapé → null ; sinon false
+  if (sp.t === 'set') return setMiss62(I, sp);
+  if (sp.t === 'exp') return expMiss63(I, sp);                    // n° 63                    // n° 62
   const s = I.s || ''; if (!s.replace(/[|−]/g, '')) return null;
   const P = linParts(s), msg = (m, c) => ({m, c});
   for (let i = 0; i < P.length; i++){
@@ -13899,7 +13971,7 @@ function linMissing(I, sp){                                           // une par
     if (sp.t === 'sci') return msg(kind === '^' ? 'Il manque l\'exposant.' : 'Il manque le nombre devant ∙ 10.', q.a);
     if (sp.t === 'dcp') return msg(kind === '^' ? 'Il manque un exposant.' : 'Il manque un facteur.', q.a);
     if (sp.t === 'rad') return msg('Il manque le nombre sous la racine.', q.a);
-    if (sp.t === 'enc') return msg(sp.lab ? 'Il manque ' + sp.lab[i] + '.' : i ? 'Il manque le 2e nombre.' : 'Il manque le 1er nombre.', q.a);
+    if (sp.t === 'enc' && !sp.optE) return msg(sp.lab ? 'Il manque ' + sp.lab[i] + '.' : i ? 'Il manque le 2e nombre.' : 'Il manque le 1er nombre.', q.a);
   }
   return false;
 }
@@ -13929,6 +14001,8 @@ function linSeg(I, a, b, o){                                          // un morc
   return fracH(box(a, a + j, true), box(a + j + 1, b, true));
 }
 function linRender(I, sp, o){
+  if (sp.t === 'set') return setRender62(I, sp, o);
+  if (sp.t === 'exp') return expRender63(I, sp, o);               // n° 63                // n° 62
   const s = I.s || ''; if (!s) return o.on && !o.st ? QCAR : '';
   const P = linParts(s), multi = P.length > 1, seg = (q, x) => linSeg(I, q.a, q.b, Object.assign({hl: multi}, o, x || {}));
   const MK = '<span class="qmk">∙</span>';
@@ -13970,25 +14044,33 @@ function linClick(e, q){                                              // clic ou
 }
 function linChar(k, sp){                                              // touche de l'ordinateur → caractère (nouvelles sortes de case)
   if (!isLin(sp)) return null;
-  if (sp.t === 'mes' || sp.t === 'two'){ if ((k === 'p' || k === 'P') && sp.kb.pi) return 'π'; if (k === '+' && sp.kb.plus) return '+'; if ((k === 'r' || k === 'R') && sp.kb.rad) return '√'; }   // n° 46
+  if (sp.t === 'exp') return expChar63(k, sp);                      // n° 63
+  if (sp.t === 'set') return k === ';' ? ';' : k === '+' && sp.kb.plus ? '+' : null;   // n° 62 : ; (solution suivante), + (Viète)
+  if (sp.t === 'mes' || sp.t === 'two'){ if ((k === 'p' || k === 'P') && sp.kb.pi) return 'π'; if (k === '+' && sp.kb.plus) return '+'; }   // n° 46 (n° 60 : plus de R pour la racine)
   if (k === '^') return sp.t === 'pow' || sp.t === 'dcp' ? '^' : sp.t === 'sci' ? 'E' : null;
   if (k === '*' || k === '×') return sp.t === 'sci' ? 'E' : sp.t === 'dcp' ? '∙' : null;
   if ((k === 'e' || k === 'E') && sp.t === 'sci') return 'E';
-  if ((k === 'r' || k === 'R') && sp.t === 'rad') return '√';
+  // n° 60 : plus de touche R pour la racine (l'enseignant, 11.11.2026 : « R n'a pas besoin de faire une racine. O et N n'ont pas besoin de faire
+  // oui et non. ») : R garde son rôle (réglages, inpFree) ; la racine se tape avec la touche du clavier à l'écran
   if (k.length === 1 && sp.kb && sp.kb.lets && sp.kb.lets.includes(k.toLowerCase())) return k.toLowerCase();
   return null;
 }
 function kb45(sp){                                                    // touches en plus des nouvelles sortes de case
   const kb = sp.kb || {};
-  return [kb.pi && ['π', '<i>π</i>', 'Pi (touche P)'], kb.plus && ['+', '+', 'Plus (touche +)'],   // n° 46
+  return [kb.semi && [';', ';', 'Solution suivante (touche ;)'], kb.set && ['∅', '<span class="mset">∅</span>', 'Ensemble vide\u00a0: aucune solution'],   // n° 62
+    kb.set && ['ℝ', '<span class="mset">ℝ</span>', 'Tous les nombres sont solutions'],
+    kb.pi && ['π', '<i>π</i>', 'Pi (touche P)'], kb.plus && ['+', '+', 'Plus (touche +)'],
+    kb.par && ['(', '(', 'Parenthèse ouvrante (touche ()'], kb.par && [')', ')', 'Parenthèse fermante (touche ))'],   // n° 63   // n° 46
     kb.mul && ['∙', '∙', 'Facteur suivant (touche *)'],
     kb.exp && ['^', '<span class="kexp"><span></span><i></i></span>', 'Exposant (touche ↑) ; encore une fois : revenir à la base'],
     kb.sci && ['E', '<span class="ksci">∙ 10<i></i></span>', 'Bloc ∙ 10ⁿ (touche *) ; encore une fois : revenir au nombre'],
-    kb.rad && ['√', '<span class="krad">' + radH('<span class="kbx"></span>', kb.n === 3 ? 3 : 2) + '</span>', 'Racine (touche R) ; encore une fois : revenir au nombre devant'],
+    kb.rad && ['√', '<span class="krad">' + radH('<span class="kbx"></span>', kb.n === 3 ? 3 : 2) + '</span>', 'Racine ; encore une fois : revenir au nombre devant'],
     ...(kb.lets || []).map(l => [l, '<i>' + l + '</i>', 'Lettre ' + l])];
 }
 function linKon(kb, I, sp){                                           // touche enfoncée tant que le curseur est dans l'exposant (ou sous la racine)
   if (!isLin(sp) || !I || I.s === undefined) return;
+  if (sp.t === 'exp'){ const s = I.s || '', on = !!grp63(s, I.c, E63O, E63C); kb.querySelectorAll('.kk[data-k="^"]').forEach(b => b.classList.toggle('kon', on)); return; }   // n° 63
+  if (sp.t === 'set'){ const on = /√\d*$/.test((I.s || '').slice(0, I.c)); kb.querySelectorAll('.kk[data-k="√"]').forEach(b => b.classList.toggle('kon', on)); return; }   // n° 62
   const P = linParts(I.s), pi = linAt(P, I.c), kind = pi ? P[pi - 1].m : '';
   kb.querySelectorAll('.kk[data-k="^"], .kk[data-k="E"]').forEach(b => b.classList.toggle('kon', kind === '^'));
   kb.querySelectorAll('.kk[data-k="√"]').forEach(b => b.classList.toggle('kon', kind === '√'));
@@ -14264,7 +14346,7 @@ function inpSpec46(p){
     const s0 = Object.assign({t: 'mes', A: B ? Aa : null, B, J: jMes, u, kb: {dec: true, fra: true, pi: true, plus: k === 'sec' && Q === 'P'}}, base);
     return p.rd ? twoSpec(p, s0) : s0;
   }
-  return null;
+  return inpSpec47(p);                                               // n° 54 : Géométrie
 }
 // ---------- la case de la sorte 'mes' (valeur exacte avec π, ou valeur arrondie) ----------
 function mesEdit(I, sp, c){                                            // π, +, virgule (une par terme), fraction (aussi avec une virgule)
@@ -14285,7 +14367,7 @@ function mesEdit(I, sp, c){                                            // π, +,
 // ---------- réponse en vert (l'enseignant, 10.11.2026 : « ce serait bien que les réponses s'affichent en vert plutôt que rouge pour les questions
 // que l'élève a répondu juste » ; QCM : « Trouvée, détail en vert aussi » : ✓, ou ~ quand il a fini par taper juste ; rouge s'il a regardé la réponse)
 function inpGood(p){ return !!(p && p.inp && p.inp.fb && p.inp.fb.r === 'ok'); }
-function inpUnit(p){ const sp = inpSpec(p); return sp && sp.u && !p.post && !p.line ? '<span class="un">' + sp.u + '</span>' : ''; }   // l'unité reste écrite après la case
+function inpUnit(p){ const sp = inpSpec(p); return sp && sp.u && !p.post && !p.line ? '<span class="un' + (sp.u === '°' ? ' udeg' : '') + '">' + sp.u + '</span>' : ''; }   // l'unité reste écrite après la case (n° 54 : ° collé)
 
 // ---------- n° 46, 2e version : valeur exacte demandée après une valeur arrondie juste (10.11.2026) ----------
 // L'enseignant : « après dans les réponses de calculs de racine on demande plutôt la valeur exacte, donc je compterais faux si on donne pas la valeur
@@ -14392,8 +14474,1629 @@ function jTwo(p, s, sp){
 }
 function inpAns(p){                                                    // la réponse en attente (qLine) : une case, ou deux pour « exacte ≈ arrondie »
   const sp = inpSpec(p), ap = '<span class="op">≈</span>';
+  if (sp && sp.t === 'enc' && sp.tpl) return inpShown(p) ? sp.tpl.map((t, i) => t + (i < sp.np ? inpHTML(p, i) : '')).join('') : BOX;   // n° 62 : x = ▢ ; y = ▢
   if (sp && sp.t === 'two') return inpShown(p) ? inpHTML(p, 0) + inpUnit(p) + ap + inpHTML(p, 1) + inpUnit(p) : BOX + ap + BOX;
   return inpShown(p) ? inpHTML(p) + inpUnit(p) : BOX;
+}
+
+/* =====================================================================
+   n° 54 (11.11.2026) : saisie des réponses, onglet Géométrie
+   L'enseignant : « Fais la suite du travail pour répondre aux questions dans qpc. Je laisse choisir parmi les parties restantes à travailler. »
+   Claude a pris l'onglet Géométrie (le suivant de « Reste à faire », QPC_SAISIE.md). QCM (les trois options recommandées) :
+   - phrases à compléter : « 6 boutons de mots » : la bonne réponse et 5 réponses d'autres phrases du même bloc, mélangées ;
+   - notations et noms (« Notation de la figure », « Donne ce que dit le codage », « Quelle est la droite d ? », côté opposé, diagonales) :
+     « Choix parmi 4 » : la bonne et des pièges (mêmes lettres avec une autre notation, une autre droite du triangle, un autre côté) ;
+   - mots pris dans une liste fixe (types d'angles, nature d'un triangle ou d'un quadrilatère, solides, transformations) : « Toute la liste,
+     toujours » (les boutons restent à la même place d'une question à l'autre).
+   Choix faits sans QCM (dits à l'enseignant) : nombres (angles, longueurs, axes, faces…) : case de nombre, ° ou l'unité après la case ;
+   coordonnées : une case par coordonnée ; oui / non, vrai / faux : deux boutons ; listes plus courtes par nature (cercle circonscrit ou
+   inscrit, côtés opposés ou consécutifs, côté ou diagonale, d₁ d₂ d₃, côtés et sommets d'un triangle, droites à tracer pour un cercle) :
+   seulement leurs choix ; un nom plus général mais juste (isocèle pour un équilatéral, parallélogramme pour un rectangle, prisme droit
+   pour un pavé droit, une seule des deux égalités du codage) : « presque » ; à l'ordinateur, touches 1 à 9 pour les boutons numérotés.
+   Les choix se mélangent d'après la question (g47rng : pas de Math.random, le tirage des questions suivantes ne change pas).
+   ===================================================================== */
+const G47_SUBS = new Set(TABS.find(t => t.id === 'es').blocks.flatMap(b => b.items.map(i => i[0])));
+const G47_ANG = ['nul', 'aigu', 'droit', 'obtus', 'plat', 'rentrant', 'plein'];
+const G47_TRI = ['isocèle', 'équilatéral', 'rectangle', 'rectangle et isocèle'];
+const G47_TR = ['symétrie axiale', 'symétrie centrale', 'translation', 'rotation', 'homothétie'];
+const G47_SOL = ['cube', 'pavé droit', 'prisme droit', 'pyramide', 'cylindre', 'cône', 'boule'];
+const G47_QK = Object.fromEntries(QORD.map(k => [QN[k], k]));          // nom → clé (carré → car…)
+const G47_DEG = {nul: 'mesure 0°', aigu: 'mesure entre 0° et 90° (plus petit qu\'un angle droit)', droit: 'mesure 90°',
+  obtus: 'mesure entre 90° et 180° (plus grand qu\'un angle droit, plus petit qu\'un angle plat)', plat: 'mesure 180°',
+  rentrant: 'mesure entre 180° et 360° (plus grand qu\'un angle plat)', plein: 'mesure 360° (un tour complet)'};
+// phrases à compléter : les réponses des autres phrases du même bloc, par sorte de mots (les distracteurs de la même sorte d'abord)
+const G47_DRT = [['circonscrit', 'inscrit', 'perpendiculaire', 'à l\'extérieur', 'à l\'intérieur'], ['médiatrices', 'bissectrices', 'médianes', 'côtés', 'sommets',
+  'les trois sommets', 'les trois côtés'], ['le milieu', 'le sommet'], ['centre de gravité', 'orthocentre'], ['distance', 'mesure']];
+const G47_TQW = [['l\'hypoténuse'], ['isocèle', 'équilatéral', 'rectangle', 'opposés', 'consécutifs', 'diagonales']];
+const G47_QART = QORD.map(k => QART[k]);                               // un carré, un rectangle… un rhomboïde (cerf-volant ou fer de lance)
+function g47rng(s){                                                    // nombres au hasard tirés de la question (toujours les mêmes pour elle)
+  let h = 2166136261 >>> 0; for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619);
+  return () => { h = (h + 0x6D2B79F5) | 0; let t = h; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+const g47Seed = p => [p.sub, p.key, stripTags(String(p.a || '')), stripTags(String(p.con || '')), p.line ? stripTags(p.line(false)) : ''].join('|');
+function g47Mix(p, L){ const R = g47rng(g47Seed(p)), a = L.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(R() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+const g47Txt = s => hEsc(s).replace(/∥/g, PLL).replace(/ (=|⊥|;) /g, ' $1 ');
+// un choix : opts (valeurs), lab (libellés HTML), alm (« presque »), R (message d'une erreur) ; nk : boutons numérotés (touches 1 à 9)
+function g47Ch(v, opts, o){ return Object.assign({t: 'ch', v: String(v), opts: opts.map(String), nk: true, g47: true}, o || {}); }
+function g47Num(p, v, R, o){
+  if (!v) return null;
+  const fl = p.fl || {}, u = unitOf(String(p.a || ''));
+  return Object.assign({t: 'num', v, form: 'dec', kb: {dec: !!fl.dec || !qIsInt(v)}, R, val: fNum(v), g47: true}, p.line ? {uL: u} : {u: p.post ? '' : u}, o || {});
+}
+function g47Bank(p, a, groups, n){                                     // la bonne réponse et n − 1 autres, de la même sorte d'abord
+  const R = g47rng(g47Seed(p) + '#b'), base = w => w.replace(/^les trois /, '').replace(/ \(.*\)$/, '');
+  const mine = groups.find(g => g.includes(a)) || [], pool = groups.flat().filter(w => w !== a && base(w) !== base(a));
+  const pickN = (L, k) => { const c = L.slice(), out = []; while (c.length && out.length < k) out.push(c.splice(Math.floor(R() * c.length), 1)[0]); return out; };
+  const same = pickN(mine.filter(w => pool.includes(w)), n - 1), rest = pickN(pool.filter(w => !same.includes(w)), n - 1 - same.length);
+  return g47Mix(p, [a].concat(same, rest));
+}
+function inpSpec47(p){
+  const s = p.sub || ''; if (!G47_SUBS.has(s)) return inpSpec62(p);   // n° 62 : Fonctions et algèbre
+  const ch = p.chk || {}, r = p.r, A = stripTags(String(p.a || '')).replace(/\s+/g, ' ').trim();
+  // oui / non, vrai / faux
+  if (r === OUI || r === NON) return {t: 'ch', v: r, opts: [OUI, NON], R: g47YesNo};
+  if (r === 'vrai' || r === 'faux') return {t: 'ch', v: r, opts: ['vrai', 'faux'], R: g47VF};
+  // coordonnées : une case par coordonnée
+  if ((s === 'g_rep2' || s === 'g_rep3') && Array.isArray(r)){
+    const V = r.map(qFromFloat), fl = p.fl || {};
+    return {t: 'enc', np: V.length, v: V, J: g47Rep, edec: true, lab: ['la 1re coordonnée', 'la 2e coordonnée', 'la 3e coordonnée'].slice(0, V.length),
+      kb: {neg: !!fl.rel || V.some(q => q[0] < 0), dec: !!fl.dec || V.some(q => !qIsInt(q))}, g47: true};
+  }
+  // « Quelle droite est tangente au cercle ? » : d₁, d₂, d₃
+  if (s === 'g_tan' && ch.tan && ch.tan.sort === 'rec'){ const ds = ch.tan.ds, O = ds.map((_, i) => String(i + 1));
+    return g47Ch(r, O, {lab: Object.fromEntries(O.map(i => [i, '<i>d</i><sub>' + i + '</sub>'])), R: g47TanRec}); }
+  // nombres
+  if (typeof r === 'number') return g47Num(p, qFromFloat(r), g47NumR);
+  if (typeof r === 'string' && /^\d+(,\d+)?°?$/.test(r.trim())){ const q = qNum(Number(r.replace('°', '').replace(',', '.'))); return g47Num(p, q, g47NumR); }
+  if (typeof r !== 'string') return null;
+  // notations (9e) : choix parmi 4
+  if (s === 'g_not' && ch.not) return g47Not(p, ch.not);
+  // « Quelle est la droite d ? » : choix parmi 4 (une autre droite du triangle, la même droite d'un autre sommet)
+  if (ch.drt && ch.drt.N && ch.drt.iv !== undefined && /^la /.test(A)) return g47Drt(p, ch.drt);
+  // cercles : « Quel est le cercle C ? » ; « Pour tracer ce cercle, il faut d'abord tracer … »
+  if (ch.cer && ch.cer.lv === 1) return g47Ch(r, ['le cercle circonscrit au triangle', 'le cercle inscrit dans le triangle'], {R: g47Cer});
+  if (ch.cer && ch.cer.trace){ const O = ['les médiatrices des côtés', 'les bissectrices des angles', 'les médianes', 'les hauteurs'];
+    return g47Ch(r, O, {R: g47Trace}); }
+  // phrases à compléter : 6 boutons de mots
+  if ((ch.drt && ch.drt.lv === 2) || (ch.cer && ch.cer.lv === 2)){ const tr = /trois \?/.test(stripTags(p.line ? p.line(false) : ''));      // « des trois ▢ » : pas « les trois … »
+    return g47Ch(r, g47Bank(p, r, tr ? G47_DRT.map(g => g.filter(w => !/^les trois /.test(w))) : G47_DRT, 6), {R: g47Phr}); }
+  if (r === 'l\'hypoténuse') return g47Ch(r, g47Bank(p, r, G47_TQW, 6), {R: g47Phr});
+  if (/^un /.test(r) && ch.quad){ const O = r === 'un rhomboïde' ? [r].concat(G47_QART.filter(w => !/rhombo/.test(w))) : G47_QART;
+    const lt = stripTags(p.line ? p.line(false) : ''), sj = QORD.find(k => lt.startsWith('Un ' + QN[k] + ' ')), alm = g47QuadAlm(r, O) || {};
+    if (sj) delete alm[QART[sj]];                                    // « Un rectangle qui … est ▢ » : « un rectangle » n'est pas « presque »
+    return g47Ch(r, g47Mix(p, O), {alm, sj: sj ? QART[sj] : null, R: g47QuadPhr}); }
+  // listes fixes
+  if (s === 'g_type') return g47Ch(r, G47_ANG, {R: g47Ang});
+  if (G47_TRI.includes(r)) return g47Ch(r, G47_TRI, {alm: g47TriAlm(r), R: g47TriR});
+  if (ch.quad && G47_QK[r]) return g47Ch(r, QORD.map(k => QN[k]), {alm: Object.fromEntries(QISA[G47_QK[r]].map(k => [QN[k],
+    'Juste : c\'est aussi un ' + QN[k] + '. Mais il a un nom plus précis : regarde tous les codages.'])), R: g47QuadR});
+  if (/^t_/.test(s)) return g47Ch(r, G47_TR, {alm: r === 'symétrie centrale' ? {rotation: 'Juste : c\'est une rotation d\'un demi-tour (180°). Mais elle a un nom : lequel ?'} : null, R: g47TrR});
+  if (s === 'g_nsol' || s === 'g_pat') return g47Ch(r, G47_SOL, {alm: g47SolAlm(r), R: g47SolR});
+  if (ch.tqvoc) return g47Voc(p, ch.tqvoc, r);
+  if (ch.tqnom && (r === 'un côté' || r === 'une diagonale')) return g47Ch(r, ['un côté', 'une diagonale'], {R: () => 'Regarde l\'ordre des lettres dans le nom du quadrilatère : ces deux lettres se suivent-elles (la dernière suit la première) ?'});
+  return null;
+}
+// ---------- choix construits ----------
+function g47Not(p, c){                                                 // « Notation de la figure », « Donne ce que dit le codage »
+  const a = String(c.a).replace(/[  ]/g, ' ');
+  if (['droite', 'seg', 'demi', 'long'].includes(c.kind)){
+    const m = /([A-Z])([A-Z])/.exec(a); if (!m) return null; const X = m[1], Y = m[2];
+    const O = c.kind === 'demi' ? [a, '[' + Y + X + ')', '(' + X + Y + ')', '[' + X + Y + ']'] : [a].concat(['(' + X + Y + ')', '[' + X + Y + ']', '[' + X + Y + ')', X + Y].filter(o => o !== a));
+    return g47Ch(a, g47Mix(p, O), {R: g47NotR, lab: Object.fromEntries(O.map(o => [o, g47Txt(o)]))});
+  }
+  const O = [a];
+  if (c.kind === 'perp'){ const pm = g47PerpMut(a); O.push(a.replace('⊥', '∥'), a.replace(/^\(([A-Z]{2})\) ⊥ \(([A-Z]{2})\)$/, '$1 = $2')); if (pm) O.push(pm); }
+  else if (c.kind === 'mil'){ O.push(g47EqMut(a, 1), g47EqMut(a, 2), a.replace(/^([A-Z]{2}) = ([A-Z]{2})$/, '($1) ⊥ ($2)')); }
+  else if (c.kind === 'deux'){ const [S1, S2] = a.split(' ; '), mu = t => /⊥/.test(t) ? t.replace('⊥', '∥') : g47EqMut(t, 1);
+    O.push(S1, S1 + ' ; ' + mu(S2), mu(S1) + ' ; ' + S2); }
+  const U = [...new Set(O.filter(Boolean))]; if (U.length < 3) return null;
+  return g47Ch(a, g47Mix(p, U), {R: g47NotR, lab: Object.fromEntries(U.map(o => [o, g47Txt(o)])),
+    alm: c.kind === 'deux' ? {[a.split(' ; ')[0]]: 'Juste, mais le codage dit encore autre chose : regarde tous les codages.'} : null});
+}
+function g47EqMut(t, w){                                               // AB = AC → AB = BC (w = 1) ou BC = AC (w = 2) : une autre paire de segments
+  const m = /^([A-Z]{2}) = ([A-Z]{2})$/.exec(t); if (!m) return null; const s1 = m[1], s2 = m[2], c = [...s1].find(x => s2.includes(x)); if (!c) return null;
+  const n1 = s1.replace(c, ''), n2 = s2.replace(c, ''); return w === 1 ? s1 + ' = ' + n1 + n2 : n1 + n2 + ' = ' + s2;
+}
+function g47PerpMut(t){                                                // (AB) ⊥ (AC) → (AB) ⊥ (BC)
+  const m = /^\(([A-Z]{2})\) ⊥ \(([A-Z]{2})\)$/.exec(t); if (!m) return null; const s1 = m[1], s2 = m[2], c = [...s1].find(x => s2.includes(x)); if (!c) return null;
+  return '(' + s1 + ') ⊥ (' + s1.replace(c, '') + s2.replace(c, '') + ')';
+}
+function g47Drt(p, d){                                                 // la droite d : la bonne, la même d'un autre sommet, deux autres droites
+  const k = d.kind, v = d.iv, N = d.N, P = d.P, R = g47rng(g47Seed(p) + '#d');
+  const conf = {mtr: ['mdn', 'hau'], mdn: ['mtr', 'hau'], hau: ['mtr', 'mdn'], bis: ['mdn', 'hau']}[k]; if (!conf) return null;
+  // une droite du triangle : un point et une direction ; écart sur le dessin entre deux droites (sur 300 autour du centre de gravité)
+  const LN = (c, i) => { const A = P[i], B = P[(i + 1) % 3], C = P[(i + 2) % 3], M = [(B[0] + C[0]) / 2, (B[1] + C[1]) / 2], nr = [B[1] - C[1], C[0] - B[0]];
+    let X = A, w; if (c === 'mdn') w = [M[0] - A[0], M[1] - A[1]]; else if (c === 'hau') w = nr; else if (c === 'mtr'){ X = M; w = nr; }
+    else { const nb = Math.hypot(B[0] - A[0], B[1] - A[1]), nc = Math.hypot(C[0] - A[0], C[1] - A[1]); w = [(B[0] - A[0]) / nb + (C[0] - A[0]) / nc, (B[1] - A[1]) / nb + (C[1] - A[1]) / nc]; }
+    const n = Math.hypot(w[0], w[1]); return [X, [w[0] / n, w[1] / n]]; };
+  const G = P ? [(P[0][0] + P[1][0] + P[2][0]) / 3, (P[0][1] + P[1][1] + P[2][1]) / 3] : null;
+  const sep = (l1, l2) => { const [X, w] = l2, t0 = (G[0] - X[0]) * w[0] + (G[1] - X[1]) * w[1];
+    return Math.max(...[-150, 150].map(t => { const Q = [X[0] + w[0] * (t0 + t), X[1] + w[1] * (t0 + t)]; return Math.abs(l1[1][0] * (Q[1] - l1[0][1]) - l1[1][1] * (Q[0] - l1[0][0])); })); };
+  const oth = [0, 1, 2].filter(i => i !== v), v2 = oth[R() < .5 ? 0 : 1], v3 = oth.find(i => i !== v2);
+  // dans l'ordre : la même droite d'un autre sommet, les deux droites qu'on confond avec elle au même sommet, puis (si elles se voient à peine
+  // à côté de la bonne : triangle presque isocèle en ce sommet) ces droites à un autre sommet ; écart d'au moins 15 sur le dessin
+  const cand = [[k, v2]].concat(conf.map(c => [c, v]), [[conf[0], v2], [conf[1], v3], [conf[0], v3], [conf[1], v2], [k, v3]]);
+  const good = P ? LN(k, v) : null, L = [[k, v]];
+  for (const [c, i] of cand){ if (L.length >= 4) break; if (L.some(([c2, i2]) => c2 === c && i2 === i)) continue; if (good && sep(good, LN(c, i)) < 15) continue; L.push([c, i]); }
+  const O = L.map(([c, i]) => c + i);
+  return g47Ch(k + v, g47Mix(p, O), {lab: Object.fromEntries(L.map(([c, i]) => [c + i, drtName(c, N, i)])), R: g47DrtR});
+}
+function g47Voc(p, c, r){                                              // vocabulaire des triangles et des quadrilatères
+  if (r === 'opposés' || r === 'consécutifs'){ const som = /sommets/.test(stripTags(p.line ? p.line(false) : ''));
+    return g47Ch(r, ['opposés', 'consécutifs'], {R: (p2, b) => som ? (b === 'consécutifs' ? 'Deux sommets consécutifs se suivent dans le nom (un côté les relie).' : 'Deux sommets opposés ne se suivent pas dans le nom (une diagonale les relie).')
+      : (b === 'consécutifs' ? 'Deux côtés consécutifs ont un sommet commun. Est-ce le cas ici ?' : 'Deux côtés opposés n\'ont pas de sommet commun. Est-ce le cas ici ?')}); }
+  if (r === 'diagonales') return g47Ch(r, ['côtés', 'diagonales'], {R: () => 'Regarde : ces segments relient-ils deux sommets qui se suivent ?'});
+  const con = stripTags(String(p.con || ''));
+  if (c.k === 'tri'){
+    let m = /sommet ([A-Z])/.exec(con);
+    if (m && /^\[[A-Z]{2}\]$/.test(r)){ const V = m[1], L = [V].concat(r.slice(1, 3).split('')), sd = (x, y) => '[' + [x, y].sort().join('') + ']';
+      const O = [sd(L[1], L[2]), sd(L[0], L[1]), sd(L[0], L[2])];
+      return g47Ch(r, g47Mix(p, O), {R: () => 'Ce côté passe par le sommet ' + V + '. Le côté opposé ne touche pas ce sommet.'}); }
+    m = /côté \[([A-Z])([A-Z])\]/.exec(con);
+    if (m && /^[A-Z]$/.test(r)){ const O = [r, m[1], m[2]].sort();
+      return g47Ch(r, O, {R: () => 'Ce sommet est sur le côté [' + m[1] + m[2] + ']. Le sommet opposé n\'est pas sur ce côté.'}); }
+    return null;
+  }
+  const ds = /^(\[[A-Z]{2}\]) et (\[[A-Z]{2}\])$/.exec(r);
+  if (ds){                                                             // les diagonales : la bonne paire, deux paires de côtés opposés, une paire de côtés consécutifs
+    const L = [...new Set((ds[1] + ds[2]).replace(/[\[\]]/g, '').split(''))]; if (L.length !== 4) return null;
+    const dg = [ds[1], ds[2]].map(x => x.slice(1, 3).split('').sort().join('')), all = [];
+    for (let i = 0; i < 4; i++) for (let j = i + 1; j < 4; j++){ const s2 = [L[i], L[j]].sort().join(''); if (!dg.includes(s2)) all.push([L[i], L[j]]); }
+    const sg = (x, y) => '[' + x + y + ']', disj = (a, b) => !a.some(x => b.includes(x)), pairs = [];
+    for (let i = 0; i < all.length; i++) for (let j = i + 1; j < all.length; j++) if (disj(all[i], all[j])) pairs.push(sg(...all[i]) + ' et ' + sg(...all[j]));
+    const cons = all.length > 1 ? sg(...all[0]) + ' et ' + sg(...all.find((x, i) => i && !disj(x, all[0]))) : null;
+    const O = [...new Set([r].concat(pairs.slice(0, 2), cons ? [cons] : []))];
+    return g47Ch(r, g47Mix(p, O), {R: () => 'Ce sont des côtés. Une diagonale relie deux sommets qui ne se suivent pas.'});
+  }
+  const m = /opposé à (\[[A-Z]{2}\])/.exec(con);
+  if (m && c.nm && /^\[[A-Z]{2}\]$/.test(r)){                          // le côté opposé (quadrilatère) : la bon, les deux consécutifs, une diagonale
+    const nm = c.nm, S = [0, 1, 2, 3].map(i => tqSeg(nm, nm[i], nm[(i + 1) % 4])), D = [tqSeg(nm, nm[0], nm[2]), tqSeg(nm, nm[1], nm[3])];
+    const O = [r].concat(S.filter(x => x !== r && x !== m[1]), [D[g47rng(g47Seed(p))() < .5 ? 0 : 1]]);
+    return g47Ch(r, g47Mix(p, O), {R: (p2, b) => D.includes(b) ? 'Ça, c\'est une diagonale, pas un côté.' : 'Ce côté a un sommet commun avec ' + m[1] + ' : ils sont consécutifs.'});
+  }
+  return null;
+}
+// ---------- messages des erreurs (choix) ----------
+const g47Def = {mtr: 'Une médiatrice est perpendiculaire au segment, en son milieu', bis: 'Une bissectrice partage l\'angle en deux angles de même mesure',
+  mdn: 'Une médiane passe par un sommet et par le milieu du côté opposé', hau: 'Une hauteur passe par un sommet et est perpendiculaire au côté opposé'};
+function g47YesNo(p, b){
+  const c = p.chk || {}, s = p.sub;
+  if (c.drt) return (g47Def[c.drt.kind] || 'Regarde bien le codage') + ' : vérifie avec ' + (c.drt.kind === 'bis' ? 'les mesures.' : 'le codage.');
+  if (c.tcon) return c.tcon.kind === 'ang' ? 'Additionne les angles : la somme doit faire 180°.' : 'Compare le plus grand côté avec la somme des deux autres.';
+  if (c.tqnom) return 'Pour nommer un quadrilatère, on fait le tour de la figure : les lettres se suivent, dans un sens ou dans l\'autre.';
+  if (c.quad && c.quad.isa){ const {X, Y} = c.quad; return 'Un ' + QN[Y] + ' a ' + QSUF[Y] + '. Est-ce le cas de tous les ' + QPL[X] + ' ?'; }
+  if (s === 'g_csym') return 'Fais faire un demi-tour à la figure autour de son centre : retombe-t-elle exactement sur elle-même ?';
+  if (s === 'g_pat') return 'Imagine le pliage : chaque carré doit aller sur une face différente du cube.';
+  if (s === 'g_tan') return 'La tangente en A est perpendiculaire au rayon [OA] : l\'angle doit faire 90°.';
+  return null;
+}
+function g47VF(p, b){
+  const c = p.chk || {};
+  if (c.qtri) return b === 'vrai' ? (p.why ? stripTags(p.why) : 'Est-ce toujours vrai ? Cherche un contre-exemple.') : 'Relis les propriétés des triangles particuliers dans ta théorie.';
+  if (c.quad && c.quad.k){ const k = c.quad.k; return b === 'vrai' ? 'Est-ce vrai pour tous les ' + QPL[k] + ' ? Relis leurs propriétés dans ta théorie.'
+    : 'Relis les propriétés des ' + QPL[k] + ' dans ta théorie : celle-ci y est-elle ?'; }
+  return null;
+}
+function g47NotR(p, b){
+  const a = String(p.r), ty = t => /[=⊥∥;]/.test(t) ? 'st' : /^\(.*\)$/.test(t) ? 'dr' : /^\[.*\]$/.test(t) ? 'sg' : /^\[.*\)$/.test(t) ? 'dd' : /^[A-Z]{2}$/.test(t) ? 'lg' : 'st';
+  const tb = ty(b), X = b.replace(/[^A-Z]/g, '')[0], Y = b.replace(/[^A-Z]/g, '')[1];
+  if (tb === 'st' || ty(a) === 'st'){
+    if (/∥/.test(b)) return PLL + ' veut dire « parallèles ». Que montre le codage ?';
+    if (/⊥/.test(a) && !/⊥/.test(b)) return 'Le codage ne montre pas deux longueurs égales : il montre un angle droit.';
+    if (!/⊥/.test(a) && /⊥/.test(b)) return 'Le codage ne montre pas d\'angle droit : regarde les petits traits.';
+    return /=/.test(b) && b.split(' ; ').some(t => /=/.test(t) && !a.split(' ; ').includes(t)) ? 'Regarde les petits traits : sur quels segments sont-ils ?' : 'Regarde le codage de l\'angle droit : en quel point est-il ?';
+  }
+  if (ty(a) === 'lg') return b + ' désigne ' + {dr: 'une droite', sg: 'le segment lui-même', dd: 'une demi-droite'}[tb] + ', pas sa longueur.';
+  if (tb === 'lg') return b + ', sans crochets ni parenthèses, c\'est une longueur (un nombre), pas la figure.';
+  if (tb === 'dr') return '(' + X + Y + ') est une droite : elle ne s\'arrête ni en ' + X + ' ni en ' + Y + '. Regarde la figure.';
+  if (tb === 'sg') return '[' + X + Y + '] est un segment : il s\'arrête en ' + X + ' et en ' + Y + '. Regarde la figure.';
+  return '[' + X + Y + ') est une demi-droite : elle commence en ' + X + ' et ne s\'arrête pas après ' + Y + '. Regarde la figure.';
+}
+function g47DrtR(p, b){
+  const k = p.chk.drt.kind, c = b.slice(0, 3);
+  if (c === k) return {mtr: 'C\'est bien une médiatrice, mais regarde quel côté elle coupe en son milieu.', bis: 'C\'est bien une bissectrice, mais regarde le sommet de l\'angle qu\'elle partage.',
+    mdn: 'C\'est bien une médiane, mais regarde de quel sommet elle part.', hau: 'C\'est bien une hauteur, mais regarde de quel sommet elle part.'}[k];
+  return 'Regarde le codage : ' + {mtr: 'un angle droit et un milieu (petits traits).', bis: 'deux angles de même mesure.', mdn: 'un milieu (petits traits), mais pas d\'angle droit.',
+    hau: 'un angle droit, mais pas de milieu.'}[k];
+}
+function g47Cer(p, b){ return /circonscrit/.test(b) ? 'Le cercle circonscrit passe par les trois sommets du triangle. Est-ce le cas ici ?'
+  : 'Le cercle inscrit est dans le triangle et touche ses trois côtés. Est-ce le cas ici ?'; }
+function g47Trace(p, b){
+  if (/médianes|hauteurs/.test(b)) return 'Le centre de ce cercle n\'est pas le point où se coupent les ' + (/médianes/.test(b) ? 'médianes' : 'hauteurs') + '.';
+  return /médiatrices/.test(b) ? 'Les médiatrices donnent un point à égale distance des trois sommets. Ce cercle passe-t-il par les sommets ?'
+    : 'Les bissectrices donnent un point à égale distance des trois côtés. Ce cercle touche-t-il les côtés ?';
+}
+function g47Phr(){ return 'Pas encore juste. Relis toute la phrase, puis réessaie.'; }
+function g47QuadAlm(a, O){                                             // classification : un nom plus général, mais juste
+  const k = Object.keys(QART).find(x => QART[x] === a) || (a === 'un rhomboïde' ? 'rho' : null); if (!k) return null;
+  const out = {}; O.forEach(w => { const j = Object.keys(QART).find(x => QART[x] === w); if (j && QISA[k].includes(j)) out[w] = 'Juste, mais il y a un nom plus précis.'; });
+  return out;
+}
+function g47QuadPhr(p, b, sp){ if (sp && sp.sj === b) return 'C\'est déjà ' + b + '. Avec cette propriété en plus, que devient-il\u00a0?';
+  const j = Object.keys(QART).find(x => QART[x] === b); return j ? 'Un ' + QN[j] + ' a ' + QSUF[j] + ' : est-ce sûr ici ?' : g47Phr(); }
+function g47Ang(p, b){
+  const c = p.chk || {}, m = c.mes !== undefined && c.mes !== null && /°/.test(stripTags(p.line ? p.line(false) : ''));
+  return 'Un angle ' + b + ' ' + G47_DEG[b] + '.' + (m ? '' : b === 'rentrant' || b === 'plein' || b === 'nul' ? ' Regarde bien la figure.' : ' Compare avec un angle droit.');
+}
+function g47TriAlm(r){
+  if (r === 'équilatéral') return {'isocèle': 'Juste : il est isocèle. Mais il a un nom plus précis : regarde tous ses côtés (ou tous ses angles).'};
+  if (r === 'rectangle et isocèle') return {'rectangle': 'Juste : il a un angle droit. Mais il a encore autre chose : regarde aussi ses côtés (ou ses angles).',
+    'isocèle': 'Juste : il est isocèle. Mais il a encore autre chose : regarde aussi ses angles.'};
+  return null;
+}
+function g47TriR(p, b){
+  const c = (p.chk || {}).qtri || {};
+  if (c.two) return 'Calcule d\'abord le 3e angle : la somme des angles d\'un triangle fait 180°.';
+  return {'équilatéral': 'Un triangle équilatéral a trois côtés isométriques (et trois angles de 60°). Est-ce le cas ici ?',
+    'isocèle': 'Un triangle isocèle a deux côtés isométriques (et deux angles isométriques). Est-ce le cas ici ?',
+    'rectangle': 'Un triangle rectangle a un angle droit. Est-ce le cas ici ?',
+    'rectangle et isocèle': 'Il faudrait un angle droit et deux côtés (ou deux angles) isométriques. Est-ce le cas ici ?'}[b] || null;
+}
+function g47QuadR(p, b){ const k = G47_QK[b], c = (p.chk || {}).quad || {};
+  return k ? 'Un ' + b + ' a ' + QSUF[k] + '. ' + (c.diag ? 'Regarde ce que montrent les codages des diagonales.' : 'Est-ce le cas ici ?') : null; }
+function g47TrR(p, b){
+  const a = String(p.r);
+  if (b === 'homothétie') return 'Les deux figures ont la même taille : ce n\'est pas une homothétie.';
+  if (a === 'homothétie') return 'Regarde la taille des deux figures.';
+  if (a === 'symétrie axiale') return 'La figure est retournée (comme dans un miroir) : quelle transformation fait ça ?';
+  if (b === 'symétrie axiale') return 'La figure n\'est pas retournée (pas comme dans un miroir) : ce n\'est pas une symétrie axiale.';
+  if (a === 'translation') return 'La figure n\'a pas tourné : elle a seulement glissé.';
+  if (b === 'translation') return 'La figure a tourné : ce n\'est pas une translation.';
+  if (a === 'rotation' && b === 'symétrie centrale') return 'Une symétrie centrale fait un demi-tour (180°). Ici, la figure a-t-elle fait un demi-tour ?';
+  return null;
+}
+function g47SolAlm(r){
+  const L = {cube: ['pavé droit', 'prisme droit'], 'pavé droit': ['prisme droit']}[r]; if (!L) return null;
+  return Object.fromEntries(L.map(w => [w, 'Juste : c\'est aussi un ' + w + '. Mais il a un nom plus précis.']));
+}
+const G47_SOLD = {cube: 'Un cube a six faces carrées.', 'pavé droit': 'Un pavé droit a six faces rectangulaires.',
+  'prisme droit': 'Un prisme droit a deux bases identiques (en haut et en bas) et des faces latérales rectangulaires.',
+  pyramide: 'Une pyramide a une seule base et un sommet (une pointe).', cylindre: 'Un cylindre a deux disques comme bases.',
+  'cône': 'Un cône a un disque comme base et une pointe.', boule: 'Une boule est toute ronde, sans face plate.'};
+function g47SolR(p, b){ return p.sub === 'g_pat' && b === 'boule' ? 'La boule n\'a pas de développement.' : (G47_SOLD[b] || null); }
+function g47TanRec(p, b){ const k = p.chk.tan.ds[Number(b) - 1]; return k === 'sec' ? 'Cette droite coupe le cercle en deux points.' : k === 'ext' ? 'Cette droite ne touche pas le cercle.' : null; }
+// ---------- coordonnées ----------
+function g47Rep(p, s, sp){
+  const P = s.split('|'), X = P.map(t => inpParse(t)), L = ['x', 'y', 'z'], iv = l => '<i>' + l + '</i>';
+  if (X.some(x => !x || !x.q || x.per)) return BAD45('Écris des nombres.');
+  const n = X.map(x => x.q), V = sp.v, k = V.length;
+  if (n.every((q, i) => qEq(q, V[i]))) return OK45();
+  const bad = n.map((q, i) => !qEq(q, V[i]));
+  const perm = (() => { const a = n.map(fNum).sort((x, y) => x - y), b = V.map(fNum).sort((x, y) => x - y); return a.every((x, i) => Math.abs(x - b[i]) < 1e-9); })();
+  if (perm) return {r: 'ko', m: k === 2 ? 'Tu as inversé : d\'abord ' + iv('x') + ' (l\'axe horizontal), puis ' + iv('y') + ' (l\'axe vertical).'
+    : 'Les bons nombres, mais pas dans l\'ordre : d\'abord ' + iv('x') + ', puis ' + iv('y') + ', puis ' + iv('z') + '.'};
+  if (n.every((q, i) => qEq(q, V[i]) || qEq(q, qNeg(V[i])))){ const i = bad.indexOf(true);
+    return {r: 'ko', m: 'Regarde le signe de ' + iv(L[i]) + (k === 2 ? (i ? ' : le point est-il au-dessus ou au-dessous de l\'axe horizontal ?' : ' : le point est-il à gauche ou à droite de l\'axe vertical ?') : '.')}; }
+  if (bad.filter(Boolean).length === 1){ const i = bad.indexOf(true);
+    return {r: 'ko', m: 'Vérifie ' + iv(L[i]) + (k === 2 ? (i ? ' : lis-la sur l\'axe vertical.' : ' : lis-la sur l\'axe horizontal.') : ' : les autres sont justes.')}; }
+  return {r: 'ko', m: k === 2 ? 'Pars de l\'origine : d\'abord ' + iv('x') + ' (horizontal), puis ' + iv('y') + ' (vertical).' : 'Lis les coordonnées dans l\'ordre : ' + iv('x') + ', puis ' + iv('y') + ', puis ' + iv('z') + '.'};
+}
+// ---------- messages des erreurs (nombres) ----------
+function g47NumR(p, x, sp){
+  const X = fNum(x.q), c = p.chk || {}, s = p.sub, is = w => Math.abs(X - w) < 1e-6, D = n => n + '°';
+  if (s === 'g_tri' && c.tri){
+    const [T, i] = c.tri, ac = c.acc, con = stripTags(String(p.con || ''));
+    if (ac){ const {kind, b, c: cc, p: pp} = ac;
+      if ((kind === 'ext' || kind === 'two') && is(180 - b - pp)) return 'Ça, c\'est l\'angle ' + angN('ADB') + '. Continue : ' + (kind === 'ext' ? 'x est son voisin.' : 'cherche l\'angle ' + angN('ADC') + ', puis le triangle ADC.');
+      if (kind === 'two' && is(b + pp)) return 'Ça, c\'est l\'angle ' + angN('ADC') + '. Continue dans le triangle ADC.';
+      if (kind === 'iso' && is(180 - b)) return 'Ça, c\'est l\'angle ' + angN('ADC') + '. Continue dans le triangle ADC.';
+      if (kind === 'iso' && is(180 - 2 * b)) return 'Ça, c\'est l\'angle ' + angN('BAD') + '. Cherche plutôt l\'angle ' + angN('ADC') + ', puis le triangle ADC.';
+      return 'Avance étape par étape : cherche d\'abord les angles du triangle ABD.';
+    }
+    const v = T[i], O = T.filter((_, j) => j !== i);
+    if (/équilatéral/.test(con)) return 'Les trois angles d\'un triangle équilatéral sont égaux, et leur somme fait 180°.';
+    if (/rectangle isocèle/.test(con)) return is(90) ? 'Ça, c\'est l\'angle droit. Les deux autres angles sont égaux.' : 'L\'angle droit fait 90°, et les deux autres angles sont égaux.';
+    if (/isocèle/.test(con)){
+      const base = T.find(t => T.filter(u => u === t).length >= 2), apex = T.find(t => T.filter(u => u === t).length === 1);
+      if (v === apex && is(180 - base)) return 'Les deux angles à la base sont égaux : enlève-le deux fois de 180°.';
+      if (v !== apex && is(180 - apex)) return 'Il reste deux angles égaux : partage ce qui reste en deux.';
+      if (v !== apex && is(180 - 2 * v)) return 'Dans un triangle isocèle, les deux angles à la base sont égaux.';
+      return 'Triangle isocèle : deux angles égaux, et la somme des trois fait 180°.';
+    }
+    const rt = O.includes(90) ? O.find(t => t !== 90) : null;
+    if (rt !== null && is(180 - rt)) return 'N\'oublie pas l\'angle droit : il mesure 90°.';
+    if (O.some(t => is(180 - t))) return 'Il faut enlever les deux angles donnés de 180°.';
+    if (is(O[0] + O[1])) return 'Tu as additionné les deux angles : il faut les enlever de 180°.';
+    return 'La somme des trois angles d\'un triangle fait 180°.';
+  }
+  if (s === 'g_opp'){
+    if (c.opp2){ const [g, same] = c.opp2; if (same && is(180 - g)) return 'Regarde bien : ces deux angles sont opposés par le sommet.';
+      if (!same && is(g)) return 'Regarde bien : ces deux angles sont adjacents, côte à côte sur une droite.'; return 'Angles opposés par le sommet : égaux. Angles adjacents sur une droite : 180° ensemble.'; }
+    if (c.opp){ const [a, b, same] = c.opp; if (!same && (is(180 - a) || is(180 - b))) return 'Les trois angles côte à côte forment un angle plat (180°) : enlève les deux autres.';
+      if (!same && is(a + b)) return 'Il faut enlever les deux angles de 180°.'; if (same && (is(a) || is(180 - b))) return 'Cherche quel angle est opposé par le sommet à x.';
+      return 'Angles opposés par le sommet : égaux. Angles côte à côte sur une droite : 180° ensemble.'; }
+  }
+  if (s === 'g_par'){
+    if (c.parT){ const {al, be} = c.parT; if (is(al + be)) return 'Les trois angles du triangle font 180° ensemble.';
+      return 'Cherche d\'abord les angles du triangle (angles alternes-internes), puis la somme des angles : 180°.'; }
+    if (c.par2 && is(180 - c.par2.val)) return 'Regarde bien : ces deux angles sont-ils égaux, ou font-ils 180° ensemble ?';
+    return 'Passe d\'un angle à l\'autre : angles alternes-internes (égaux), opposés par le sommet (égaux), adjacents (180°).';
+  }
+  if (s === 'g_ins' && c.ins){ const [mode, ins, val] = c.ins, cen = 2 * ins;
+    if (mode === 'c2i') return is(cen) ? 'x n\'est pas l\'angle au centre : c\'est un angle inscrit.' : 'Un angle inscrit mesure la moitié de l\'angle au centre (même arc).';
+    if (mode === 'i2c') return is(ins / 2) ? 'L\'angle au centre est le double de l\'angle inscrit, pas la moitié.' : 'x est un angle au centre : il mesure le double de l\'angle inscrit (même arc).';
+    if (mode === 'ii') return 'Les deux angles sont inscrits et interceptent le même arc.';
+    if (mode === 'iso'){ if (c.insR && is(c.insR.c2)) return 'Ça, c\'est l\'angle au centre ' + angN('AOB') + '. x est un angle inscrit.';
+      return 'OA = OB : le triangle OAB est isocèle. Cherche l\'angle au centre ' + angN('AOB') + ', puis l\'angle inscrit.'; }
+    return 'Un angle inscrit mesure la moitié de l\'angle au centre (même arc).';
+  }
+  if (s === 'g_tha' && c.tha){ const t = c.tha;
+    if (t.kind === 'M') return '[AB] est un diamètre et le point est sur le cercle : c\'est le cercle de Thalès.';
+    if (is(180 - t.al) || is(180 - t.val)) return 'N\'oublie pas l\'angle droit (cercle de Thalès).';
+    return 'Pense à l\'angle droit (cercle de Thalès) et aux rayons égaux (triangles isocèles).';
+  }
+  if (s === 'g_pol' && c.pol){ const [n, inter] = c.pol, cen = 360 / n;
+    if (!inter && is(180 - cen)) return 'Ici, x est un angle au centre : le tour complet (360°) partagé en ' + n + '.';
+    if (!inter && is(180 / n)) return 'Le tour complet fait 360°, pas 180°.';
+    if (inter && is(cen)) return 'Ça, c\'est l\'angle au centre. Continue : le triangle formé avec le centre est isocèle.';
+    return inter ? 'Commence par l\'angle au centre (360° partagé en ' + n + '), puis le triangle isocèle.' : 'Le tour complet (360°) est partagé en ' + n + ' angles égaux.';
+  }
+  if (s === 'g_tan' && c.tan){ const t = c.tan;
+    if (t.sort === 'p90') return 'La tangente est perpendiculaire au rayon au point de contact.';
+    if (t.sort === 'tri') return is(180 - t.al) ? 'N\'oublie pas l\'angle droit en A : la tangente est perpendiculaire au rayon [OA].' : 'Le triangle OAT est rectangle en A : la somme des angles fait 180°.';
+    if (t.sort === 'pyt'){ const {r: R, at, ot, ask, mode} = t, nr = w => Math.abs(X - w) <= .5 * 10 ** -decs(x) + 1e-9;   // à l'arrondi près des décimales tapées
+      if (ask !== 'ot' && nr(Math.hypot(ot, ask === 'at' ? R : at))) return '[OT] est l\'hypoténuse (en face de l\'angle droit en A) : on soustrait les carrés.';
+      if (ask === 'ot' && nr(Math.sqrt(Math.abs(at * at - R * R)))) return 'On cherche l\'hypoténuse [OT] : on additionne les carrés.';
+      if (mode === 'diam' && (is(2 * R) || (ask === 'at' && ot > 2 * R && nr(Math.sqrt(ot * ot - 4 * R * R))) || (ask === 'ot' && nr(Math.hypot(2 * R, at))))) return 'Attention : on te donne le diamètre. Le rayon en est la moitié.';
+      if (mode && mode !== 'diam') return 'Attention : la distance de T au cercle n\'est pas OT. OT = rayon + cette distance.';
+      if (is(ot - (ask === 'at' ? R : at)) || is(ot + (ask === 'at' ? R : at)) || is(at + R)) return 'Avec Pythagore, on calcule avec les carrés des longueurs.';
+      return 'La tangente est perpendiculaire au rayon : le triangle OAT est rectangle en A. Utilise Pythagore.'; }
+    if (t.sort === 'two') return 'Dans le quadrilatère OATB, les angles en A et en B sont droits : la somme des quatre angles fait 360°.';
+    if (t.sort === 'two2') return 'Commence par l\'angle au centre (les angles en A et en B sont droits), puis le triangle OAB est isocèle (OA = OB).';
+    if (t.sort === 'chord') return 'Le triangle OAB est isocèle (OA = OB), et la tangente est perpendiculaire au rayon [OA].';
+    return null;
+  }
+  if (s === 'g_sym' && c.sym){ const n = c.sym[1];
+    return X < n ? 'Il y en a d\'autres : pense aussi aux diagonales et aux droites qui passent par les milieux des côtés.' : 'Trop : plie la figure dans ta tête le long de chaque axe. Les deux moitiés se superposent-elles ?'; }
+  if (s === 'g_sol' && c.solid){ const [so, n, w] = c.solid, F = so === 'pri' ? [n + 2, 2 * n, 3 * n] : so === 'pyr' ? [n + 1, n + 1, 2 * n] : [6, 8, 12];
+    const W = ['faces', 'sommets', 'aretes'], WN = {faces: 'faces', sommets: 'sommets', aretes: 'arêtes'}, j = W.findIndex((u, i) => u !== w && is(F[i]));
+    if (j >= 0) return 'Ça, c\'est le nombre de ' + WN[W[j]] + '. On demande les ' + WN[w] + '.';
+    return {faces: 'Compte les bases et les faces latérales.', sommets: so === 'pyr' ? 'Compte les sommets de la base, et la pointe.' : 'Compte les sommets de chaque base.',
+      aretes: 'Compte les arêtes des bases, puis les arêtes latérales.'}[w] || null; }
+  if (c.drt && c.drt.lv === 4){ const k = c.drt.kind;
+    if (k === 'bis') return 'La bissectrice partage l\'angle en deux angles de même mesure.';
+    if (k === 'mdn') return 'La médiane passe par le milieu du côté opposé : regarde quelle partie du côté on demande.';
+    return 'Un point de la médiatrice est à la même distance des deux extrémités du segment.'; }
+  if (c.cer && c.cer.lv === 4) return c.cer.kind === 'cci' ? 'Le centre du cercle circonscrit est à la même distance des trois sommets (ce sont des rayons).'
+    : 'Le centre du cercle inscrit est à la même distance des trois côtés (ce sont des rayons).';
+  if (c.qtri || c.quad){ const L = stripTags(p.line ? p.line(false) : '');
+    if (/axes? de symétrie/.test(L)) return 'Dessine la figure et cherche les droites qui la partagent en deux moitiés qui se superposent.';
+    if (/parallèles/.test(L)) return 'Regarde les côtés opposés, deux par deux : sont-ils parallèles ?';
+    if (/deux autres angles mesurent/.test(L)){ const ap = Number((/angle de (\d+)°/.exec(L) || [])[1]); if (ap && is(180 - ap)) return 'Les deux autres angles sont égaux : partage ce qui reste en deux.'; }
+    if (/°/.test(String(p.r))) return 'La somme des trois angles d\'un triangle fait 180°.';
+  }
+  return null;
+}
+function inpUnitL(p){ const sp = inpSpec(p); return sp && sp.uL ? '<span class="un' + (sp.uL === '°' ? ' udeg' : '') + '">' + (sp.uL === '°' ? '' : ' ') + sp.uL + '</span>' : ''; }   // n° 54 : l'unité après la case, dans une ligne
+
+/* =====================================================================
+   n° 55 (11.11.2026)
+   1. « PD » (l'enseignant : « Evite PD (mot à éviter en français). Tu peux remplacer par DP. », à propos d'un choix « (MP) ⊥ (PD) ») :
+      lu ainsi : jamais P et D côte à côte dans un nom affiché ; les lettres sont choisies pour ne pas les réunir (notations : noPD ;
+      types d'angles : pas de point D autour du sommet P ; cercle de Thalès : [CD] avec N au lieu de P), sans tirage de plus.
+   2. Boutons 1★ … 4★ en mode enseignant à l'ordinateur (l'enseignant : « En format enseignant sur ordi, remet les boutons de choix
+      d'étoiles. Quand un bloc de réponse est affiché, ça permet de passer à une nouvelle question du nombre d'étoiles voulu. Dans ce
+      format, ne mets pas de couleur sur le bouton pour le nombre d'étoiles choisi si le nombre d'étoile est caché aux élèves. » ; puis
+      « je veux dire que l'élève qui regarde le tableau ne doit pas pouvoir voir le nombre d'étoiles de la question. ») : en bas à
+      droite comme en mode élève ; étoiles cachées (Général) : aucun bouton en couleur, ni sous la souris ; étoiles montrées : celui de
+      la question affichée (lu ainsi, dit ; aussi au téléphone en mode enseignant) ; après un clic, le bouton perd le focus (Espace ne
+      le relance pas, et rien ne reste marqué) ; deux questions : pas de boutons (pas de case, le pied de page reste sur une ligne).
+   ===================================================================== */
+function noPD(nm){                                                     // trois lettres : P et D jamais ensemble (D remplacé)
+  if (!(nm.includes('P') && nm.includes('D'))) return nm;
+  const r = ['B', 'C', 'E', 'R', 'S', 'T', 'A', 'M'].find(c => !nm.includes(c)); return nm.map(c => c === 'D' ? r : c);
+}
+function lvbMark(){
+  const s = PICK ? null : QS[cur], ps = s && !s.grp && !inG() ? [s.L, s.R].filter(Boolean) : [];
+  const L = !S.hideStars && ps.length && ps.every(p => p.level === ps[0].level) ? ps[0].level : 0;
+  document.querySelectorAll('#lvBtns button[data-lv]').forEach(b => { b.hidden = false; b.classList.toggle('on', Number(b.dataset.lv) === L); });
+  const a = document.activeElement; if (a && a.closest && a.closest('#lvBtns')) a.blur();
+}
+
+/* n° 56 (11.11.2026) : bouton « Une question » (l'enseignant : « quand on est en mode deux questions, ajoute un bouton (coloré pour être un
+   peu plus visible) en haut pour revenir à une question (comme la touche 8) » ; sans QCM) : le 1er bouton de l'en-tête, plein, couleur
+   de l'accent, avec la touche 8 ; seulement quand deux questions sont affichées (body.two), jamais en mode élève ; un clic = toggleTwo. */
+$('bOneQ').onclick = () => { if (document.querySelector('.over.open')) return; const a = document.activeElement; if (a && a.blur) a.blur(); toggleTwo(); };
+
+/* =====================================================================
+   n° 62 (11.11.2026) : saisie des réponses, onglet Fonctions et algèbre (sans les expressions littérales)
+   L'enseignant : « Continue à développer les blocs réponses pour qpc. » ; QCM (les quatre options recommandées) :
+   - « En deux temps » : maintenant Proportionnalité, Équations, Systèmes, Fonctions (sauf graphique → expression), Lecture de
+     données, substitution et vocabulaire avec des mots ou des nombres ; les expressions (réduire, développer, factoriser, traduire
+     une phrase, graphique → expression, partie littérale, opposé, ordonner) dans une prochaine conversation, avec leur propre QCM ;
+   - équations : « Accolades déjà écrites » : la case affiche S = { ▢ } ; touche « ; » pour la 2e solution (ordre libre) ; touches
+     ∅ et ℝ à la place des accolades ;
+   - une seule des deux solutions (2e degré, préimages d'une fonction quadratique) : « Presque » (« Juste, mais il manque une
+     solution. ») ;
+   - Viète à ★★★★ avec une racine : « Comme les racines » : valeurs arrondies au centième = « Juste ! Maintenant, donne la valeur
+     exacte, avec la racine. » (elles passent à droite après « ≈ »), puis la fraction avec √ (touches √ et + ; « − » après un nombre
+     du numérateur = moins entre deux termes) ; lu ainsi (dit) : aussi x² = 7 (★★★★), même raison.
+   Choix faits sans QCM (dits à l'enseignant) : une solution décimale égale à une fraction (3,5 pour 7/2) = juste ; fraction pas
+   simplifiée = « presque » ; valeur arrondie d'une fraction (2,67 pour 8/3) = comme les racines (« donne la valeur exacte, en
+   fraction ») ; systèmes : deux cases x = ▢ ; y = ▢ ; deux préimages : x = ▢ ou x = ▢ (ordre libre) ; tableau de valeurs : une case
+   par « ? » ; « quelle droite (courbe) ? » : d₁ d₂ d₃ (C₁ C₂ C₃) ; vocabulaire : oui / non, les deux natures nommées dans la consigne,
+   monôme / binôme / trinôme / polynôme (polynôme : « presque », nom plus général), « variable » parmi 6 mots, degré, coefficient et
+   nombre de termes : une case de nombre ; touches ; ∅ ℝ seulement pour les équations (; pour le 2e degré), √ pour x² = a et Viète.
+   ===================================================================== */
+const F62_SUBS = new Set(TABS.find(t => t.id === 'fa').blocks.flatMap(b => b.items.map(i => i[0])));
+const f62Near = (a, b) => isFinite(a) && isFinite(b) && Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(b));
+const f62N = v => nFmt(Math.round(v * 1e6) / 1e6);
+const f62G = t => '« ' + t + ' »';
+const f62X = IV('x'), f62Y = IV('y'), f62F = IV('f');
+var F62_DX = 0;                                                        // décimales tapées (posé par f62Num : une valeur arrondie au centième ou plus reconnue)
+function f62Alt(L, X, ok){                                              // la première erreur connue qui donne ce que l'élève a tapé
+  const oks = [].concat(ok), hit = w => f62Near(X, w) || (F62_DX >= 2 && Math.abs(X - w) <= 1.0001 * 10 ** -F62_DX);
+  for (const a of L) if (a && a[1] && isFinite(a[0]) && !oks.some(o => f62Near(a[0], o)) && hit(a[0])) return a[1];
+  return null;
+}
+const f62Q = q => qIsInt(q) ? fmtInt(q[0]) : qFin(q) ? nFmt(q[0] / q[1]) : (q[0] < 0 ? '−' : '') + fracH(fmtInt(Math.abs(q[0])), fmtInt(q[1]));
+const f62Txt = p => (qTxt(p) + ' ' + stripTags(String(p.dat || '')) + ' ' + stripTags(String(p.con || ''))).replace(/&nbsp;/g, ' ');
+function f62Num(p, v, R, o){                                            // une case de nombre (unité après la case, comme en géométrie)
+  if (!v) return null;
+  const fl = p.fl || {}, T = f62Txt(p), A = String(p.a || ''), u = unitOf(stripTags(A).replace(/&nbsp;/g, ' '));
+  const form = /class="frac"/.test(A) || !qFin(v) ? 'frac' : 'dec';
+  const kb = {neg: !!fl.rel || v[0] < 0 || /−/.test(T), dec: form === 'dec' && (!!fl.dec || !qIsInt(v) || /\d,\d/.test(T)), fra: form === 'frac'};
+  const R1 = R ? (p2, x, sp2) => { F62_DX = decs(x); try { return R(p2, x, sp2); } finally { F62_DX = 0; } } : null;
+  return Object.assign({t: 'num', v, form, kb, R: R1}, p.line ? {uL: u} : {u: p.post ? '' : u}, o || {});
+}
+const f62Ch = (v, opts, o) => Object.assign({t: 'ch', v: String(v), opts: opts.map(String), nk: true, g47: true}, o || {});
+const M62 = {miss: 'Juste, mais il manque une solution.', ten: 'Attention aux unités : vérifie les conversions.',
+  t60: 'Attention aux unités de temps : 1 h = 60 min et 1 min = 60 s. Convertis d\'abord.',
+  t100: 'Attention : 1 h = 60 min et 1 min = 60 s (pas 100).', add: 'Proportionnalité : on multiplie ou on divise (on n\'ajoute pas la même chose).',
+  ang: 'Les angles ne changent pas dans un agrandissement ou une réduction.', sq2: f62X + '² veut dire ' + f62X + ' ∙ ' + f62X + ' (pas 2 ∙ ' + f62X + ').',
+  negsq: 'Attention : le carré d\'un nombre négatif est positif (par exemple, (−3)² = 9).'};
+
+// ---------- description (la suite de inpSpec47) ----------
+function inpSpec62(p){
+  const s = p.sub || ''; if (!F62_SUBS.has(s)) return null;
+  const ch = p.chk || {}, r = p.r, val = x => typeof x === 'number' ? qFromFloat(x) : x && x.k ? qVal(x) : null;
+  if (/^e[12]_/.test(s)) return f62SetSpec(p);
+  if (/^sy_/.test(s) && ch.sys) return f62SysSpec(p);
+  if (s === 'l_voc' || s === 'l_vocp') return f62VocSpec(p) || inpSpec63(p);   // n° 63 : partie littérale, opposé, ordonner
+  if (s === 'l_sub' && ch.sub) return f62Num(p, val(r), f62Sub);
+  if (s === 'fn_xg' && ch.fn) return f62XgSpec(p);
+  if (s === 'fn_tab' && ch.fntab) return f62TabSpec(p);
+  if ((s === 'fn_lpi' || s === 'fn_pi') && ch.fn && Array.isArray(r)) return f62Pre2Spec(p);
+  if (/^fn_(lim|im|lpi|pi)$/.test(s) && ch.fn) return f62Num(p, val(r), f62FnR);
+  if (/^d_/.test(s) && ch.dat) return f62Num(p, val(r), f62Dat);
+  if (s === 'q4' && ch.q4) return f62Num(p, val(r), f62Q4);
+  if (s === 'pagr' && ch.agr) return f62Num(p, val(r), f62Agr);
+  if (s === 'pech' && (ch.ech || ch.echS || ch.echU)) return f62Num(p, val(r), f62Ech);
+  if (s === 'ppen' && ch.pen) return f62Num(p, val(r), f62Pen);
+  if ((s === 'pvit' || s === 'pdeb' || s === 'pmv') && (ch.prate || ch.ptot)) return f62Num(p, val(r), f62Rate);
+  return inpSpec63(p);                                                  // n° 63 : expressions littérales, graphique → expression
+}
+
+// ---------- Proportionnalité ----------
+function f62Q4(p, x, sp){
+  const c = p.chk.q4, [[x0, y0], [x1, y1]] = c.cols, X = fNum(x.q), ok = fNum(sp.v);
+  const dir = 'Attention au sens du coefficient : il fait passer d\'une grandeur à l\'autre.', inv = 'Vérifie : quand une grandeur augmente, l\'autre augmente aussi.';
+  const L = c.askY ? [[y0 + x1 - x0, M62.add], [y0 * x0 / x1, inv], [x1 * x0 / y0, dir], [y0 * x1, x0 !== 1 ? 'Passe par 1 : divise d\'abord par ' + f62N(x0) + '.' : null]]
+    : [[x0 + y1 - y0, M62.add], [x0 * y0 / y1, inv], [y1 * y0 / x0, dir], [x0 * y1, y0 !== 1 ? 'Passe par 1 : divise d\'abord par ' + f62N(y0) + '.' : null]];
+  return f62Alt(L, X, ok);
+}
+function f62AgrK(p){                                                  // le coefficient écrit dans la consigne (angles : pas dans chk)
+  const h = String(p.con || '') + ' ' + String(p.dat || ''), m = /coefficient\s*(?:<span class="frac"><span class="nu">(\d+)<\/span><span class="de">(\d+)<\/span><\/span>|(\d+(?:,\d+)?))/.exec(h);
+  return !m ? NaN : m[3] ? Number(m[3].replace(',', '.')) : Number(m[1]) / Number(m[2]);
+}
+function f62Agr(p, x, sp){
+  const c = p.chk.agr, X = fNum(x.q), ok = fNum(sp.v), {A, B, kA, kB} = c, k = c.k !== undefined ? c.k : f62AgrK(p), k2 = f62N(k);
+  const mul = 'Agrandir ou réduire, c\'est multiplier par le coefficient (' + k2 + ').', L = [];
+  switch (c.kind){
+    case 'img': case 'red': L.push([A + k, mul], [A / k, mul]); break;
+    case 'orig': L.push([kA * k, 'On cherche la longueur de départ : divise par le coefficient.'], [kA - k, 'On cherche la longueur de départ : divise par le coefficient.']); break;
+    case 'coef': L.push([A / kA, 'Le coefficient : la longueur de la figure 2 divisée par celle de la figure 1.'], [kA - A, 'Le coefficient se trouve par une division (pas une soustraction).']); break;
+    case 'ang': L.push([c.al * k, M62.ang], [c.al / k, M62.ang]); break;
+    case 'angT': { const sm = [].concat(c.al).reduce((u, w) => u + w, 0); L.push([c.ans * k, M62.ang], [c.ans / k, M62.ang], [sm, 'La somme des trois angles d\'un triangle fait 180°.']); break; }
+    case 'perim': case 'perimK': L.push([2 * (A + B), 'Ça, c\'est le périmètre de la figure 1. Multiplie par le coefficient.'], [kA + kB, 'Le périmètre, c\'est le tour complet (tous les côtés).'],
+      [kA * kB, 'Ça, c\'est l\'aire. On cherche le périmètre.']); break;
+    case 'aire': L.push([k * A * B, 'Pour une aire, on multiplie par le coefficient au carré (' + k2 + '²).'], [A * B, 'Ça, c\'est l\'aire de la figure 1.'],
+      [2 * (kA + kB), 'Ça, c\'est le périmètre. On cherche l\'aire.']); break;
+    case 'mix': L.push([B / k, 'Trouve d\'abord le coefficient : figure 2 divisée par figure 1.'], [B + kA - A, M62.add]); break;
+    case 'mixo': L.push([kB * k, 'Trouve d\'abord le coefficient, puis divise par lui.'], [kB - (kA - A), M62.add]); break;
+  }
+  return f62Alt(L, X, ok);
+}
+function f62Ech(p, x, sp){
+  const ch = p.chk, X = fNum(x.q), ok = fNum(sp.v), L = [];
+  if (ch.ech){ const {N, pc, rc, rv, cpu, kind, parts} = ch.ech, un = cpu === 100 ? 'm' : 'km';
+    if (kind === 'p2r'){ L.push([pc / N, 'En réalité, c\'est plus grand : multiplie par ' + fmtInt(N) + '.']);
+      if (parts) parts.forEach(q => L.push([q * N / cpu, 'Il y a deux morceaux : additionne-les.'])); }
+    if (kind === 'r2p') L.push([rv * N, 'Sur le plan, c\'est plus petit : divise par ' + fmtInt(N) + '.']);
+    if (kind === 'ech') L.push([rv / pc, 'Mets les deux longueurs dans la même unité (en cm) avant de diviser.'], [pc / rc, 'L\'échelle 1 : ' + IV('N') + ' : ' + IV('N') + ' = longueur réelle : longueur sur le plan.']);
+    const m = f62Alt(L, X, ok); if (m) return m;
+    if (TEN_OK(X, ok)) return 'Attention aux unités : 1 ' + un + ' = ' + (un === 'm' ? '100 cm' : '100' + NB + '000 cm') + '.';
+    return null; }
+  if (ch.echS){ const {N, a, b} = ch.echS;
+    L.push([a * b * N / 1e4, 'Pour une aire réelle : multiplie d\'abord chaque longueur par ' + fmtInt(N) + ', puis calcule l\'aire.'], [a * b, 'Ça, c\'est l\'aire sur le plan.']);
+    return f62Alt(L, X, ok) || (TEN_OK(X, ok) ? 'Attention aux unités : 1 m = 100 cm (et 1 m² = 10' + NB + '000 cm²).' : null); }
+  if (ch.echU){ const {pv, rv} = ch.echU; L.push([pv / rv, 'L\'échelle 1 : ' + IV('N') + ' : ' + IV('N') + ' = longueur réelle : longueur sur le plan.']);
+    return f62Alt(L, X, ok) || (TEN_OK(X, ok) ? 'Mets les deux longueurs dans la même unité (en mm) avant de diviser.' : null); }
+  return null;
+}
+function f62Pen(p, x, sp){
+  const c = p.chk.pen, X = fNum(x.q), ok = fNum(sp.v), {p: P, H, d, ask, a0} = c, L = [];
+  const pm = (P < 0 ? '−' : '') + f62N(Math.abs(P));
+  const sg = P < 0 ? 'La route descend : la pente et le dénivelé sont négatifs.' : 'La route monte : la pente et le dénivelé sont positifs.';
+  if (ask === 'p') L.push([d / H, 'Une pente en % : le dénivelé pour 100 m à l\'horizontale (multiplie par 100).'], [H / d * 100, 'Pente = dénivelé : distance horizontale (pas l\'inverse), puis ∙ 100.'], [-P, sg]);
+  if (ask === 'd') L.push([P * H, pm + ' % veut dire ' + pm + ' m pour 100 m : divise par 100.'], [H / P, 'Dénivelé = pente ∙ distance horizontale : 100.'], [-d, sg]);
+  if (ask === 'h') L.push([d * P / 100, 'Distance horizontale = dénivelé : pente ∙ 100.'], [d / P, 'N\'oublie pas : ' + pm + ' % veut dire ' + pm + ' m pour 100 m.'], [-H, 'Une distance horizontale est positive.']);
+  if (ask === 'a') L.push([a0 - d, d > 0 ? 'La route monte : ajoute le dénivelé à l\'altitude de départ.' : 'La route descend : enlève le dénivelé de l\'altitude de départ.'],
+    [d, 'Ça, c\'est le dénivelé. On cherche l\'altitude d\'arrivée.'], [a0 + P * H, 'N\'oublie pas de diviser par 100 : ' + pm + ' % veut dire ' + pm + ' m pour 100 m.']);
+  return f62Alt(L, X, ok);
+}
+function f62Rate(p, x, sp){
+  const ch = p.chk, X = fNum(x.q), ok = fNum(sp.v), gr = {pvit: 'vit', pdeb: 'deb', pmv: 'mv'}[p.sub], L = [];
+  const sens = {vit: 'Vérifie : en plus de temps, on parcourt plus de distance.', deb: 'Vérifie : en plus de temps, il coule plus de litres.', mv: 'Vérifie : un bloc plus grand est plus lourd.'}[gr];
+  const divx = {vit: 'Pour trouver la durée : distance : vitesse.', deb: 'Pour trouver la durée : volume : débit.', mv: 'Pour trouver le volume : masse : masse volumique.'}[gr];
+  const invr = {vit: 'La vitesse : distance : durée.', deb: 'Le débit : volume : durée.', mv: 'La masse volumique : masse : volume.'}[gr];
+  if (ch.prate){ const {X0, Y0, X1, Y1, ask} = ch.prate, t = X0 === 60;
+    if (ask === 'y') L.push([Y0 * X1, t ? M62.t60 : null], [Y0 * X1 / 100, t ? M62.t100 : null], [Y0 * X0 / X1, sens], [X1 / Y0, sens]);
+    if (ask === 'x') L.push([Y1 * Y0, divx], [Y1 / Y0, t ? M62.t60 : null], [Y1 * 100 / Y0, t ? M62.t100 : null], [Y0 / Y1 * X0, divx]);
+    if (ask === 'r') L.push([Y1 / X1, t ? M62.t60 : null], [Y1 * 100 / X1, t ? M62.t100 : null], [X1 / Y1 * X0, invr], [X1 / Y1, invr], [Y1 * X1, invr]);
+  }
+  if (ch.ptot){ const c = ch.ptot;
+    if (c.gr === 'vit'){ const v = c.d.map((u, i) => u / c.t[i] * 60), dt = c.d[0] + c.d[1], tt = c.t[0] + c.t[1];
+      L.push([(v[0] + v[1]) / 2, 'La vitesse moyenne : distance totale : durée totale (pas la moyenne des deux vitesses).'], [dt / tt, M62.t60], [dt / tt * 100, M62.t100]); }
+    if (c.gr === 'deb'){ const [r1, r2] = c.r, msg = 'Les deux robinets coulent ensemble : additionne les débits.';
+      L.push([c.V / r1, msg], [c.V / r2, msg], [c.V / r1 + c.V / r2, msg], [(c.V / r1 + c.V / r2) / 2, msg], [c.V / (r1 * r2), msg]); }
+    if (c.gr === 'mv'){ const V = c.dims.reduce((u, w) => u * w, 1), S = c.dims.reduce((u, w) => u + w, 0);
+      L.push([c.mv * S, 'Calcule d\'abord le volume du pavé (longueur ∙ largeur ∙ hauteur).'], [V, 'Ça, c\'est le volume. Multiplie par la masse volumique.']); }
+    if (c.gr === 'mvhm') L.push([c.v, 'Multiplie le volume par la masse volumique.']);
+  }
+  const m = f62Alt(L, X, ok); if (m) return m;
+  if (ch.ptot && ch.ptot.gr === 'mvhm' && TEN_OK(X, ok)) return 'Attention aux unités : 1 dm³ = 1000 cm³ et 1 kg = 1000 g.';
+  return null;
+}
+
+// ---------- Lecture de données ----------
+function f62Dat(p, x, sp){
+  const d = p.chk.dat, X = fNum(x.q), ok = fNum(sp.v), s = p.sub, L = [];
+  const lire = s === 'd_car' ? 'Pars du bon endroit sur l\'axe horizontal, va jusqu\'à la courbe, puis lis sur l\'axe vertical.' : s === 'd_col' ? 'Regarde bien la colonne demandée, puis lis sa hauteur sur l\'axe vertical.' : 'Regarde bien la part demandée.';
+  const V = d.vals || [], P = d.pcs || [], sum = V.reduce((u, w) => u + w, 0);
+  switch (d.kind){
+    case 'lire': if (V[d.i - 1] !== undefined) L.push([V[d.i - 1], lire]); if (V[d.i + 1] !== undefined) L.push([V[d.i + 1], lire]); break;
+    case 'ant': L.push([V[d.i], 'On cherche le moment (sur l\'axe horizontal), pas la valeur.']); break;
+    case 'diff': L.push([V[d.i], 'On cherche une différence : la plus grande valeur moins la plus petite.'], [V[d.j], 'On cherche une différence : la plus grande valeur moins la plus petite.'],
+      [V[d.i] + V[d.j], 'Ça, c\'est la somme. On cherche la différence.']); break;
+    case 'ecart': { const mx = Math.max(...V), mn = Math.min(...V);
+      if (mn < 0) L.push([mx - Math.abs(mn), 'Attention avec les nombres négatifs : ' + f62N(mx) + ' − (' + f62N(mn) + ') = ' + f62N(mx) + ' + ' + f62N(-mn) + '.']);
+      L.push([mx, 'L\'écart : la plus haute moins la plus basse.'], [mn, 'L\'écart : la plus haute moins la plus basse.'], [V[V.length - 1] - V[0], 'L\'écart : la plus haute moins la plus basse (pas la fin moins le début).'],
+        [V[0] - V[V.length - 1], 'L\'écart : la plus haute moins la plus basse (pas la fin moins le début).']); break; }
+    case 'tot':
+      if (V.length) V.forEach(v => L.push([sum - v, 'Additionne toutes les colonnes : il en manque une.']));
+      else if (d.v !== undefined){ const pc = P[d.i]; L.push([d.v * pc / 100, f62N(d.v) + ' élèves, c\'est ' + f62N(pc) + ' %. On cherche le total (100 %).'], [d.v * pc, f62N(d.v) + ' élèves, c\'est ' + f62N(pc) + ' %. On cherche le total (100 %).']); }
+      break;
+    case 'pct':
+      if (V.length){ L.push([V[d.i], 'Ça, c\'est le nombre d\'élèves. Pour le pourcentage : divise par le total, puis multiplie par 100.'], [V[d.i] / sum, 'Pour avoir des %, multiplie par 100.']); }
+      else P.forEach((v, i) => { if (i !== d.i) L.push([v, lire]); });
+      break;
+    case 'n': L.push([P[d.i], 'Ça, c\'est le pourcentage. Calcule ' + f62N(P[d.i]) + ' % de ' + f62N(d.N) + '.'], [d.N * P[d.i], 'N\'oublie pas de diviser par 100.']); break;
+    case 'ang': L.push([P[d.i], 'Ça, c\'est le pourcentage. Un tour complet fait 360° : 1 % = 3,6°.'], [P[d.i] * 360, 'N\'oublie pas de diviser par 100.']); break;
+  }
+  return f62Alt(L, X, ok);
+}
+
+// ---------- Fonctions ----------
+const f62Fa = F => F.a[0] / F.a[1];
+const f62FaH = F => F.a[1] === 1 ? f62N(F.a[0]) : (F.a[0] < 0 ? '−' : '') + fracH(fmtInt(Math.abs(F.a[0])), fmtInt(F.a[1]));
+function f62FnV(F, x){ const a = f62Fa(F); return {cst: F.b, lin: a * x, aff: a * x + F.b, qua: a * x * x, cub: a * x * x * x, inv: a / x}[F.ty]; }
+function f62ImMsg(F, x, X, read){                                      // une image (calculée ou lue) : l'élève a tapé X
+  const a = f62Fa(F), aH = f62FaH(F), y = f62FnV(F, x), L = [], xH = f62N(x), fx = f62F + '(' + xH + ')';
+  if (read){
+    L.push([x, 'Tu as lu ' + f62X + '. Pars de ' + xH + ' sur l\'axe horizontal, va jusqu\'à la courbe, puis lis ' + fx + ' sur l\'axe vertical.']);
+    if ((F.ty === 'lin' || F.ty === 'aff') && a) L.push([(x - F.b) / a, 'Tu as lu dans le mauvais sens : ' + f62X + ' = ' + xH + ' se trouve sur l\'axe horizontal.']);
+    [x - 1, x + 1].forEach(z => L.push([f62FnV(F, z), 'Regarde bien : pars exactement de ' + f62X + ' = ' + xH + '.']));
+    return f62Alt(L, X, y);
+  }
+  if (F.ty === 'cst') L.push([x, 'Une fonction constante donne toujours le même nombre, quel que soit ' + f62X + '.']);
+  if (F.ty === 'qua') L.push([a * 2 * x, M62.sq2], [a * a * x * x, 'Seul ' + f62X + ' est au carré : calcule d\'abord ' + f62X + '², puis multiplie par ' + aH + '.'], [-a * x * x, x < 0 ? M62.negsq : null]);
+  if (F.ty === 'cub') L.push([a * 3 * x, f62X + '³ veut dire ' + f62X + ' ∙ ' + f62X + ' ∙ ' + f62X + ' (pas 3 ∙ ' + f62X + ').'], [(a * x) ** 3, 'Seul ' + f62X + ' est au cube : calcule d\'abord ' + f62X + '³, puis multiplie par ' + aH + '.']);
+  if (F.ty === 'inv') L.push([x / a, 'On divise ' + aH + ' par ' + f62X + ' (pas l\'inverse).'], [a * x, 'C\'est une division : ' + aH + ' : ' + f62X + '.']);
+  if (F.ty === 'aff') L.push([a * (x + F.b), 'Priorités : calcule d\'abord ' + aH + ' ∙ ' + f62X + ', puis ajoute ' + f62N(F.b) + '.'],
+    [a * x - F.b, 'Attention au signe du nombre ajouté.'], [a * x, 'N\'oublie pas ' + f62G((F.b > 0 ? '+ ' : '− ') + f62N(Math.abs(F.b))) + '.']);
+  if ((F.ty === 'lin' || F.ty === 'aff') && a) L.push([x / a + F.b, 'On multiplie ' + f62X + ' par ' + aH + ' (on ne divise pas).'],
+    [(x - F.b) / a, 'Ça, c\'est le nombre qui a pour image ' + xH + '. On cherche l\'image de ' + xH + '.']);
+  return f62Alt(L, X, y);
+}
+function f62PiMsg(F, y, X, read, oks){                                 // une préimage (calculée ou lue)
+  const a = f62Fa(F), aH = f62FaH(F), L = [], yH = f62N(y);
+  L.push([f62FnV(F, y), read ? 'Tu as lu dans le mauvais sens : pars de ' + yH + ' sur l\'axe vertical, va jusqu\'à la courbe, puis lis ' + f62X + ' sur l\'axe horizontal.'
+    : 'Ça, c\'est l\'image de ' + yH + '. On cherche le nombre ' + f62X + ' tel que ' + f62F + '(' + f62X + ') = ' + yH + '.']);
+  L.push([y, 'Ça, c\'est ' + f62F + '(' + f62X + '). On cherche ' + f62X + '.']);
+  if (!read){
+    if (F.ty === 'aff' && a) L.push([(y + F.b) / a, 'Attention au signe : enlève d\'abord ' + f62G((F.b > 0 ? '+ ' : '− ') + f62N(Math.abs(F.b))) + ' (fais l\'opération inverse).'],
+      [y / a - F.b, 'Enlève d\'abord ' + f62G((F.b > 0 ? '+ ' : '− ') + f62N(Math.abs(F.b))) + ', puis divise par ' + aH + '.'], [y - F.b, 'N\'oublie pas de diviser par ' + aH + '.']);
+    if (F.ty === 'lin' && a) L.push([y * a, 'Pour trouver ' + f62X + ', on divise par ' + aH + '.']);
+    if (F.ty === 'qua' && a) L.push([y / a, 'Il faut encore prendre la racine carrée.'], [y / (2 * a), f62X + '² n\'est pas 2' + f62X + ' : divise par ' + aH + ', puis prends la racine carrée.']);
+    if (F.ty === 'cub' && a) L.push([y / a, 'Il faut encore prendre la racine cubique.']);
+    if (F.ty === 'inv') L.push([y * a, 'Pour une fonction inverse : ' + f62X + ' = ' + aH + ' : ' + f62F + '(' + f62X + ').']);
+  }
+  return f62Alt(L, X, oks);
+}
+function f62FnR(p, x, sp){
+  const c = p.chk.fn, X = fNum(x.q), read = p.sub === 'fn_lim' || p.sub === 'fn_lpi';
+  return c.kind === 'im' ? f62ImMsg(c.F, c.x, X, read) : f62PiMsg(c.F, c.y, X, read, [].concat(c.x));
+}
+function f62XgSpec(p){                                                  // « Quelle droite (courbe) représente f ? » : d₁ d₂ d₃, C₁ C₂ C₃
+  const c = p.chk.fn; if (!c.ds) return null; const line = ['cst', 'lin', 'aff'].includes(c.F.ty), O = c.ds.map((_, i) => String(i + 1));
+  return f62Ch(p.r, O, {lab: Object.fromEntries(O.map(i => [i, line ? DLABH(i) : CLABH(i)])), R: f62XgR});
+}
+function f62XgR(p, b){
+  const c = p.chk.fn, F = c.F, G = c.ds[Number(b) - 1], line = ['cst', 'lin', 'aff'].includes(F.ty); if (!G) return null;
+  const Gf = Object.assign({b: 0}, G);
+  for (const x of [1, -1, 2, -2, 0, 3, -3]){ if (F.ty === 'inv' && !x) continue; const y = f62FnV(F, x), z = f62FnV(Gf, x);
+    if (isFinite(y) && Number.isInteger(Math.round(y * 1e9) / 1e9) && !f62Near(z, y)) return 'Calcule ' + f62F + '(' + f62N(x) + ') = ' + f62N(y) + ' : la bonne ' + (line ? 'droite' : 'courbe') + ' passe par le point (' + f62N(x) + ' ; ' + f62N(y) + ').'; }
+  return null;
+}
+function f62TabSpec(p){                                                 // tableau de valeurs : une case par « ? » (ligne de x, puis ligne de f(x))
+  const c = p.chk.fntab, h = p.line ? p.line(false) : ''; if (!h) return null;
+  const rows = h.split('</tr>'), cells = [];
+  for (let r = 0; r < 2; r++){ const tds = (rows[r] || '').split('<td').slice(1); tds.forEach((t, j) => { if (/class="qbox"/.test(t)) cells.push({r, j}); }); }
+  if (!cells.length || cells.length !== (h.match(/class="qbox"/g) || []).length) return null;
+  const v = cells.map(({r, j}) => qFromFloat(r ? c.ys[j] : c.xs[j])); if (v.some(q => !q || !qFin(q))) return null;
+  const fl = p.fl || {}, T = f62Txt(p);
+  if (cells.length === 1) return f62Num(p, v[0], (p2, x) => { const C = cells[0]; return C.r ? f62ImMsg(c.F, c.xs[C.j], fNum(x.q)) : f62PiMsg(c.F, c.ys[C.j], fNum(x.q), false, c.xs[C.j]); });
+  const ord = i => i ? (i + 1) + 'e' : '1re';
+  return {t: 'enc', np: cells.length, v, cells, J: f62TabJ, edec: v.some(q => !qIsInt(q)) || !!fl.dec || /\d,\d/.test(T),
+    lab: cells.map((_, i) => 'la ' + ord(i) + ' case'), kb: {neg: !!fl.rel || /−/.test(T) || v.some(q => q[0] < 0), dec: v.some(q => !qIsInt(q)) || !!fl.dec || /\d,\d/.test(T)}};
+}
+function f62TabJ(p, s, sp){
+  const c = p.chk.fntab, P = s.split('|'), X = P.map(t => inpParse(t));
+  if (X.some(x => !x || !x.q || x.frac || x.per)) return BAD45();
+  const bad = X.findIndex((x, i) => !qEq(x.q, sp.v[i])); if (bad < 0) return OK45();
+  const C = sp.cells[bad], w = fNum(X[bad].q), ord = bad ? (bad + 1) + 'e' : '1re';
+  const m = C.r ? f62ImMsg(c.F, c.xs[C.j], w) || 'Remplace ' + f62X + ' par ' + f62N(c.xs[C.j]) + ' dans l\'expression.'
+    : f62PiMsg(c.F, c.ys[C.j], w, false, c.xs[C.j]) || 'Cherche le nombre ' + f62X + ' tel que ' + f62F + '(' + f62X + ') = ' + f62N(c.ys[C.j]) + '.';
+  return {r: 'ko', m: 'La ' + ord + ' case n\'est pas juste. ' + m};
+}
+function f62Pre2Spec(p){                                                // deux préimages : x = ▢ ou x = ▢ (ordre libre)
+  const c = p.chk.fn, V = [].concat(p.r).map(qFromFloat); if (V.length !== 2 || V.some(q => !q || !qFin(q))) return null;
+  const fl = p.fl || {}, dec = V.some(q => !qIsInt(q)) || !!fl.dec;
+  return {t: 'enc', np: 2, v: V, tpl: [f62X + ' = ', ' <span class="ou">ou</span> ' + f62X + ' = ', ''], optE: true, J: f62Pre2J, edec: dec,
+    lab: ['la 1re solution', 'la 2e solution'], kb: {neg: true, dec}};
+}
+function f62Pre2J(p, s, sp){
+  const c = p.chk.fn, P = s.split('|'), X = P.map(t => t ? inpParse(t) : null), read = p.sub === 'fn_lpi';
+  if (X.some((x, i) => P[i] && (!x || !x.q || x.frac || x.per))) return BAD45();
+  const T = X.filter(Boolean); if (!T.length) return BAD45();
+  for (const x of T) if (!sp.v.some(v => qEq(v, x.q))){
+    const m = f62PiMsg(c.F, c.y, fNum(x.q), read, sp.v.map(fNum)); return {r: 'ko', m: m || (sp.v.some(v => qEq(qNeg(v), x.q)) ? 'Le nombre est juste, mais pas le signe.' : INP_MSG.ko)}; }
+  const k = new Set(T.map(x => sp.v.findIndex(v => qEq(v, x.q))));
+  return k.size < 2 ? {r: 'almost', m: M62.miss} : OK45();
+}
+
+// ---------- Systèmes : x = ▢ ; y = ▢ ----------
+function f62SysSpec(p){
+  const c = p.chk.sys, v = [qFromFloat(c.x), qFromFloat(c.y)]; if (v.some(q => !q)) return null;
+  const fl = p.fl || {}, T = f62Txt(p), dec = v.some(q => !qIsInt(q));
+  return {t: 'enc', np: 2, v, tpl: [f62X + ' = ', ' ; ' + f62Y + ' = ', ''], J: f62SysJ, edec: dec,
+    lab: ['la valeur de ' + f62X, 'la valeur de ' + f62Y], kb: {neg: !!fl.rel || /−/.test(T) || v.some(q => q[0] < 0), dec}};
+}
+function f62Lin(t){                                                     // « −3x + y » → {x: −3, y: 1, c: 0}
+  const s = String(t).replace(/\s+/g, ''); if (!s) return null;
+  const r = {x: 0, y: 0, c: 0}, re = /([+−-]?)(\d+(?:,\d+)?)?([xy])?/y; let i = 0;
+  while (i < s.length){ re.lastIndex = i; const m = re.exec(s); if (!m || !m[0] || (!m[2] && !m[3])) return null;
+    const sg = m[1] === '−' || m[1] === '-' ? -1 : 1, k = m[2] ? Number(m[2].replace(',', '.')) : 1;
+    if (m[3]) r[m[3]] += sg * k; else r.c += sg * k; i = re.lastIndex; }
+  return r;
+}
+function f62SysRows(p){                                                 // les deux équations affichées : a x + b y = c, et leur écriture
+  const c = p.chk.sys, out = [], re = /<span class="sl">([\s\S]*?)<\/span><span>=<\/span><span>([\s\S]*?)<\/span>/g; let m;
+  while ((m = re.exec(String(p.q || '')))){ const L = f62Lin(stripTags(m[1])), R = f62Lin(stripTags(m[2])); if (!L || !R) return null;
+    const row = {a: L.x - R.x, b: L.y - R.y, c: R.c - L.c, h: m[1] + ' = ' + m[2]}; if (!f62Near(row.a * c.x + row.b * c.y, row.c)) return null; out.push(row); }
+  return out.length === 2 ? out : null;
+}
+function f62SysJ(p, s, sp){
+  const [A, B] = s.split('|'), xa = inpParse(A), xb = inpParse(B);
+  if (!xa || !xb || !xa.q || !xb.q || xa.frac || xb.frac || xa.per || xb.per) return BAD45();
+  const [x0, y0] = sp.v, okx = qEq(xa.q, x0), oky = qEq(xb.q, y0);
+  if (okx && oky) return OK45();
+  if (qEq(xa.q, y0) && qEq(xb.q, x0)) return {r: 'ko', m: 'Tu as inversé ' + f62X + ' et ' + f62Y + '.'};
+  if (okx) return {r: 'ko', m: f62X + ' est juste. Remplace ' + f62X + ' par ' + f62Q(x0) + ' dans une des équations pour trouver ' + f62Y + '.'};
+  if (oky) return {r: 'ko', m: f62Y + ' est juste. Remplace ' + f62Y + ' par ' + f62Q(y0) + ' dans une des équations pour trouver ' + f62X + '.'};
+  const R = f62SysRows(p), X = fNum(xa.q), Y = fNum(xb.q);
+  if (R){ const sat = R.map(r => f62Near(r.a * X + r.b * Y, r.c)); if (sat.filter(Boolean).length === 1)
+    return {r: 'ko', m: 'Ces valeurs vérifient une équation, mais pas l\'autre : <span class="nw">' + R[sat.indexOf(false)].h + '</span>.'}; }
+  if (qEq(xa.q, qNeg(x0)) && qEq(xb.q, qNeg(y0))) return {r: 'ko', m: 'Les nombres sont justes, mais pas les signes.'};
+  return {r: 'ko', m: 'Vérifie : remplace ' + f62X + ' et ' + f62Y + ' par tes valeurs dans les deux équations.'};
+}
+
+// ---------- Calcul littéral : substitution, vocabulaire ----------
+function f62Sub(p, x, sp){
+  const [T, V] = p.chk.sub, X = fNum(x.q), ok = fNum(sp.v), L = [];
+  const ev = f => T.reduce((u, [k, m]) => u + f(k, m), 0), lets = m => Object.keys(m).filter(l => m[l]);
+  const std = (k, m) => k * lets(m).reduce((u, l) => u * V[l] ** m[l], 1);
+  const one = T.find(([k, m]) => lets(m).length === 1 && m[lets(m)[0]] === 1 && Math.abs(k) > 1 && Number.isInteger(V[lets(m)[0]]) && V[lets(m)[0]] > 0);
+  if (one){ const l = lets(one[1])[0];
+    L.push([ev((k, m) => lets(m).length === 1 && m[lets(m)[0]] === 1 && Math.abs(k) > 1 && Number.isInteger(V[lets(m)[0]]) && V[lets(m)[0]] > 0
+      ? Math.sign(k) * Number(String(Math.abs(k)) + String(V[lets(m)[0]])) : std(k, m)), 'Un nombre collé à une lettre, c\'est une multiplication : ' + f62N(Math.abs(one[0])) + IV(l) + ' = ' + f62N(Math.abs(one[0])) + ' ∙ ' + IV(l) + '.']); }
+  if (T.some(([, m]) => lets(m).some(l => m[l] >= 2))){
+    L.push([ev((k, m) => k * lets(m).reduce((u, l) => u * (m[l] >= 2 ? m[l] * V[l] : V[l]), 1)), M62.sq2]);
+    L.push([ev((k, m) => lets(m).length === 1 && m[lets(m)[0]] >= 2 ? (k * V[lets(m)[0]]) ** m[lets(m)[0]] : std(k, m)), 'Seule la lettre est au carré : calcule d\'abord la puissance, puis multiplie.']);
+    if (lets(V).some(l => V[l] < 0)) L.push([ev((k, m) => k * lets(m).reduce((u, l) => u * (V[l] < 0 && m[l] % 2 === 0 ? -(Math.abs(V[l]) ** m[l]) : V[l] ** m[l]), 1)), M62.negsq]);
+  }
+  return f62Alt(L, X, ok);
+}
+const F62_VAR = [['variable', 'partie littérale', 'puissance', 'somme', 'différence', 'expression'], ['variables', 'parties littérales', 'puissances', 'sommes', 'différences', 'expressions']];
+const F62_VOC = {sem: 'Deux monômes sont semblables quand ils ont la même partie littérale : les mêmes lettres, avec les mêmes exposants.',
+  mono: 'Un monôme est un produit d\'un nombre et de lettres : pas de somme, pas de lettre au dénominateur ni sous une racine.',
+  pol: 'Un polynôme est une somme de monômes : chaque terme est-il un monôme ?',
+  oppyn: 'Deux polynômes sont opposés quand chaque terme de l\'un a le signe contraire dans l\'autre.'};
+function f62VocSpec(p){
+  const c = (p.chk || {}).voc; if (!c) return null; const k = c.k;
+  if (F62_VOC[k] && (p.r === OUI || p.r === NON)) return {t: 'ch', v: p.r, opts: [OUI, NON], R: () => F62_VOC[k]};
+  if (k === 'nat'){ const a = V_NAT[c.x.t], b = V_NAT[c.alt], con = String(p.con || ''); if (!a || !b) return null;
+    return f62Ch(a, con.indexOf(a) <= con.indexOf(b) ? [a, b] : [b, a], {R: () => 'Cherche la dernière opération à faire (avec les priorités) : c\'est elle qui donne le nom.'}); }
+  if (k === 'var'){ const L = F62_VAR[c.a === 'variables' ? 1 : 0];
+    return f62Ch(c.a, g47Mix(p, L), {R: () => 'Dans une formule, les lettres peuvent prendre plusieurs valeurs : comment les appelle-t-on ?'}); }
+  if (k === 'ter'){
+    if (c.n <= 3) return f62Ch(c.a, ['monôme', 'binôme', 'trinôme', 'polynôme'], {alm: {polynôme: 'Juste : c\'est un polynôme. Mais il a un nom plus précis : compte ses termes.'},
+      R: () => 'Compte les termes : ils sont séparés par + ou −.'});
+    return f62Num(p, [c.n, 1], () => 'Compte les termes : ils sont séparés par + ou −.');
+  }
+  if (k === 'd' || k === 'pdeg'){ const n = Number(p.r); if (!Number.isInteger(n)) return null; return f62Num(p, [n, 1], f62DegR); }
+  if (k === 'c') return f62CoefSpec(p, c.M);
+  return null;                                                          // partie littérale, opposé, ordonner : des expressions (prochaine partie)
+}
+function f62DegR(p, x){
+  const c = p.chk.voc, X = fNum(x.q), L = [];
+  if (c.k === 'd'){ const e = Object.values(c.M.m).filter(Boolean), dg = e.reduce((u, w) => u + w, 0), msg = 'Le degré : on additionne les exposants de toutes les lettres (une lettre seule a l\'exposant 1).';
+    if (!e.length) L.push([1, 'Un nombre seul a le degré 0.']); else L.push([e.length, msg], [Math.max(...e), msg]);
+    return f62Alt(L, X, dg); }
+  const T = c.T || [], dgs = T.map(M => Object.values(M.m).reduce((u, w) => u + w, 0)), mx = Number(p.r), msg = 'Le degré d\'un polynôme, c\'est le plus grand degré de ses termes (réduis d\'abord s\'il le faut).';
+  L.push([dgs.reduce((u, w) => u + w, 0), msg], [T.length, msg]); if (dgs.length) L.push([dgs[0], msg], [Math.max(...dgs.slice(1).concat([0])), msg]);
+  return f62Alt(L, X, mx);
+}
+function f62CoefSpec(p, M){                                             // le coefficient d'un monôme : un nombre, ou avec π ou une racine
+  const s = M.s < 0 ? -1 : 1, T = f62Txt(p), fl = p.fl || {};
+  if (M.sp === 'pi') return {t: 'mes', val: s * M.n * Math.PI, A: [0, 1], B: [s * M.n, 1], pi: true, J: f62CoefPi, kb: {pi: true, neg: s < 0 || !!fl.rel || /−/.test(T)}};
+  if (M.sp) return {t: 'rad', n: 2, x: {N: M.n * M.n * M.sp}, v: null, form: 'dec', val: s * M.n * Math.sqrt(M.sp), sg: s, J: f62CoefRad, kb: {rad: true, n: 2, neg: s < 0 || !!fl.rel || /−/.test(T)}};
+  const q = M.v != null ? qMul(qNum(M.v), [s, 1]) : qRat(s * M.n, M.d);
+  return f62Num(p, q, f62CoefR, {kb: {neg: s < 0 || !!fl.rel || /−/.test(T), dec: M.v != null || /\d,\d/.test(T), fra: M.d > 1}});
+}
+function f62CoefR(p, x, sp){
+  const M = p.chk.voc.M, X = fNum(x.q), L = [];
+  if (Object.keys(M.m).length && M.n === 1 && M.d === 1 && M.v == null) L.push([0, 'Quand on ne voit pas de nombre devant les lettres, le coefficient est 1 (ou −1 avec un signe −).']);
+  Object.values(M.m).filter(Boolean).forEach(e => L.push([e, 'Le coefficient, c\'est le nombre devant les lettres (pas un exposant).']));
+  return f62Alt(L, X, fNum(sp.v));
+}
+function f62CoefPi(p, s, sp){
+  const P = mesParse(s); if (!P) return BAD45(); if (P.zero) return BAD45(INP_MSG.zero);
+  if (!P.hasPi) return {r: 'ko', m: IV('π') + ' est un nombre : il fait partie du coefficient (touche ' + IV('π') + ').'};
+  if (!P.a[0] && qEq(P.b, sp.B)) return P.red ? OK45() : {r: 'almost', m: INP_MSG.simp};
+  if (!P.a[0] && qEq(P.b, qNeg(sp.B))) return {r: 'ko', m: 'Le nombre est juste, mais pas le signe.'};
+  return {r: 'ko', m: 'Le coefficient, c\'est tout le nombre devant les lettres.'};
+}
+function f62CoefRad(p, s, sp){
+  const m = /^(−?)(\d*)√(\d+)$/.exec(s);
+  if (!m){ const x = inpParse(s); return x && x.q ? {r: 'ko', m: 'Le coefficient contient une racine : garde-la (touche √).'} : BAD45(); }
+  const k = m[2] ? Number(m[2]) : 1, R = Number(m[3]), g = m[1] ? -1 : 1;
+  if (k * k * R === sp.x.N) return g === sp.sg ? (maxPowDiv(R, 2) > 1 ? {r: 'almost', m: 'Juste, mais simplifie : écris-le comme dans la question.'} : OK45()) : {r: 'ko', m: 'Le nombre est juste, mais pas le signe.'};
+  return {r: 'ko', m: 'Le coefficient, c\'est tout le nombre devant les lettres.'};
+}
+
+// ---------- Équations : l'ensemble des solutions (sorte 'set') ----------
+// I.s : '' ; '∅' ; 'ℝ' ; ou des solutions séparées par ';'. Une solution : un nombre (signe, virgule) ou une fraction « a/b » ; avec
+// sp.kb.rad, un numérateur comme « −5−√73 » (un terme, un « + » ou un « − » entre deux termes, une racine) sur un dénominateur entier.
+const S62_ONE = c => c === '∅' || c === 'ℝ';
+const S62_MAX = 4;
+function s62El(s, k){ const a = s.lastIndexOf(';', k - 1) + 1, b0 = s.indexOf(';', k); return {a, b: b0 < 0 ? s.length : b0}; }
+function s62Op(s, a, b){ for (let i = a + 1; i < b; i++) if (s[i] === '+' || (s[i] === '−' && /[\d,]/.test(s[i - 1]))) return i; return -1; }
+function setEdit62(I, sp, c){
+  let s = I.s || '', k = Math.max(0, Math.min(I.c, s.length)); const kb = sp.kb || {};
+  if (S62_ONE(s)){
+    if (c === '←' || c === 'home'){ I.c = 0; return; }
+    if (c === '→' || c === 'end'){ I.c = 1; return; }
+    if (c === '⌫' || c === 'del' || c === 'clr' || c === s){ I.s = ''; I.c = 0; return; }
+    if (c === '∅' || c === 'ℝ'){ I.s = c; I.c = 1; return; }
+    if (!/^[\d,−\/√]$/.test(c)) return;
+    s = ''; k = 0;                                                     // un chiffre, un signe… : les accolades reviennent
+  }
+  if (c === '∅' || c === 'ℝ'){ if (kb.set){ I.s = c; I.c = 1; } return; }
+  if (c === 'clr'){ I.s = ''; I.c = 0; return; }
+  const E = s62El(s, k), el = s.slice(E.a, E.b), J0 = el.indexOf('/'), J = J0 < 0 ? -1 : E.a + J0, inDen = J >= 0 && k > J;
+  const nA = E.a, nB = J >= 0 ? J : E.b, op = s62Op(s, nA, nB);
+  const tA = inDen ? J + 1 : op >= 0 && k > op ? op + 1 : nA, tB = inDen ? E.b : op >= 0 && k <= op ? op : nB, term = s.slice(tA, tB);
+  const put = t => { s = s.slice(0, k) + t + s.slice(k); k += t.length; };
+  if (c === '⌫'){
+    if (k > E.a){ const ch = s[k - 1];
+      if (ch === '/'){ if (J + 1 === E.b) s = s.slice(0, k - 1) + s.slice(k); k--; }
+      else { s = s.slice(0, k - 1) + s.slice(k); k--; } }
+    else if (k > 0){ if (E.a === E.b) s = s.slice(0, k - 1) + s.slice(k); k--; }        // « ; » : enlevé seulement si la solution d'après est vide
+  }
+  else if (c === 'del'){
+    if (k < s.length){ const ch = s[k];
+      if (ch === ';'){ const n2 = s62El(s, k + 1); if (n2.a === n2.b) s = s.slice(0, k) + s.slice(k + 1); }
+      else if (ch === '/'){ if (J + 1 === E.b) s = s.slice(0, k) + s.slice(k + 1); }
+      else s = s.slice(0, k) + s.slice(k + 1); }
+  }
+  else if (c === '←'){ if (k > 0) k--; }
+  else if (c === '→'){ if (k < s.length) k++; }
+  else if (c === 'home') k = E.a;
+  else if (c === 'end') k = E.b;
+  else if (c === '↑'){ if (inDen) k = J; }
+  else if (c === '↓'){ if (J >= 0 && !inDen) k = E.b; }
+  else if (/^\d$/.test(c)){ if (el.replace(/\D/g, '').length >= 12) return; put(c); }
+  else if (c === ','){ if (!kb.dec || J >= 0 || term.includes(',') || term.includes('√')) return; put(k === tA || (s[k - 1] === '−' && k - 1 === tA) ? '0,' : ','); }
+  else if (c === '−'){
+    if (!kb.neg && !kb.plus && s[tA] !== '−') return;
+    if (op >= 0 && !inDen && tA === op + 1){ s = s.slice(0, op) + (s[op] === '+' ? '−' : '+') + s.slice(op + 1); }   // 2e terme : le signe entre les deux termes
+    else if (kb.plus && !inDen && op < 0 && k === nB && k > nA && /[\d,]/.test(s[k - 1])) put('−');                 // −5 − √73 : un « − » entre deux termes
+    else if (s[tA] === '−'){ s = s.slice(0, tA) + s.slice(tA + 1); if (k > tA) k--; }
+    else { s = s.slice(0, tA) + '−' + s.slice(tA); if (k >= tA) k++; }
+  }
+  else if (c === '+'){ if (!kb.plus || inDen || op >= 0 || k !== nB || !/[\d,]/.test(s[k - 1] || '')) return; put('+'); }
+  else if (c === '√'){ if (!kb.rad || inDen || term.includes('√') || term.includes(',')) return; k = tB; put('√'); }
+  else if (c === '/'){
+    if (!kb.fra) return;
+    if (J >= 0){ k = inDen ? nB : E.b; }
+    else { if (el.includes(',')) return; if (!el.replace('−', '')){ put('/'); k--; } else { k = E.b; put('/'); } }
+  }
+  else if (c === ';'){ if (!kb.semi || !el || s.split(';').length >= S62_MAX) return; k = E.b; put(';'); }
+  else return;
+  I.s = s; I.c = Math.max(0, Math.min(k, s.length));
+}
+function s62Run(I, x, y, o){                                            // des caractères [x, y) : chiffres, signes, racine (le nombre dessous)
+  const s = I.s, on = !!o.on && !o.st, at = i => on && I.c === i;
+  const ch = (i, t) => o.st ? t : '<span class="qch" data-g="' + i + '">' + t + '</span>';
+  let h = '', i = x, skip = -1;
+  while (i < y){
+    if (at(i) && i !== skip) h += QCAR;
+    const c = s[i];
+    if (c === '√'){ let j = i + 1; while (j < y && /\d/.test(s[j])) j++;
+      let r = ''; for (let m = i + 1; m <= j; m++){ if (at(m)) r += QCAR; if (m < j) r += ch(m, s[m]); }
+      if (j === i + 1 && !o.st) r += '<span class="s62rq"></span>';
+      h += o.st ? radH(r, 2) : '<span class="qch" data-g="' + i + '">' + radH(r, 2) + '</span>';
+      skip = j; i = j; continue; }
+    h += ch(i, c === '+' || (c === '−' && i > x && /[\d,]/.test(s[i - 1])) ? ' ' + c + ' ' : hEsc(c)); i++;
+  }
+  if (at(y) && y !== skip) h += QCAR;
+  return h;
+}
+function s62ElH(I, a, b, o){                                            // une solution : fraction ou non
+  const j0 = I.s.slice(a, b).indexOf('/'); if (j0 < 0) return s62Run(I, a, b, o);
+  const j = a + j0, box = (x, y) => o.st ? s62Run(I, x, y, o) : '<span class="qpt' + (x === y ? ' qph' : '') + (o.on && I.c >= x && I.c <= y ? ' on' : '') + '" data-ge="' + y + '">' + s62Run(I, x, y, o) + '</span>';
+  return fracH(box(a, j), box(j + 1, b));
+}
+function setRender62(I, sp, o){
+  const s = I.s || '', on = !!o.on && !o.st;
+  if (S62_ONE(s)) return (on && I.c === 0 ? QCAR : '') + '<span class="mset"' + (o.st ? '' : ' data-ge="1"') + '>' + s + '</span>' + (on && I.c >= 1 ? QCAR : '');
+  const els = []; let a = 0;
+  for (let i = 0; i <= s.length; i++) if (i === s.length || s[i] === ';'){ els.push([a, i]); a = i + 1; }
+  const sep = i => o.st ? ' ; ' : '<span class="qch" data-g="' + i + '"> ; </span>';
+  return '<span class="bp">{</span>' + els.map(([x, y], n) => (n ? sep(x - 1) : '') + s62ElH(I, x, y, o)).join('') + '<span class="bp">}</span>';
+}
+function setMiss62(I, sp){                                              // une partie vide → {m, c} ; rien de tapé → null ; sinon false
+  const s = I.s || ''; if (!s) return null; if (S62_ONE(s)) return false;
+  let a = 0;
+  for (const e of s.split(';')){
+    if (!e) return {m: 'Il manque une solution après ' + f62G(';') + ' (ou efface ' + f62G(';') + ').', c: a};
+    const j = e.indexOf('/'), n = j < 0 ? e : e.slice(0, j);
+    if (j >= 0){ if (!n.replace('−', '')) return {m: 'Il manque le numérateur.', c: a + j}; if (!e.slice(j + 1).replace('−', '')) return {m: 'Il manque le dénominateur.', c: a + e.length}; }
+    const r = e.indexOf('√'); if (r >= 0 && !/\d/.test(e[r + 1] || '')) return {m: 'Il manque le nombre sous la racine.', c: a + r + 1};
+    if (n.length > 1 && /[+−]$/.test(n)) return {m: 'Il manque un nombre après le signe.', c: a + n.length};
+    a += e.length + 1;
+  }
+  return false;
+}
+function s62Parse(e){                                                   // une solution tapée → valeur exacte (rationnelle, ou (A + B√N)), ou null
+  const j = e.indexOf('/'), nS = j < 0 ? e : e.slice(0, j), dS = j < 0 ? null : e.slice(j + 1), op = s62Op(nS, 0, nS.length);
+  const T = op < 0 ? [nS] : [nS.slice(0, op), (nS[op] === '−' ? '−' : '') + nS.slice(op + 1)];
+  let a = [0, 1], b = [0, 1], N = 1, dec = false, dx = 0, sq = false, msq = false, mixed = false, rad = false;
+  for (const t of T){
+    const m = /^(−?)(\d*(?:,\d*)?)(?:√(\d+))?$/.exec(t); if (!m || (!m[2] && m[3] === undefined)) return null;
+    const sg = m[1] ? -1 : 1;
+    if (m[3] !== undefined){ if (m[2].includes(',')) return null; rad = true;
+      const kk = m[2] ? Number(m[2]) : 1, R = Number(m[3]); if (!R) return null;
+      const f = maxPowDiv(R, 2), Rp = R / (f * f);
+      if (Rp === 1){ a = qAdd(a, [sg * kk * f, 1]); sq = true; continue; }
+      if (f > 1) msq = true; if (N !== 1 && N !== Rp) mixed = true; N = Rp; b = qAdd(b, [sg * kk * f, 1]); continue; }
+    const x = inpParse(t); if (!x || !x.q || x.per) return null;
+    if (/,/.test(t)){ dec = true; dx = Math.max(dx, (x.fp || '').length); }
+    a = qAdd(a, x.q);
+  }
+  let d = [1, 1], frac = false, red = true;
+  if (dS !== null){ const y = inpParse(dS); if (!y || !y.q || y.frac || y.per || /,/.test(dS)) return null; if (!y.q[0]) return {zero: true}; d = y.q; frac = true;
+    if (qIsInt(a) && qIsInt(b) && qIsInt(d) && gcd(gcd(a[0], b[0]), d[0]) > 1) red = false; }
+  const A = qDiv(a, d), B = qDiv(b, d), irr = !!B[0] && N > 1 && !mixed;
+  return {X: fNum(A) + fNum(B) * Math.sqrt(N), q: irr || mixed ? null : A, irr: irr ? {A, B, N} : null, mixed, dec, dx, frac, red, sq, msq, rad, one: T.length === 1};
+}
+function f62Irr(p, v){                                                  // une solution irrationnelle (−B ± √D) : 2A, d'après l'équation
+  const e = (p.chk || {}).e2o; if (!e) return null;
+  const A = e[0][0] - e[1][0], B = e[0][1] - e[1][1], C = e[0][2] - e[1][2], D = B * B - 4 * A * C;
+  if (![A, B, C].every(Number.isInteger) || !A || D <= 0) return null;
+  const f = maxPowDiv(D, 2), N = D / (f * f); if (N === 1) return null;
+  for (const sg of [1, -1]){ const X = (-B + sg * f * Math.sqrt(N)) / (2 * A); if (f62Near(X, v)) return {X, irr: {A: qRat(-B, 2 * A), B: qRat(sg * f, 2 * A), N}}; }
+  return null;
+}
+function f62Sols(p){                                                    // 'R', [] (aucune), ou [{X, q} | {X, irr}] dans l'ordre
+  const r = p.r;
+  if (r === 'R') return 'R'; if (r === 'vide') return [];
+  if (r && typeof r === 'object' && !Array.isArray(r)){ const q = qVal(r); return q ? [{X: fNum(q), q}] : null; }
+  if (!Array.isArray(r)) return null;
+  const out = [];
+  for (const v of r){ if (typeof v !== 'number' || out.some(o => f62Near(o.X, v))) continue;
+    const q = qFromFloat(v); if (q){ out.push({X: v, q}); continue; }
+    const ir = f62Irr(p, v); if (!ir) return null; out.push(ir); }
+  return out.sort((u, w) => u.X - w.X);
+}
+function f62SetSpec(p){
+  const sols = f62Sols(p); if (!sols) return null;
+  const s = p.sub, fl = p.fl || {}, T = f62Txt(p), deg2 = /^e2_/.test(s), L = Array.isArray(sols) ? sols : [];
+  const rad = s === 'e2_1' || s === 'e2_5', plus = s === 'e2_5';
+  const dec = !!fl.dec || /\d,\d/.test(T) || /\d,\d/.test(stripTags(String(p.a || ''))) || rad;
+  return {t: 'set', sols, deg2, J: jSet62, kb: {neg: !!fl.rel || /−/.test(T) || L.some(o => o.X < 0) || rad, dec, fra: true, rad, n: 2, plus, semi: deg2, set: true}};
+}
+function jSet62(p, s, sp){
+  const S0 = sp.sols, I = p.inp || {}, x = f62X;
+  if (S62_ONE(s)){
+    const all = s === 'ℝ', msg = 'Quand on enlève les ' + x + ', il reste une égalité : est-elle toujours vraie ou jamais vraie ?';
+    if (S0 === 'R') return all ? OK45() : {r: 'ko', m: msg};
+    if (!S0.length) return !all ? OK45() : {r: 'ko', m: msg};
+    return {r: 'ko', m: S0.length > 1 ? 'Cette équation a des solutions : continue à la résoudre.' : 'Cette équation a une solution : continue à isoler ' + x + '.'};
+  }
+  const E = s.split(';').map(s62Parse);
+  if (E.some(e => !e)) return BAD45(); if (E.some(e => e.zero)) return BAD45(INP_MSG.zero);
+  if (S0 === 'R') return {r: 'ko', m: 'Essaie avec un autre nombre à la place de ' + x + ' : l\'égalité est-elle encore vraie ?'};
+  if (!S0.length) return {r: 'ko', m: 'Vérifie : remplace ' + x + ' par ce nombre dans l\'équation. Les deux côtés sont-ils égaux ? Quand on enlève les ' + x + ', que reste-t-il ?'};
+  const used = new Set(); let ap = null, apFra = false, form = null, dup = false;
+  for (let n = 0; n < E.length; n++){
+    const e = E[n]; let k = -1, how = null;
+    S0.forEach((o, i) => { if (k >= 0) return;
+      if (o.q && e.q && qEq(e.q, o.q)){ k = i; how = 'ex'; }
+      else if (o.irr && e.irr && qEq(e.irr.A, o.irr.A) && qEq(e.irr.B, o.irr.B) && e.irr.N === o.irr.N){ k = i; how = 'ex'; }
+      else if (e.dec && e.one && !e.frac && !e.rad && !(o.q && qFin(o.q)) && Math.abs(e.X - o.X) <= .5 * 10 ** -e.dx + 1e-9 * Math.max(1, Math.abs(o.X))){ k = i; how = 'ap'; } });
+    if (k < 0) return {r: 'ko', m: f62EqMsg(p, e, sp, s.split(';')[n])};
+    if (used.has(k)) dup = true; used.add(k);
+    if (how === 'ap'){ ap = ap === null ? e.dx : Math.min(ap, e.dx); if (S0[k].q) apFra = true; }
+    else if (!form){ if (e.frac && e.q && qIsInt(e.q)) form = 'ent'; else if (e.frac && !e.red) form = 'simp'; else if (e.sq) form = 'sq'; else if (e.msq) form = 'msq'; }
+  }
+  if (used.size < S0.length) return {r: 'almost', m: M62.miss};
+  if (dup) return {r: 'almost', m: 'Juste, mais écris chaque solution une seule fois.'};
+  if (ap !== null){ const kd = apFra ? 'fra' : 'rad';
+    if (I.after) return {r: 'ko', m: EXACT_KO[kd]};
+    if (ap < 2) return {r: 'almost', m: EXACT_ALM[kd]};
+    return {r: 'step', after: true, m: EXACT_ASK[kd]}; }
+  if (form) return {r: 'almost', m: {ent: INP_MSG.ent, simp: INP_MSG.simp, sq: 'Juste, mais calcule la racine jusqu\'au bout.', msq: 'Juste, mais simplifie encore : sors les carrés de la racine.'}[form]};
+  return OK45();
+}
+function f62EqMsg(p, e, sp, src){                                       // une solution fausse : l'erreur fréquente, sinon « remplace x par … »
+  const ch = p.chk || {}, w = e.X, oks = sp.sols.map(o => o.X), L = [], x = f62X;
+  const nb = v => f62N(Math.abs(v)), sgT = (v, t) => f62G((v > 0 ? '+ ' : '− ') + t);
+  const mono = (k, l) => (Math.abs(k) === 1 ? '' : nb(k)) + l;
+  if (ch.eq){ const [P, Q, R, Sx] = ch.eq, a = P - R, c = Sx - Q;
+    if (Q) L.push([(Sx + Q) / a, 'Attention au signe : pour enlever ' + sgT(Q, nb(Q)) + ', ' + (Q > 0 ? 'on soustrait ' : 'on additionne ') + nb(Q) + ' des deux côtés.']);
+    if (R) L.push([c / (P + R), 'Attention au signe : pour enlever ' + sgT(R, mono(R, x)) + ' d\'un côté, ' + (R > 0 ? 'on soustrait ' : 'on additionne ') + mono(R, x) + ' des deux côtés.']);
+    if (Math.abs(a) !== 1){ const aH = f62N(a);
+      L.push([c * a, 'Pour enlever le ' + aH + ' devant ' + x + ' (' + aH + x + ' = ' + aH + ' ∙ ' + x + '), on divise les deux côtés par ' + aH + '.'],
+        [a / c, 'Attention au sens de la division : on divise le nombre seul par ' + aH + ' (le nombre devant ' + x + ').'],
+        [c - a, aH + x + ' veut dire ' + aH + ' ∙ ' + x + ' : on divise par ' + aH + ' (on ne soustrait pas).']); }
+    if (p.sub === 'e1_6' && P){ const b = Q / P; if (Number.isInteger(b) && b) L.push([(Sx - b) / P, 'N\'oublie pas de multiplier aussi ' + f62N(b) + ' par ' + f62N(P) + ' (distributivité).']); }
+  }
+  if (ch.eq3){ const [A, B] = ch.eq3, m = 'Pour enlever ' + f62G(': ' + f62N(A)) + ', on multiplie les deux côtés par ' + f62N(A) + '.';
+    L.push([B / A, m], [A / B, m], [B + A, fracH(x, f62N(A)) + ' veut dire ' + x + ' : ' + f62N(A) + ' : ' + m.charAt(0).toLowerCase() + m.slice(1)], [B - A, m]); }
+  if (ch.eq8){ const [A, B, C] = ch.eq8;
+    L.push([(C - B) / A, 'Pour enlever ' + f62G(': ' + f62N(A)) + ', on multiplie par ' + f62N(A) + ' (on ne divise pas).'],
+      [(C + B) * A, 'Attention au signe : pour enlever ' + sgT(B, nb(B)) + ', ' + (B > 0 ? 'on soustrait ' : 'on additionne ') + nb(B) + ' des deux côtés.'],
+      [C * A - B, 'Enlève d\'abord ' + sgT(B, nb(B)) + ', puis multiplie par ' + f62N(A) + '.']); }
+  if (ch.e2o){ const o = ch.e2o, A = o[0][0] - o[1][0], B = o[0][1] - o[1][1], C = o[0][2] - o[1][2];
+    if (ch.eq2s && !B && A){ const a2 = -C / A, msgR = 'Il faut encore prendre la racine carrée.', m2 = f62X + '² veut dire ' + x + ' ∙ ' + x + ' (pas 2' + x + ') : prends la racine carrée.';
+      L.push([a2 / 2, m2], [-a2 / 2, m2], [a2, msgR], [-a2, msgR]);
+      if (Math.abs(A) !== 1){ L.push([Math.sqrt(Math.abs(C)), 'N\'oublie pas de diviser par ' + f62N(A) + ' avant de prendre la racine.'], [-Math.sqrt(Math.abs(C)), 'N\'oublie pas de diviser par ' + f62N(A) + ' avant de prendre la racine.']); }
+      if (o[0][2] && o[1][2]){ const z = (o[1][2] + o[0][2]) / A; if (z > 0) L.push([Math.sqrt(z), 'Attention au signe : quand un nombre change de côté, il change de signe.'], [-Math.sqrt(z), 'Attention au signe : quand un nombre change de côté, il change de signe.']); } }
+    if (ch.eq2f) ch.eq2f.forEach(([fa, fb]) => { if (!fa) return; const fH = '<span class="nw">' + (fa === 1 ? '' : f62N(fa)) + x + (fb ? (fb < 0 ? ' − ' : ' + ') + nb(fb) : '') + ' = 0</span>';
+      L.push([fb / fa, 'Attention au signe : si ' + fH + ', que vaut ' + x + ' ?']);
+      if (Math.abs(fa) !== 1) L.push([-fb, 'Pour ' + fH + ', n\'oublie pas de diviser par ' + f62N(fa) + '.'], [fb, 'Pour ' + fH + ', n\'oublie pas de diviser par ' + f62N(fa) + ' (et attention au signe).']); });
+    if (ch.eq2c && A){ L.push([B / A, 'Attention au signe : mets ' + x + ' en évidence, puis regarde chaque facteur.']); if (Math.abs(A) !== 1) L.push([-B, 'N\'oublie pas de diviser par ' + f62N(A) + '.'], [B, 'N\'oublie pas de diviser par ' + f62N(A) + ' (et attention au signe).']); }
+    if (ch.vie2 && A){ const D = B * B - 4 * A * C, D2 = B * B + 4 * A * C;
+      [1, -1].forEach(g => { if (D >= 0){ L.push([(B + g * Math.sqrt(D)) / (2 * A), 'Attention au signe : dans la formule, c\'est −' + IV('b') + '.'], [(-B + g * Math.sqrt(D)) / A, 'On divise par 2' + IV('a') + ' (pas par ' + IV('a') + ').']); }
+        if (D2 >= 0) L.push([(-B + g * Math.sqrt(D2)) / (2 * A), 'Vérifie ' + IV('b') + '² − 4' + IV('a') + IV('c') + ' (attention au signe de 4' + IV('a') + IV('c') + ').']); }); }
+  }
+  const m = f62Alt(L, w, oks); if (m) return m;
+  if (oks.some(o => f62Near(-w, o))) return 'Le nombre est juste, mais pas le signe.';
+  const I0 = {s: src || '', c: -1}, h = s62ElH(I0, 0, I0.s.length, {st: true});
+  return 'Vérifie : remplace ' + x + ' par <span class="nw">' + h + '</span> dans l\'équation. Les deux côtés sont-ils égaux ?';
+}
+
+/* =====================================================================
+   n° 63 (12.11.2026) : saisie des réponses, onglet Fonctions et algèbre, les expressions littérales (fin de « Reste à faire »)
+   L'enseignant : « Continue le travail sur les blocs réponses. Je crois que tu es presque au bout » ; Claude a pris les expressions,
+   laissées pour une conversation à part avec leur QCM (QPC_SAISIE_FA.md). QCM (les quatre options recommandées) :
+   - une réponse de même valeur, pas sous la forme demandée (pas réduite, pas développée, pas factorisée, factorisation pas complète) :
+     « presque » avec un message ciblé ; la question recopiée telle quelle : faux ;
+   - l'ordre des termes et des facteurs : libre, sauf « Ordonne » (l'ordre est la question) ;
+   - les écritures qui ne suivent pas les conventions de la classe (1x, x¹, yx pour xy, (x + 3)2, + (−3)) : « presque », avec la
+     convention, partout ;
+   - traduire une phrase : une expression égale mais pas la traduction (2x + 6 pour « le double de la somme de x et de 3 ») : « presque ».
+   Choix faits sans QCM (dits à l'enseignant) : une seule case « expression » (sorte 'exp') : lettres de la question, + et −, exposant
+   (touche ↑ ou ^, ² de l'ordinateur), parenthèses pour factoriser et traduire, fraction pour traduire, les fonctions et les
+   coefficients en fraction ; pas de touche ∙ (une réponse n'en a jamais besoin) ; (x + 3)(x + 3) pour (x + 3)² : « presque » ; un
+   facteur avec une fraction ou une virgule quand la réponse n'en a pas (2(x − 1,5)) : « presque » ; « Ordonne » dans un autre ordre :
+   faux ; graphique → expression : toute écriture égale (2x/3, ⅔x) ; erreurs : celles de chaque exercice, sinon le terme qui ne va pas
+   (« Vérifie le terme en x. ») sans donner la réponse.
+   Ce qui est tapé (I.s) : chiffres, virgule, lettres, + − ( ), et des marques : ⁅ ⁆ un exposant (chiffres seulement), ⟦ ⁄ ⟧ une
+   fraction (numérateur, dénominateur ; pas de fraction dans une fraction). Une marque compte pour une place du curseur.
+   ===================================================================== */
+const E63O = '⁅', E63C = '⁆', F63O = '⟦', F63M = '⁄', F63C = '⟧', E63_MAX = 60;
+const E63_SUBS = /^(?:l_(?:mulm|mono|addm|subm|addp|subp|dev|dev2|ir[1-4]|fme|fir[1-4]|fvi|tra|voc|vocp)|fn_gx)$/;
+function grp63(s, k, O, C){ const a = s.lastIndexOf(O, k - 1); if (a < 0) return null; const b = s.indexOf(C, a); return b >= k ? {a, b} : null; }
+// ---------- frappe ----------
+function expEdit63(I, sp, c){
+  let s = I.s || '', k = Math.max(0, Math.min(I.c, s.length)); const kb = sp.kb || {};
+  const E = grp63(s, k, E63O, E63C), F = grp63(s, k, F63O, F63C), fm = F ? s.indexOf(F63M, F.a) : -1, inDen = !!F && k > fm, prev = s[k - 1];
+  const put = t => { if (s.length + t.length > E63_MAX) return; s = s.slice(0, k) + t + s.slice(k); k += t.length; };
+  const base = ch => ch !== undefined && /[0-9a-z)]/.test(ch);
+  const start = i => i === 0 || ['(', F63O, F63M].includes(s[i - 1]);
+  const exp = () => { if (!kb.exp) return; if (E){ k = E.b + 1; return; } if (s[k] === E63O){ k++; return; }
+    if (base(prev) && s.length + 2 <= E63_MAX){ s = s.slice(0, k) + E63O + E63C + s.slice(k); k++; } };
+  if (c === '⌫'){
+    if (k > 0){ const ch = s[k - 1];
+      if (ch === E63C || ch === F63C) k--;
+      else if (ch === E63O){ if (s[k] === E63C){ s = s.slice(0, k - 1) + s.slice(k + 1); } k--; }
+      else if (ch === F63O){ if (s[k] === F63M && s[k + 1] === F63C){ s = s.slice(0, k - 1) + s.slice(k + 2); } k--; }
+      else if (ch === F63M){ if (s[k] === F63C){ s = s.slice(0, F.a) + s.slice(F.a + 1, k - 1) + s.slice(k + 1); k -= 2; } else k--; }   // dénominateur vide : plus de fraction
+      else { s = s.slice(0, k - 1) + s.slice(k); k--; } }
+  }
+  else if (c === 'del'){
+    if (k < s.length){ const ch = s[k];
+      if (ch === E63C || ch === F63C) k++;
+      else if (ch === E63O){ if (s[k + 1] === E63C) s = s.slice(0, k) + s.slice(k + 2); else k++; }
+      else if (ch === F63O){ if (s[k + 1] === F63M && s[k + 2] === F63C) s = s.slice(0, k) + s.slice(k + 3); else k++; }
+      else if (ch === F63M){ if (s[k + 1] === F63C){ s = s.slice(0, F.a) + s.slice(F.a + 1, k) + s.slice(k + 2); k--; } else k++; }
+      else s = s.slice(0, k) + s.slice(k + 1); }
+  }
+  else if (c === 'clr'){ s = ''; k = 0; }
+  else if (c === '←'){ if (k > 0) k--; }
+  else if (c === '→'){ if (k < s.length) k++; }
+  else if (c === 'home') k = 0;
+  else if (c === 'end') k = s.length;
+  else if (c === '↑'){ if (inDen) k = fm; else exp(); }
+  else if (c === '↓'){ if (E) k = E.b + 1; else if (F && !inDen) k = F.b; }
+  else if (c === '^') exp();
+  else if (c === '²'){ if (kb.exp && !E && base(prev)) put(E63O + '2' + E63C); }
+  else if (/^\d$/.test(c)){ if (E && s.slice(E.a + 1, E.b).length >= 2) return; put(c); }
+  else if (c === ','){
+    if (!kb.dec || E) return;
+    let j = k; while (j > 0 && /\d/.test(s[j - 1])) j--;
+    if (s[j - 1] === ',' || /^\d*,/.test(s.slice(k))) return;
+    put(j < k ? ',' : '0,');
+  }
+  else if (/^[a-z]$/.test(c)){ if (E || !(kb.lets || []).includes(c)) return; put(c); }
+  else if (c === '+'){ if (!kb.plus || E || start(k)) return; if (prev === '+' || prev === '−') s = s.slice(0, k - 1) + '+' + s.slice(k); else put('+'); }
+  else if (c === '−'){ if (!kb.neg || E) return; if (prev === '+') s = s.slice(0, k - 1) + '−' + s.slice(k); else if (prev !== '−') put('−'); }
+  else if (c === '(' || c === ')'){ if (kb.par && !E) put(c); }
+  else if (c === '/'){
+    if (!kb.fra || E) return;
+    if (F){ k = inDen ? fm : F.b; }
+    else {
+      let j = k;
+      if (prev === ')'){ let d = 0; for (j = k - 1; j >= 0; j--){ if (s[j] === ')') d++; else if (s[j] === '(' && !--d) break; } if (j < 0) j = k; }
+      else while (j > 0 && (/[0-9a-z,]/.test(s[j - 1]) || s[j - 1] === E63C)){ if (s[j - 1] === E63C) j = s.lastIndexOf(E63O, j - 1); else j--; }
+      if (s.length + 3 > E63_MAX) return;
+      if (j === k){ s = s.slice(0, k) + F63O + F63M + F63C + s.slice(k); k++; }
+      else { let nu = s.slice(j, k); if (nu[0] === '(' && nu[nu.length - 1] === ')') nu = nu.slice(1, -1);
+        s = s.slice(0, j) + F63O + nu + F63M + F63C + s.slice(k); k = j + nu.length + 2; }
+    }
+  }
+  else return;
+  I.s = s; I.c = Math.max(0, Math.min(k, s.length));
+}
+function expChar63(k, sp){                                              // touche de l'ordinateur → caractère
+  const kb = sp.kb || {};
+  if (k === '(' || k === ')') return kb.par ? k : null;
+  if (k === '+') return kb.plus ? '+' : null;
+  if (k === '^') return '^';
+  if (k === '²') return '²';
+  if (k.length === 1 && /[a-z]/i.test(k) && (kb.lets || []).includes(k.toLowerCase())) return k.toLowerCase();
+  return null;
+}
+// ---------- affichage ----------
+function expRender63(I, sp, o){
+  const s = I.s || '', on = !!o.on && !o.st;
+  if (!s) return on ? QCAR : '';
+  const car = i => on && I.c === i ? QCAR : '';
+  const ch = (i, t) => o.st ? t : '<span class="qch" data-g="' + i + '">' + t + '</span>';
+  const opnd = j => j >= 0 && (/[0-9a-z),]/.test(s[j]) || s[j] === E63C || s[j] === F63C);
+  const box = (a, b) => o.st ? run(a, b) : '<span class="qpt' + (a === b ? ' qph' : '') + (on && I.c >= a && I.c <= b ? ' on' : '') + '" data-ge="' + b + '">' + run(a, b) + '</span>';
+  function run(a, b){
+    let h = '', i = a;
+    while (i < b){ h += car(i); const c = s[i];
+      if (c === E63O){ const e = s.indexOf(E63C, i); if (e > i){ h += '<sup class="qsup">' + box(i + 1, e) + '</sup>'; i = e + 1; continue; } }
+      if (c === F63O){ const m = s.indexOf(F63M, i), f = s.indexOf(F63C, m); if (m > i && f > m){ h += fracH(box(i + 1, m), box(m + 1, f)); i = f + 1; continue; } }
+      const t = /[a-z]/.test(c) ? '<i>' + c + '</i>' : c === '+' || (c === '−' && opnd(i - 1)) ? ' ' + c + ' ' : hEsc(c);
+      h += ch(i, t); i++; }
+    return h + car(b);
+  }
+  return '<span class="e63r">' + run(0, s.length) + '</span>';     // e63r : repère pour fitPane (le calcul peut passer sur deux lignes)
+}
+// ---------- lecture : arbre ----------
+function expParse63(s){
+  let i = 0; const n = s.length;
+  const err = (m, c) => { throw {m63: m, c: c === undefined ? i : c}; };
+  const isF = c => c !== undefined && (/[0-9,a-z(]/.test(c) || c === F63O || c === E63O);
+  function expr(){
+    const T = [], at = i; let sg = 1;
+    if (s[i] === '−'){ sg = -1; i++; } else if (s[i] === '+') err('Enlève le signe + du début.', i + 1);
+    for (;;){
+      if (!isF(s[i])) err(s[i] === ')' && !T.length && sg > 0 ? 'Il y a une parenthèse fermante en trop.' : T.length || sg < 0 ? 'Il manque quelque chose après le signe.' : 'Il manque quelque chose ici.', i);
+      T.push({sg, e: term()});
+      if (s[i] === '+' || s[i] === '−'){ sg = s[i] === '+' ? 1 : -1; i++;
+        if (s[i] === '+' || s[i] === '−') err('Deux signes à la suite : écris un seul signe, ou mets des parenthèses, + (−3).', i); continue; }
+      break;
+    }
+    return T.length === 1 && T[0].sg > 0 ? T[0].e : {t: 'add', T, at};
+  }
+  function term(){ const G = [], at = i;                              // groupes séparés par ∙ (questions : 2a ∙ 3a), chacun un produit sans signe
+    for (;;){ const F = [], a = i; for (;;){ F.push(factor()); if (isF(s[i]) && s[i] !== E63O) continue; break; }
+      G.push(F.length === 1 ? F[0] : {t: 'mul', F, at: a});
+      if (s[i] === '∙'){ i++; if (!isF(s[i])) err('Il manque un facteur.', i); continue; } break; }
+    return G.length === 1 ? G[0] : {t: 'mul', F: G, at, dot: true}; }
+  function factor(){ let p = prim();
+    while (s[i] === E63O){ const at = i, e = s.indexOf(E63C, i), d = e > i ? s.slice(i + 1, e) : '';
+      if (e < 0) err(INP_MSG.bad, i); if (!d) err('Il manque l\'exposant.', i + 1); if (!/^\d+$/.test(d)) err(INP_MSG.bad, i + 1);
+      p = {t: 'pow', b: p, n: Number(d), at}; i = e + 1; }
+    return p; }
+  function prim(){ const c = s[i], at = i;
+    if (/[0-9,]/.test(c)){ let j = i; while (j < n && /[0-9,]/.test(s[j])) j++; const raw = s.slice(i, j); i = j;
+      if (!/^\d+(?:,\d+)?$/.test(raw)) err(raw[0] === ',' ? 'Il manque un chiffre avant la virgule.' : /,.*,/.test(raw) ? 'Il y a deux virgules dans un nombre.' : 'Il manque un chiffre après la virgule.', j);
+      return {t: 'num', v: Number(raw.replace(',', '.')), raw, at}; }
+    if (/[a-z]/.test(c)){ i++; return {t: 'var', n: c, at}; }
+    if (c === '('){ i++; if (s[i] === ')') err('Les parenthèses sont vides.', i); const e = expr(); if (s[i] !== ')') err('Il manque une parenthèse fermante.', i); i++; return {t: 'par', e, at}; }
+    if (c === F63O){ i++; if (s[i] === F63M) err('Il manque le numérateur.', i); const nu = expr(); if (s[i] !== F63M) err(INP_MSG.bad, i); i++;
+      if (s[i] === F63C) err('Il manque le dénominateur.', i); const de = expr(); if (s[i] !== F63C) err(INP_MSG.bad, i); i++; return {t: 'frac', n: nu, d: de, at}; }
+    if (c === E63O) err('Écris d\'abord ce qui est élevé à la puissance, puis l\'exposant.', i);
+    return err(INP_MSG.bad, i);
+  }
+  try { if (!n) return {empty: true}; const e = expr(); if (i < n) err(s[i] === ')' ? 'Il y a une parenthèse fermante en trop.' : INP_MSG.bad, i); return {e}; }
+  catch (x){ if (x && x.m63) return {err: x.m63, c: x.c}; throw x; }
+}
+function expMiss63(I, sp){ const s = I.s || ''; if (!s) return null; const r = expParse63(s); return r.err ? {m: r.err, c: Math.min(r.c, s.length)} : false; }
+// ---------- valeur, polynômes ----------
+const V63 = [0, 1, 2, 3].map(k => Object.fromEntries('abcdefghijklmnopqrstuvwxyz'.split('').map((l, j) => [l, ((j * 7 + k * 13) % 17 + 3) / 7 * ((j + k) % 2 ? -1 : 1)])));
+const near63 = (a, b) => isFinite(a) && isFinite(b) && Math.abs(a - b) <= 1e-7 * Math.max(1, Math.abs(a), Math.abs(b));
+function ev63(e, V){ switch (e.t){
+  case 'num': return e.v; case 'var': return V[e.n] !== undefined ? V[e.n] : NaN;
+  case 'add': return e.T.reduce((a, t) => a + t.sg * ev63(t.e, V), 0); case 'mul': return e.F.reduce((a, f) => a * ev63(f, V), 1);
+  case 'pow': return ev63(e.b, V) ** e.n; case 'par': return ev63(e.e, V); case 'frac': return ev63(e.n, V) / ev63(e.d, V); } return NaN; }
+const r63 = v => Math.round(v * 1e9) / 1e9;
+const pc63 = v => { const M = new Map(); if (Math.abs(v) > 1e-12) M.set('', [v, {}]); return M; };
+const pm63 = (c, m) => { const M = new Map(), mm = {}; Object.keys(m).forEach(x => { if (m[x]) mm[x] = m[x]; }); if (Math.abs(c) > 1e-12) M.set(mKey(mm), [c, mm]); return M; };
+function padd63(A, B, s){ const R = new Map(); A.forEach((v, k) => R.set(k, [v[0], v[1]]));
+  B.forEach(([c, m], k) => { const o = R.get(k), w = r63((o ? o[0] : 0) + (s === undefined ? 1 : s) * c); if (Math.abs(w) < 1e-9) R.delete(k); else R.set(k, [w, m]); }); return R; }
+const psc63 = (A, k) => padd63(new Map(), A, k);
+function pmul63(A, B){ if (!A || !B) return null; let R = new Map();
+  A.forEach(([c, m]) => B.forEach(([d, w]) => { const M = Object.assign({}, m); Object.keys(w).forEach(v => { M[v] = (M[v] || 0) + w[v]; }); R = padd63(R, pm63(c * d, M)); }));   // sans rnd (au millionième)
+  return R.size > 120 ? null : R; }
+function ppow63(A, n){ if (!A || n > 12) return null; let R = pc63(1); for (let j = 0; j < n && R; j++) R = pmul63(R, A); return R; }
+function peq63(A, B){ if (!A || !B || A.size !== B.size) return false; for (const [k, [c]] of A){ const o = B.get(k); if (!o || !near63(c, o[0])) return false; } return true; }
+const pArr63 = T => { let R = new Map(); (T || []).forEach(([c, m]) => { R = padd63(R, pm63(c, m)); }); return R; };
+const pTerms63 = P => [...P.values()].sort((a, b) => mDeg(b[1]) - mDeg(a[1]) || (mKey(a[1]) < mKey(b[1]) ? -1 : 1));
+const isParSum63 = e => e && e.t === 'par' && e.e.t === 'add' && e.e.T.length >= 2;
+const terms63 = e => e.t === 'add' ? e.T : [{sg: 1, e}];
+// polynôme d'une expression ; mut : une erreur fréquente à refaire (pour reconnaître ce que l'élève a tapé)
+function poly63(e, mut){
+  const M = mut || '';
+  switch (e.t){
+    case 'num': return pc63(e.v);
+    case 'var': return pm63(1, {[e.n]: 1});
+    case 'par': return poly63(e.e, mut);
+    case 'frac': { const N = poly63(e.n, mut), D = poly63(e.d, mut); if (!N || !D || D.size !== 1 || !D.has('')) return null; return psc63(N, 1 / D.get('')[0]); }
+    case 'add': { let R = new Map();
+      for (const t of e.T){ let P = null;
+        if (t.e.t === 'par'){ const IT = terms63(t.e.e);
+          if (M === 'first' && t.sg < 0 && IT.length >= 2){ P = new Map(); IT.forEach((u, j) => { const Q = poly63(u.e, mut); P = Q && P ? padd63(P, Q, j ? u.sg : -u.sg) : null; }); if (P){ R = padd63(R, P); continue; } }
+          if (M === 'dneg' && IT.length === 1 && IT[0].sg < 0){ const Q = poly63(IT[0].e, mut); if (!Q) return null; R = padd63(R, Q, t.sg); continue; } }
+        if ((M === 'dist1' || M === 'sign1') && t.sg < 0 && t.e.t === 'mul' && t.e.F.filter(isParSum63).length === 1){ P = poly63({t: 'mul', F: [{t: 'num', v: -1}].concat(t.e.F)}, mut); if (!P) return null; R = padd63(R, P); continue; }
+        P = poly63(t.e, mut); if (!P) return null; R = padd63(R, P, t.sg); }
+      return R; }
+    case 'mul': { const F = e.F, nPar = F.filter(isParSum63).length;
+      if (M === 'noK' && nPar >= 2 && F.some(f => f.t === 'num')) return poly63({t: 'mul', F: F.filter(f => f.t !== 'num')}, mut);
+      if ((M === 'dist1' || M === 'sign1') && nPar === 1){ const ps = F.find(isParSum63), K = poly63({t: 'mul', F: F.filter(f => f !== ps).concat([{t: 'num', v: 1}])}, mut);
+        if (!K) return null; const kc = K.size === 1 ? [...K.values()][0][0] : 0; if (M === 'sign1' && !(kc < 0)) return null;
+        let R = new Map(); for (const [j, u] of terms63(ps.e).entries()){ const Q = poly63(u.e, mut), T = !Q ? null : j === 0 ? pmul63(K, Q) : M === 'dist1' ? Q : pmul63(psc63(K, -1), Q);
+          if (!T) return null; R = padd63(R, T, u.sg); } return R; }
+      if (M === 'fl' && nPar === 2){ const P2 = F.filter(isParSum63); if (P2.every(f => f.e.T.length === 2)){ const K = poly63({t: 'mul', F: F.filter(f => !isParSum63(f)).concat([{t: 'num', v: 1}])}, mut);
+          const [A, B] = P2.map(f => f.e.T.map(u => psc63(poly63(u.e) || new Map(), u.sg))); if (!K) return null;
+          return pmul63(K, padd63(pmul63(A[0], B[0]), pmul63(A[1], B[1]))); } }
+      let R = pc63(1); for (const f of F){ R = pmul63(R, poly63(f, mut)); if (!R) return null; } return R; }
+    case 'pow': { const b = e.b, n = e.n;
+      if (isParSum63(b) && b.e.T.length === 2 && n === 2 && ['sqT', 'sqTs', 'no2', 'cns'].includes(M)){
+        const [u, v] = b.e.T, A = poly63(u.e), B = psc63(poly63(v.e) || new Map(), u.sg * v.sg); if (!A || !B) return null;
+        if (M === 'sqT') return padd63(pmul63(A, A), pmul63(B, B));
+        if (M === 'sqTs') return padd63(pmul63(A, A), pmul63(B, B), u.sg * v.sg);
+        if (M === 'no2') return padd63(padd63(pmul63(A, A), pmul63(B, B)), pmul63(A, B));
+        const nsq = P => { if (P.size !== 1) return pmul63(P, P); const [c, m] = [...P.values()][0]; return Math.abs(c) === 1 || !mDeg(m) ? pmul63(P, P) : pmul63(pc63(Math.abs(c)), pmul63(pm63(1, m), pm63(1, m))); };
+        return padd63(padd63(nsq(A), nsq(B)), psc63(pmul63(A, B), 2)); }
+      const P = poly63(b, mut); if (!P) return null;
+      if (P.size === 1 && (M === 'cns' || M === 'cmn' || M === 'pexp') && (b.t === 'par' || b.t === 'pow')){ const [c, m] = [...P.values()][0], w = {};
+        if (M === 'pexp'){ if (b.t !== 'par' || !Object.values(m).some(x => x > 1)) return null; Object.keys(m).forEach(x => { w[x] = m[x] + n; }); return pm63(c ** n, w); }
+        Object.keys(m).forEach(x => { w[x] = m[x] * n; }); if (Math.abs(c) === 1) return null; return pm63(M === 'cns' ? c : c * n, w); }
+      return ppow63(P, n); }
+  }
+  return null;
+}
+// ---------- les monômes d'un produit (multiplication de monômes : erreurs fréquentes) ----------
+function mmAlt63(Q){
+  const F = Q.t === 'mul' ? Q.F : [Q], L = F.map(f => poly63(f)); if (L.some(P => !P || P.size !== 1)) return [];
+  const T = L.map(P => [...P.values()][0]), out = [];
+  const lets = {}; T.forEach(([, m]) => Object.keys(m).forEach(x => { (lets[x] = lets[x] || []).push(m[x]); }));
+  const coef = T.reduce((a, [c]) => a * c, 1), mk = f => { const w = {}; Object.keys(lets).forEach(x => { w[x] = f(lets[x]); }); return w; };
+  const cs = T.map(([c]) => c).filter(c => Math.abs(c) !== 1);
+  if (cs.length >= 2) out.push([pm63(r63(cs.reduce((a, c) => a + c, 0)), mk(e => e.reduce((u, w) => u + w, 0))), 'Multiplie les nombres entre eux (ne les additionne pas).']);
+  if (Object.values(lets).some(e => e.length >= 2 && e.some(x => x > 1))) out.push([pm63(coef, mk(e => e.reduce((u, w) => u * w, 1))), 'Quand on multiplie, on additionne les exposants : ' + IV('x') + '² ∙ ' + IV('x') + '³ = ' + IV('x') + '⁵.']);
+  if (Object.values(lets).some(e => e.length >= 2)){ out.push([pm63(coef, mk(e => Math.max(...e))), 'N\'oublie pas de multiplier aussi les lettres : ' + IV('x') + ' ∙ ' + IV('x') + ' = ' + IV('x') + '².']);
+    const n2 = Object.values(lets).reduce((a, e) => a * (e.length >= 2 ? e.length : 1), 1); out.push([pm63(coef * n2, mk(e => e.length >= 2 ? 1 : e[0])), IV('x') + ' ∙ ' + IV('x') + ' = ' + IV('x') + '² (pas 2' + IV('x') + ').']); }
+  return out;
+}
+// ---------- noms des termes, messages ----------
+const tN63 = m => { const k = Object.keys(m).filter(v => m[v]); return k.length ? 'le terme en ' + mH(m) : 'le nombre seul'; };
+const tDe63 = m => { const k = Object.keys(m).filter(v => m[v]); return k.length ? 'du terme en ' + mH(m) : 'du nombre seul'; };
+const E63M = {
+  first: 'Le − devant une parenthèse change le signe de tous les termes de la parenthèse.',
+  dneg: 'Attention aux signes : − (−3) = + 3 et + (−3) = − 3.',
+  dist1: 'Multiplie chaque terme de la parenthèse (pas seulement le premier).',
+  sign1: 'Le signe − se distribue aussi : multiplie chaque terme par le facteur avec son signe.',
+  noK: 'N\'oublie pas de multiplier aussi par le nombre devant les parenthèses.',
+  fl: 'Il y a quatre produits : chaque terme de la 1re parenthèse multiplie chaque terme de la 2e.',
+  sqT: 'Un carré d\'une somme n\'est pas la somme des carrés : n\'oublie pas le double produit 2' + IV('a') + IV('b') + '.',
+  sqTs: 'Un carré d\'une somme n\'est pas la somme des carrés : n\'oublie pas le double produit 2' + IV('a') + IV('b') + '.',
+  no2: 'Le terme du milieu est le double produit : 2 ∙ ' + IV('a') + ' ∙ ' + IV('b') + ' (n\'oublie pas le 2).',
+  cns: 'Le carré (ou la puissance) s\'applique aussi au nombre : (2' + IV('x') + ')² = 4' + IV('x') + '².',
+  cmn: 'Le carré (ou la puissance) s\'applique aussi au nombre : (2' + IV('x') + ')³ = 2' + IV('x') + ' ∙ 2' + IV('x') + ' ∙ 2' + IV('x') + '.',
+  pexp: 'Puissance d\'une puissance : on multiplie les exposants, (' + IV('x') + '²)³ = ' + IV('x') + '⁶.'
+};
+const E63_MUTS = ['first', 'dneg', 'dist1', 'sign1', 'noK', 'fl', 'sqT', 'sqTs', 'no2', 'cns', 'cmn', 'pexp'];
+function diff63(P, R, add){                                             // le terme qui ne va pas (sans donner la réponse)
+  const K = [...new Set([...R.keys(), ...P.keys()])], gp = k => P.get(k) ? P.get(k)[0] : 0, gr = k => R.get(k) ? R.get(k)[0] : 0, mOf = k => (R.get(k) || P.get(k))[1];
+  if (P.size === R.size && [...R.keys()].every(k => P.has(k) && near63(gp(k), -gr(k)))) return 'Tous les termes ont le mauvais signe : vérifie les signes.';
+  if (add){
+    for (const [k, [c, m]] of P) if (!R.has(k)){ const L = Object.keys(m).sort().join('');
+      for (const [k2, [d, w]] of R) if (!P.has(k2) && Object.keys(w).sort().join('') === L && near63(c, d) && L) return 'Quand on additionne des termes semblables, les exposants ne changent pas : 3' + IV('x') + ' + 2' + IV('x') + ' = 5' + IV('x') + '.'; }
+    const miss = [...R.keys()].filter(k => !P.has(k));
+    for (const [k, [c]] of P){ const pool = [k].filter(x => R.has(x)).concat(miss.filter(x => x !== k));
+      for (let a = 0; a < pool.length; a++) for (let b = a + 1; b < pool.length; b++){ if ((k === pool[a] || k === pool[b] || !R.has(k)) && near63(c, gr(pool[a]) + gr(pool[b])) && !near63(c, gr(k)))
+        return 'On additionne seulement les termes semblables (même partie littérale) : ne mélange pas ' + tN63(mOf(pool[a])) + ' et ' + tN63(mOf(pool[b])) + '.'; } }
+  }
+  const order = pTerms63(R).map(([, m]) => mKey(m)).concat(pTerms63(P).map(([, m]) => mKey(m)).filter(k => !R.has(k)));
+  const bad = order.filter(k => !near63(gp(k), gr(k)));
+  if (!bad.length) return null;
+  if (bad.length >= 2) return 'Vérifie ' + tN63(mOf(bad[0])) + ' et ' + tN63(mOf(bad[1])) + '.';
+  const k = bad[0], m = mOf(k);
+  if (!P.has(k)) return 'Il manque ' + tN63(m) + '.';
+  if (!R.has(k)) return Object.keys(m).some(v => m[v]) ? 'Il ne devrait pas y avoir de terme en ' + mH(m) + '.' : 'Il ne devrait pas y avoir de nombre seul.';
+  if (near63(gp(k), -gr(k))) return 'Vérifie le signe ' + tDe63(m) + '.';
+  return 'Vérifie ' + tN63(m) + '.';
+}
+// ---------- la forme : réduite, développée, factorisée ; conventions ----------
+const E63F = {
+  like: m => 'Juste, mais réduis encore : il reste deux termes ' + (Object.keys(m).some(v => m[v]) ? 'en ' + mH(m) : 'sans lettre') + '.',
+  nums: () => 'Juste, mais réduis encore : multiplie les nombres entre eux.',
+  rep: v => 'Juste, mais réduis encore : regroupe les ' + IV(v) + ' avec un exposant (' + IV(v) + ' ∙ ' + IV(v) + ' = ' + IV(v) + '²).',
+  npow: () => 'Juste, mais calcule la puissance du nombre.',
+  e0: () => 'Juste, mais un exposant 0 donne 1 : simplifie.',
+  zero: () => 'Juste, mais enlève le terme nul (0).',
+  fr: () => 'Juste, mais simplifie la fraction.',
+  powP: () => 'Juste, mais calcule la puissance : il ne doit plus rester de parenthèses.',
+  mulP: () => 'Juste, mais réduis encore : effectue la multiplication (il ne doit plus rester de parenthèses).',
+  one: v => 'Juste, mais on n\'écrit pas le 1 devant une lettre : ' + (v ? IV(v) + ' plutôt que 1' + IV(v) : 'enlève le 1') + '.',
+  e1: v => 'Juste, mais on n\'écrit pas l\'exposant 1 : ' + IV(v) + ' plutôt que ' + IV(v) + '¹.',
+  ord: (a, b) => 'Juste, mais écris les lettres dans l\'ordre alphabétique : ' + IV(a) + IV(b) + ' plutôt que ' + IV(b) + IV(a) + '.',
+  numL: par => par ? 'Juste, mais écris le nombre devant la parenthèse : 2(…) plutôt que (…)2.' : 'Juste, mais écris le nombre devant les lettres : 3' + IV('x') + ' plutôt que ' + IV('x') + '3.',
+  monoL: () => 'Juste, mais écris le facteur sans parenthèse devant les parenthèses.',
+  sgn: () => 'Juste, mais simplifie les signes : + (−3) s\'écrit − 3, et − (−3) s\'écrit + 3.',
+  par1: () => 'Juste, mais enlève les parenthèses inutiles.'
+};
+const E63_PAR = {mono: 'Juste, mais calcule la puissance : il ne doit plus rester de parenthèses.', add: 'Juste, mais enlève les parenthèses, puis réduis.',
+  dev: 'Juste, mais développe : il ne doit plus rester de parenthèses.', opp: 'Juste, mais enlève les parenthèses : change le signe de chaque terme.',
+  fn: 'Juste, mais développe et réduis : écris-la sans parenthèses.', ord: 'Juste, mais écris les termes sans parenthèses.'};
+// les défauts d'écriture, dans l'ordre : forme (pas réduit…), puis conventions ; o.fac : parenthèses permises (factoriser, traduire)
+function scan63(e, o){
+  const F = [], C = [], add = (L, x) => L.push(x);
+  const numF = f => f.t === 'num' || (f.t === 'frac' && !hasL(f)) || (f.t === 'pow' && f.b.t === 'num');
+  const hasL = f => f.t === 'var' || ['par', 'pow'].includes(f.t) && hasL(f.b || f.e) || f.t === 'frac' && (hasL(f.n) || hasL(f.d)) || f.t === 'add' && f.T.some(t => hasL(t.e)) || f.t === 'mul' && f.F.some(hasL);
+  const monoKey = f => { const P = poly63(f); return P && P.size <= 1 && !hasPar(f) ? (P.size ? [...P.keys()][0] : '#0') : null; };
+  const hasPar = f => f.t === 'par' || f.t === 'pow' && hasPar(f.b) || f.t === 'mul' && f.F.some(hasPar) || f.t === 'frac' && (hasPar(f.n) || hasPar(f.d));
+  (function walk(x, top){
+    switch (x.t){
+      case 'add': { const keys = new Map();
+        x.T.forEach(t => { const k = monoKey(t.e); if (k === '#0') add(F, ['zero']); else if (k !== null){ if (keys.has(k)) add(F, ['like', poly63(t.e).get(k)[1]]); keys.set(k, 1); }
+          if (t.e.t === 'par' && terms63(t.e.e).length === 1) add(C, [terms63(t.e.e)[0].sg < 0 ? 'sgn' : 'par1']);
+          walk(t.e, false); }); break; }
+      case 'mul': { const nn = x.F.filter(numF).length; if (nn >= 2) add(F, ['nums']);
+        if (!o.fac && x.F.some(f => f.t === 'par' && !isParSum63(f) || f.t === 'pow' && f.b.t === 'par' && !isParSum63(f.b))) add(F, ['mulP']);
+        let seenL = false, seenP = false, lastL = null; const seen = new Set();
+        x.F.forEach((f, j) => {
+          if (numF(f)){ if (seenL || seenP) add(C, ['numL', seenP]); if (f.t === 'num' && f.v === 1 && j < x.F.length - 1) add(C, ['one', (x.F[j + 1].t === 'var' ? x.F[j + 1].n : x.F[j + 1].t === 'pow' && x.F[j + 1].b.t === 'var' ? x.F[j + 1].b.n : '')]); }
+          const L = f.t === 'var' ? f.n : f.t === 'pow' && f.b.t === 'var' ? f.b.n : null;
+          if (L){ if (seen.has(L)) add(F, ['rep', L]); else if (lastL && lastL > L) add(C, ['ord', lastL, L]); seen.add(L); lastL = L; seenL = true; if (seenP) add(C, ['monoL']); }
+          if (f.t === 'par' || (f.t === 'pow' && f.b.t === 'par')){ seenP = true; lastL = null; if (f.t === 'par' && terms63(f.e).length === 1 && !(j === 0 && x.F.length === 1)) add(C, ['par1']); }
+          walk(f, false); }); break; }
+      case 'pow': { if (x.n === 1) add(C, ['e1', x.b.t === 'var' ? x.b.n : 'x']); if (x.n === 0) add(F, ['e0']); if (x.b.t === 'num') add(F, ['npow']);
+        if (x.b.t === 'par'){ if (!o.fac) add(F, isParSum63(x.b) ? ['par'] : ['powP']); walk(x.b.e, false); } else walk(x.b, false); break; }
+      case 'par': if (!o.fac && isParSum63(x)) add(F, ['par']); walk(x.e, false); break;
+      case 'frac': { const N = poly63(x.n), D = poly63(x.d);
+        if (N && D && D.size === 1 && D.has('')){ const d = D.get('')[0]; if (d === 1) add(F, ['fr']); const cs = [...N.values()].map(([c]) => c);
+          if (Number.isInteger(d) && cs.every(Number.isInteger) && cs.reduce((g, c) => gcd(g, Math.abs(c)), d) > 1) add(F, ['fr']); }
+        if (!o.fac && (isParSum63(x.n) || isParSum63(x.d))) add(F, ['par1']);
+        if (!o.fac && x.n.t === 'add' && x.n.T.length >= 2 && D && D.size === 1) add(F, ['frs']);
+        walk(x.n, false); walk(x.d, false); break; }
+    }
+  })(e, true);
+  return {F, C};
+}
+function msg63(it, mode){ const [k, a, b] = it;
+  if (k === 'par') return E63_PAR[mode] || E63_PAR.dev;
+  if (k === 'frs') return mode === 'fn' ? null : 'Juste, mais écris-le comme une somme de termes.';
+  if (k === 'like') return E63F.like(a); if (k === 'rep') return E63F.rep(a); if (k === 'one') return E63F.one(a); if (k === 'e1') return E63F.e1(a);
+  if (k === 'ord') return E63F.ord(b, a); if (k === 'numL') return E63F.numL(a);
+  return E63F[k] ? E63F[k]() : null;
+}
+const lin63n = s => String(s || '').replace(/∙/g, '');
+// ---------- jugement ----------
+function jExp63(p, s, sp){
+  const r = expParse63(s); if (r.err || !r.e) return BAD45(r.err);
+  const e = r.e, mode = sp.mode;
+  if (mode === 'par') return jPar63(p, e, sp);
+  const P = poly63(e);
+  const eq = sp.R ? !!P && peq63(P, sp.R) : V63.every(V => near63(ev63(e, V), sp.val(V)));
+  if (eq){ const f = form63(p, e, s, sp, P); return f || OK45(); }
+  let m = null; try { m = err63(p, e, P, s, sp); } catch (x){ console.error(x); }
+  return {r: 'ko', m: m || INP_MSG.ko};
+}
+function form63(p, e, s, sp, P){
+  const mode = sp.mode;
+  if (mode === 'fac') return facForm63(p, e, s, sp, P);
+  if (mode === 'tra'){ const st = traSame63(sp.x, e); if (!st) return {r: 'almost', m: 'Juste, mais traduis la phrase telle quelle, sans développer ni réduire : la phrase parle ' + TRA63_NAT[sp.x.t] + '.'};
+    const {C} = scan63(e, {fac: true}); return C.length ? {r: 'almost', m: msg63(C[0], mode)} : null; }
+  if (mode === 'ord'){ const lt = sp.lt, ex = terms63(e).map(t => { const Q = poly63(t.e); return Q && Q.size === 1 ? [...Q.values()][0][1][lt] || 0 : null; });
+    if (ex.some((x, j) => x === null || (j && x > ex[j - 1]))) return {r: 'ko', m: 'Pas encore dans l\'ordre : du plus grand exposant de ' + IV(lt) + ' au plus petit.'}; }
+  if (mode === 'fn' && !sp.R) return null;
+  const {F, C} = scan63(e, {fac: false});
+  const fi = F.map(it => msg63(it, mode)).find(Boolean), ci = C.map(it => msg63(it, mode)).find(Boolean);
+  if ((fi || ci) && sp.qLin && lin63n(s) === lin63n(sp.qLin)) return {r: 'ko', m: 'Ça, c\'est l\'expression de départ : il faut encore la ' + (mode === 'dev' ? 'développer' : 'réduire') + '.'};
+  return fi ? {r: 'almost', m: fi} : ci ? {r: 'almost', m: ci} : null;
+}
+// factoriser : un produit, fini, sans fraction dans les parenthèses (si la réponse n'en a pas), conventions
+function facInfo63(e){                                                  // {prod: bool, F: facteurs, polys: [{P, n, f}]}
+  let x = e; if (x.t === 'add' && x.T.length === 1) x = x.T[0].e;
+  if (x.t === 'add') return {prod: false};
+  const F = x.t === 'mul' ? x.F : [x], polys = [];
+  F.forEach(f => { const b = f.t === 'pow' ? f.b : f, n = f.t === 'pow' ? f.n : 1; if (isParSum63(b)){ const P = poly63(b.e); if (P) polys.push({P, n, f: b}); } });
+  return {prod: true, F, polys, nP: polys.reduce((a, q) => a + q.n, 0)};
+}
+function facForm63(p, e, s, sp, P){
+  const fi = facInfo63(e);
+  if (!fi.prod){ const {F} = scan63(e, {fac: false}); const red = !F.length && terms63(e).every(t => !hasPar63(t.e));
+    return red ? {r: 'ko', m: 'Ça, c\'est l\'expression de départ : factorise-la (écris-la comme un produit).'} : {r: 'almost', m: 'Juste, mais ce n\'est pas encore un produit : factoriser, c\'est écrire un produit.'}; }
+  const {F, C} = scan63(e, {fac: true});
+  const f1 = F.map(it => msg63(it, 'fac')).find(Boolean); if (f1) return {r: 'almost', m: f1.replace('Juste, mais réduis encore', 'Juste, mais réduis dans la parenthèse')};
+  for (const q of fi.polys){ const cs = [...q.P.values()].map(([c]) => c), ms = [...q.P.values()].map(([, m]) => m);
+    if (!sp.nonInt && cs.some(c => !Number.isInteger(r63(c)))) return {r: 'almost', m: 'Juste, mais il ne doit pas rester de fraction ni de virgule dans les parenthèses : fais entrer le nombre devant (2(' + IV('x') + ' − 1,5) = 2' + IV('x') + ' − 3).'};
+    if (cs.every(c => Number.isInteger(r63(c))) && cs.reduce((g, c) => gcd(g, Math.abs(Math.round(c))), 0) > 1) return {r: 'almost', m: 'Juste, mais tu peux encore mettre un nombre en évidence dans une parenthèse.'};
+    const com = Object.keys(ms[0]).filter(v => ms.every(m => m[v] > 0)); if (com.length) return {r: 'almost', m: 'Juste, mais tu peux encore mettre ' + IV(com[0]) + ' en évidence dans une parenthèse.'};
+    if (cs.every(c => c < 0)) return {r: 'almost', m: 'Juste, mais mets le signe − en évidence : (−' + IV('x') + ' − 3) = −(' + IV('x') + ' + 3).'}; }
+  for (let a = 0; a < fi.polys.length; a++) for (let b = a + 1; b < fi.polys.length; b++) if (peq63(fi.polys[a].P, fi.polys[b].P)) return {r: 'almost', m: 'Juste, mais écris le produit d\'une parenthèse par elle-même avec un carré : (' + IV('x') + ' + 3)(' + IV('x') + ' + 3) = (' + IV('x') + ' + 3)².'};
+  if (fi.nP < sp.nP) return {r: 'almost', m: 'Juste, mais ce n\'est pas fini : une parenthèse se factorise encore.'};
+  const ci = C.map(it => msg63(it, 'fac')).find(Boolean);
+  return ci ? {r: 'almost', m: ci} : null;
+}
+const hasPar63 = f => f.t === 'par' || f.t === 'pow' && hasPar63(f.b) || f.t === 'mul' && f.F.some(hasPar63) || f.t === 'frac' && (hasPar63(f.n) || hasPar63(f.d)) || f.t === 'add' && f.T.some(t => hasPar63(t.e));
+// ---------- erreurs (réponse fausse) ----------
+function err63(p, e, P, s, sp){
+  const mode = sp.mode;
+  if (mode === 'tra') return traErr63(p, e, sp);
+  if (mode === 'fn') return fnErr63(p, e, P, sp);
+  if (!P || !sp.R) return null;
+  const R = sp.R;
+  if (mode === 'opp'){ if (peq63(P, sp.T)) return 'Ça, c\'est le même polynôme : l\'opposé change le signe de chaque terme.';
+    if (P.size === R.size && [...R.keys()].every(k => P.has(k) && Math.abs(Math.abs(P.get(k)[0]) - Math.abs(R.get(k)[0])) < 1e-9)) return 'Change le signe de tous les termes (pas seulement du premier).'; }
+  if (mode === 'ord'){ if (P.size === R.size && [...R.keys()].every(k => P.has(k) && Math.abs(Math.abs(P.get(k)[0]) - Math.abs(R.get(k)[0])) < 1e-9)) return 'Chaque terme garde son signe quand on le déplace : le signe devant un terme part avec lui.';
+    return 'Garde les mêmes termes : on change seulement leur ordre.'; }
+  if (mode === 'fac') return facErr63(p, e, P, sp);
+  if (sp.Q){
+    if (mode === 'mono') for (const [A, m] of mmAlt63(sp.Q)) if (!peq63(A, R) && peq63(P, A)) return m;
+    for (const mu of E63_MUTS){ const A = poly63(sp.Q, mu); if (A && !peq63(A, R) && peq63(P, A)) return E63M[mu]; }
+  }
+  if (mode === 'mono' && P.size === 1 && R.size === 1){ const [c, m] = [...P.values()][0], [d, w] = [...R.values()][0];
+    if (mKey(m) === mKey(w) && near63(c, -d)) return 'Le monôme est juste, mais pas le signe : compte les signes −.';
+    if (mKey(m) === mKey(w)) return 'Les lettres sont justes, mais pas le nombre : multiplie les nombres entre eux.';
+    if (near63(c, d)) return 'Le nombre est juste, mais pas les lettres : vérifie les exposants.'; }
+  return diff63(P, R, mode === 'add' || mode === 'dev');
+}
+function facErr63(p, e, P, sp){
+  const R = sp.R, fi = facInfo63(e), pre = 'Développe ta réponse pour vérifier : ';
+  if (!fi.prod) return 'Pas encore juste. Factoriser, c\'est écrire l\'expression comme un produit : vérifie en développant.';
+  const ks = [...R.keys()]; let k0 = null;
+  for (const k of ks) if (P.has(k)){ const q = R.get(k)[0] / P.get(k)[0]; if (k0 === null) k0 = q; else if (!near63(q, k0)){ k0 = NaN; break; } } else { k0 = NaN; break; }
+  if (P.size === R.size && isFinite(k0) && k0 !== null && !near63(k0, 1)) return near63(k0, -1) ? pre + 'tous les signes sont inversés.' : 'Il manque un nombre devant : développe ta réponse et compare avec l\'expression de départ.';
+  const D = padd63(R, P, -1);
+  if (D.size === 1 && fi.F){ const K = fi.F.filter(f => !isParSum63(f.t === 'pow' ? f.b : f)); const KP = K.length ? poly63({t: 'mul', F: K.concat([{t: 'num', v: 1}])}) : null;
+    if (KP && KP.size === 1 && (peq63(D, KP) || peq63(D, psc63(KP, -1)))) return 'Quand un terme est égal au facteur mis en évidence, il reste 1 (ou −1) dans la parenthèse.'; }
+  const s = p.sub, mid = [...R.entries()].find(([, [, m]]) => mDeg(m) === 1), Pm = mid ? P.get(mid[0]) : null;
+  if (s === 'l_fir3' && [...P.values()].some(([, m]) => mDeg(m) === 1)) return 'Ici, il n\'y a pas de terme du milieu : ' + IV('a') + '² − ' + IV('b') + '² = (' + IV('a') + ' + ' + IV('b') + ')(' + IV('a') + ' − ' + IV('b') + ').';
+  if ((s === 'l_fir1' || s === 'l_fir2') && mid && !Pm) return 'Il y a un terme du milieu : c\'est le carré d\'une somme ou d\'une différence, (' + IV('a') + ' + ' + IV('b') + ')² ou (' + IV('a') + ' − ' + IV('b') + ')².';
+  if ((s === 'l_fir1' || s === 'l_fir2') && mid && Pm && near63(Pm[0], -mid[1][0])) return 'Regarde le signe du terme du milieu : (' + IV('a') + ' + ' + IV('b') + ')² ou (' + IV('a') + ' − ' + IV('b') + ')² ?';
+  if ((s === 'l_fir4' || s === 'l_fvi') && fi.polys && fi.polys.length === 2 && mid && R.has('')){ const c0 = R.get('')[0], cP = P.get('') ? P.get('')[0] : 0, sq = [...R.values()].find(([, m]) => mDeg(m) === 2);
+    const sqP = sq ? P.get(mKey(sq[1])) : null;
+    if (sq && sqP && near63(sqP[0], sq[0])){
+      if (near63(cP, c0) && !(Pm && near63(Pm[0], mid[1][0]))) return s === 'l_fvi' ? 'Vérifie les zéros : en développant, le terme en ' + mH(mid[1][1]) + ' n\'est pas le même. Attention aux signes : le zéro ' + IV('x') + '₁ donne le facteur (' + IV('x') + ' − ' + IV('x') + '₁).'
+        : 'Le produit des deux nombres est juste, mais pas leur somme : cherche deux nombres de produit ' + f62N(c0 / sq[0]) + ' et de somme ' + f62N(mid[1][0] / sq[0]) + '.';
+      if (Pm && near63(Pm[0], mid[1][0]) && !near63(cP, c0)) return s === 'l_fvi' ? 'Vérifie les zéros : en développant, le nombre seul n\'est pas le même.' : 'La somme des deux nombres est juste, mais pas leur produit : cherche deux nombres de produit ' + f62N(c0 / sq[0]) + ' et de somme ' + f62N(mid[1][0] / sq[0]) + '.'; } }
+  const d = diff63(P, R, false); return d ? pre + d.charAt(0).toLowerCase() + d.slice(1) : null;
+}
+// ---------- traduire une phrase ----------
+const TRA63_NAT = {sum: 'd\'une somme', dif: 'd\'une différence', pro: 'd\'un produit', quo: 'd\'un quotient', sq: 'd\'un carré', cu: 'd\'un cube', dbl: 'd\'un double',
+  tpl: 'd\'un triple', hlf: 'd\'une moitié', tie: 'd\'un tiers', qua: 'd\'un quart'};
+function traCan63(x){                                                   // forme de l'arbre de la phrase : sommes et produits sans ordre
+  const C = traCan63;
+  switch (x.t){
+    case 'v': return {k: 'v', n: x.n}; case 'n': return {k: 'n', v: x.k};
+    case 'sum': { const T = []; [C(x.a), C(x.b)].forEach(u => { if (u.k === 'add') T.push(...u.T); else T.push({sg: 1, e: u}); }); return {k: 'add', T}; }
+    case 'dif': { const A = C(x.a), B = C(x.b); return {k: 'add', T: (A.k === 'add' ? A.T : [{sg: 1, e: A}]).concat([{sg: -1, e: B}])}; }
+    case 'pro': case 'dbl': case 'tpl': { const L = x.t === 'pro' ? [C(x.a), C(x.b)] : [{k: 'n', v: x.t === 'dbl' ? 2 : 3}, C(x.a)]; return {k: 'mul', F: L.flatMap(u => u.k === 'mul' ? u.F : [u])}; }
+    case 'quo': { const B = C(x.b); if (B.k === 'n') return {k: 'mul', F: [C(x.a), {k: 'n', v: 1 / B.v}].flatMap(u => u.k === 'mul' ? u.F : [u])}; return {k: 'quo', a: C(x.a), b: B}; }
+    case 'hlf': case 'tie': case 'qua': return {k: 'mul', F: [C(x.a), {k: 'n', v: 1 / {hlf: 2, tie: 3, qua: 4}[x.t]}].flatMap(u => u.k === 'mul' ? u.F : [u])};
+    case 'sq': case 'cu': return {k: 'pow', b: C(x.a), n: x.t === 'sq' ? 2 : 3};
+  }
+  return null;
+}
+function expCan63(e){                                                   // même forme pour ce que l'élève a tapé
+  const C = expCan63;
+  switch (e.t){
+    case 'num': return {k: 'n', v: e.v}; case 'var': return {k: 'v', n: e.n}; case 'par': return C(e.e);
+    case 'add': return {k: 'add', T: e.T.flatMap(t => { const u = C(t.e); return u.k === 'add' && (t.e.t !== 'par' || t.sg > 0) ? u.T.map(w => ({sg: w.sg * t.sg, e: w.e})) : [{sg: t.sg, e: u}]; })};   // a + (b − c) = a + b − c ; a − (b + c) reste
+    case 'mul': return {k: 'mul', F: e.F.map(C).flatMap(u => u.k === 'mul' ? u.F : [u])};
+    case 'pow': return {k: 'pow', b: C(e.b), n: e.n};
+    case 'frac': { const B = C(e.d); if (B.k === 'n') return {k: 'mul', F: [C(e.n), {k: 'n', v: 1 / B.v}].flatMap(u => u.k === 'mul' ? u.F : [u])}; return {k: 'quo', a: C(e.n), b: B}; }
+  }
+  return null;
+}
+function canEq63(a, b){
+  if (!a || !b || a.k !== b.k) return false;
+  switch (a.k){
+    case 'v': return a.n === b.n; case 'n': return near63(a.v, b.v);
+    case 'pow': return a.n === b.n && canEq63(a.b, b.b);
+    case 'quo': return canEq63(a.a, b.a) && canEq63(a.b, b.b);
+    case 'add': case 'mul': { const A = a.k === 'add' ? a.T : a.F, B = b.k === 'add' ? b.T : b.F; if (A.length !== B.length) return false;
+      const used = new Set(); return A.every(u => { const j = B.findIndex((w, i) => !used.has(i) && (a.k === 'add' ? u.sg === w.sg && canEq63(u.e, w.e) : canEq63(u, w))); if (j < 0) return false; used.add(j); return true; }); }
+  }
+  return false;
+}
+function traSame63(x, e){                                               // la traduction (ordre libre ; la moitié = x/2 = ½x) ; 1x, x3… : conventions ensuite
+  let a = traCan63(x), b = expCan63(e);
+  const norm = u => { if (!u) return u; if (u.k === 'mul'){ const F = u.F.map(norm); const ns = F.filter(f => f.k === 'n'), o = F.filter(f => f.k !== 'n');
+      const v = ns.reduce((w, f) => w * f.v, 1); const F2 = (ns.length && !near63(v, 1) ? [{k: 'n', v}] : []).concat(o); return F2.length === 1 ? F2[0] : {k: 'mul', F: F2}; }
+    if (u.k === 'add') return {k: 'add', T: u.T.map(t => ({sg: t.sg, e: norm(t.e)}))}; if (u.k === 'pow') return {k: 'pow', b: norm(u.b), n: u.n}; if (u.k === 'quo') return {k: 'quo', a: norm(u.a), b: norm(u.b)}; return u; };
+  return canEq63(norm(a), norm(b));
+}
+function traMuts63(x){                                                  // la phrase avec une erreur fréquente : [arbre, message]
+  const out = [], cl = y => JSON.parse(JSON.stringify(y)), sd = y => y.t === 'sum' || y.t === 'dif';
+  const W = {sum: 'somme', dif: 'différence'};
+  const walk = (y, set) => {
+    const at = z => out.push([set(z), null]), put = (z, m) => out.push([set(z), m]);
+    if (y.t === 'dif') put({t: 'dif', a: y.b, b: y.a, f: y.f}, 'Attention à l\'ordre : dans une différence, les deux nombres s\'écrivent dans l\'ordre de la phrase.');
+    if (y.t === 'quo') put({t: 'quo', a: y.b, b: y.a}, 'Attention à l\'ordre : « le quotient de ' + IV('a') + ' par ' + IV('b') + ' », c\'est ' + IV('a') + ' divisé par ' + IV('b') + '.');
+    if (y.t === 'sq') put({t: 'dbl', a: y.a}, 'Le carré, c\'est multiplier par lui-même : ' + IV('x') + '² = ' + IV('x') + ' ∙ ' + IV('x') + ' (pas 2' + IV('x') + ').');
+    if (y.t === 'dbl') put({t: 'sq', a: y.a}, 'Le double, c\'est multiplier par 2 : 2' + IV('x') + ' (pas ' + IV('x') + '²).');
+    if (y.t === 'cu') put({t: 'tpl', a: y.a}, 'Le cube : ' + IV('x') + '³ = ' + IV('x') + ' ∙ ' + IV('x') + ' ∙ ' + IV('x') + ' (pas 3' + IV('x') + ').');
+    if (y.t === 'tpl') put({t: 'cu', a: y.a}, 'Le triple, c\'est multiplier par 3 : 3' + IV('x') + ' (pas ' + IV('x') + '³).');
+    if (y.t === 'hlf') put({t: 'dbl', a: y.a}, 'La moitié, c\'est diviser par 2.');
+    if (y.t === 'tie') put({t: 'tpl', a: y.a}, 'Le tiers, c\'est diviser par 3.');
+    if (y.t === 'qua') put({t: 'pro', a: {t: 'n', k: 4}, b: y.a}, 'Le quart, c\'est diviser par 4.');
+    if (y.t === 'sum') put({t: 'pro', a: y.a, b: y.b}, 'Une somme, c\'est une addition (+).');
+    if (y.t === 'pro' && !(y.a.t === 'n' || y.b.t === 'n')) put({t: 'sum', a: y.a, b: y.b}, 'Un produit, c\'est une multiplication.');
+    if (y.t === 'dif') put({t: 'sum', a: y.a, b: y.b}, 'Une différence, c\'est une soustraction (−).');
+    if ((y.t === 'sq' || y.t === 'cu') && ['dbl', 'tpl', 'pro'].includes(y.a.t)){ const k = y.a.t === 'pro' ? y.a.a : {t: 'n', k: y.a.t === 'dbl' ? 2 : 3}, v = y.a.t === 'pro' ? y.a.b : y.a.a;
+      put({t: 'pro', a: k, b: {t: y.t, a: v}}, 'Attention à l\'ordre : « le carré du double de ' + IV('x') + ' », c\'est (2' + IV('x') + ')² ; « le double du carré de ' + IV('x') + ' », c\'est 2' + IV('x') + '².'); }
+    if (['dbl', 'tpl'].includes(y.t) && (y.a.t === 'sq' || y.a.t === 'cu')) put({t: y.a.t, a: {t: y.t, a: y.a.a}}, 'Attention à l\'ordre : « le double du carré de ' + IV('x') + ' », c\'est 2' + IV('x') + '² ; « le carré du double de ' + IV('x') + ' », c\'est (2' + IV('x') + ')².');
+    // parenthèses oubliées : l'opération ne porte que sur le premier ou le dernier terme de la somme (ou de la différence)
+    const unary = ['dbl', 'tpl', 'hlf', 'tie', 'qua', 'sq', 'cu'];
+    if (unary.includes(y.t) && sd(y.a)){ const m = 'Il manque des parenthèses (ou une barre de fraction sur tout) : l\'opération porte sur toute la ' + W[y.a.t] + '.';
+      put({t: y.a.t, a: {t: y.t, a: y.a.a}, b: y.a.b, f: y.a.f}, m); put({t: y.a.t, a: y.a.a, b: {t: y.t, a: y.a.b}, f: y.a.f}, m);
+      if (y.t === 'sq') put({t: y.a.t, a: {t: 'sq', a: y.a.a}, b: {t: 'sq', a: y.a.b}, f: y.a.f}, 'Le carré d\'une ' + W[y.a.t] + ' n\'est pas la ' + W[y.a.t] + ' des carrés : écris toute la ' + W[y.a.t] + ' entre parenthèses, puis au carré.'); }
+    if ((y.t === 'pro' || y.t === 'quo') && (sd(y.a) || sd(y.b))){ const m = 'Il manque des parenthèses (ou une barre de fraction sur tout) : l\'opération porte sur toute la ' + W[(sd(y.a) ? y.a : y.b).t] + '.';
+      if (sd(y.b)){ put({t: y.b.t, a: {t: y.t, a: y.a, b: y.b.a}, b: y.b.b, f: y.b.f}, m); put({t: y.b.t, a: y.b.a, b: {t: y.t, a: y.a, b: y.b.b}, f: y.b.f}, m); }
+      if (sd(y.a)){ put({t: y.a.t, a: y.a.a, b: {t: y.t, a: y.a.b, b: y.b}, f: y.a.f}, m); put({t: y.a.t, a: {t: y.t, a: y.a.a, b: y.b}, b: y.a.b, f: y.a.f}, m); } }
+    ['a', 'b'].forEach(k => { if (y[k] && typeof y[k] === 'object') walk(y[k], z => { const c = cl(y); c[k] = z; return set(c); }); });
+  };
+  walk(x, z => z);
+  return out.filter(o => o[1]);
+}
+function traErr63(p, e, sp){
+  const vals = V63.map(V => ev63(e, V));
+  for (const [y, m] of traMuts63(sp.x)) if (V63.every((V, j) => near63(vals[j], trVal(y, V)))) return m;
+  if (V63.every((V, j) => near63(vals[j], -sp.val(V)))) return 'Attention à l\'ordre (ou aux signes) : tu as trouvé l\'opposé.';
+  return 'Pas encore juste. Relis la phrase : son premier mot dit la dernière opération à faire.';
+}
+// ---------- la partie littérale ----------
+function jPar63(p, e, sp){
+  const P = poly63(e), w = sp.m, key = mKey(w);
+  if (!P || P.size !== 1 || hasPar63(e)) return {r: 'ko', m: 'Écris seulement les lettres du monôme, avec leurs exposants.'};
+  const [c, m] = [...P.values()][0];
+  if (mKey(m) === key){ if (!near63(c, 1)) return {r: 'ko', m: 'La partie littérale : seulement les lettres et leurs exposants, sans le coefficient.'};
+    const {F, C} = scan63(e, {fac: false}); if (terms63(e).length > 1 || e.t === 'add' || F.some(it => it[0] === 'nums')) return {r: 'ko', m: 'Écris seulement les lettres du monôme, avec leurs exposants.'};
+    const it = F.concat(C).map(it => msg63(it, 'par')).find(Boolean); return it ? {r: 'almost', m: it} : OK45(); }
+  if (Object.keys(m).sort().join('') === Object.keys(w).filter(v => w[v]).sort().join('')) return {r: 'ko', m: 'Les lettres sont justes : vérifie leurs exposants.'};
+  return {r: 'ko', m: 'La partie littérale, ce sont toutes les lettres du monôme, avec leurs exposants.'};
+}
+// ---------- graphique → expression ----------
+function fnErr63(p, e, P, sp){
+  const F = sp.F, a = F.a[0] / F.a[1], b = F.b || 0, g = x => ev63(e, Object.assign({}, V63[0], {x}));
+  if (F.ty === 'cst'){ const cst = P && [...P.keys()].every(k => k === '');
+    return cst ? 'Regarde où la droite horizontale coupe l\'axe vertical : c\'est la valeur de ' + f62F + '(' + f62X + ') pour tous les ' + f62X + '.' : 'La droite est horizontale : ' + f62F + '(' + f62X + ') est le même nombre pour tous les ' + f62X + ' (pas de ' + f62X + ' dans l\'expression).'; }
+  if (!isCurve(F)){
+    if (P && [...P.values()].every(([, m]) => !Object.keys(m).some(v => v !== 'x') && mDeg(m) <= 1)){
+      const a1 = P.get('x1') ? P.get('x1')[0] : 0, b1 = P.get('') ? P.get('')[0] : 0;
+      if (near63(a1, b) && near63(b1, a) && !near63(a, b)) return 'Tu as échangé les deux nombres : ' + f62F + '(' + f62X + ') = ' + IV('a') + f62X + ' + ' + IV('b') + ', où ' + IV('b') + ' est la hauteur où la droite coupe l\'axe vertical.';
+      if (near63(a1, a)) return 'Le coefficient de ' + f62X + ' est juste. Regarde où la droite coupe l\'axe vertical : c\'est le nombre ajouté.';
+      if (near63(b1, b) && near63(a1, -a)) return 'Attention au signe du coefficient de ' + f62X + ' : la droite monte ou descend ?';
+      if (near63(b1, b) && a1 && near63(a1, 1 / a)) return 'Le coefficient de ' + f62X + ' : de combien la droite monte (ou descend) quand ' + f62X + ' augmente de 1 ? (vertical divisé par horizontal)';
+      if (near63(b1, b)) return 'Le nombre ajouté est juste. Vérifie le coefficient de ' + f62X + ' : de combien la droite monte (ou descend) quand ' + f62X + ' augmente de 1 ?';
+      return null; }
+    return 'Le graphique est une droite : l\'expression est de la forme ' + IV('a') + f62X + ' + ' + IV('b') + '.';
+  }
+  const k = CURV[F.ty], form = {2: IV('a') + f62X + '²', 3: IV('a') + f62X + '³', '-1': fracH(IV('a'), f62X)}[k];
+  const r2 = g(2) / g(1), kk = near63(r2, 4) ? 2 : near63(r2, 8) ? 3 : near63(r2, .5) ? -1 : null;
+  if (kk !== k) return 'La courbe est ' + (k === 2 ? 'une parabole' : k === 3 ? 'la courbe d\'une fonction cubique' : 'une hyperbole') + ' : l\'expression est de la forme ' + form + '.';
+  const a1 = k === -1 ? g(1) : g(1);
+  if (near63(a1, -a)) return 'Attention au signe de ' + IV('a') + ' : pour ' + f62X + ' positif, la courbe est-elle au-dessus ou au-dessous de l\'axe horizontal ?';
+  return 'Le coefficient ' + IV('a') + ' n\'est pas juste : lis un point de la courbe (avec ' + f62X + ' ≠ 0) et calcule ' + IV('a') + '.';
+}
+// ---------- de l'écriture de la page (HTML) à celle de la case ----------
+function htmlToLin63(h){
+  const t = document.createElement('template'); t.innerHTML = String(h || ''); let bad = false;
+  const walk = n => { let r = '';
+    n.childNodes.forEach(c => {
+      if (c.nodeType === 3){ r += c.nodeValue; return; } if (c.nodeType !== 1) return;
+      const tg = c.tagName.toLowerCase(), cl = c.classList;
+      if (tg === 'sup'){ r += E63O + walk(c) + E63C; return; }
+      if (cl.contains('frac')){ const nu = c.querySelector(':scope > .nu'), de = c.querySelector(':scope > .de'); if (!nu || !de){ bad = true; return; } r += F63O + walk(nu) + F63M + walk(de) + F63C; return; }
+      if (tg === 'svg' || cl.contains('rad')){ bad = true; return; }
+      r += walk(c); });
+    return r; };
+  const s = walk(t.content).replace(/[\s   ]/g, '').replace(/[-‒–]/g, '−').replace(/[×·]/g, '∙');
+  if (bad || !s || /[^0-9a-z,+−()∙⁄-⁆⟦⟧]/.test(s)) return null;
+  return s;
+}
+const letters63 = s => [...new Set(String(s || '').match(/[a-z]/g) || [])].sort();
+const vMono63 = M => (M.sp ? null : [M.s * (M.v != null ? M.v : M.n / M.d), M.m]);
+// ---------- description (inpSpec62 → inpSpec63) ----------
+function inpSpec63(p){
+  const s = p.sub || ''; if (!E63_SUBS.test(s)) return null;
+  try {
+    const ch = p.chk || {}, fl = p.fl || {}, J = jExp63, base = {t: 'exp', J};
+    const kb0 = (lets, o) => Object.assign({lets, exp: true, neg: true, plus: true, par: false, fra: false, dec: false}, o);
+    if (/^l_(?:mulm|mono|addm|subm|addp|subp|dev|dev2|ir[1-4])$/.test(s) && p.poly){
+      const qL = htmlToLin63(p.q), aL = htmlToLin63(p.a); if (!qL || !aL) return null;
+      const Q = expParse63(qL).e; if (!Q) return null;
+      const mode = /^l_(?:mulm|mono)$/.test(s) ? 'mono' : /^l_(?:addm|subm|addp|subp)$/.test(s) ? 'add' : 'dev';
+      const lets = letters63(qL + aL), neg = mode !== 'mono' || !!fl.rel || /−/.test(qL + aL);
+      return Object.assign(base, {mode, R: pArr63(p.poly), Q, qLin: qL, kb: kb0(lets, {neg, plus: mode !== 'mono', dec: /,/.test(qL + aL)})});
+    }
+    if (/^l_(?:fme|fir[1-4]|fvi)$/.test(s) && p.poly){
+      const qL = htmlToLin63(p.q), aL = htmlToLin63(p.a); if (!qL || !aL) return null;
+      const A = expParse63(aL).e; if (!A) return null; const fi = facInfo63(A);
+      const nonInt = fi.polys ? fi.polys.some(q => [...q.P.values()].some(([c]) => !Number.isInteger(r63(c)))) : false;
+      return Object.assign(base, {mode: 'fac', R: pArr63(p.poly), qLin: qL, nP: fi.nP || 0, nonInt, kb: kb0(letters63(qL + aL), {par: true, dec: /,/.test(qL + aL)})});
+    }
+    if (s === 'l_tra' && ch.tra){ const x = ch.tra.x, aL = htmlToLin63(p.a); if (!aL) return null;
+      const L = letters63((JSON.stringify(x).match(/"n":"[a-z]"/g) || []).join('').replace(/"n":/g, ''));
+      return Object.assign(base, {mode: 'tra', x, val: V => trVal(x, V), R: null, kb: kb0(L.length ? L : letters63(aL), {par: true, fra: true})}); }
+    if ((s === 'l_voc' || s === 'l_vocp') && ch.voc){ const c = ch.voc;
+      if (c.k === 'p' && c.M && c.M.m){ const m = {}; Object.keys(c.M.m).forEach(v => { if (c.M.m[v]) m[v] = c.M.m[v]; });
+        return Object.assign(base, {mode: 'par', m, R: pm63(1, m), kb: kb0(letters63(Object.keys(m).join('')), {neg: false, plus: false})}); }
+      if ((c.k === 'opp' || c.k === 'ord') && Array.isArray(c.T)){
+        const T = c.T.map(vMono63), O = (c.k === 'opp' ? c.O : c.T || []).map(vMono63); if (T.some(x => !x) || O.some(x => !x)) return null;
+        const h = stripTags(String(p.line ? p.line(false) : '') + ' ' + String(p.q || '')), fr = /class="frac"/.test(String(p.line ? p.line(false) : '') + String(p.q || '') + String(p.a || ''));
+        const lets = letters63(T.map(([, m]) => Object.keys(m).join('')).join(''));
+        return Object.assign(base, {mode: c.k, R: pArr63(O), T: pArr63(T), lt: c.lt || lets[0], kb: kb0(lets, {fra: fr, dec: /\d,\d/.test(h + stripTags(String(p.a || '')))})}); }
+      return null; }
+    if (s === 'fn_gx' && ch.fn && p.r){ const F = p.r, a = F.a[0] / F.a[1], k = CURV[F.ty];
+      const R = !k ? padd63(pm63(a, {x: 1}), pc63(F.b || 0)) : k > 0 ? pm63(a, {x: k}) : null;
+      return Object.assign(base, {mode: 'fn', F, R, val: V => fnV(F, V.x), kb: kb0(['x'], {neg: !!fl.rel || /−/.test(stripTags(String(p.a))), fra: true, dec: !!fl.dec || /\d,\d/.test(stripTags(String(p.a)))})}); }
+  } catch (x){ console.error(x); }
+  return null;
 }
 
 function newQuestions(){ PICK = false; LASTG = null; seqEnd(); QS = buildQuestions(); cur = 0; SNC_PEND = true; render(); }   // n° 51 : SNC_PEND, brouillon à la 1re question
@@ -15060,7 +16763,7 @@ var QR = (function(){
    « dans lien élèves si on clique dessus, ça pourrait permettre de coller un lien d'élève aussi » : champ « Reprendre un lien » (ses exercices
    cochés dans les réglages, son titre, ses étoiles, sa case FR) ; la fenêtre s'ouvre aussi sans exercice coché (pour coller un lien).
    Note du projet : QPC_PROJET_LIENS_ELEVES.md. */
-const QPC_VERSION = '2026-11-11';    // dossier de cette version sur le site (…/qpc/2026-11-07/) : à changer à chaque version mise en ligne
+const QPC_VERSION = '2026-11-12';    // dossier de cette version sur le site (…/qpc/2026-11-07/) : à changer à chaque version mise en ligne
 const QPC_BASE = 'https://outils-maths.github.io/qpc/';    // compte GitHub « outils-maths » (avec un s)
 const QPC_ONLINE = /(^|\.)github\.io$/i.test(location.hostname);    // ouverte depuis le site : seulement le mode élève (sans lien : un message)
 var STU = null;                       // mode élève (page ouverte par un lien élèves) ; null : page de l'enseignant
@@ -16212,14 +17915,18 @@ function sncSame(a, b){ return sncKey(a) === sncKey(b); }
 function sncModified(se){ return !!SNC_TMP[se.id] && !sncSame(se.P, sncEff(se)); }
 function sncTmp(se){ return SNC_TMP[se.id] = SNC_TMP[se.id] || {off: (Array.isArray(se.P.off) ? se.P.off : []).slice(), sh: Object.assign({}, sncObj(se.P.sh))}; }
 function sncTmpEnd(se){ if (!sncModified(se)) delete SNC_TMP[se.id]; }   // revenu comme enregistré : plus de bouton
-function sncLines(se, W){            // les exercices, par bloc, une ligne chacun (case, couleur de son morceau de la réglette, nom, %)
+function sncLines(se, W){            // les exercices, par bloc, une ligne chacun (case, nom, % dans une pastille de la couleur de son morceau de la réglette)
+  // n° 61 (l'enseignant, 11.11.2026 : « les carrés de couleur ressemblent à des coches. Trouve une alternative. » ; maquettes, puis QCM parmi pastille
+  // sur le %, nom surligné, ligne entière teintée : d'abord la ligne teintée, puis « j'ai changé d'avis. Mets la pastille (choix A proposé) sur le % » ;
+  // carrés de la fenêtre « Proportions » laissés, sans case à côté) : le % d'un exercice coché dans une pastille de la couleur de son morceau
+  // (sncPst), seulement s'il y a une réglette (au moins deux cochés) ; décoché ou seul coché : sans couleur.
   const G = []; W.O.forEach(o => { const g = G[G.length - 1]; if (g && g.bl === o.bl) g.os.push(o); else G.push({bl: o.bl, os: [o]}); });
   const ci = {}; W.on.forEach((o, i) => { ci[shK(o)] = i; });
   return '<div class="sncX">' + G.map(g => { const B = BLOCKS[g.bl];
     return '<div class="sncBl">' + (B.items.length ? '<div class="sncBn">' + B.name + '</div>' : '') + g.os.map(o => { const k = shK(o), on = k in ci;
+      const col = on && W.on.length > 1 ? IP_SEGC[ci[k] % IP_SEGC.length] : '';
       return '<label class="sncL' + (on ? '' : ' off') + '"><input type="checkbox" data-sx="' + hEsc(k) + '"' + (on ? ' checked' : '') + '>' +
-        '<span class="sncSq"' + (on && W.on.length > 1 ? ' style="background:' + IP_SEGC[ci[k] % IP_SEGC.length] + '"' : '') + '></span>' +
-        '<span class="sncN">' + hEsc(shName(o)) + '</span><span class="sncP" data-sk="' + hEsc(k) + '">' + (on ? W.N[k] + NBS + '%' : '—') + '</span></label>'; }).join('') + '</div>'; }).join('') + '</div>';
+        '<span class="sncN">' + hEsc(shName(o)) + '</span><span class="sncP' + (col ? ' sncPst" style="background:' + col : '') + '" data-sk="' + hEsc(k) + '">' + (on ? W.N[k] + NBS + '%' : '—') + '</span></label>'; }).join('') + '</div>'; }).join('') + '</div>';
 }
 const SNC_PLAY = '<svg class="tri" viewBox="0 0 10 10" aria-hidden="true"><path d="M10 5L0 0V10Z"/></svg>';
 function sncRow(se){

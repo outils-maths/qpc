@@ -1053,6 +1053,85 @@ body.inpok .pane .qbox{cursor:text}
 #bRep.repk .repkb{display:inline-block;font-size:.85em;font-weight:600;color:var(--muted)}
 .con .cprec{display:block;font-size:.78em;font-weight:600;margin-top:.15em}   /* n° 46, 4e version : précision demandée */
 .kb{touch-action:pan-y pinch-zoom}   /* n° 47 : swipe aussi depuis le clavier à l'écran (comme main) */
+/* ---------- n° 49 et 50 (11.11.2026) : séances (orange des liens élèves, --sel) ; n° 50 : fenêtre, exercices par bloc, réglette ---------- */
+[data-c=ora]{--tc:var(--sel);--tt:var(--sel-soft);--tk:var(--sel-k)}
+#bSnc{--accent:var(--sel);margin-right:.1em;display:inline-flex;align-items:center;gap:.4em}
+.sncPl{flex:none;width:1.55em;height:1.55em;border-radius:50%;background:var(--sel);color:#fff;display:inline-flex;align-items:center;justify-content:center}
+.sncPl .tri{width:.62em;height:.62em;margin:0 0 0 .14em;vertical-align:0;fill:currentColor}
+.sncPlB{width:1.2em;height:1.2em}
+.sncPlB .tri{width:.5em;height:.5em;margin-left:.1em}
+.sncPlS{width:1.25em;height:1.25em;vertical-align:-.25em;margin:0 .1em}
+.sncPlS .tri{width:.5em;height:.5em;margin-left:.1em}
+.sncbox{max-width:min(96vw, 62em)}
+#sncPane{--accent:var(--sel);--accent-soft:var(--sel-soft)}
+#sncPane.sncDrop .sncbody{outline:2px dashed var(--sel);outline-offset:-.4em;background:var(--sel-soft)}
+.sncTop{display:flex;flex-wrap:wrap;align-items:center;gap:.45em 1em;margin:.15em 0 .4em}
+#sncAdd{white-space:normal;text-align:left}
+.sncMsg{color:var(--sel-k);font-size:.86em;font-weight:600}
+.sncHint{color:var(--muted);font-size:.84em;margin:.1em 0 .75em;line-height:1.45}
+.sncList{display:flex;flex-direction:column;gap:.6em}
+.sncEmpty{color:var(--muted);font-size:.9em;font-style:italic;margin:.3em 0}
+.sncR{border:1px solid var(--line);border-left:.32em solid var(--sel);border-radius:.25em .6em .6em .25em;background:var(--panel);padding:.45em .7em .55em .6em}
+.sncR.sncEdOn{background:var(--sel-soft)}
+.sncR.sncFl{animation:sncFl 1.4s ease-out}
+@keyframes sncFl{0%{box-shadow:0 0 0 .3em rgba(184,92,0,.45)}100%{box-shadow:0 0 0 0 rgba(184,92,0,0)}}
+.sncH{display:flex;align-items:center;gap:.55em;min-width:0}
+.sncGo{flex:none;width:1.9em;height:1.9em;border-radius:50%;border:none;background:var(--sel);color:#fff;display:inline-flex;align-items:center;justify-content:center;padding:0;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.sncGo:hover{background:var(--sel-k)}
+.sncGo:disabled{opacity:.35;cursor:default}
+.sncGo .tri{width:.7em;height:.7em;margin:0 0 0 .16em;vertical-align:0;fill:currentColor}
+.sncT{font-weight:700;color:var(--sel-k);cursor:text;border-bottom:1px dashed transparent;min-width:0;overflow-wrap:anywhere}
+.sncT:hover{border-bottom-color:currentColor}
+.sncTi{font:inherit;font-weight:700;color:var(--sel-k);border:1px solid var(--sel);border-radius:.3em;padding:.05em .35em;min-width:0;flex:1 1 12em;max-width:28em;background:#fff}
+.sncB{margin-left:auto;display:flex;gap:.3em;flex:none}
+.sncI{border:1px solid var(--line);background:var(--panel);color:var(--sel-k);border-radius:.4em;width:1.9em;height:1.9em;padding:0;display:inline-flex;align-items:center;justify-content:center;font-size:.95em;line-height:1}
+.sncI:hover,.sncI.on{border-color:var(--sel);background:#fff}
+.sncI.on{box-shadow:inset 0 0 0 1px var(--sel)}
+.sncI svg{width:1.05em;height:1.05em}
+.sncX{columns:2 20em;column-gap:2em;margin:.4em 0 0 2.45em}
+.sncBl{break-inside:avoid;margin:0 0 .4em}
+.sncBn{font-weight:700;font-size:.8em;color:var(--sel-k);margin:0 0 .1em}
+.sncL{display:flex;align-items:center;gap:.45em;font-size:.86em;line-height:1.3;padding:.1em 0;cursor:pointer}
+.sncL input{accent-color:var(--sel);margin:0;flex:none}
+.sncL.off{color:var(--muted)}
+.sncL.off .sncN{text-decoration:line-through;text-decoration-color:rgba(0,0,0,.25)}
+.sncSq{flex:none;width:.85em;height:.85em;border-radius:.18em;border:1px solid #9aa3ad;background:#fff}
+.sncN{flex:1;min-width:0}
+.sncP{flex:none;font-weight:700;color:#36404c;font-variant-numeric:tabular-nums;min-width:3em;text-align:right}
+.sncL.off .sncP{font-weight:400}
+.sncBarW{margin:.35em 0 .05em 2.45em}
+.sncBarW .ipbar{height:2.15em}
+.sncWarn{font-size:.8em;color:#a32020;margin:.3em 0 0 2.45em}
+.sncWarn.sncNo{color:var(--muted);font-style:italic}
+.sncEd,.sncCf{display:flex;flex-wrap:wrap;gap:.4em;align-items:center;margin:.5em 0 0 2.45em;font-size:.95em}
+.sncCf{color:#a32020;font-weight:600;font-size:.88em}
+.sncEd .mini,.sncCf .mini{font-size:.86em;padding:.1em .6em}
+.sncCf .sncDel{border-color:#c62828;color:#a32020}
+.sncCf .sncDel:hover{background:#fdecea}
+.sncIO{margin-top:1.1em;padding-top:.6em;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:.35em .8em;align-items:center;font-size:.84em;color:var(--muted)}
+.sncIOb{display:inline-flex;flex-wrap:wrap;gap:.4em;align-items:center}
+.sncIO .mini{font-size:.95em;padding:.1em .6em}
+.sncIOh{font-style:italic}
+@media (max-width:700px){
+  .sncX,.sncBarW,.sncWarn,.sncEd,.sncCf{margin-left:0}
+}
+@media (pointer:coarse){ .sncIOh{display:none} .sncL{padding:.25em 0} }
+/* n° 51 : changements pour cette fois, brouillons */
+.sncMod{display:flex;flex-wrap:wrap;gap:.4em .6em;align-items:center;margin:.5em 0 0 2.45em;font-size:.86em;color:var(--sel-k);font-weight:600}
+.sncMod .btn{font-size:.95em;padding:.2em .7em;white-space:normal;text-align:left}
+.sncMod .mini{font-size:.9em;padding:.1em .6em}
+.sncDrW{margin-top:1em}
+.sncDrH{font-weight:700;color:var(--sel-k);font-size:1em;border-bottom:2px solid var(--sel);padding-bottom:.1em;margin-bottom:.3em}
+.sncDrHint{color:var(--muted);font-size:.82em;margin:.1em 0 .5em;line-height:1.4}
+.sncR.sncDr{border-left-style:dashed;background:transparent;padding:.35em .6em .4em}
+.sncDt{font-weight:600;color:var(--sel-k);font-size:.95em;min-width:0}
+.sncDr .sncGo{width:1.6em;height:1.6em}
+.sncDr .sncB .mini{font-size:.8em;padding:.1em .55em;height:auto}
+.sncD{font-size:.8em;color:var(--muted);margin:.25em 0 0 2.2em;line-height:1.4}
+@media (max-width:700px){ .sncMod,.sncD{margin-left:0} }
+@media (max-width:1400px){ #bSnc .lbx3{display:none} }   /* bas des réglages sur une ligne (1280 × 720, 960 × 1080) : « Séances » */
+@media (max-width:1100px) and (min-width:701px){ #oSet .boxfoot{gap:.4em;padding-left:.6em;padding-right:.6em} #oSet .boxfoot .btn{padding-left:.55em;padding-right:.55em} #bSnc .sncPlB{display:none} #setWarn:empty{display:none} }
+@media (max-width:700px){ #bLink .lbx{display:none} }    /* téléphone : « Séances » et « Lien/impression » sur la même ligne */
 </style>
 </head>
 <body>
@@ -1184,10 +1263,11 @@ body.inpok .pane .qbox{cursor:text}
     </div>
     <div class="boxfoot">
       <span class="warn" id="setWarn"></span>
+      <button class="btn" id="bSnc" title="Séances personnalisées : enregistrer les exercices cochés, lancer une séance enregistrée"><span class="sncPl sncPlB" aria-hidden="true"><svg class="tri" viewBox="0 0 10 10"><path d="M10 5L0 0V10Z"/></svg></span>Séances<span class="lbx3"> personnalisées</span></button>
       <button class="btn" id="bLink" title="Lien/impression élèves : un lien et un QR code pour que tes élèves s'entraînent sur les exercices cochés, et une feuille à imprimer">Lien/impression<span class="lbx"> élèves</span></button>
       
-<button class="btn" id="bNone" title="Décocher toutes les questions, dans tous les onglets (touche ⟵ effacer)">Tout décocher<span class="kh kbs">⟵</span></button>
-      <button class="btn" id="bProp" title="La proportion de chaque exercice quand on joue (la même dans le lien élèves et sur la feuille à imprimer)">Proportions</button>
+<button class="btn" id="bProp" title="La proportion de chaque exercice quand on joue (la même dans le lien élèves et sur la feuille à imprimer)">Proportions</button>
+      <button class="btn" id="bNone" title="Décocher toutes les questions, dans tous les onglets (touche ⟵ effacer)">Tout décocher<span class="kh kbs">⟵</span></button>
       <button class="btn on" id="bApply" title="Nouvelles questions avec ces réglages (touche Entrée)">Nouvelles questions<span class="lbx2"> avec ces réglages</span><span class="kh">Entrée</span></button>
     </div>
   </div>
@@ -1259,6 +1339,20 @@ body.inpok .pane .qbox{cursor:text}
       <div class="prows" id="pRows"></div>
     </div>
     <div class="boxfoot"><button type="button" class="btn" id="pEq" title="Chaque exercice la même part">Parts égales</button><button type="button" class="btn on" id="pOk">OK<span class="kh">Entrée</span></button></div>
+  </div>
+</div>
+
+<!-- n° 49 et 50 : séances enregistrées (bouton « Séances » en bas des réglages ; code : « Séances », à la fin du script) -->
+<div class="over" id="oSnc">
+  <div class="box sncbox" role="dialog" aria-label="Séances personnalisées" data-c="ora" id="sncPane">
+    <div class="boxhead"><h2 class="title">Séances personnalisées</h2><button class="hbtn" data-close>✕</button></div>
+    <div class="boxbody sncbody">
+      <div class="sncTop"><button type="button" class="btn on" id="sncAdd" title="Enregistrer les exercices cochés dans les réglages (avec leurs cases et leurs proportions) comme une nouvelle séance">Cliquer pour enregistrer les exercices cochés comme nouvelle séance</button><span class="sncMsg" id="sncMsg" aria-live="polite"></span></div>
+      <p class="sncHint">Une séance garde les exercices cochés, leurs cases (décimaux, relatifs…) et leurs proportions. Dans une séance, tu peux décocher des exercices ou glisser les séparations de la réglette pour cette fois, puis <span class="sncPl sncPlS" aria-hidden="true"><svg class="tri" viewBox="0 0 10 10"><path d="M10 5L0 0V10Z"/></svg></span> pour la lancer ; un clic sur le titre le renomme.</p>
+      <div class="sncList" id="sncList"></div>
+      <div class="sncDrW"><div class="sncDrH">Brouillons</div><p class="sncDrHint">Les derniers exercices joués sans avoir été enregistrés comme séance (les 10 derniers) : relance-les ou enregistre-les.</p><div class="sncList" id="sncDrafts"></div></div>
+      <div class="sncIO"><span class="sncIOt">Les séances sont gardées dans ce navigateur. Pour les avoir sur un autre ordinateur :</span><span class="sncIOb"><button type="button" class="mini" id="sncExp" title="Télécharger le fichier « Séances QPC.txt » (à mettre sur ta clé ou ton Drive)">Exporter dans un fichier</button><button type="button" class="mini" id="sncImp" title="Ajouter les séances d'un fichier « Séances QPC.txt »">Importer un fichier</button><span class="sncIOh">(ou glisse le fichier ici)</span></span><input type="file" id="sncFile" accept=".txt,.json,text/plain" hidden></div>
+    </div>
   </div>
 </div>
 
@@ -3124,6 +3218,7 @@ GL('fd', [1, 2, 3, 4], lv => {
     const s = NEG && lv >= 3 && chance(.3) ? -1 : 1, sg = s < 0 ? '−' : '', x = decExp(n, d), N = n * k, D = d * k;
     const det = () => fdCore(n, d, s, k > 1 ? simpDet(s * N, D, true) : '');
     return {q: '<span>' + valHTML(F(s * N, D)) + '</span>', key: 'fd' + s * N + '/' + D, a: decExpH(x, sg), r: F(s * n, d), cnt: fam ? 'fd:' + fam : null,
+      con: 'Donne l\'écriture décimale',                                  // n° 49 (l'enseignant, 11.11.2026 : « il n'y a pas de consigne »)
       chk: {fd: [s * N, D, x], srt, k, alt: !x.per && FD_HARD.has(d) && Number.isInteger(10 ** Math.max(1, x.fin.length) / d)}, det};
   }
 });
@@ -12237,10 +12332,11 @@ function navTitles(){ // infobulles de ◀ et ▶ : question ou groupe
   $('bPrev').title = pv && pv.grp ? 'Groupe précédent (←)' : 'Question précédente (←)';
 }
 function render(){
+  if (SNC_PEND && !STU && QS.length) sncDraftNote();                            // n° 51 : exercices joués sans être une séance enregistrée → brouillon
   grpBtnUI();
   if (INP && ((STU && STU.start) || inG() || PICK)) INP = null; kbDraw();          // saisie (n° 38) : pas de case sur la liste de l'élève ni dans un groupe                                                                     // libellé du bouton « Questions multiples » (avant fitHeader)
-  if (STU && STU.start) return stuRender();                                    // mode élève : liste des exercices
-  if (inG()) return renderGrp();                                                 // plusieurs questions à la fois (touche M)
+  if (STU && STU.start){ kbTrack(null); return stuRender(); }                 // mode élève : liste des exercices (n° 49 : on quitte la question)
+  if (inG()){ kbTrack(null); return renderGrp(); }                               // plusieurs questions à la fois (touche M)
   if (GRZ) [$('pL'), $('pR')].forEach(p => p.getAnimations({subtree: true}).forEach(a => a.cancel()));   // on quitte le groupe pendant une animation du détail
   gfxClear(); GRZ = null;
   document.body.classList.remove('grpm', 'grpz');
@@ -12742,7 +12838,7 @@ function grpAnim(T, G){
    ancien lien, sans parts, garde cette façon). Lien : &p= (parts entières, dans l'ordre de x) ; étoiles cachées : &s= (% d'étoiles de chaque
    exercice, « 40.35.20.5 », dans l'ordre de x ; les mêmes barres que la feuille), tirées avec un correcteur d'après la séance (sdPick). */
 const shHas = x => typeof x === 'number' && isFinite(x) && x >= 0;
-const ipIsSh = k => k === 'share' || k === 'lsh' || k === 'cls';
+const ipIsSh = k => k === 'share' || k === 'lsh' || k === 'cls' || k === 'snc';     // n° 50 : réglette d'une séance
 function shRaw(d, O){                // parts brutes des exercices O (sans part : la moyenne des autres ; « combiner » : les autres de son bloc ensemble)
   const s = d.share || {}, kn = O.filter(o => shHas(s[shK(o)])), avg = (kn.length ? kn.reduce((a, o) => a + s[shK(o)], 0) / kn.length : 1) || 1;
   return O.map(o => shHas(s[shK(o)]) ? s[shK(o)] : o.ing ? 0 : COMB_IDS.includes(o.id) ? avg * Math.max(1, O.filter(x => x.bl === o.bl && x.id !== o.id && !x.ing).length) : avg);
@@ -12797,6 +12893,7 @@ function ipBarFill(bar){             // une barre jumelle mise à jour d'après 
 }
 function ipBarAfter(D, live){        // après (ou pendant) un glissement : le lien et son QR code, les barres jumelles, la feuille
   const k = D.bar.dataset.k; if (k === 'cls'){ propRows(); return; }   // fenêtre « Proportions » : les lignes suivent la barre
+  if (k === 'snc') return sncBarAfter(D, live);                          // n° 50 : les % des lignes de la séance
   const lk = $('oLink').classList.contains('open') && LNK && LNK.P;
   if (lk) linkUrlDraw();
   if (IP && IP.O.length) ipShares();
@@ -12822,10 +12919,22 @@ function ipBarAfter(D, live){        // après (ou pendant) un glissement : le l
    ===================================================================== */
 var INP = null;                                                    // la question dont la case est ouverte (var : lue par render dès le chargement)
 // n° 48 (l'enseignant, 11.11.2026 : « (sur tél) quand on a cliqué sur la croix pour enlever le clavier, et qu'on va à la prochaine question, ne
-// remets pas le clavier. On peut cliquer sur répondre pour faire ça. ») : INP_OFF = la case a été fermée exprès (✕, Échap, Espace) ; tant qu'il est
-// vrai, elle ne s'ouvre plus d'elle-même sur les questions suivantes (mode élève, écran tactile) ; ouvrir la case (« Répondre », « ? », Espace) le
-// remet à faux. Pas pour une case fermée par un clic à côté, un changement de question, Page préc. / suiv.
-var INP_OFF = false;
+// remets pas le clavier. On peut cliquer sur répondre pour faire ça. ») ; n° 49 (11.11.2026 : « Quand le clavier est affiché (avec le bloc de
+// réponse), il faut que quand on passe à une nouvelle question le clavier est affiché. Si il était désactivé, il est désactivé. Si on revient à une
+// question, il faut que ça revient à comment c'était la dernière fois qu'on était sur cette question. » ; QCM : partout, aussi à l'ordinateur en mode
+// enseignant). KB_ON = la case est « activée » : ouvrir la case (« Répondre », « ? », Espace) l'active, la fermer exprès (✕, Échap, Espace) la
+// désactive ; null = pas encore choisi : activée en mode élève et sur écran tactile, désactivée à l'ordinateur en mode enseignant (comme avant).
+// Une case fermée par un clic à côté, une réponse affichée, une réponse juste, Page préc. / suiv. ou un changement de question ne change rien.
+// En arrivant sur une question (kbTrack) : nouvelle question, la case s'ouvre si elle est activée ; question déjà vue, elle reprend l'état qu'elle
+// avait quand on l'a quittée (p.kbm), et cet état continue sur les questions suivantes. Repère : var KB_ON = .
+var KB_ON = null, KB_AT = null, KB_NEW = false;     // KB_AT : la question affichée (seule) ; KB_NEW : on vient d'y arriver
+function kbOn(){ return KB_ON === null ? !!(STU || inpTouch()) : KB_ON; }
+function kbTrack(p){                                // à chaque affichage : la question seule affichée (null : aucune, deux questions, groupe, liste de l'élève)
+  if (p === KB_AT) return;
+  if (KB_AT) KB_AT.kbm = kbOn();                   // l'état qu'avait la question qu'on quitte
+  KB_AT = p; KB_NEW = !!p;
+  if (p && typeof p.kbm === 'boolean') KB_ON = p.kbm;   // question déjà vue : comme on l'a laissée
+}
 const NBS = '\u00a0';
 const hEsc = t => String(t).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'})[c]);
 // ---------- nombres rationnels exacts [numérateur, dénominateur > 0], irréductibles ----------
@@ -13165,7 +13274,7 @@ function inpCan(){                                                    // une cas
 // qui est tapé, « n/d ») se refait après chaque frappe et sert au jugement.
 const inpNew = () => ({b: '', n: '', d: null, f: 'n', c: 0, tries: 0});
 const inpB = I => { I.b = (I.n || '') + (I.d !== null && I.d !== undefined ? '/' + I.d : ''); };
-function inpOpen(){ if (!inpCan()) return; const p = inpCur(); p.inp = p.inp || inpNew(); INP = p; INP_OFF = false; render(); }
+function inpOpen(){ if (!inpCan()) return; const p = inpCur(); p.inp = p.inp || inpNew(); INP = p; KB_ON = true; render(); }
 function inpClose(){ if (!INP) return; INP = null; render(); }
 function inpEdit(I, sp, c){                                           // une frappe dans la case (au curseur)
   const P = I.f === 'd' && I.d !== null ? 'd' : 'n'; let s = I[P] || '', k = Math.max(0, Math.min(I.c, s.length));
@@ -13209,7 +13318,7 @@ function inpEdit(I, sp, c){                                           // une fra
 function inpType(c){
   const p = INP; if (!p) return; const sp = inpSpec(p); if (!sp) return; const I = p.inp;
   if (c === 'ok') return inpCheck();
-  if (c === 'esc'){ INP_OFF = true; return inpClose(); }             // n° 48 : la croix du clavier
+  if (c === 'esc'){ KB_ON = false; return inpClose(); }              // n° 48 : la croix du clavier (n° 49 : KB_ON)
   if (sp.t === 'ch'){ if (sp.opts.includes(c)){ I.b = c; inpCheck(); } return; }
   if (isLin(sp)){ linInit(I, sp); linEdit(I, sp, c); I.b = I.s; render(); return; }   // n° 45
   if (I.n === undefined){ I.n = I.b || ''; I.d = null; I.f = 'n'; I.c = I.n.length; }   // case d'une version d'avant (sécurité)
@@ -13234,7 +13343,9 @@ function inpSync(){                                                   // à chaq
   if (INP && INP !== p) INP = null;
   if (p && (p.shown.ans || p.shown.det)){ if (INP === p) INP = null;
     if (!p.mk && p.inp && (p.inp.tries || (p.inp.steps && p.inp.steps.length) || p.inp.after || p.inp.two)) p.mk = p.inp.last === 'almost' ? 'mid' : 'ko'; }
-  if ((STU || inpTouch()) && p && !INP && !p.inp && !INP_OFF && inpCan()){ p.inp = inpNew(); INP = p; }   // mode élève et écran tactile : la case s'ouvre d'elle-même (une fois)
+  kbTrack(p);                                                         // n° 49 : en arrivant sur une question, la case comme on l'avait (KB_ON, p.kbm)
+  if (KB_NEW && p && !document.querySelector('.over.open')){ KB_NEW = false;
+    if (kbOn() && !INP && inpCan()){ p.inp = p.inp || inpNew(); INP = p; } }   // ce qui était tapé reste (question déjà vue)
   document.body.classList.toggle('inpok', !!(p && !p.shown.ans && !p.shown.det && inpSpec(p)));
   kbDraw();
 }
@@ -13267,7 +13378,7 @@ function inpKeyDown(e){                                               // touches
   if (/^Page(Up|Down)$/.test(k) || (sp.t === 'ch' && /^Arrow(Left|Right)$/.test(k))){ INP = null; return false; }
   if (/^(Shift|CapsLock|NumLock|Dead|Alt|AltGraph|Control|Meta|Tab|F\d+)$/.test(k)) return k !== 'Tab' && !/^F\d+$/.test(k);
   e.preventDefault(); inpNoFocus(); INP_SWALLOW = true;
-  if (k === 'Escape' || k === ' '){ INP_OFF = true; inpClose(); }   // n° 48 : fermée exprès ; n° 41 : Espace referme aussi la case (l'enseignant : « c'est ce que j'aimerais »)
+  if (k === 'Escape' || k === ' '){ KB_ON = false; inpClose(); }    // n° 48 : fermée exprès (n° 49 : KB_ON) ; n° 41 : Espace referme aussi la case (l'enseignant : « c'est ce que j'aimerais »)
   else if (k === 'Enter'){ if (!e.repeat) inpCheck(); }
   else { const c = inpChar(e, sp); if (c) inpType(c); }
   return true;
@@ -13385,7 +13496,7 @@ document.addEventListener('click', e => {
 }, true);
 $('main').addEventListener('click', e => {                           // clic sur « ? » ou dans la case : ouvrir la case, curseur à l'endroit du clic
   const q = e.target.closest('.pane .qbox, .pane .qin'); if (!q) return;
-  if (!INP){ if (!inpCan()) return; const p = inpCur(); p.inp = p.inp || inpNew(); INP = p; INP_OFF = false; }
+  if (!INP){ if (!inpCan()) return; const p = inpCur(); p.inp = p.inp || inpNew(); INP = p; KB_ON = true; }
   inpClick(e, q); render();
 });
 
@@ -14285,7 +14396,7 @@ function inpAns(p){                                                    // la ré
   return inpShown(p) ? inpHTML(p) + inpUnit(p) : BOX;
 }
 
-function newQuestions(){ PICK = false; LASTG = null; seqEnd(); QS = buildQuestions(); cur = 0; render(); }
+function newQuestions(){ PICK = false; LASTG = null; seqEnd(); QS = buildQuestions(); cur = 0; SNC_PEND = true; render(); }   // n° 51 : SNC_PEND, brouillon à la 1re question
 function newOrSettings(){ if (objectives(S).length) newQuestions(); else openSet(); }
 
 /* ---------- toutes les questions ---------- */
@@ -14388,6 +14499,7 @@ function syncUI(){
   $('summary').innerHTML = O.length ? Object.keys(per).map(b => BLOCKS[b].name + (BLOCKS[b].items.length ? ' (' + per[b] + ')' : '')).join(' · ') : '— rien de coché —';
   d.share = d.share || {}; const ks = new Set(objectives(d, true).map(shK)); Object.keys(d.share).forEach(k => { if (!ks.has(k)) delete d.share[k]; });   // décoché : sa part est oubliée (recoché : la part moyenne)
   if ($('oSet').classList.contains('open')) psUI();
+  if ($('oSnc').classList.contains('open')) sncUI();                           // n° 49 et 50 : fenêtre « Séances » ouverte
 }
 // pourcentages (l'enseignant, 25.10.2026, 6e conversation) : le premier % touché reste bloqué quand on en touche un autre juste après ;
 // seul le troisième compense. Débloqué en retouchant le premier, en changeant d'onglet ou en rouvrant les réglages.
@@ -15713,7 +15825,7 @@ function ipBarLabels(bar){    // le texte de chaque morceau, d'après sa largeur
   const RR = ipIsSh(kind) ? shLR(VV, 100) : null;      // n° 34 : parts arrondies qui font 100 % (comme les lignes de « Proportions » et &p=)
   bar.querySelectorAll('.ipseg').forEach(s => { const i = Number(s.dataset.i), v = parseFloat(s.style.width), px = W * v / 100, n = RR ? RR[i] : Math.round(v);
     const st = '<span class="stars">' + '★'.repeat(i + 1) + '</span>';
-    if (kind === 'lsh' || kind === 'cls'){ const nm = (kind === 'cls' ? (i + 1) + ') ' : '') + (s.dataset.n || '');     // n° 33 : le nom de l'exercice, puis sa part ; n° 34 : son numéro (fenêtre « Proportions »)
+    if (kind === 'lsh' || kind === 'cls' || kind === 'snc'){ const nm = (kind === 'cls' ? (i + 1) + ') ' : '') + (s.dataset.n || '');     // n° 33 : le nom de l'exercice, puis sa part ; n° 34 : son numéro (fenêtre « Proportions »)
       s.innerHTML = px >= 96 && nm ? '<span class="ipsn">' + ipEsc(nm) + '</span><span class="ipsp">' + n + ' %</span>' : kind === 'cls' ? (px >= 56 ? (i + 1) + ') ' + n + ' %' : px >= 24 ? (i + 1) + ')' : '') : px >= 40 ? n + ' %' : px >= 20 ? String(n) : '';
       s.title = nm + ' : ' + n + ' %'; return; }
     s.innerHTML = kind === 'share' ? (px >= 96 && s.dataset.n && NB[i] ? '<span class="ipsn">' + ipEsc(NB[i] + ') ' + s.dataset.n) + '</span><span class="ipsp">' + n + ' %</span>'   // n° 37 : comme la barre du lien
@@ -15828,6 +15940,7 @@ function ipBarPMove(e){
 }
 function ipBarKeep(D){         // les valeurs d'une barre dans l'état : parts (n° 33 : draft.share, une part par exercice, pour les trois barres jumelées) ou étoiles
   const k = D.bar.dataset.k, V = D.V.map(x => x < .01 ? 0 : x);
+  if (k === 'snc') return sncBarKeep(D, V);                            // n° 50 : réglette d'une séance (ses parts, pas celles des réglages)
   if (k === 'cls') shWrite(draft, objectives(draft, true), V);          // fenêtre « Proportions » : les exercices cochés (n° 36 : et les calculs seuls des priorités)
   else if (k === 'lsh') shWrite(draft, LNK.EO || pObjs(LNK.E), V);     // lien : ses exercices (sans ceux décochés dans la fenêtre ; ceux de sa barre)
   else if (k === 'share'){ const v = shView(draft, IP.O), nv = {};      // feuille : un morceau par exercice de la feuille ; bloc mélangé : ses exercices gardent leurs proportions
@@ -16019,6 +16132,288 @@ $('pRows').addEventListener('pointerdown', e => {
 $('pRows').addEventListener('pointermove', e => { if (PGD) prgAt(e); });
 function prgEnd(e){ if (!PGD) return; if (Math.abs(e.clientX - PGD.x0) > 2){ FD_CLICK = true; setTimeout(() => { FD_CLICK = false; }, 400); } PGD = null; }   // relâché hors de la fenêtre : elle reste ouverte
 $('pRows').addEventListener('pointerup', prgEnd); $('pRows').addEventListener('pointercancel', prgEnd);
+
+/* =====================================================================
+   Séances (n° 49, 11.11.2026). L'enseignant : « J'aimerais aussi que tu (re)développe la fonctionnalité de séances (l'onglet sera en dessous de
+   l'onglet géométrie) [...]. En gros il faut pouvoir sauvegarder des setups de questions (avec aussi les proportions d'exos). Quand on clique sur une
+   séance, ça va en version enseignant (avec toutes les fonctionnalités), mais c'est un raccourci pour avoir directement les questions qu'on veut.
+   Pour sauvegarder une nouvelle séance, on choisit les exercices qu'on veut et on va dans l'onglet séance, et on clique sur sauvegarder les exercices
+   actuellement choisis comme séance. Pour chaque séance, on peut voir (écrit en petit) les exercices choisis avec leur proportion. »
+   QCM : lancer une séance = l'écran de départ (1 2 3 4 M), comme « Nouvelles questions avec ces réglages » ; séances gardées dans le navigateur,
+   transportées par un fichier à exporter / importer (« Séances QPC.txt », aussi en le glissant dans la fenêtre).
+   n° 50 (après l'essai de la n° 49) : « sépare plutôt les exos par bloc, et fais une ligne par exo (tu peux utiliser deux colonnes s'il y a de la
+   place) ; affiche également en dessous des exos une réglette qui montre visuellement la proportion. On peut également décocher les exos qu'on veut
+   sur cette page et modifier la réglette avant de lancer play. » ; bouton du haut « Cliquer pour enregistrer les exercices cochés comme nouvelle
+   séance » ; « bouge "séances" plutôt à gauche du bouton "lien/impression élèves" » ; « Renomme séances en séances personnalisées ». Lu ainsi :
+   plus d'onglet, un bouton qui ouvre une fenêtre (comme « Proportions ») ; seul le bouton rond ▷ lance une séance.
+   n° 51 : « si on décoche ou change la réglette dans une séance, ça ne doit pas sauver pour la prochaine fois. pour faire ça, il faut "enregistrer
+   les modifications pour les prochaines fois" (nouveau bouton qui s'affiche quand on décoche des trucs ou change la réglette). » → SNC_TMP (en
+   mémoire, perdu au rechargement) ; « Revenir comme enregistré » ajouté (dit). « Aussi, quand on fais des exercices mais qu'on ne clique pas sur
+   enregistrer, tu peux sauver la séance en brouillon (endroit dédié dans les séances personnalisées). » → à la 1re question jouée après de nouveaux
+   réglages (SNC_PEND, posé par newQuestions), les exercices joués deviennent un brouillon s'ils ne sont pas déjà une séance enregistrée (les mêmes
+   remontent en tête) ; les 5 derniers, gardés dans le navigateur ; ▷, « Enregistrer comme séance », ✕.
+   Repris de l'ancien onglet « Sélections » (07.11.2026, enlevé à sa demande) : titre par défaut la date (« Séance du 11.11 »), clic sur le titre =
+   le renommer (Entrée garde, Échap annule), ✎ montre « Mettre à jour avec les exercices cochés » dans la séance, ✕ supprime (avec une confirmation
+   dans la séance : « Supprimer » / « Garder », pas « Annuler »), orange des liens élèves.
+   Une séance : {id, t (titre), c (créée), m (modifiée, pour l'import), P} ; P = {it, blk, num, opt, sh, off} comme un lien (pFromState, relu par
+   stateFromP : identifiants figés, LINK_ALIAS ; un exercice inconnu de cette version est ignoré et signalé) ; off : les exercices décochés (clés shK).
+   Lancer ne change que les exercices, leurs cases et leurs parts (SES_KEYS) : l'onglet Général reste tel quel. Nouvelle séance : à la fin de la liste.
+   Clé du navigateur SNC_KEY ({v: 1, list, drafts}) : ne jamais la changer (les séances passent d'une version de la page à l'autre).
+   ===================================================================== */
+var SNC_KEY = 'qpc-seances', SNC = null, SNC_DR = [], SNC_TMP = {}, SNC_ED = null, SNC_CF = null, SNC_REN = null, SNC_FL = null, SNC_RT = 0;   // SNC_RT : fin d'un renommage par un clic ailleurs
+var SNC_DRMAX = 10, SNC_PEND = false, SNC_SEL = false; // brouillons gardés (n° 52, l'enseignant : « tu peux garder 10 brouillons plutot » ; avant 5) ; SNC_PEND : de nouveaux réglages, pas encore de question jouée (newQuestions)
+function sncOk(x){ return !!(x && typeof x.id === 'string' && x.id && x.P && Array.isArray(x.P.it) && Array.isArray(x.P.blk)); }
+function sncObj(v){ return v && typeof v === 'object' && !Array.isArray(v) ? v : {}; }
+function sncList(){
+  if (SNC) return SNC; let L = [], D = [];
+  try { const o = JSON.parse(localStorage.getItem(SNC_KEY) || 'null');
+    if (o && Array.isArray(o.list)) L = o.list.filter(sncOk); if (o && Array.isArray(o.drafts)) D = o.drafts.filter(sncOk); } catch (e) {}
+  SNC_DR = D; return SNC = L;
+}
+function sncDrafts(){ sncList(); return SNC_DR; }
+function sncSave(){ try { localStorage.setItem(SNC_KEY, JSON.stringify({v: 1, list: sncList(), drafts: sncDrafts()})); return true; } catch (e) { return false; } }
+function sncMsg(m){ const el = $('sncMsg'); if (el) el.textContent = m || ''; }
+function sncSnap(d){                 // la séance d'après des réglages : comme un lien, avec les parts exactes ; aucune case décochée
+  const P = pFromState(d, '', null), ks = new Set(objectives(stateFromP(Object.assign({}, P, {sh: d.share || {}})), true).map(shK)), sh = {};
+  Object.keys(d.share || {}).sort().forEach(k => { const v = d.share[k]; if (ks.has(k) && shHas(v)) sh[k] = Math.round(v * 1e4) / 1e4; });
+  return {it: P.it.slice(), blk: P.blk.slice(), num: Object.assign({}, P.num), opt: Object.assign({}, P.opt), sh, off: []};
+}
+const SNC_AL = id => LINK_ALIAS[id] || id;
+function sncEff(se){ const t = se.id && SNC_TMP[se.id]; return t ? Object.assign({}, se.P, t) : se.P; }   // n° 51 : avec les changements pour cette fois
+function sncState(se, base, all){    // les réglages de la séance (exercices, cases, parts) sur ceux de base ; all : aussi les exercices décochés dans la séance
+  const P = sncEff(se), sh = {};
+  Object.entries(sncObj(P.sh)).forEach(([k, v]) => { sh[k[0] === '~' ? '~' + SNC_AL(k.slice(1)) : SNC_AL(k)] = v; });
+  const r = stateFromP({it: P.it.map(SNC_AL), blk: P.blk, num: sncObj(P.num), opt: sncObj(P.opt), sh}), st = clone(base);
+  st.on = r.on; st.it = r.it; st.opt = r.opt; st.share = clone(r.share || {});
+  st.num = clone(base.num || {}); Object.keys(r.on).forEach(b => { if (BLOCKS[b] && BLOCKS[b].nd && typeof sncObj(P.num)[b] === 'string') st.num[b] = clone(r.num[b]); });
+  if (!all) (Array.isArray(P.off) ? P.off : []).forEach(k => {          // les exercices décochés dans la séance
+    if (k[0] === '~'){ delete st.share['~' + SNC_AL(k.slice(1))]; return; }       // calculs seuls à côté des priorités : plus posés
+    const id = SNC_AL(k), b = ITEM_BLOCK[id];
+    if (b){ st.it[id] = false; (PRIO_ING[id] || []).forEach(j => { st.it[j] = false; });   // des priorités décochées : sans leurs opérations
+      if (!BLOCKS[b].items.some(([j]) => st.it[j])) st.on[b] = false; }
+    else if (BLOCKS[id]) st.on[id] = false; });
+  return st;
+}
+function sncUnknown(se){ return se.P.it.filter(id => !ITEM_BLOCK[SNC_AL(id)]).length + se.P.blk.filter(b => !BLOCKS[b]).length; }
+function sncView(se){                // les lignes (tous les exercices de la séance) et la réglette (ceux qui sont cochés)
+  const full = sncState(se, S, true), P = sncEff(se), O = objectives(full), off = new Set(Array.isArray(P.off) ? P.off : []);
+  const on = O.filter(o => !off.has(shK(o))), v = shView(full, on), n = on.length > 1 ? shLR(on.map(o => v[o.id]), 100) : on.map(() => 100), N = {};
+  on.forEach((o, i) => { N[shK(o)] = n[i]; });
+  return {full, O, on, V: on.map(o => v[o.id]), N};
+}
+function sncShares(st){              // les exercices posés et leurs % arrondis (comme la fenêtre « Proportions » : 0 % = pas posé)
+  const O0 = objectives(st), O1 = O0.filter(o => (st.share || {})[shK(o)] !== 0), O = O1.length ? O1 : O0;
+  const v = shView(st, O), n = O.length > 1 ? shLR(O.map(o => v[o.id]), 100) : [100];
+  return O.map((o, i) => ({o, n: n[i]}));
+}
+function sncKey(P){                 // ce qui sera posé : exercices et % arrondis, cases et options de leurs blocs (pas les exercices décochés)
+  const st = sncState({P}, S), Q = pFromState(st, '', null); return JSON.stringify(sncShares(st).map(x => [shK(x.o), x.n])) + JSON.stringify(Q.num) + JSON.stringify(Q.opt); }
+function sncSame(a, b){ return sncKey(a) === sncKey(b); }
+function sncModified(se){ return !!SNC_TMP[se.id] && !sncSame(se.P, sncEff(se)); }
+function sncTmp(se){ return SNC_TMP[se.id] = SNC_TMP[se.id] || {off: (Array.isArray(se.P.off) ? se.P.off : []).slice(), sh: Object.assign({}, sncObj(se.P.sh))}; }
+function sncTmpEnd(se){ if (!sncModified(se)) delete SNC_TMP[se.id]; }   // revenu comme enregistré : plus de bouton
+function sncLines(se, W){            // les exercices, par bloc, une ligne chacun (case, couleur de son morceau de la réglette, nom, %)
+  const G = []; W.O.forEach(o => { const g = G[G.length - 1]; if (g && g.bl === o.bl) g.os.push(o); else G.push({bl: o.bl, os: [o]}); });
+  const ci = {}; W.on.forEach((o, i) => { ci[shK(o)] = i; });
+  return '<div class="sncX">' + G.map(g => { const B = BLOCKS[g.bl];
+    return '<div class="sncBl">' + (B.items.length ? '<div class="sncBn">' + B.name + '</div>' : '') + g.os.map(o => { const k = shK(o), on = k in ci;
+      return '<label class="sncL' + (on ? '' : ' off') + '"><input type="checkbox" data-sx="' + hEsc(k) + '"' + (on ? ' checked' : '') + '>' +
+        '<span class="sncSq"' + (on && W.on.length > 1 ? ' style="background:' + IP_SEGC[ci[k] % IP_SEGC.length] + '"' : '') + '></span>' +
+        '<span class="sncN">' + hEsc(shName(o)) + '</span><span class="sncP" data-sk="' + hEsc(k) + '">' + (on ? W.N[k] + NBS + '%' : '—') + '</span></label>'; }).join('') + '</div>'; }).join('') + '</div>';
+}
+const SNC_PLAY = '<svg class="tri" viewBox="0 0 10 10" aria-hidden="true"><path d="M10 5L0 0V10Z"/></svg>';
+function sncRow(se){
+  const ed = SNC_ED === se.id, cf = SNC_CF === se.id, W = sncView(se), u = sncUnknown(se), md = !!SNC_TMP[se.id];
+  return '<div class="sncR' + (ed ? ' sncEdOn' : '') + (SNC_FL === se.id ? ' sncFl' : '') + '" data-sid="' + hEsc(se.id) + '">' +
+    '<div class="sncH"><button type="button" class="sncGo" data-sa="go" title="Lancer cette séance (avec les exercices cochés)" aria-label="Lancer"' + (W.on.length ? '' : ' disabled') + '>' + SNC_PLAY + '</button>' +
+    '<span class="sncT" data-sa="ren" title="Renommer cette séance">' + hEsc(se.t) + '</span>' +
+    '<span class="sncB"><button type="button" class="sncI' + (ed ? ' on' : '') + '" data-sa="ed" title="Modifier : mettre à jour avec les exercices cochés" aria-label="Modifier">' + KB_SVG.pen + '</button>' +
+    '<button type="button" class="sncI" data-sa="x" title="Supprimer cette séance" aria-label="Supprimer">✕</button></span></div>' +
+    (W.O.length ? sncLines(se, W) : '<div class="sncWarn sncNo">Aucun exercice de cette séance n\'existe dans cette version de la page.</div>') +
+    (W.on.length > 1 ? '<div class="sncBarW">' + ipBarHTML('snc', W.V, 0, W.on.map(o => shName(o))) + '</div>' : '') +
+    (W.O.length && !W.on.length ? '<div class="sncWarn">Coche au moins un exercice pour lancer cette séance.</div>' : '') +
+    (md ? '<div class="sncMod">Changé pour cette fois<button type="button" class="btn on" data-sa="keepmod" title="Garder ces cases et cette réglette dans la séance">Enregistrer les modifications pour les prochaines fois</button>' +
+      '<button type="button" class="mini" data-sa="undo" title="Remettre les cases et la réglette comme dans la séance enregistrée">Revenir comme enregistré</button></div>' : '') +
+    (u && W.O.length ? '<div class="sncWarn sncNo">' + u + ' exercice' + (u > 1 ? 's' : '') + ' de cette séance inconnu' + (u > 1 ? 's' : '') + ' de cette version de la page.</div>' : '') +
+    (ed ? '<div class="sncEd"><button type="button" class="mini" data-sa="load" title="Cocher dans les réglages les exercices de cette séance (pour les modifier)">Cocher ses exercices</button>' +
+      '<button type="button" class="mini" data-sa="upd" title="Remplacer les exercices de cette séance par les exercices cochés maintenant dans les réglages">Mettre à jour avec les exercices cochés</button></div>' : '') +
+    (cf ? '<div class="sncCf">Supprimer cette séance ?<button type="button" class="mini sncDel" data-sa="del">Supprimer</button><button type="button" class="mini" data-sa="keep">Garder</button></div>' : '') +
+    '</div>';
+}
+function sncWhen(t){ const d = new Date(t), z = x => (x < 10 ? '0' : '') + x; return z(d.getDate()) + '.' + z(d.getMonth() + 1) + ', ' + d.getHours() + NBS + 'h' + NBS + z(d.getMinutes()); }
+function sncDesc(x){                 // brouillon : en petit, les exercices et leur proportion
+  const L = sncShares(sncState(x, S));
+  return L.length ? L.map(y => hEsc(shName(y.o)) + (L.length > 1 ? NBS + y.n + NBS + '%' : '')).join(' · ') : '<span class="sncNo">Aucun exercice de ce brouillon n\'existe dans cette version de la page.</span>';
+}
+function sncDrRow(x){
+  return '<div class="sncR sncDr" data-did="' + hEsc(x.id) + '"><div class="sncH"><button type="button" class="sncGo" data-sa="dgo" title="Relancer ces exercices" aria-label="Lancer">' + SNC_PLAY + '</button>' +
+    '<span class="sncDt">Brouillon du ' + sncWhen(x.m) + (sncThemes(x.P) ? ' (' + hEsc(sncThemes(x.P)) + ')' : '') + '</span><span class="sncB"><button type="button" class="mini" data-sa="dsave" title="Garder ces exercices comme une séance">Enregistrer comme séance</button>' +
+    '<button type="button" class="sncI" data-sa="dx" title="Supprimer ce brouillon" aria-label="Supprimer">✕</button></span></div><div class="sncD">' + sncDesc(x) + '</div></div>';
+}
+function sncDraftClean(){            // un brouillon devenu une séance enregistrée (mêmes exercices, cases et %) : enlevé
+  const L = sncList(), D = sncDrafts(), K = new Set(L.map(x => sncKey(x.P))), n = D.length;
+  SNC_DR = D.filter(x => !K.has(sncKey(x.P))); if (SNC_DR.length !== n) sncSave();
+}
+function sncUI(){
+  const box = $('sncList'); if (!box || SNC_REN || IPD) return;          // pendant un renommage ou un glissement : rien n'est refait
+  const L = sncList(); sncDraftClean(); const D = sncDrafts();
+  box.innerHTML = L.length ? L.map(sncRow).join('') : '<p class="sncEmpty">Aucune séance pour l\'instant : coche des exercices dans les réglages, puis « Cliquer pour enregistrer… ».</p>';
+  $('sncDrafts').innerHTML = D.length ? D.map(sncDrRow).join('') : '<p class="sncEmpty">Aucun brouillon pour l\'instant.</p>';
+  mathify(box); box.querySelectorAll('.ipbar').forEach(ipBarLabels);
+  $('sncExp').disabled = !L.length;
+  if (SNC_FL){ const r = box.querySelector('.sncFl'); if (r && r.scrollIntoView) r.scrollIntoView({block: 'nearest'}); SNC_FL = null; }
+}
+function sncShow(){ SNC_CF = null; SNC_ED = null; sncMsg(''); sncUI(); }
+function sncOpen(){ $('oSnc').classList.add('open'); sncShow(); }
+function sncDate(){ const d = new Date(), z = x => (x < 10 ? '0' : '') + x; return z(d.getDate()) + '.' + z(d.getMonth() + 1); }
+function sncThemes(P){               // n° 53 (l'enseignant, 11.11.2026 : « pour le titre de la séance, rajoute entre parenthèses les thèmes des exercices qui
+  // s'y trouvent ») : les blocs de ses exercices, dans l'ordre des réglages ; au-delà de 60 caractères, « … »
+  const B = []; objectives(sncState({P}, S)).forEach(o => { if (!B.includes(o.bl)) B.push(o.bl); });
+  let t = ''; for (const b of B){ const n = stripTags(BLOCKS[b].name), u = t ? t + ', ' + n : n; if (u.length > 60){ t += ', …'; break; } t = u; }
+  return t;
+}
+function sncNew(P){                  // une nouvelle séance (titre : la date, puis ses thèmes entre parenthèses), à la fin de la liste ; null si le navigateur refuse
+  const L = sncList(), d = sncDate(), th = sncThemes(P), sx = th ? ' (' + th + ')' : '';
+  let t = 'Séance du ' + d + sx, k = 2; while (L.some(x => x.t === t)) t = 'Séance ' + (k++) + ' du ' + d + sx;
+  const now = Date.now(), se = {id: now.toString(36) + Math.random().toString(36).slice(2, 7), t, c: now, m: now, P};
+  L.push(se); if (!sncSave()){ L.pop(); return null; } return se;
+}
+function sncAdd(){
+  if (!objectives(draft).length){ sncMsg('Coche d\'abord des exercices dans les réglages.'); return; }
+  const w = checkDraft(draft); if (w){ sncMsg(w); return; }
+  const P = sncSnap(draft), same = sncList().find(x => sncSame(x.P, P));
+  if (same){ SNC_FL = same.id; sncMsg('Ces exercices sont déjà enregistrés : « ' + same.t + ' ».'); sncUI(); return; }
+  const se = sncNew(P); if (!se){ sncMsg('Ce navigateur ne permet pas d\'enregistrer.'); return; }
+  SNC_FL = se.id; SNC_ED = SNC_CF = null; sncMsg('Séance enregistrée. Un clic sur son titre pour le renommer.'); sncUI();
+}
+function sncGo(se){                  // ▷ : les réglages de la séance ou du brouillon (exercices cochés), l'écran de départ (comme « Nouvelles questions avec ces réglages »)
+  const st = sncState(se, draft); if (!objectives(st).length){ sncMsg('Coche au moins un exercice de « ' + (se.t || 'ce brouillon') + ' ».'); return; }
+  const w = checkDraft(st); if (w){ sncMsg(w); return; }
+  draft = st; S = clone(st); save(); SNC_ED = SNC_CF = null; sncMsg('');
+  $('setWarn').textContent = ''; $('oSnc').classList.remove('open'); $('oSet').classList.remove('open'); newQuestions();
+}
+function sncLoad(se){                // ✎ « Cocher ses exercices » : dans les réglages (le brouillon), sans lancer
+  const st = sncState(se, draft); SES_KEYS.forEach(k => draft[k] = st[k]); $('setWarn').textContent = '';
+  syncUI(); sncMsg('Exercices de « ' + se.t + ' » cochés dans les réglages : ferme cette fenêtre pour les changer, puis reviens ici et clique sur « Mettre à jour… ».');
+}
+function sncUpd(se){
+  if (!objectives(draft).length){ sncMsg('Coche d\'abord des exercices dans les réglages.'); return; }
+  const w = checkDraft(draft); if (w){ sncMsg(w); return; }
+  se.P = sncSnap(draft); delete SNC_TMP[se.id]; se.m = Date.now(); sncSave(); SNC_ED = null; SNC_FL = se.id; sncMsg('Séance « ' + se.t + ' » mise à jour.'); sncUI();
+}
+function sncCheck(se, k, on){        // une case d'une séance : pour cette fois (n° 51)
+  const t = sncTmp(se), off = new Set(t.off); if (on) off.delete(k); else off.add(k);
+  t.off = [...off]; sncTmpEnd(se); SNC_SEL = false; sncMsg(''); sncUI();
+}
+function sncOf(el){ const r = el && el.closest('.sncR[data-sid]'); return r ? sncList().find(x => x.id === r.dataset.sid) || null : null; }
+function sncDrOf(el){ const r = el && el.closest('.sncR[data-did]'); return r ? sncDrafts().find(x => x.id === r.dataset.did) || null : null; }
+function sncBarKeep(D, V){           // la réglette d'une séance (pendant et après le glissement) : pour cette fois (n° 51)
+  const se = sncOf(D.bar); if (!se) return; const W = sncView(se);
+  if (W.on.length !== V.length) return;
+  shWrite(W.full, W.on, V); const ks = new Set(W.O.map(shK)), sh = {};
+  Object.keys(W.full.share || {}).sort().forEach(k => { const v = W.full.share[k]; if (ks.has(k) && shHas(v)) sh[k] = Math.round(v * 1e4) / 1e4; });
+  Object.entries(sncObj(se.P.sh)).forEach(([k, v]) => { if (!(k in sh) && !ks.has(SNC_AL(k.replace(/^~/, '')))) sh[k] = v; });   // exercices inconnus : gardés
+  sncTmp(se).sh = sh;
+}
+function sncBarAfter(D, live){       // les % des lignes suivent la réglette ; au relâchement, le bouton « Enregistrer les modifications… »
+  const se = sncOf(D.bar); if (!se) return; const W = sncView(se), r = D.bar.closest('.sncR');
+  r.querySelectorAll('.sncP[data-sk]').forEach(p => { const k = p.dataset.sk; if (k in W.N) p.textContent = W.N[k] + NBS + '%'; });
+  if (!live){ sncTmpEnd(se); sncUI(); }
+}
+function sncDraftNote(){             // n° 51 : 1re question jouée après de nouveaux réglages → brouillon (sauf une séance enregistrée telle quelle)
+  SNC_PEND = false; if (STU || !objectives(S).length) return;
+  const P = sncSnap(S), k = sncKey(P); if (sncList().some(x => sncKey(x.P) === k)) return;
+  const D = sncDrafts(), i = D.findIndex(x => sncKey(x.P) === k), now = Date.now();
+  if (i >= 0){ const x = D.splice(i, 1)[0]; x.m = now; x.P = P; D.unshift(x); }
+  else D.unshift({id: 'b' + now.toString(36) + Math.random().toString(36).slice(2, 6), t: '', c: now, m: now, P});
+  if (D.length > SNC_DRMAX) D.length = SNC_DRMAX;
+  sncSave(); if ($('oSnc').classList.contains('open')) sncUI();
+}
+function sncRen(r, se){              // clic sur le titre : le renommer (Entrée ou clic ailleurs garde, Échap annule)
+  const t = r.querySelector('.sncT'); if (!t) return;
+  const inp = document.createElement('input'); inp.type = 'text'; inp.className = 'sncTi'; inp.value = se.t; inp.maxLength = 80;
+  inp.setAttribute('aria-label', 'Titre de la séance'); inp.spellcheck = false;
+  SNC_REN = se.id; t.replaceWith(inp); inp.focus(); inp.select();
+  let done = false;
+  const end = (keep, blur) => { if (done) return; done = true; SNC_REN = null; if (blur) SNC_RT = Date.now(); const v = inp.value.replace(/\s+/g, ' ').trim();
+    if (keep && v && v !== se.t){ se.t = v; se.m = Date.now(); sncSave(); } sncUI(); };
+  inp.addEventListener('keydown', e => { e.stopPropagation();           // pas les touches des fenêtres (Entrée, Échap, R, F)
+    if (e.key === 'Enter'){ e.preventDefault(); if (!e.repeat) end(true); } else if (e.key === 'Escape'){ e.preventDefault(); end(false); } });
+  inp.addEventListener('blur', () => end(true, true));                  // fini par un clic ailleurs : ce clic ne fait rien d'autre
+  ['click', 'change', 'input'].forEach(ev => inp.addEventListener(ev, e => e.stopPropagation()));
+}
+function sncExport(){                // les séances enregistrées (pas les changements pour cette fois, pas les brouillons)
+  const L = sncList(); if (!L.length) return;
+  const txt = 'Questions pour des champions : séances (à importer avec le bouton « Séances personnalisées » des réglages)\n' + JSON.stringify({qpc: 'seances', v: 1, list: L}) + '\n';
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], {type: 'text/plain;charset=utf-8'})); a.download = 'Séances QPC.txt';
+  document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+  sncMsg(L.length + (L.length > 1 ? ' séances exportées' : ' séance exportée') + ' dans « Séances QPC.txt » (dossier Téléchargements).');
+}
+function sncImport(txt){
+  let o = null; try { const i = String(txt).indexOf('{'); if (i >= 0) o = JSON.parse(String(txt).slice(i)); } catch (e) {}
+  const list = o && o.qpc === 'seances' && Array.isArray(o.list) ? o.list.filter(sncOk) : null;
+  if (!list || !list.length){ sncMsg('Ce fichier ne contient pas de séances.'); return; }
+  const L = sncList(); let add = 0, upd = 0, old = 0;
+  list.forEach(x => { const P = x.P, c = Number(x.c) || Date.now();
+    const se = {id: String(x.id).slice(0, 40), t: String(x.t || 'Séance').replace(/\s+/g, ' ').trim().slice(0, 80) || 'Séance', c, m: Number(x.m) || c,
+      P: {it: P.it.map(String), blk: P.blk.map(String), num: sncObj(P.num), opt: sncObj(P.opt), sh: sncObj(P.sh), off: Array.isArray(P.off) ? P.off.map(String) : []}};
+    const i = L.findIndex(y => y.id === se.id);
+    if (i < 0){ L.push(se); add++; } else if (se.m > (Number(L[i].m) || 0)){ L[i] = se; delete SNC_TMP[se.id]; upd++; } else old++; });
+  if (!sncSave()){ sncMsg('Ce navigateur ne permet pas d\'enregistrer.'); return; }
+  const pl = (n, s, p) => n + ' ' + (n > 1 ? p : s);
+  sncMsg('Importé : ' + [add ? pl(add, 'nouvelle séance', 'nouvelles séances') : '', upd ? pl(upd, 'séance mise à jour', 'séances mises à jour') : '',
+    old ? pl(old, 'déjà là', 'déjà là') : ''].filter(Boolean).join(', ') + '.');
+  SNC_ED = SNC_CF = null; sncUI();
+}
+function sncFile(f){ if (!f) return; const rd = new FileReader(); rd.onload = () => sncImport(rd.result); rd.onerror = () => sncMsg('Impossible de lire ce fichier.'); rd.readAsText(f); }
+$('bSnc').onclick = e => { e.currentTarget.blur(); sncOpen(); };
+$('sncAdd').onclick = () => sncAdd();
+$('sncExp').onclick = () => sncExport();
+$('sncImp').onclick = () => $('sncFile').click();
+$('sncFile').addEventListener('change', e => { e.stopPropagation(); const f = e.target.files && e.target.files[0]; sncFile(f); e.target.value = ''; });
+// n° 53 (l'enseignant, 11.11.2026 : « il faut qu'on puisse cliquer n'importe où dans la séance (pas seulement le bouton modifier) pour mettre en
+// évidence la séance ») : un appui n'importe où dans une séance (cases et réglette comprises, sauf ✎ qui garde son va-et-vient) la met en évidence,
+// comme ✎ (fond orange clair, « Cocher ses exercices » et « Mettre à jour… ») ; tout de suite par les classes (sans refaire la liste : un glissement
+// de la réglette peut commencer), les boutons au clic ou au relâchement de la réglette ; une autre séance appuyée la remplace.
+$('sncList').addEventListener('pointerdown', e => {
+  if (SNC_REN || (e.button || 0) > 0) return; const r = e.target.closest('.sncR[data-sid]'); if (!r || e.target.closest('[data-sa="ed"]')) return;
+  if (SNC_ED === r.dataset.sid) return; SNC_ED = r.dataset.sid; SNC_SEL = true;
+  document.querySelectorAll('#sncList .sncR').forEach(x => x.classList.toggle('sncEdOn', x === r));
+}, true);
+$('sncList').addEventListener('click', e => {
+  if (SNC_REN || Date.now() - SNC_RT < 400) return;
+  const a = e.target.closest('[data-sa]'); if (!a){ if (SNC_SEL && !IPD && !e.target.closest('label, input')){ SNC_SEL = false; sncUI(); } return; }
+  SNC_SEL = false;
+  const se = sncOf(a); if (!se) return; const id = se.id, k = a.dataset.sa;
+  if (k === 'go') return sncGo(se);
+  if (k === 'ren') return sncRen(a.closest('.sncR'), se);
+  if (k === 'ed'){ SNC_ED = SNC_ED === id ? null : id; SNC_CF = null; sncMsg(''); return sncUI(); }
+  if (k === 'x'){ SNC_CF = SNC_CF === id ? null : id; sncMsg(''); return sncUI(); }
+  if (k === 'keep'){ SNC_CF = null; return sncUI(); }
+  if (k === 'del'){ SNC = sncList().filter(x => x.id !== id); delete SNC_TMP[id]; SNC_CF = null; sncSave(); sncMsg('Séance « ' + se.t + ' » supprimée.'); return sncUI(); }
+  if (k === 'load') return sncLoad(se);
+  if (k === 'upd') return sncUpd(se);
+  if (k === 'keepmod'){ se.P = clone(sncEff(se)); delete SNC_TMP[id]; se.m = Date.now(); sncSave(); SNC_FL = id; sncMsg('Modifications de « ' + se.t + ' » enregistrées pour les prochaines fois.'); return sncUI(); }
+  if (k === 'undo'){ delete SNC_TMP[id]; sncMsg(''); return sncUI(); }
+});
+$('sncDrafts').addEventListener('click', e => {
+  const a = e.target.closest('[data-sa]'); if (!a) return;
+  const x = sncDrOf(a); if (!x) return; const k = a.dataset.sa;
+  if (k === 'dgo') return sncGo(x);
+  if (k === 'dx'){ SNC_DR = sncDrafts().filter(y => y !== x); sncSave(); sncMsg(''); return sncUI(); }
+  if (k === 'dsave'){ const same = sncList().find(y => sncSame(y.P, x.P));
+    if (same){ SNC_FL = same.id; sncMsg('Ces exercices sont déjà enregistrés : « ' + same.t + ' ».'); return sncUI(); }
+    const se = sncNew(clone(x.P)); if (!se){ sncMsg('Ce navigateur ne permet pas d\'enregistrer.'); return; }
+    SNC_DR = sncDrafts().filter(y => y !== x); sncSave(); SNC_FL = se.id; sncMsg('Brouillon enregistré comme « ' + se.t + ' ». Un clic sur son titre pour le renommer.'); sncUI(); }
+});
+$('sncList').addEventListener('change', e => { const x = e.target; if (!x.dataset || !x.dataset.sx) return; e.stopPropagation(); const se = sncOf(x); if (se) sncCheck(se, x.dataset.sx, x.checked); });
+['pointerdown', 'pointermove', 'pointerup', 'pointercancel'].forEach((ev, i) => $('sncList').addEventListener(ev, [ipBarDown, ipBarPMove, ipBarEnd, ipBarEnd][i]));   // réglettes
+window.addEventListener('resize', () => { if ($('oSnc').classList.contains('open') && !IPD) $('sncList').querySelectorAll('.ipbar').forEach(ipBarLabels); });
+['dragenter', 'dragover'].forEach(ev => $('sncPane').addEventListener(ev, e => {     // glisser le fichier dans la fenêtre
+  if (!e.dataTransfer || ![...(e.dataTransfer.types || [])].includes('Files')) return; e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; $('sncPane').classList.add('sncDrop'); }));
+$('sncPane').addEventListener('dragleave', e => { if (!$('sncPane').contains(e.relatedTarget)) $('sncPane').classList.remove('sncDrop'); });
+$('sncPane').addEventListener('drop', e => { $('sncPane').classList.remove('sncDrop'); const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if (!f) return; e.preventDefault(); sncFile(f); });
 
 buildSettingsUI();
 applyLook();

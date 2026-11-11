@@ -12821,6 +12821,11 @@ function ipBarAfter(D, live){        // après (ou pendant) un glissement : le l
      regardée après un essai faux. Sans essai, pas de marque (l'enseignant qui montre seulement les réponses ne voit rien changer).
    ===================================================================== */
 var INP = null;                                                    // la question dont la case est ouverte (var : lue par render dès le chargement)
+// n° 48 (l'enseignant, 11.11.2026 : « (sur tél) quand on a cliqué sur la croix pour enlever le clavier, et qu'on va à la prochaine question, ne
+// remets pas le clavier. On peut cliquer sur répondre pour faire ça. ») : INP_OFF = la case a été fermée exprès (✕, Échap, Espace) ; tant qu'il est
+// vrai, elle ne s'ouvre plus d'elle-même sur les questions suivantes (mode élève, écran tactile) ; ouvrir la case (« Répondre », « ? », Espace) le
+// remet à faux. Pas pour une case fermée par un clic à côté, un changement de question, Page préc. / suiv.
+var INP_OFF = false;
 const NBS = '\u00a0';
 const hEsc = t => String(t).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'})[c]);
 // ---------- nombres rationnels exacts [numérateur, dénominateur > 0], irréductibles ----------
@@ -13160,7 +13165,7 @@ function inpCan(){                                                    // une cas
 // qui est tapé, « n/d ») se refait après chaque frappe et sert au jugement.
 const inpNew = () => ({b: '', n: '', d: null, f: 'n', c: 0, tries: 0});
 const inpB = I => { I.b = (I.n || '') + (I.d !== null && I.d !== undefined ? '/' + I.d : ''); };
-function inpOpen(){ if (!inpCan()) return; const p = inpCur(); p.inp = p.inp || inpNew(); INP = p; render(); }
+function inpOpen(){ if (!inpCan()) return; const p = inpCur(); p.inp = p.inp || inpNew(); INP = p; INP_OFF = false; render(); }
 function inpClose(){ if (!INP) return; INP = null; render(); }
 function inpEdit(I, sp, c){                                           // une frappe dans la case (au curseur)
   const P = I.f === 'd' && I.d !== null ? 'd' : 'n'; let s = I[P] || '', k = Math.max(0, Math.min(I.c, s.length));
@@ -13204,7 +13209,7 @@ function inpEdit(I, sp, c){                                           // une fra
 function inpType(c){
   const p = INP; if (!p) return; const sp = inpSpec(p); if (!sp) return; const I = p.inp;
   if (c === 'ok') return inpCheck();
-  if (c === 'esc') return inpClose();
+  if (c === 'esc'){ INP_OFF = true; return inpClose(); }             // n° 48 : la croix du clavier
   if (sp.t === 'ch'){ if (sp.opts.includes(c)){ I.b = c; inpCheck(); } return; }
   if (isLin(sp)){ linInit(I, sp); linEdit(I, sp, c); I.b = I.s; render(); return; }   // n° 45
   if (I.n === undefined){ I.n = I.b || ''; I.d = null; I.f = 'n'; I.c = I.n.length; }   // case d'une version d'avant (sécurité)
@@ -13229,7 +13234,7 @@ function inpSync(){                                                   // à chaq
   if (INP && INP !== p) INP = null;
   if (p && (p.shown.ans || p.shown.det)){ if (INP === p) INP = null;
     if (!p.mk && p.inp && (p.inp.tries || (p.inp.steps && p.inp.steps.length) || p.inp.after || p.inp.two)) p.mk = p.inp.last === 'almost' ? 'mid' : 'ko'; }
-  if ((STU || inpTouch()) && p && !INP && !p.inp && inpCan()){ p.inp = inpNew(); INP = p; }   // mode élève et écran tactile : la case s'ouvre d'elle-même (une fois)
+  if ((STU || inpTouch()) && p && !INP && !p.inp && !INP_OFF && inpCan()){ p.inp = inpNew(); INP = p; }   // mode élève et écran tactile : la case s'ouvre d'elle-même (une fois)
   document.body.classList.toggle('inpok', !!(p && !p.shown.ans && !p.shown.det && inpSpec(p)));
   kbDraw();
 }
@@ -13262,7 +13267,7 @@ function inpKeyDown(e){                                               // touches
   if (/^Page(Up|Down)$/.test(k) || (sp.t === 'ch' && /^Arrow(Left|Right)$/.test(k))){ INP = null; return false; }
   if (/^(Shift|CapsLock|NumLock|Dead|Alt|AltGraph|Control|Meta|Tab|F\d+)$/.test(k)) return k !== 'Tab' && !/^F\d+$/.test(k);
   e.preventDefault(); inpNoFocus(); INP_SWALLOW = true;
-  if (k === 'Escape' || k === ' ') inpClose();   // n° 41 : Espace referme aussi la case (l'enseignant : « c'est ce que j'aimerais »)
+  if (k === 'Escape' || k === ' '){ INP_OFF = true; inpClose(); }   // n° 48 : fermée exprès ; n° 41 : Espace referme aussi la case (l'enseignant : « c'est ce que j'aimerais »)
   else if (k === 'Enter'){ if (!e.repeat) inpCheck(); }
   else { const c = inpChar(e, sp); if (c) inpType(c); }
   return true;
@@ -13380,7 +13385,7 @@ document.addEventListener('click', e => {
 }, true);
 $('main').addEventListener('click', e => {                           // clic sur « ? » ou dans la case : ouvrir la case, curseur à l'endroit du clic
   const q = e.target.closest('.pane .qbox, .pane .qin'); if (!q) return;
-  if (!INP){ if (!inpCan()) return; const p = inpCur(); p.inp = p.inp || inpNew(); INP = p; }
+  if (!INP){ if (!inpCan()) return; const p = inpCur(); p.inp = p.inp || inpNew(); INP = p; INP_OFF = false; }
   inpClick(e, q); render();
 });
 

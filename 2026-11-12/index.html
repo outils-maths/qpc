@@ -381,10 +381,10 @@ body.tall .sbox{height:96%}                 /* fenêtre en hauteur (écran parta
 .bb .opts{gap:.05em 1.1em}
 .bb .opts label{padding:0}     /* lignes serrées : Fonctions et algèbre sans défilement en 1366 × 768 (24.10.2026, 6e conversation) */
 .bb .opts + .opts{margin-top:.06em}
-.blk.off .bb{opacity:.5}
+.blk.off .bb{opacity:.65}     /* n° 66 (l'enseignant, 12.11.2026 : « rends la transparence un peu moins transparente dans les blocs ») : bloc décoché, avant .5 */
 .blk.noit .bn input{visibility:hidden}     /* aucun exercice coché : coche du titre invisible, place gardée (08.11.2026) */
 .blk.noit .bn{cursor:default}
-.blk.noit .nd,.blk.nond .nd{opacity:.5}     /* aucun exercice choisi : décimaux, relatifs, fractions grisés (08.11.2026) ; nond : Priorités des opérations décoché sans case (coche du titre visible, n° 29) */
+.blk.noit .nd,.blk.nond .nd{opacity:.65}     /* aucun exercice choisi : décimaux, relatifs, fractions grisés (08.11.2026) ; nond : Priorités des opérations décoché sans case (coche du titre visible, n° 29) */
 .tp input[type=checkbox],.tp input[type=radio]{accent-color:var(--tc, var(--accent))}
 .opts.key,.opts.key .lab2{font-weight:700;color:var(--tk)}
 .searching .tp{display:block}
@@ -1132,13 +1132,10 @@ body.inpok .pane .qbox{cursor:text}
 @media (max-width:1400px){ #bSnc .lbx3{display:none} }   /* bas des réglages sur une ligne (1280 × 720, 960 × 1080) : « Séances » */
 @media (max-width:1100px) and (min-width:701px){ #oSet .boxfoot{gap:.4em;padding-left:.6em;padding-right:.6em} #oSet .boxfoot .btn{padding-left:.55em;padding-right:.55em} #bSnc .sncPlB{display:none} #setWarn:empty{display:none} }
 @media (max-width:700px){ #bLink .lbx{display:none} }    /* téléphone : « Séances » et « Lien/impression » sur la même ligne */
-/* n° 54 : boutons de choix (géométrie) : numéro de la touche à l'ordinateur, libellés longs ; ° collé au nombre */
-.kk.kch .knb{display:inline-block;font-size:.5em;font-weight:700;color:var(--muted);margin-right:.55em;vertical-align:.45em}
+/* n° 54 : boutons de choix (géométrie) : libellés longs ; ° collé au nombre (n° 65 : plus de numéro de touche, .knb) */
 .kk.kch.kopt{font-size:1.05em;min-width:0;height:auto;min-height:2.3em;padding:.3em .8em;white-space:normal;line-height:1.2;max-width:15em}
 .kk.kch .kl{display:inline}
-.kk.kch.kopt .knb{font-size:.68em;vertical-align:.2em}
 .eq .un.udeg{margin-left:-.3em}
-@media (hover:none) and (pointer:coarse){ .kk.kch .knb{display:none} }
 @media (max-width:700px) and (orientation:portrait){ .kbk.kbch.kbopt{display:grid;grid-template-columns:1fr 1fr;gap:.35em;width:100%} .kbk.kbch.kbopt .kk{max-width:none;width:100%;font-size:.98em} }
 /* n° 55 : mode enseignant à l'ordinateur : boutons 1★ … 4★ en bas à droite, comme le mode élève (couleur : lvbMark) */
 @media (min-width:701px) and (min-height:501px){
@@ -1156,11 +1153,10 @@ body.two:not(.stu) #bOneQ{display:inline-block}
 body.two:not(.stu) header.hc1 .hbtn{padding-left:.5em;padding-right:.5em}   /* écran partagé : l'en-tête reste sur une ligne avec ce bouton en plus */
 /* n° 58 (l'enseignant, 11.11.2026 : « quand tu es en mode bloc réponse il faut enlever l'affichage des touches flèche gauche et droite sur
    les boutons du bas (vu qu'ils ne marchent pas) ») : case ouverte (body.kbon), pas de repère des touches qui ne marchent pas pendant la saisie :
-   ← → (sauf question à choix, body.inpch : elles y changent de question), et de même Entrée (elle vérifie), 7, 9, 8 ; n° 59 : M, J, R, F
+   Entrée (elle vérifie), 7, 9, 8 (n° 64 : ← → changent de question pendant la saisie, leurs repères restent sur ◀ ▶) ; n° 59 : M, J, R, F
    seulement quand la case se sert de la lettre (sinon elles gardent leur rôle : body.kbf-m… posés par kbDraw) */
 body.kbon #bOneQ .kh, body.kbon:not(.kbf-m) #bGrp .kh, body.kbon:not(.kbf-j) #bAll .kh, body.kbon:not(.kbf-r) #bSet .kh, body.kbon:not(.kbf-f) #bFull .kh,
-body.kbon #bSL .kh, body.kbon #bSR .kh, body.kbon #bAns .kh, body.kbon #bDet .kh,
-body.kbon:not(.inpch) #bPrev .kh, body.kbon:not(.inpch) #bNext .kh{display:none}
+body.kbon #bSL .kh, body.kbon #bSR .kh, body.kbon #bAns .kh, body.kbon #bDet .kh{display:none}
 /* n° 59 (l'enseignant, 11.11.2026 : « tu peux marquer que pour le bouton vérifier on peut utiliser la touche entrée aussi ») : repère « Entrée »
    sur le coin de « Vérifier » du clavier à l'écran, comme sur les boutons du bas (caché sur téléphone et écran tactile, comme tous les .kh) ;
    taille des boutons du bas (.6em ramené à la police des touches, 1,25 em ; « .kk.kok span » le mettait à .84em) ; moins haut que les autres
@@ -1286,7 +1282,7 @@ body.kbon:not(.inpch) #bPrev .kh, body.kbon:not(.inpch) #bNext .kh{display:none}
             <span><kbd>→</kbd> suivante · <kbd>←</kbd> précédente · <kbd>R</kbd> réglages · <kbd>F</kbd> plein écran · <kbd>J</kbd> toutes les questions</span>
             <span><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> question à <span class="stars">★</span> … <span class="stars">★★★★</span> · <kbd>7</kbd> <kbd>9</kbd> réponse seulement <span class="kw">à gauche / à droite</span><span class="kt">en haut / en bas</span></span>
             <span><kbd>Espace</kbd> (ou clic sur le « ? ») ouvrir la case, <kbd>Espace</kbd> encore la fermer · <kbd>Entrée</kbd> vérifier · <kbd>Échap</kbd> (ou clic à côté) fermer la case</span>
-            <span>Dans la case : <kbd>←</kbd> <kbd>→</kbd> le curseur · <kbd>↑</kbd> <kbd>↓</kbd> en haut, en bas · <kbd>/</kbd> fraction · <kbd>P</kbd> période · <kbd>*</kbd> ∙</span>
+            <span>Dans la case : <kbd>Maj</kbd> <kbd>←</kbd> <kbd>→</kbd> le curseur · <kbd>↑</kbd> <kbd>↓</kbd> en haut, en bas · <kbd>/</kbd> fraction · <kbd>P</kbd> période · <kbd>*</kbd> ∙</span>
           </div>
 
           <div class="lab">Fond</div>
@@ -13402,7 +13398,9 @@ function inpSync(){                                                   // à chaq
 }
 function inpChar(e, sp){                                              // la touche du clavier de l'ordinateur → un caractère de la case
   const k = e.key;
-  if (sp.t === 'ch' && sp.nk){ const d = /^[1-9]$/.test(k) ? k : (/^(?:Digit|Numpad)([1-9])$/.exec(e.code) || [])[1]; return d ? (sp.opts[Number(d) - 1] || null) : null; }   // n° 54
+  // n° 65 (l'enseignant, 12.11.2026, sur une capture des boutons « 1 le milieu », « 2 le sommet »… : « enlève les raccourcis sur les réponses
+  // proposées ») : plus de numéro sur les boutons ni de touches 1 à 9 ; on choisit au clic ou au doigt ; les autres touches ne font toujours rien (n° 66 : sauf 1 à 4, dans inpKeyDown)
+  if (sp.t === 'ch' && sp.nk) return null;
   if (/^[0-9]$/.test(k)) return k;
   if (sp.t === 'ch'){ const u = k.length === 1 ? k.toUpperCase() : ''; return sp.opts.includes(k) ? k : sp.opts.includes(u) ? u : null; }   // n° 60 : plus de O, N pour oui, non (ni V, F pour vrai, faux) ; les lettres des points restent
   const lk = linChar(k, sp); if (lk) return lk;                       // n° 45
@@ -13435,8 +13433,20 @@ function inpKeyDown(e){                                               // touches
   if (!INP || e.altKey || e.ctrlKey || e.metaKey) return false;
   if (INP !== inpCur()){ INP = null; return false; }
   const k = e.key, sp = inpSpec(INP);
-  // Page préc. / suiv. (et ← → d'une question à choix) : la case se referme, la touche change de question ; ailleurs, ← → ↑ ↓ déplacent le curseur (n° 40)
-  if (/^Page(Up|Down)$/.test(k) || (sp.t === 'ch' && /^Arrow(Left|Right)$/.test(k))){ INP = null; return false; }
+  // n° 64 (l'enseignant, 12.11.2026 : « je voudrais que quand le bloc réponse est affiché, les flèches gauche et droite changent la question comme
+  // si le bloc n'était pas affiché » ; à la n° 57, il avait gardé ← → pour le curseur) : ← → comme Page préc. / suiv. : la case se referme, la touche
+  // change de question (la case revient sur la nouvelle question : KB_ON) ; Maj + ← → déplacent le curseur (comme ← → avant ; question à choix :
+  // Maj + ← → changent aussi de question) ; ↑ ↓, Début, Fin inchangées. Pas de question avant : rien ne se passe, la case reste ouverte (avant,
+  // Page préc. sur la 1re question la laissait affichée sans qu'on puisse y taper).
+  const navK = /^Page(Up|Down)$/.test(k) || (/^Arrow(Left|Right)$/.test(k) && (!e.shiftKey || sp.t === 'ch'));
+  if (navK){ if (/^(PageUp|ArrowLeft)$/.test(k) && !PICK && cur <= 0){ e.preventDefault(); return true; } INP = null; return false; }
+  // n° 66 (l'enseignant, 12.11.2026, après la n° 65 : « oui 1 à 4 peut aller à une question de l'étoile demandée sur ces questions ») : question
+  // à choix (boutons), touches 1 à 4 qui ne sont pas un des choix : comme sans la case (forceLevel ; mode élève : stuLevel, seulement les étoiles
+  // permises) ; la case revient sur la nouvelle question (KB_ON). Une touche sans effet (élève : étoiles cachées ou pas permises) ne ferme rien.
+  if (sp.t === 'ch'){ const d = /^[1-4]$/.test(k) ? k : (/^(?:Digit|Numpad)([1-4])$/.exec(e.code) || [])[1];
+    if (d && !sp.opts.includes(d)){ e.preventDefault(); const lv = Number(d);
+      if (!STU){ INP = null; forceLevel(lv); } else if (!STU.rnd && !STU.start && lv <= stuMax()){ INP = null; stuLevel(lv); }
+      return true; } }
   if (inpFree(k, sp)){ if (/^m$/i.test(k)){ inpClose(); if (!inpTouch()) KB_ON = false; } return false; }   // n° 59 : M, J, R, F gardent leur rôle (M : comme un clic sur le bouton)
   if (/^(Shift|CapsLock|NumLock|Dead|Alt|AltGraph|Control|Meta|Tab|F\d+)$/.test(k)) return k !== 'Tab' && !/^F\d+$/.test(k);
   e.preventDefault(); inpNoFocus(); INP_SWALLOW = true;
@@ -13505,7 +13515,7 @@ function kbHTML(sp){
     (ti ? ' title="' + ti + '"' : '') + '>' + lab + '</button>';
   let h;
   const chL = o => sp.lab && sp.lab[o] ? sp.lab[o] : o === '<' ? '&lt;' : o === '>' ? '&gt;' : hEsc(o), chLg = sp.t === 'ch' && !!sp.g47 && sp.opts.some(o => stripTags(chL(o)).length > 13);   // n° 54
-  if (sp.t === 'ch') h = sp.opts.map((o, i) => key(o, (sp.nk ? '<span class="knb">' + (i + 1) + '</span>' : '') + (sp.g47 ? '<span class="kl">' + chL(o) + '</span>' : chL(o)), 'kch' + (chLg ? ' kopt' : o.length > 1 ? ' kwd' : ''), '', sp.nk && i < 9 ? 'Touche ' + (i + 1) : '')).join('');
+  if (sp.t === 'ch') h = sp.opts.map((o, i) => key(o, (sp.g47 ? '<span class="kl">' + chL(o) + '</span>' : chL(o)), 'kch' + (chLg ? ' kopt' : o.length > 1 ? ' kwd' : ''), '', '')).join('');   // n° 65 : plus de numéro (.knb) ni de « Touche n »
   else {
     // ordinateur : une ligne (1 … 9, 0, puis les touches en plus) ; téléphone en hauteur : pavé 7 8 9 / 4 5 6 / 1 2 3 / 0 (CSS, --c et --r)
     const D = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'], at = {1: [1, 3], 2: [2, 3], 3: [3, 3], 4: [1, 2], 5: [2, 2], 6: [3, 2], 7: [1, 1], 8: [2, 1], 9: [3, 1], 0: [2, 4]};
@@ -13522,7 +13532,6 @@ function kbHTML(sp){
 function kbDraw(){
   const kb = $('kb'), sp = INP && inpSpec(INP);
   repBtn();
-  document.body.classList.toggle('inpch', !!(sp && sp.t === 'ch'));   // n° 58 : question à choix (← → y changent de question)
   ['m', 'j', 'r', 'f'].forEach(l => document.body.classList.toggle('kbf-' + l, !!(sp && inpFree(l, sp))));   // n° 59 : lettre libre, repère gardé
   if (!sp){ if (!kb.hidden){ kb.hidden = true; kb.innerHTML = ''; kb._sig = ''; } document.body.classList.remove('kbon'); return; }
   const sig = JSON.stringify([sp.t, sp.t === 'ch' ? [sp.opts, sp.lab || null] : sp.kb]);   // n° 54 : les libellés changent d'une question à l'autre
@@ -14492,7 +14501,7 @@ function inpAns(p){                                                    // la ré
    coordonnées : une case par coordonnée ; oui / non, vrai / faux : deux boutons ; listes plus courtes par nature (cercle circonscrit ou
    inscrit, côtés opposés ou consécutifs, côté ou diagonale, d₁ d₂ d₃, côtés et sommets d'un triangle, droites à tracer pour un cercle) :
    seulement leurs choix ; un nom plus général mais juste (isocèle pour un équilatéral, parallélogramme pour un rectangle, prisme droit
-   pour un pavé droit, une seule des deux égalités du codage) : « presque » ; à l'ordinateur, touches 1 à 9 pour les boutons numérotés.
+   pour un pavé droit, une seule des deux égalités du codage) : « presque » ; n° 65 : plus de touches 1 à 9 (clic ou doigt).
    Les choix se mélangent d'après la question (g47rng : pas de Math.random, le tirage des questions suivantes ne change pas).
    ===================================================================== */
 const G47_SUBS = new Set(TABS.find(t => t.id === 'es').blocks.flatMap(b => b.items.map(i => i[0])));
@@ -14516,7 +14525,7 @@ function g47rng(s){                                                    // nombre
 const g47Seed = p => [p.sub, p.key, stripTags(String(p.a || '')), stripTags(String(p.con || '')), p.line ? stripTags(p.line(false)) : ''].join('|');
 function g47Mix(p, L){ const R = g47rng(g47Seed(p)), a = L.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(R() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 const g47Txt = s => hEsc(s).replace(/∥/g, PLL).replace(/ (=|⊥|;) /g, ' $1 ');
-// un choix : opts (valeurs), lab (libellés HTML), alm (« presque »), R (message d'une erreur) ; nk : boutons numérotés (touches 1 à 9)
+// un choix : opts (valeurs), lab (libellés HTML), alm (« presque »), R (message d'une erreur) ; nk : choix au clic seulement (n° 65 : plus de numéros ni de touches 1 à 9)
 function g47Ch(v, opts, o){ return Object.assign({t: 'ch', v: String(v), opts: opts.map(String), nk: true, g47: true}, o || {}); }
 function g47Num(p, v, R, o){
   if (!v) return null;

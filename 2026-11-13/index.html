@@ -1171,6 +1171,16 @@ body.kbon #bSL .kh, body.kbon #bSR .kh, body.kbon #bAns .kh, body.kbon #bDet .kh
 .stuW svg{flex:none;width:1.35em;height:1.35em;margin-top:.05em}
 .con.cw{white-space:normal;max-width:90vw;text-wrap:balance}   /* n° 68 : problèmes de Pythagore, la consigne va à la ligne plutôt que de tout rapetisser */
 body.two:not(.tall) .con.cw{max-width:44vw}
+/* n° 70 (l'enseignant, 13.11.2026 : « mettre un peu plus en évidence la coche problèmes » ; maquette C, « mais enlève l'ampoule ») : la case « problèmes » sur une ligne à part, trait pointillé au-dessus, « problèmes » en gras, précision en petit (réglages seulement : la liste des élèves, le lien et la feuille gardent « problèmes ») */
+#oSet .pbrow{flex-basis:100%;box-sizing:border-box;display:flex;flex-wrap:wrap;align-items:center;column-gap:.5em;border-top:1px dashed color-mix(in srgb, var(--tc) 55%, transparent);margin-top:.2em;padding-top:.15em}
+#oSet .pbr{display:none;align-items:center;gap:.4em}
+#oSet .pbrow:has(input[data-it]:checked) .pbr{display:inline-flex}
+#oSet .pbrow.pbone:has(input[data-it]:checked) .pbr{display:none}
+#oSet .pbr input[type=range]{width:5em;margin:0;accent-color:var(--tc);cursor:pointer}
+#oSet .pbr output{min-width:3.2em;font-weight:700;color:var(--tc);font-variant-numeric:tabular-nums}
+@media (max-width:700px){ #oSet .pbr input[type=range]{width:6em} }
+#oSet label.pbx>span:first-of-type{font-weight:700;color:var(--tc)}
+#oSet label.pbx>span:first-of-type::after{content:" (sur les exercices cochés)";font-weight:400;font-size:.82em;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -11602,7 +11612,7 @@ const TABS = [
     {id: 'vol', name: 'Volumes', nd: ['dec'], kw: 'solides cube pave prisme cylindre pyramide cone boule',
       rows: [[null, [['v_cub', 'cube'], ['v_pav', 'pavé droit'], ['v_pri', 'prisme droit'], ['v_cyl', 'cylindre'], ['v_pyr', 'pyramide'], ['v_con', 'cône'], ['v_bou', 'boule']]]]},
     {id: 'at', name: 'Aires totales', nd: ['dec'], kw: 'surface solides cube pave prisme cylindre pyramide sphere boule', rows: [[null, [['at_cub', 'cube'], ['at_pav', 'pavé droit'], ['at_pri', 'prisme droit'], ['at_cyl', 'cylindre'], ['at_pyr', 'pyramide'], ['at_bou', 'sphère']]]]},
-    {id: 'pyt', name: 'Pythagore', nd: ['dec'], kw: 'triangle rectangle hypotenuse reciproque contraposee espace problemes situations', rows: [[null, [['py_calc', 'calculer une longueur'], ['py_rec', 'réciproque'], ['py_con', 'contraposée'], ['py_esp', 'dans l\'espace'], ['py_pb', 'problèmes (sur les exercices cochés)']]]]},
+    {id: 'pyt', name: 'Pythagore', nd: ['dec'], kw: 'triangle rectangle hypotenuse reciproque contraposee espace problemes situations', rows: [[null, [['py_calc', 'calculer une longueur'], ['py_rec', 'réciproque'], ['py_con', 'contraposée'], ['py_esp', 'dans l\'espace'], ['py_pb', 'problèmes', 'pbx']]]]},
     {id: 'tha', name: 'Thalès', nd: ['dec'], kw: 'paralleles reciproque contraposee', rows: [[null, [['th_calc', 'calculer une longueur'], ['th_rec', 'réciproque'], ['th_con', 'contraposée']]]]},
   ]},
   {id: 'es', name: 'Géométrie', ab: 'ES', c: 'blu', blocks: [
@@ -11725,6 +11735,7 @@ function pickObjective(only){                // only : seulement ces objectifs (
   return {bl, id};
 }
 const COMB_IDS = ['pp5', 'rp4'], COMB_SHARE = .5;
+const PB_IDS = ['py_pb'];                     // n° 71 : cases « problèmes (sur les exercices cochés) » (mini réglette, 50 % du bloc par défaut)
 const flagsOf = (bl, s) => { const n = (s || S).num[bl] || {}; return {dec: !!n.dec, rel: !!n.rel || bl === 'rel', fra: !!n.fra}; };
 const THW = {nat: [4, 2, 1, 1], dec: [1, 2, 2, 2], rel: [1, 2, 2, 2], fra: [1, 1, 2, 2]};      // décimaux, relatifs, fractions : plutôt avec plus d'étoiles
 function pickTheme(list, lv, key){ const t = wpick(list, x => THW[x][lv - 1] / (1 + .6 * (TALLY[key + x] || 0))); bump(key + t); return t; }
@@ -12885,11 +12896,15 @@ const shHas = x => typeof x === 'number' && isFinite(x) && x >= 0;
 const ipIsSh = k => k === 'share' || k === 'lsh' || k === 'cls' || k === 'snc';     // n° 50 : réglette d'une séance
 function shRaw(d, O){                // parts brutes des exercices O (sans part : la moyenne des autres ; « combiner » : les autres de son bloc ensemble)
   const s = d.share || {}, kn = O.filter(o => shHas(s[shK(o)])), avg = (kn.length ? kn.reduce((a, o) => a + s[shK(o)], 0) / kn.length : 1) || 1;
-  return O.map(o => shHas(s[shK(o)]) ? s[shK(o)] : o.ing ? 0 : COMB_IDS.includes(o.id) ? avg * Math.max(1, O.filter(x => x.bl === o.bl && x.id !== o.id && !x.ing).length) : avg);
+  const r = O.map(o => shHas(s[shK(o)]) ? s[shK(o)] : o.ing ? 0 : COMB_IDS.includes(o.id) ? avg * Math.max(1, O.filter(x => x.bl === o.bl && x.id !== o.id && !x.ing).length) : avg);
+  // n° 71 (l'enseignant, 13.11.2026 : « Par défaut 50% ») : « problèmes » sans part = autant que les autres exercices de son bloc ensemble
+  O.forEach((o, i) => { if (PB_IDS.includes(o.id) && !shHas(s[shK(o)])){ const t = O.reduce((a, x, j) => a + (j !== i && x.bl === o.bl ? r[j] : 0), 0); if (t > 0) r[i] = t; } });
+  return r;
 }
 function shView(d, O){ const r = shRaw(d, O), t = r.reduce((a, b) => a + b, 0), v = {}; O.forEach((o, i) => v[o.id] = t > 0 ? r[i] * 100 / t : 100 / O.length); return v; }
 function shWrite(d, O, V){ const r = shRaw(d, O), t = r.reduce((a, b) => a + b, 0) || 100; d.share = d.share || {};
-  O.forEach((o, i) => { const x = (V[i] || 0) * t / 100; if (o.ing && !(x > 0)) delete d.share[shK(o)]; else d.share[shK(o)] = x; }); }   // n° 36 : ingrédient à 0 = pas de clé
+  O.forEach((o, i) => { const x = (V[i] || 0) * t / 100; if (o.ing && !(x > 0)) delete d.share[shK(o)]; else d.share[shK(o)] = x; });   // n° 36 : ingrédient à 0 = pas de clé
+  if (d === draft && typeof pbUI === 'function') pbUI(); }   // n° 71 : mini réglettes des problèmes
 function shLR(V, n){                 // n réparti selon V (plus grands restes)
   const t = V.reduce((a, b) => a + b, 0) || 1, ex = V.map(v => v * n / t), c = ex.map(v => Math.floor(v + 1e-9));
   const ord = ex.map((v, i) => [v - c[i], i]).sort((a, b) => b[0] - a[0] || a[1] - b[1]);
@@ -16382,6 +16397,34 @@ function ppbR(p, x, sp){                                                        
   return null;
 }
 
+
+/* ---------- n° 71 (13.11.2026) : mini réglette des problèmes ----------
+   L'enseignant : « mets une mini réglette sur la ligne qui apparait quand on coche problèmes, qui ajuste la part des problèmes. Par défaut
+   50% » ; QCM : 50 % **des questions du bloc** (les autres blocs gardent leur part ; reliée à la fenêtre « Proportions ») ; « de 0 à 100%,
+   juste après "(sur les exercices cochés)", glisser % par % ». La réglette écrit les parts du brouillon (shWrite) : la part des problèmes
+   devient p % de la part du bloc, les autres exercices du bloc gardent leurs proportions entre eux, les autres blocs ne bougent pas. */
+function pbPart(d, id){                // la part (%) des problèmes `id` dans leur bloc, d'après le brouillon d (null : case pas cochée)
+  const O = objectives(d, true), o = O.find(x => x.id === id); if (!o) return null;
+  const v = shView(d, O), B = O.filter(x => x.bl === o.bl), t = B.reduce((a, x) => a + v[x.id], 0);
+  return B.length < 2 ? 100 : t > 0 ? v[id] * 100 / t : 50;
+}
+function pbSet(id, p){                 // la part des problèmes dans leur bloc = p %
+  const O = objectives(draft, true), o = O.find(x => x.id === id); if (!o) return;
+  const v = shView(draft, O), B = O.filter(x => x.bl === o.bl), others = B.filter(x => x.id !== id); if (!others.length) return;
+  const t = B.reduce((a, x) => a + v[x.id], 0), to = others.reduce((a, x) => a + v[x.id], 0), np = t * p / 100;
+  const V = O.map(x => x.id === id ? np : x.bl !== o.bl ? v[x.id] : to > 1e-9 ? v[x.id] * (t - np) / to : (x.ing ? 0 : (t - np) / others.filter(y => !y.ing).length));
+  shWrite(draft, O, V);
+  if (typeof psUI === 'function') psUI();
+}
+function pbUI(){                       // les mini réglettes d'après le brouillon
+  document.querySelectorAll('input[data-pb]').forEach(r => { const id = r.dataset.pb, p = pbPart(draft, id), out = document.querySelector('output[data-pbv="' + id + '"]');
+    if (p === null) return; if (document.activeElement !== r) r.value = Math.round(p); if (out) out.textContent = Math.round(p) + ' %';
+    r.closest('.pbrow').classList.toggle('pbone', p >= 100 && objectives(draft, true).filter(x => x.bl === ITEM_BLOCK[id]).length < 2); });
+}
+document.addEventListener('input', e => { const r = e.target.closest && e.target.closest('input[data-pb]'); if (!r) return;
+  pbSet(r.dataset.pb, Number(r.value)); const out = document.querySelector('output[data-pbv="' + r.dataset.pb + '"]'); if (out) out.textContent = r.value + ' %'; });
+document.addEventListener('change', e => { if (e.target.closest && e.target.closest('input[data-pb]')) pbUI(); });
+
 function newQuestions(){ PICK = false; LASTG = null; seqEnd(); QS = buildQuestions(); cur = 0; SNC_PEND = true; render(); }   // n° 51 : SNC_PEND, brouillon à la 1re question
 function newOrSettings(){ if (objectives(S).length) newQuestions(); else openSet(); }
 
@@ -16422,7 +16465,8 @@ function optHTML(kind){
 // lignes d'un bloc ; deux lignes qui se suivent avec {col: 'L'} puis {col: 'R'} (5e élément) : côte à côte, en colonnes (.c2 ; une seule colonne sur téléphone)
 function rowsHTML(b){
   const row = ([t, its, sub, ex, o]) => '<div class="opts' + (sub ? ' sub' : '') + (o && o.col ? ' colv' : '') + '">' + (t ? '<span class="lab2">' + t + '</span>' : '') + (sub ? '<span class="lab3">' + sub + '</span>' : '') +
-    its.map(([id, lab, cls]) => '<label' + (cls ? ' class="' + cls + '"' : '') + '><input type="checkbox" data-it="' + id + '"> <span>' + lab + '</span>' + vicoHTML(id) + (NOSTAR.has(id) && !b.hint ? '<span class="nost">(sans étoiles)</span>' : '') + '</label>').join('') + (ex || '') + '</div>';
+    its.map(([id, lab, cls]) => { const L = '<label' + (cls ? ' class="' + cls + '"' : '') + '><input type="checkbox" data-it="' + id + '"> <span>' + lab + '</span>' + vicoHTML(id) + (NOSTAR.has(id) && !b.hint ? '<span class="nost">(sans étoiles)</span>' : '') + '</label>';
+      return cls === 'pbx' ? '<div class="pbrow">' + L + '<span class="pbr" title="Part des problèmes dans les questions de ce bloc"><input type="range" min="0" max="100" step="1" value="50" data-pb="' + id + '" aria-label="Part des problèmes dans ce bloc"><output data-pbv="' + id + '">50\u00a0%</output></span></div>' : L; }).join('') + (ex || '') + '</div>';   // n° 71 : mini réglette
   const rs = b.rows || []; let h = '';
   for (let i = 0; i < rs.length; i++){ const o = rs[i][4], n = rs[i + 1] && rs[i + 1][4];
     if (o && o.col === 'L' && n && n.col === 'R'){ h += '<div class="c2">' + row(rs[i]) + row(rs[i + 1]) + '</div>'; i++; } else h += row(rs[i]); }
@@ -16486,6 +16530,7 @@ function syncUI(){
   d.share = d.share || {}; const ks = new Set(objectives(d, true).map(shK)); Object.keys(d.share).forEach(k => { if (!ks.has(k)) delete d.share[k]; });   // décoché : sa part est oubliée (recoché : la part moyenne)
   if ($('oSet').classList.contains('open')) psUI();
   if ($('oSnc').classList.contains('open')) sncUI();                           // n° 49 et 50 : fenêtre « Séances » ouverte
+  if (typeof pbUI === 'function') pbUI();   // n° 71 : mini réglettes des problèmes
 }
 // pourcentages (l'enseignant, 25.10.2026, 6e conversation) : le premier % touché reste bloqué quand on en touche un autre juste après ;
 // seul le troisième compense. Débloqué en retouchant le premier, en changeant d'onglet ou en rouvrant les réglages.
@@ -18056,6 +18101,7 @@ function propUI(){
   const v = shView(draft, O); $('pBar').innerHTML = ipBarHTML('cls', O.map(o => v[o.id]), 0, O.map(shName));
   const bar = $('pBar').querySelector('.ipbar'); ipBarLabels(bar); requestAnimationFrame(() => ipBarLabels(bar));
   propRows();
+  if (typeof pbUI === 'function') pbUI();   // n° 71
 }
 /* n° 37 (10.11.2026) : un cadenas à gauche de chaque jauge (l'enseignant : « il faudrait un petit cadenas pour bloquer le mouvement des curseurs si
    on veut pas que ça bouge ») ; QCM : la grande barre bloquée aussi. Un exercice verrouillé garde son % : les autres jauges, − / + et « Parts

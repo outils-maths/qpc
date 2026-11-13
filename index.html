@@ -1166,6 +1166,11 @@ body.kbon #bSL .kh, body.kbon #bSR .kh, body.kbon #bAns .kh, body.kbon #bDet .kh
 /* n° 62 : saisie, Fonctions et algèbre (radicande vide dans un ensemble de solutions) */
 .s62rq{display:inline-block;min-width:.45em;height:.9em}
 .calc.wrap63{flex-wrap:wrap;justify-content:center;row-gap:.15em}   /* n° 63 */
+/* n° 68 (l'enseignant, 13.11.2026) : message aux élèves sur la page où ils arrivent (« ces questions ne suffisent pas ») */
+.stuW{display:flex;align-items:flex-start;gap:.55em;width:min(100%, 36em);box-sizing:border-box;margin:.4em 0 0;padding:.55em .85em;background:#fff4e6;border:1px solid #f0c48f;border-left:.32em solid #c25b00;border-radius:.6em;color:var(--ink);font-size:.95em;line-height:1.35;text-wrap:pretty}
+.stuW svg{flex:none;width:1.35em;height:1.35em;margin-top:.05em}
+.con.cw{white-space:normal;max-width:90vw;text-wrap:balance}   /* n° 68 : problèmes de Pythagore, la consigne va à la ligne plutôt que de tout rapetisser */
+body.two:not(.tall) .con.cw{max-width:44vw}
 </style>
 </head>
 <body>
@@ -1211,6 +1216,7 @@ body.kbon #bSL .kh, body.kbon #bSR .kh, body.kbon #bAns .kh, body.kbon #bDet .kh
     <p class="stuH">Tu pourras changer les exercices plus tard avec le bouton ☰ en haut.</p>
     <p class="stuQ" id="stuQ"></p>
     <div class="stuB" id="stuB"></div>
+    <p class="stuW" id="stuW"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8 22.6 21H1.4Z" fill="#fde2bf" stroke="#b85c00" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 9v6" stroke="#7a3d00" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="18" r="1.3" fill="#7a3d00"/></svg><span>Réussir ces questions, c'est un bon début, mais ce n'est pas assez pour être prêt : revois aussi ta théorie et tes exercices.</span></p>
   </section>
   <div class="stuM"><p id="stuMsg"></p></div>
 </main>
@@ -6562,7 +6568,7 @@ function trFig(T, det){
   const T = tMake(kind, lv), a = TRN[kind];
   const key = kind + lv + 'f' + T.si;
   const extra = kind === 't_ho' ? DIV('<i>k</i> = ' + (T.k === 1 / 3 ? fracH(1, 3) : fmtNum(T.k)), 'gr') : '';
-  return wordQ({a, r: a, fig: trFig(T, false), con: 'Quelle transformation ?', conBig: true, key, figDet: true, chk: {tr: T},
+  return wordQ({a, r: a, fig: trFig(T, false), con: 'Quelle transformation (le nom le plus précis) ?', conW: true, conBig: true, key, figDet: true, chk: {tr: T},
     det: () => trFig(T, true) + extra});
 }));
 // --- solides : faces, sommets, arêtes ; nom
@@ -6614,7 +6620,7 @@ GL('g_nsol', [1, 2, 3, 4], lv => {
   const avail = Object.keys(SOLN).filter(solOk); if (!avail.length) return null;
   const kind = bagPick('nsol', avail), n = kind === 'pri' ? pick([3, 5, 6, 8]) : kind === 'pyr' ? pick([3, 4, 5, 6]) : kind === 'cube' || kind === 'pav' ? 4 : 0;   // pas de prisme à base carrée (= pavé droit)
   const name = SOLN[kind];
-  return wordQ({a: name, r: name, fig: solidDraw(kind, n), con: 'Quel est ce solide ?', conBig: true, key: 'gn' + kind + n, chk: {nsol: [kind, name, n]},
+  return wordQ({a: name, r: name, fig: solidDraw(kind, n), con: 'Quel est ce solide (le nom le plus précis) ?', conW: true, conBig: true, key: 'gn' + kind + n, chk: {nsol: [kind, name, n]},
     figDet: true, det: () => solidDraw(kind, n, 'faces') + (kind === 'pri' || kind === 'pyr' ? DIV(H('cA', 'base') + ' : ' + BASEN[n], 'gr') : '')});
 });
 // --- repérage dans le plan
@@ -8745,7 +8751,7 @@ function triQ(lv){
   if (lv === 1){ const k = pick(['equ', 'iso', 'iso', 'rec', 'rec', 'ri']), a = TRIK[k], T = tri9(0, 180, 240, triAngs(k));     // figure déformée, à main levée (31.10.2026, 7e conversation)
     const lk = TLOOK[k] && chance(TROMPE_P) ? TLOOK[k] : null, P = tSketch(lk ? tri9(0, 180, 240, triAngs(lk)).P : T.P, {equ: [[0, 1, 2]], iso: [[0, 2]], ri: [[0, 2]], rec: []}[k], k === 'rec' || k === 'ri' ? 0 : -1, !!lk);
     const S = qSkMake(P), Te = lk ? {P: alignTo(T.P, P), ang: T.ang} : T;
-    return geoQ({a, r: a, fig: triKindSkFig(k, N, P, S), con: 'Quelle est la nature de ce triangle ?', conBig: true, key: 'qt' + k, figDet: true, chk: {qtri: {k, a, ang: T.ang, P0: Te.P, Psk: P, sk: true, look: lk}},
+    return geoQ({a, r: a, fig: triKindSkFig(k, N, P, S), con: 'Quelle est la nature de ce triangle (le nom le plus précis) ?', conW: true, conBig: true, key: 'qt' + k, figDet: true, chk: {qtri: {k, a, ang: T.ang, P0: Te.P, Psk: P, sk: true, look: lk}},
       det: () => skPair(triKindSkFig(k, N, P, S, true), triKindFig(k, N, Te, true).svg) + sufLine(k === 'equ' ? 'trois côtés isométriques' : k === 'iso' ? 'deux côtés isométriques' : k === 'rec' ? 'un angle droit' : 'un angle droit et deux côtés isométriques', a)}); }
   if (lv === 2){ const [s, v, why, fk] = pick(TRI_VF), a = v ? 'vrai' : 'faux';
     return phrQ('Vrai ou faux ?', s + ' ', a, '', {key: 'qtv' + s, why, chk: {qtri: {vf: v, a, fk}}, dfig: () => TRI_DET[fk]()}); }
@@ -8759,7 +8765,7 @@ function triQ(lv){
         if (ang[i] === 90) rmC(f, p, U, W, 16, c); else angArc(f, p, U, W, {r: 34, lab: ang[i] + '°', size: 22, color: c}); });
       Q.forEach((p, i) => vtx(f, p, N[i], Cc)); return f.svg(GK); };
     const fig = draw(P, S, false), a = TRIK[k];
-    return geoQ({a, r: a, fig, con: 'Quelle est la nature de ce triangle ?', conBig: true, key: 'qt3' + a, figDet: true, chk: {qtri: {k, a, ang, P0: Pe, Psk: P, sk: true, look: lk}},
+    return geoQ({a, r: a, fig, con: 'Quelle est la nature de ce triangle (le nom le plus précis) ?', conW: true, conBig: true, key: 'qt3' + a, figDet: true, chk: {qtri: {k, a, ang, P0: Pe, Psk: P, sk: true, look: lk}},
       det: () => skPair(draw(P, S, true), draw(Pe, null, true)) + sufLine(k === 'equ' ? 'trois angles de 60°' : k === 'iso' ? 'deux angles isométriques' : k === 'rec' ? 'un angle droit' : 'un angle droit et deux angles isométriques', a)}); }
   const Q = pick([['Dans un triangle rectangle, le côté opposé à l\'angle droit s\'appelle ', 'l\'hypoténuse', '.', '', () => TRI_DET.hyp()], ['Un triangle isocèle (pas équilatéral) a ', '1', ' axe de symétrie.', '', () => TRI_DET.isoAx()],
     ['Un triangle équilatéral a ', '3', ' axes de symétrie.', '', () => TRI_DET.equAx()], ['Dans un triangle rectangle, la somme des deux autres angles vaut ', '90°', '.', '180° − 90° = 90°', () => TRI_DET.rec90()],
@@ -8988,13 +8994,13 @@ function quadQ(k, lv){
   if (lv === 1){ const N = pick(QNAMES), dart = k === 'rho' && chance(.5), P0 = quadPts(k, dart), lk = !dart && QLOOK[k] && chance(TROMPE_P) ? pick(QLOOK[k]) : null,
       Pl = lk ? quadPts(lk, false) : P0, P = qSketch(dart ? 'dart' : k, Pl, 'cot', !!lk), Pe = lk ? alignTo(P0, P) : P0, S = qSkMake(P), Q = {P, svg: quadSkFig(k, N, dart, P, S)}, fig = Q.svg, a = QN[k] + (k === 'rho' ? (dart ? ' (fer de lance)' : ' (cerf-volant)') : '');
     const dat = k === 'tra' ? '(' + N[0] + N[1] + ') ' + PLL + ' (' + N[3] + N[2] + ')' : null;
-    return geoQ({a, r: QN[k], fig, dat, con: 'Quelle est la nature de ce quadrilatère ?', conBig: true, key: 'qq' + k + (k === 'rho' ? (dart ? 'f' : 'c') : ''), figDet: true, chk: {quad: {k, lv, a, P: Q.P, P0: Pe, sk: true, look: lk}},
+    return geoQ({a, r: QN[k], fig, dat, con: 'Quelle est la nature de ce quadrilatère (le nom le plus précis) ?', conW: true, conBig: true, key: 'qq' + k + (k === 'rho' ? (dart ? 'f' : 'c') : ''), figDet: true, chk: {quad: {k, lv, a, P: Q.P, P0: Pe, sk: true, look: lk}},
       det: () => skPair(quadSkFig(k, N, dart, P, S, true), quadFig(k, N, dart, Pe, true).svg) + sufLine(QREC[k], a)}); }      // détail : la figure de la question et la figure exacte (31.10.2026, 7e conversation)      // trapèze : « (AB) ∥ (DC) » reste en haut, les deux côtés en orange
   if (lv === 2){ const pi = ri(0, QPROP.length - 1), [pr, ks] = QPROP[pi], v = ks.includes(k), a = v ? 'vrai' : 'faux', why = 'Ceux qui ' + pr.replace(/^a ses /, 'ont leurs ').replace(/^a /, 'ont ') + ' : ' + QORD.filter(x => ks.includes(x)).map(QNL).join(', ') + '.';
     return phrQ('Vrai ou faux ?', cap1(QART[k]) + ' ' + pr.replace(/^a /, 'a toujours ') + '. ', a, '', {key: 'qv' + k + pr, why, chk: {quad: {k, lv, a, pr, v}}, dfig: () => qPropDet(k, pi, v)}); }
   const L = QSPEC.filter(([, r]) => r === k).map(([s, , X, fams]) => [s, /^Un (cerf-volant|fer de lance)/.test(s) ? 'un rhomboïde' : QART[k], '.', () => qSpecDet(X, k, fams, s)])
     .concat([QCNT[k].concat([() => qCntDet(k)])]), [b, a, c, dfig] = pick(L);
-  return phrQ('Complète', b, a, c, {key: 'qs' + k + b, chk: {quad: {k, lv, a}}, dfig});
+  return phrQ(/^un /.test(a) ? 'Complète avec le nom le plus précis' : 'Complète', b, a, c, {key: 'qs' + k + b, chk: {quad: {k, lv, a}}, dfig});   // n° 68
 }
 ['rho', 'tra', 'par', 'los', 'rec', 'car'].forEach(k => GL('q_' + k, [1, 2, 3, 4], lv => tqQc(quadQ(k, lv))));
 /* ---------- triangles et quadrilatères : questions ajoutées le 31.10.2026 (4e conversation) ----------
@@ -9066,7 +9072,7 @@ function triLenQ(){
     if (triOK(c[0], c[1], c[2], 25)) Ll = c; }
   const P = tSketch(Ll ? rotAll(triPts(Ll[0], Ll[1], Ll[2]), ri(0, 359) * DEG, [0, 0]) : T, [], -1, !!Ll), S = qSkMake(P), Te = Ll ? alignTo(T, P) : T;
   const a = k === 'qcq' ? 'quelconque' : TRIK[k], why = k === 'equ' ? 'trois côtés isométriques' : k === 'iso' ? 'deux côtés isométriques' : 'trois longueurs différentes';
-  return geoQ({a, r: a, fig: triLenSkFig(L, N, k, P, S, false), con: 'Quelle est la nature de ce triangle ?', conBig: true, key: 'qtl' + k, figDet: true,
+  return geoQ({a, r: a, fig: triLenSkFig(L, N, k, P, S, false), con: 'Quelle est la nature de ce triangle (le nom le plus précis) ?', conW: true, conBig: true, key: 'qtl' + k, figDet: true,
     chk: {qtri: {len: L, k, a, P: Te, Psk: P, sk: true, look: Ll && (k === 'iso' ? 'equ' : 'iso')}}, det: () => skPair(triLenSkFig(L, N, k, P, S, true), triLenFig(L, N, k, Te, true)) + sufLine(why, a)});
 }
 
@@ -9370,7 +9376,7 @@ function quadDiagFig(k, N, P, hl){ const f = qFig(k, P, ['dmid', 'dperp'], hl, '
 function quadDiagQ(k){ const N = pick(QNAMES), P0 = tqShape(k), lk = QLOOKD[k] && chance(TROMPE_P) ? pick(QLOOKD[k]) : null, P = qSketch(k, lk ? tqShape(lk) : P0, 'diag', !!lk), Pe = lk ? alignTo(P0, P) : P0,      // diagonales pas à l'échelle non plus (31.10.2026, 7e conversation)
   a = QN[k] + (k === 'rho' ? ' (cerf-volant)' : '');
   const S = qSkMake(P, true);
-  return geoQ({a, r: QN[k], fig: quadDiagSkFig(k, N, P, S, false), con: 'Quelle est la nature de ce quadrilatère ?', conBig: true, key: 'qqd' + k, figDet: true,
+  return geoQ({a, r: QN[k], fig: quadDiagSkFig(k, N, P, S, false), con: 'Quelle est la nature de ce quadrilatère (le nom le plus précis) ?', conW: true, conBig: true, key: 'qqd' + k, figDet: true,
     chk: {quad: {k, lv: 1, a, P, P0: Pe, diag: true, sk: true, X: S.X, look: lk}}, det: () => skPair(quadDiagSkFig(k, N, P, S, true), quadDiagFig(k, N, Pe, true)) + sufLine(QDIAG[k], a)}); }
 
 /* ----- vocabulaire (côté opposé, consécutifs, diagonale) ----- */
@@ -10485,7 +10491,7 @@ GL('g_pat', [1, 2, 3, 4], lv => {
   let fig, figC, key = 'patn' + kind + n, cells = null, v = null;
   if (kind === 'cube'){ const cs = orient(pick(lv === 1 ? CUBE_NETS.filter(isCross) : lv >= 3 ? CUBE_NETS.filter(c => !isCross(c)) : CUBE_NETS)); fig = cubeNetFig(cs); figC = cubeNetFig(cs, 'opp'); key += isCross(cs) ? 'x' : 'o'; cells = cs; }
   else { v = netVar(kind, n); fig = solidNetFig(kind, n, false, v); figC = solidNetFig(kind, n, true, v); }
-  return wordQ({a: name, r: name, fig, con: 'De quel solide est-ce le développement ?', conBig: true, key, figDet: true, chk: {pat: {kind, n, name, cells}},
+  return wordQ({a: name, r: name, fig, con: 'De quel solide <span style=\"white-space:nowrap\">est-ce</span> le développement (le nom le plus précis) ?', conW: true, conBig: true, key, figDet: true, chk: {pat: {kind, n, name, cells}},
     det: () => '<div class="frow">' + figC + foldHTML(kind === 'cube' ? {kind, cells, fills: cubeFills(cells, 'opp')} : {kind, n, v}, figC) + '</div>' + (kind === 'pri' || kind === 'pyr' ? DIV(H('cA', 'base') + ' : ' + (n === 4 ? 'carré' : BASEN[n]), 'gr') : '') +
       (kind === 'cube' || kind === 'pav' ? DIV('faces opposées : même couleur', 'gr') : '') + DIV(ANS(name), 'fin')});
 });
@@ -11596,7 +11602,7 @@ const TABS = [
     {id: 'vol', name: 'Volumes', nd: ['dec'], kw: 'solides cube pave prisme cylindre pyramide cone boule',
       rows: [[null, [['v_cub', 'cube'], ['v_pav', 'pavé droit'], ['v_pri', 'prisme droit'], ['v_cyl', 'cylindre'], ['v_pyr', 'pyramide'], ['v_con', 'cône'], ['v_bou', 'boule']]]]},
     {id: 'at', name: 'Aires totales', nd: ['dec'], kw: 'surface solides cube pave prisme cylindre pyramide sphere boule', rows: [[null, [['at_cub', 'cube'], ['at_pav', 'pavé droit'], ['at_pri', 'prisme droit'], ['at_cyl', 'cylindre'], ['at_pyr', 'pyramide'], ['at_bou', 'sphère']]]]},
-    {id: 'pyt', name: 'Pythagore', nd: ['dec'], kw: 'triangle rectangle hypotenuse reciproque contraposee espace', rows: [[null, [['py_calc', 'calculer une longueur'], ['py_rec', 'réciproque'], ['py_con', 'contraposée'], ['py_esp', 'dans l\'espace']]]]},
+    {id: 'pyt', name: 'Pythagore', nd: ['dec'], kw: 'triangle rectangle hypotenuse reciproque contraposee espace problemes situations', rows: [[null, [['py_calc', 'calculer une longueur'], ['py_rec', 'réciproque'], ['py_con', 'contraposée'], ['py_esp', 'dans l\'espace'], ['py_pb', 'problèmes']]]]},
     {id: 'tha', name: 'Thalès', nd: ['dec'], kw: 'paralleles reciproque contraposee', rows: [[null, [['th_calc', 'calculer une longueur'], ['th_rec', 'réciproque'], ['th_con', 'contraposée']]]]},
   ]},
   {id: 'es', name: 'Géométrie', ab: 'ES', c: 'blu', blocks: [
@@ -12231,7 +12237,7 @@ function qLine(p, show){
     (p.pre ? '<span>' + p.pre + '</span>' : '') + ans + (p.post ? '<span class="un">' + p.post + '</span>' : '') + '</span>';
 }
 function qaHTML(p, show){
-  return (p.con ? '<div class="con' + (p.conBig ? ' big' : '') + '">' + p.con + '</div>' : '') +
+  return (p.con ? '<div class="con' + (p.conBig ? ' big' : '') + (p.conW ? ' cw' : '') + '">' + p.con + '</div>' : '') +   // n° 68 : conW
     (p.fig ? '<div class="fig' + (p.figDet ? ' fd' : '') + '">' + p.fig + '</div>' : '') +
     (p.dat ? '<div class="dat">' + p.dat + '</div>' : '') + '<div class="calc">' + qLine(p, show) + '</div>';
 }
@@ -13047,7 +13053,7 @@ function inpParse(b){
 const INP_ARITH = /^(?:[MP](?:nat|dec|rel)[+−∙:]|liv|livd|m10|m10x|mcom|mdis|rsum|pw(?:nat|dec|rel)|rprio)$/;
 function inpSpec(p){
   if (!p) return null;
-  if (p._sp === undefined){ try { p._sp = inpSpec0(p); } catch (e) { console.error(e); p._sp = null; } }
+  if (p._sp === undefined){ try { p._sp = p.sub === 'py_pb' ? ppbSpec(p) : inpSpec0(p); } catch (e) { console.error(e); p._sp = null; } }
   return p._sp;
 }
 function inpSpec0(p){
@@ -13094,7 +13100,7 @@ const INP_MSG = {
 function inpJudge(p, b){                                              // → {r: 'ok' | 'almost' | 'ko' | 'bad', m: message}
   const sp = inpSpec(p); if (!sp) return {r: 'bad', m: INP_MSG.bad};
   if (isLin(sp)) return linJudge(p, b, sp);                           // n° 45
-  if (sp.t === 'ch'){ if (b === sp.v) return {r: 'ok', m: INP_MSG.ok}; if (sp.alm && sp.alm[b]) return {r: 'almost', m: sp.alm[b]};   // n° 54 : sp.alm
+  if (sp.t === 'ch'){ if (b === sp.v) return {r: 'ok', m: INP_MSG.ok}; if (sp.alm && sp.alm[b]) return {r: sp.gen ? 'ko' : 'almost', m: sp.alm[b]};   // n° 54 : sp.alm ; n° 68 : sp.gen, un nom plus général est faux (on demande le nom le plus précis)
     return {r: 'ko', m: (sp.R && sp.R(p, b, sp)) || INP_MSG.ko}; }
   const x = inpParse(b);
   if (!x) return {r: 'bad', m: INP_MSG.bad};
@@ -13109,6 +13115,7 @@ function inpJudge(p, b){                                              // → {r:
     return {r: 'ok', m: (sp.okm && sp.okm(p, x, sp)) || INP_MSG.ok};   // n° 46 : sp.okm
   }
   let m = null; try { m = sp.R ? sp.R(p, x, sp) : null; } catch (e) { console.error(e); }
+  if (m && typeof m === 'object') return m;                           // n° 68 : la règle dit elle-même « presque » (arrondi des problèmes de Pythagore)
   return {r: 'ko', m: m || inpGeneric(p, x, sp) || INP_MSG.ko};
 }
 function inpGeneric(p, x, sp){                                        // erreurs de tous les exercices de nombres
@@ -14573,14 +14580,14 @@ function inpSpec47(p){
   if (/^un /.test(r) && ch.quad){ const O = r === 'un rhomboïde' ? [r].concat(G47_QART.filter(w => !/rhombo/.test(w))) : G47_QART;
     const lt = stripTags(p.line ? p.line(false) : ''), sj = QORD.find(k => lt.startsWith('Un ' + QN[k] + ' ')), alm = g47QuadAlm(r, O) || {};
     if (sj) delete alm[QART[sj]];                                    // « Un rectangle qui … est ▢ » : « un rectangle » n'est pas « presque »
-    return g47Ch(r, g47Mix(p, O), {alm, sj: sj ? QART[sj] : null, R: g47QuadPhr}); }
+    return g47Ch(r, g47Mix(p, O), {alm, gen: true, sj: sj ? QART[sj] : null, R: g47QuadPhr}); }
   // listes fixes
   if (s === 'g_type') return g47Ch(r, G47_ANG, {R: g47Ang});
-  if (G47_TRI.includes(r)) return g47Ch(r, G47_TRI, {alm: g47TriAlm(r), R: g47TriR});
+  if (G47_TRI.includes(r)) return g47Ch(r, G47_TRI, {alm: g47TriAlm(r), gen: true, R: g47TriR});
   if (ch.quad && G47_QK[r]) return g47Ch(r, QORD.map(k => QN[k]), {alm: Object.fromEntries(QISA[G47_QK[r]].map(k => [QN[k],
-    'Juste : c\'est aussi un ' + QN[k] + '. Mais il a un nom plus précis : regarde tous les codages.'])), R: g47QuadR});
-  if (/^t_/.test(s)) return g47Ch(r, G47_TR, {alm: r === 'symétrie centrale' ? {rotation: 'Juste : c\'est une rotation d\'un demi-tour (180°). Mais elle a un nom : lequel ?'} : null, R: g47TrR});
-  if (s === 'g_nsol' || s === 'g_pat') return g47Ch(r, G47_SOL, {alm: g47SolAlm(r), R: g47SolR});
+    'C\'est bien aussi un ' + QN[k] + ', mais ce n\'est pas le nom le plus précis : regarde tous les codages.'])), gen: true, R: g47QuadR});
+  if (/^t_/.test(s)) return g47Ch(r, G47_TR, {alm: r === 'symétrie centrale' ? {rotation: 'C\'est bien une rotation d\'un demi-tour (180°), mais elle a un nom plus précis : lequel ?'} : null, gen: true, R: g47TrR});
+  if (s === 'g_nsol' || s === 'g_pat') return g47Ch(r, G47_SOL, {alm: g47SolAlm(r), gen: true, R: g47SolR});
   if (ch.tqvoc) return g47Voc(p, ch.tqvoc, r);
   if (ch.tqnom && (r === 'un côté' || r === 'une diagonale')) return g47Ch(r, ['un côté', 'une diagonale'], {R: () => 'Regarde l\'ordre des lettres dans le nom du quadrilatère : ces deux lettres se suivent-elles (la dernière suit la première) ?'});
   return null;
@@ -14718,7 +14725,7 @@ function g47Trace(p, b){
 function g47Phr(){ return 'Pas encore juste. Relis toute la phrase, puis réessaie.'; }
 function g47QuadAlm(a, O){                                             // classification : un nom plus général, mais juste
   const k = Object.keys(QART).find(x => QART[x] === a) || (a === 'un rhomboïde' ? 'rho' : null); if (!k) return null;
-  const out = {}; O.forEach(w => { const j = Object.keys(QART).find(x => QART[x] === w); if (j && QISA[k].includes(j)) out[w] = 'Juste, mais il y a un nom plus précis.'; });
+  const out = {}; O.forEach(w => { const j = Object.keys(QART).find(x => QART[x] === w); if (j && QISA[k].includes(j)) out[w] = 'C\'est vrai aussi, mais ce n\'est pas le nom le plus précis.'; });
   return out;
 }
 function g47QuadPhr(p, b, sp){ if (sp && sp.sj === b) return 'C\'est déjà ' + b + '. Avec cette propriété en plus, que devient-il\u00a0?';
@@ -14728,9 +14735,9 @@ function g47Ang(p, b){
   return 'Un angle ' + b + ' ' + G47_DEG[b] + '.' + (m ? '' : b === 'rentrant' || b === 'plein' || b === 'nul' ? ' Regarde bien la figure.' : ' Compare avec un angle droit.');
 }
 function g47TriAlm(r){
-  if (r === 'équilatéral') return {'isocèle': 'Juste : il est isocèle. Mais il a un nom plus précis : regarde tous ses côtés (ou tous ses angles).'};
-  if (r === 'rectangle et isocèle') return {'rectangle': 'Juste : il a un angle droit. Mais il a encore autre chose : regarde aussi ses côtés (ou ses angles).',
-    'isocèle': 'Juste : il est isocèle. Mais il a encore autre chose : regarde aussi ses angles.'};
+  if (r === 'équilatéral') return {'isocèle': 'Il est bien isocèle, mais ce n\'est pas le nom le plus précis : regarde tous ses côtés (ou tous ses angles).'};
+  if (r === 'rectangle et isocèle') return {'rectangle': 'Il a bien un angle droit, mais ce n\'est pas le nom le plus précis : regarde aussi ses côtés (ou ses angles).',
+    'isocèle': 'Il est bien isocèle, mais ce n\'est pas le nom le plus précis : regarde aussi ses angles.'};
   return null;
 }
 function g47TriR(p, b){
@@ -14756,7 +14763,7 @@ function g47TrR(p, b){
 }
 function g47SolAlm(r){
   const L = {cube: ['pavé droit', 'prisme droit'], 'pavé droit': ['prisme droit']}[r]; if (!L) return null;
-  return Object.fromEntries(L.map(w => [w, 'Juste : c\'est aussi un ' + w + '. Mais il a un nom plus précis.']));
+  return Object.fromEntries(L.map(w => [w, 'C\'est bien aussi un ' + w + ', mais ce n\'est pas le nom le plus précis.']));
 }
 const G47_SOLD = {cube: 'Un cube a six faces carrées.', 'pavé droit': 'Un pavé droit a six faces rectangulaires.',
   'prisme droit': 'Un prisme droit a deux bases identiques (en haut et en bas) et des faces latérales rectangulaires.',
@@ -14924,7 +14931,7 @@ $('bOneQ').onclick = () => { if (document.querySelector('.over.open')) return; c
    simplifiée = « presque » ; valeur arrondie d'une fraction (2,67 pour 8/3) = comme les racines (« donne la valeur exacte, en
    fraction ») ; systèmes : deux cases x = ▢ ; y = ▢ ; deux préimages : x = ▢ ou x = ▢ (ordre libre) ; tableau de valeurs : une case
    par « ? » ; « quelle droite (courbe) ? » : d₁ d₂ d₃ (C₁ C₂ C₃) ; vocabulaire : oui / non, les deux natures nommées dans la consigne,
-   monôme / binôme / trinôme / polynôme (polynôme : « presque », nom plus général), « variable » parmi 6 mots, degré, coefficient et
+   monôme / binôme / trinôme (n° 67 : plus de « polynôme »), « variable » parmi 6 mots, degré, coefficient et
    nombre de termes : une case de nombre ; touches ; ∅ ℝ seulement pour les équations (; pour le 2e degré), √ pour x² = a et Viète.
    ===================================================================== */
 const F62_SUBS = new Set(TABS.find(t => t.id === 'fa').blocks.flatMap(b => b.items.map(i => i[0])));
@@ -15240,8 +15247,8 @@ function f62VocSpec(p){
   if (k === 'var'){ const L = F62_VAR[c.a === 'variables' ? 1 : 0];
     return f62Ch(c.a, g47Mix(p, L), {R: () => 'Dans une formule, les lettres peuvent prendre plusieurs valeurs : comment les appelle-t-on ?'}); }
   if (k === 'ter'){
-    if (c.n <= 3) return f62Ch(c.a, ['monôme', 'binôme', 'trinôme', 'polynôme'], {alm: {polynôme: 'Juste : c\'est un polynôme. Mais il a un nom plus précis : compte ses termes.'},
-      R: () => 'Compte les termes : ils sont séparés par + ou −.'});
+    // n° 67 (l'enseignant, 12.11.2026 : « dans les réponses proposées quand c'est monôme, binôme ou trinôme, ne propose pas polynôme ») : plus de choix « polynôme » (ni de « presque »)
+    if (c.n <= 3) return f62Ch(c.a, ['monôme', 'binôme', 'trinôme'], {R: () => 'Compte les termes : ils sont séparés par + ou −.'});
     return f62Num(p, [c.n, 1], () => 'Compte les termes : ils sont séparés par + ou −.');
   }
   if (k === 'd' || k === 'pdeg'){ const n = Number(p.r); if (!Number.isInteger(n)) return null; return f62Num(p, [n, 1], f62DegR); }
@@ -16108,6 +16115,273 @@ function inpSpec63(p){
   return null;
 }
 
+/* ---------- n° 68 (13.11.2026) : Pythagore, case « problèmes » (py_pb) ----------
+   L'enseignant, 13.11.2026 : « Tu peux faire des situations pour Pythagore à partir de 3 étoiles (peut être une dizaine uniques, si ça ne
+   prend pas trop de place), aussi un piège à partir de 3 étoiles : Léa affirme qu'un triangle rectangle ayant deux côtés de 6cm et 8cm
+   possède forcément un troisième côté de 10 cm. a-t-elle raison ? » QCM : une nouvelle case « problèmes » dans le bloc Pythagore ; quand la
+   longueur n'est pas un nombre décimal exact, arrondie au dixième seulement (pas de valeur exacte) ; un croquis simple de la situation ;
+   piège : « toujours non, mais ne remets pas le piège deux fois » (au plus une fois par séance : compteur pyLea).
+   Lu ainsi (dit à l'enseignant) : les étoiles se comptent dans la case. ★ : une situation, nombres d'un triplet, on cherche la plus grande
+   longueur ; ★★ : on peut chercher un côté de l'angle droit (décimaux avec la case) ; ★★★ : nombres quelconques, réponse arrondie au
+   dixième, et le piège ; ★★★★ : deux étapes (moitié, somme, différence), et le piège. Douze situations : écran, terrain, toboggan, câble,
+   bateau, échelle, cerf-volant (une étape) ; raccourci, toit, tente, cerf-volant tenu à la main, échelle qui glisse (deux étapes).
+   Saisie : case de nombre (ppbSpec), arrondi : « presque » (plus de chiffres, arrondi presque juste, nombre entier) ; erreurs : carrés
+   additionnés au lieu de soustraits et l'inverse, racine oubliée, longueurs sans les carrés, étape oubliée (ppbR).
+   L'enseignant, 13.11.2026, après la 1re version : « les croquis peuvent être sans traits déformés » : traits droits (f.seg), pas de Fig.sk. */
+const PPB_T = [[3, 4, 5], [6, 8, 10], [5, 12, 13], [8, 15, 17], [9, 12, 15], [12, 16, 20], [7, 24, 25], [20, 21, 29], [15, 20, 25], [10, 24, 26], [12, 35, 37], [9, 40, 41]];
+// côtés de l'angle droit a (donné), b et l'hypoténuse c, avec c entre lo et hi ; ask 'c' : on cherche c (a et b « ronds ») ; ask 'b' : on
+// cherche b (a et c « ronds ») ; trip : nombres d'un triplet (réponse exacte), sinon réponse qui n'est pas un nombre à une décimale
+function ppbTri(lv, lo, hi, ask, trip){
+  const st = DEC && lv >= 2 && chance(.5) ? .5 : 1, R = (x, y) => rnd(ri(Math.ceil(x / st), Math.max(Math.ceil(x / st), Math.floor(y / st))) * st);
+  const ks = [.5, 1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10, 12, 15, 20].filter(k => DEC && lv >= 2 || Number.isInteger(k));
+  for (let t = 0; t < 400; t++){
+    let a, b, c;
+    if (trip){ const T = pick(PPB_T), k = pick(ks), s = chance(.5); a = rnd(T[s ? 0 : 1] * k); b = rnd(T[s ? 1 : 0] * k); c = rnd(T[2] * k); }
+    else if (ask === 'c'){ a = R(Math.max(1, lo * .25), hi * .78); b = R(Math.max(1, lo * .25), hi * .78); c = Math.hypot(a, b); }
+    else { c = R(lo, hi); a = R(c * .3, c * .9); b = Math.sqrt(Math.max(0, c * c - a * a)); }
+    if (!(c >= lo && c <= hi) || Math.min(a, b) < c * .25) continue;                       // pas de triangle trop aplati
+    const v = ask === 'c' ? c : b, f = v * 10 - Math.floor(v * 10);
+    if (!trip && Number.isInteger(rnd(v * 10))) continue;
+    if (!trip && Math.abs(f - .5) < .04) continue;                                         // arrondi au dixième sans hésitation
+    return {a, b, c};
+  }
+  return null;
+}
+const ppbL = (x, u) => nbsp(fmtNum(rnd(x)) + ' ' + u);
+const ppbX = '<i>x</i>', ppbY = '<i>h</i>';
+const ppbEx = v => Number.isInteger(rnd(v * 10));                                         // nombre à une décimale au plus : réponse exacte
+const ppbA = (v, u) => (ppbEx(v) ? fmtNum(rnd(v)) : fmtR(v, 1)) + ' ' + u;
+// x² = a² + b² (ou − b²), puis x = √… ; lhs : la lettre
+function ppbDet(lhs, x, y, op, u, last, d2){                                             // d2 : valeur intermédiaire au centième (échelle qui glisse)
+  const N = rnd(op === ' + ' ? x * x + y * y : x * x - y * y), v = Math.sqrt(N);
+  if (d2 && !Number.isInteger(rnd(v * 100))) return steps(sqH(lhs), [sqH(fmtNum(rnd(x))) + op + sqH(fmtNum(rnd(y))), fmtNum(rnd(x * x)) + op + fmtNum(rnd(y * y)), fmtNum(N)]) +
+    steps(lhs, [sq(fmtNum(N)), H('cA', fmtR(v, 2) + ' ' + u)], ['=', '≈']);
+  return steps(sqH(lhs), [sqH(fmtNum(rnd(x))) + op + sqH(fmtNum(rnd(y))), fmtNum(rnd(x * x)) + op + fmtNum(rnd(y * y)), fmtNum(N)]) +
+    steps(lhs, [sq(fmtNum(N)), last ? ANS(ppbA(v, u)) : H('cA', ppbA(v, u))], ['=', ppbEx(v) ? '=' : '≈']);
+}
+// erreurs d'une étape : x cherché à partir de p et q (op : ' + ' hypoténuse, ' − ' un côté de l'angle droit)
+function ppbAlts(p, q, op){
+  if (op === ' + ') return [[Math.sqrt(Math.abs(p * p - q * q)), 'Ici, on cherche le plus grand côté du triangle rectangle (en face de l\'angle droit) : on additionne les carrés.'],
+    [p * p + q * q, 'N\'oublie pas la racine carrée à la fin.'], [p + q, 'Avec Pythagore, on calcule avec les carrés des longueurs.']];
+  return [[Math.sqrt(p * p + q * q), 'La longueur cherchée n\'est pas le plus grand côté du triangle rectangle : on soustrait les carrés.'],
+    [p * p - q * q, 'N\'oublie pas la racine carrée à la fin.'], [p - q, 'Avec Pythagore, on calcule avec les carrés des longueurs.']];
+}
+// ---------- croquis (traits droits, pas à l'échelle) ----------
+const ppbQ = '?';
+function ppbLab(f, A, B, s, C, o){ return lenLab(f, A, B, s, C, Object.assign(s === ppbQ ? {color: RED, bold: true} : {}, o || {})); }
+function ppbDim(f, A, B, s, C, o){ const D = dimLine(f, A, B, C, o); return dimTxt(f, D, s, s === ppbQ ? {color: RED, bold: true} : {}); }
+function ppbRung(f, A, B, w){ const n = V2.mul(V2.perp(V2.unit(V2.sub(B, A))), w || 6), L = V2.dist(A, B), m = Math.max(3, Math.round(L / 26));      // échelle : deux montants et des barreaux
+  f.seg(V2.add(A, n), V2.add(B, n), {w: 2.4}); f.seg(V2.sub(A, n), V2.sub(B, n), {w: 2.4});
+  for (let i = 1; i < m; i++){ const P = V2.lerp(A, B, i / m); f.seg(V2.add(P, n), V2.sub(P, n), {w: 1.8}); } }
+function ppbGround(f, x0, x1, y, bare){ y = y || 0; f.seg([x0, y], [x1, y], {w: 2.6}); if (!bare) for (let x = x0 + 8; x < x1 - 4; x += 16) f.seg([x, y - 2], [x - 8, y - 11], {w: 1.2, nohit: true}); }
+// écran ou terrain rectangulaire : largeur W (en bas), hauteur V (à droite), diagonale
+function ppbFigRect(kind, W, V, lW, lV, lD){
+  const f = new Fig(), k = 230 / Math.max(W, V), w = Math.max(W * k, V * k * .45), h = Math.max(V * k, w * .45), P = [[0, 0], [w, 0], [w, h], [0, h]], C = [w / 2, h / 2], sx = chance(.5);
+  const Q = sx ? P : P.map(([x, y]) => [w - x, y]);                                        // diagonale qui monte vers la droite ou vers la gauche
+  if (kind === 'ter') f.poly(P, {fill: '#eaf4e4', stroke: 'none', nohit: true});
+  for (let i = 0; i < 4; i++) f.seg(P[i], P[(i + 1) % 4], {w: kind === 'ecr' ? 4.5 : 3});
+  f.seg(Q[0], Q[2], {w: 2.6, dash: '9 7'});
+  rightMark(f, Q[1], Q[0], Q[2]);
+  ppbLab(f, P[0], P[1], lW, C); ppbLab(f, Q[1], Q[2], lV, C);
+  smartLab(f, Q[0], Q[2], lD, Object.assign({ts: [.5, .42, .58, .35, .65]}, lD === ppbQ ? {color: RED, bold: true} : {}));
+  return f.svg(); }
+// un côté vertical (mur, échelle du toboggan, mât, ficelle verticale) et le sol ; l'angle droit en O ; l'oblique de (sx∙W, 0) à (0, V)
+function ppbFigV(kind, W, V, lW, lV, lD){
+  const f = new Fig(), k = 220 / Math.max(W, V), s = chance(.5) ? 1 : -1, w = Math.max(W * k, 50) * s, h = Math.max(V * k, 50), O = [0, 0], A = [w, 0], B = [0, h], C = [w / 3, h / 3];
+  if (kind === 'ech'){ ppbGround(f, Math.min(-28 * s, w * 1.18), Math.max(-28 * s, w * 1.18)); f.seg(O, [0, h * 1.15], {w: 5});
+    for (let y = 14; y < h * 1.1; y += 18) f.seg([0, y], [-10 * s, y - 9], {w: 1.2, nohit: true}); ppbRung(f, A, B, 6); }
+  else if (kind === 'tob'){ ppbGround(f, Math.min(-30 * s, w * 1.12), Math.max(-30 * s, w * 1.12)); ppbRung(f, O, B, 7); f.seg(B, A, {w: 5}); }
+  else if (kind === 'cab'){ ppbGround(f, Math.min(-40 * s, w * 1.15), Math.max(-40 * s, w * 1.15)); f.seg(O, [0, h * 1.3], {w: 6}); f.seg(B, A, {w: 2.2}); f.circle(A, 3.5, {fill: INK}); }
+  else { ppbGround(f, Math.min(-30 * s, w * 1.12), Math.max(-30 * s, w * 1.12)); f.seg(O, B, {w: 2, dash: '7 6'}); f.seg(A, B, {w: 2});    // cerf-volant
+    const K = [[0, h + 14], [9, h], [0, h - 16], [-9, h]]; f.poly(K, {fill: '#f3d9b8', w: 2}); f.seg([0, h - 16], [-6 * s, h - 40], {w: 1.4});
+    f.circle([w, 22], 7, {w: 2}); f.seg([w, 15], [w, 0], {w: 2}); }
+  rightMark(f, O, A, B);
+  ppbLab(f, O, A, lW, C); ppbLab(f, O, B, lV, C, {flip: kind === 'ech' || kind === 'cab'}); ppbLab(f, A, B, lD, O, {gap: kind === 'ech' || kind === 'tob' ? 14 : 8});
+  return f.svg(); }
+// bateau : du port P vers le nord (V), puis vers l'est ou l'ouest (W) ; distance au port en pointillé
+function ppbFigBat(W, V, lW, lV, lD, west){
+  const f = new Fig(), k = 220 / Math.max(W, V), s = west ? -1 : 1, P = [0, 0], N = [0, Math.max(V * k, 50)], E = [s * Math.max(W * k, 50), N[1]], C = [E[0] / 3, N[1] * .6];
+  const arr = (A, B) => { const M = V2.lerp(A, B, .55), u = V2.unit(V2.sub(B, A)), n = V2.perp(u); f.poly([V2.add(M, V2.mul(u, 9)), V2.add(V2.sub(M, V2.mul(u, 7)), V2.mul(n, 7)), V2.sub(V2.sub(M, V2.mul(u, 7)), V2.mul(n, 7))], {fill: INK, w: 1}); };
+  f.seg(P, N, {w: 3}); f.seg(N, E, {w: 3}); arr(P, N); arr(N, E); f.seg(E, P, {w: 2.4, dash: '8 7'}); f.circle(P, 5, {fill: INK});
+  rightMark(f, N, P, E); f.text(V2.add(P, [-s * 30, -6]), 'port', {size: 22});
+  const nx = -s * 34; f.seg([nx, N[1] - 6], [nx, N[1] + 26], {w: 2}); f.poly([[nx, N[1] + 34], [nx - 6, N[1] + 22], [nx + 6, N[1] + 22]], {fill: INK, w: 1}); f.text([nx, N[1] + 48], 'N', {size: 20, bold: true});
+  ppbLab(f, P, N, lV, C); ppbLab(f, N, E, lW, C); ppbLab(f, P, E, lD, N);
+  return f.svg(); }
+// ---------- les situations à une étape ----------
+// t : [unité, lo, hi, textes] ; textes(c) : la phrase pour ask 'c' ; 'v' : on cherche le côté vertical, 'w' : le côté horizontal
+const PPB_S1 = {
+  ecr: ['cm', 20, 140, {
+    c: (W, V) => 'Un écran mesure ' + ppbL(W, 'cm') + ' de large et ' + ppbL(V, 'cm') + ' de haut.<br>Quelle est la longueur de sa diagonale ?',
+    v: (W, V, D) => 'La diagonale d\'un écran mesure ' + ppbL(D, 'cm') + ' et sa largeur ' + ppbL(W, 'cm') + '.<br>Quelle est sa hauteur ?',
+    w: (W, V, D) => 'La diagonale d\'un écran mesure ' + ppbL(D, 'cm') + ' et sa hauteur ' + ppbL(V, 'cm') + '.<br>Quelle est sa largeur ?'},
+    {c: 'diagonale', v: 'hauteur', w: 'largeur'}, 'la largeur, la hauteur et la diagonale forment un triangle rectangle'],
+  ter: ['m', 20, 200, {
+    c: (W, V) => 'Un terrain rectangulaire mesure ' + ppbL(W, 'm') + ' sur ' + ppbL(V, 'm') + '.<br>Quelle est la longueur de sa diagonale ?',
+    v: (W, V, D) => 'La diagonale d\'un terrain rectangulaire mesure ' + ppbL(D, 'm') + '.<br>Un des côtés mesure ' + ppbL(W, 'm') + '. Combien mesure l\'autre côté ?',
+    w: (W, V, D) => 'La diagonale d\'un terrain rectangulaire mesure ' + ppbL(D, 'm') + '.<br>Un des côtés mesure ' + ppbL(V, 'm') + '. Combien mesure l\'autre côté ?'},
+    {c: 'diagonale', v: 'côté', w: 'côté'}, 'deux côtés du terrain et la diagonale forment un triangle rectangle'],
+  tob: ['m', 2, 9, {
+    c: (W, V) => 'L\'échelle d\'un toboggan est verticale et mesure ' + ppbL(V, 'm') + '.<br>Le bas du toboggan est à ' + ppbL(W, 'm') + ' du pied de l\'échelle. Quelle est la longueur du toboggan ?',
+    v: (W, V, D) => 'Un toboggan mesure ' + ppbL(D, 'm') + ' de long. Son bas est à ' + ppbL(W, 'm') + ' du pied de l\'échelle, qui est verticale.<br>Quelle est la hauteur de l\'échelle ?',
+    w: (W, V, D) => 'Un toboggan mesure ' + ppbL(D, 'm') + ' de long. Son échelle est verticale et mesure ' + ppbL(V, 'm') + '.<br>À quelle distance du pied de l\'échelle arrive le bas du toboggan ?'},
+    {c: 'longueur', v: 'hauteur', w: 'distance'}, 'l\'échelle, le sol et le toboggan forment un triangle rectangle'],
+  cab: ['m', 5, 40, {
+    c: (W, V) => 'Un câble tient un mât vertical. Il est attaché au mât à ' + ppbL(V, 'm') + ' du sol,<br>et au sol à ' + ppbL(W, 'm') + ' du pied du mât. Quelle est la longueur du câble ?',
+    v: (W, V, D) => 'Un câble de ' + ppbL(D, 'm') + ' tient un mât vertical. Il est attaché au sol à ' + ppbL(W, 'm') + ' du pied du mât.<br>À quelle hauteur est-il attaché au mât ?',
+    w: (W, V, D) => 'Un câble de ' + ppbL(D, 'm') + ' tient un mât vertical. Il est attaché au mât à ' + ppbL(V, 'm') + ' du sol.<br>À quelle distance du pied du mât est-il attaché au sol ?'},
+    {c: 'longueur', v: 'hauteur', w: 'distance'}, 'le mât, le sol et le câble forment un triangle rectangle'],
+  bat: ['km', 5, 60, {
+    c: (W, V, D, wst) => 'Un bateau part du port. Il navigue ' + ppbL(V, 'km') + ' vers le nord, puis ' + ppbL(W, 'km') + ' vers l\'' + (wst ? 'ouest' : 'est') + '.<br>À quelle distance du port est-il ?',
+    v: (W, V, D, wst) => 'Un bateau part du port vers le nord, puis navigue ' + ppbL(W, 'km') + ' vers l\'' + (wst ? 'ouest' : 'est') + '.<br>Il est alors à ' + ppbL(D, 'km') + ' du port. Combien de kilomètres a-t-il faits vers le nord ?',
+    w: (W, V, D, wst) => 'Un bateau part du port. Il navigue ' + ppbL(V, 'km') + ' vers le nord, puis vers l\'' + (wst ? 'ouest' : 'est') + '.<br>Il est alors à ' + ppbL(D, 'km') + ' du port. Combien de kilomètres a-t-il faits vers l\'' + (wst ? 'ouest' : 'est') + ' ?'},
+    {c: 'distance', v: 'distance', w: 'distance'}, 'le chemin vers le nord, le chemin vers l\'est (ou l\'ouest) et la ligne droite jusqu\'au port forment un triangle rectangle'],
+  ech: ['m', 2, 13, {
+    c: (W, V) => 'Le haut d\'une échelle touche un mur à ' + ppbL(V, 'm') + ' du sol.<br>Son pied est à ' + ppbL(W, 'm') + ' du mur. Quelle est la longueur de l\'échelle ?',
+    v: (W, V, D) => 'Une échelle de ' + ppbL(D, 'm') + ' est posée contre un mur. Son pied est à ' + ppbL(W, 'm') + ' du mur.<br>À quelle hauteur touche-t-elle le mur ?',
+    w: (W, V, D) => 'Une échelle de ' + ppbL(D, 'm') + ' est posée contre un mur. Elle touche le mur à ' + ppbL(V, 'm') + ' du sol.<br>À quelle distance du mur est son pied ?'},
+    {c: 'longueur', v: 'hauteur', w: 'distance'}, 'le mur, le sol et l\'échelle forment un triangle rectangle'],
+  kit: ['m', 10, 80, {
+    c: (W, V) => 'Un <span style="white-space:nowrap">cerf-volant</span> vole à ' + ppbL(V, 'm') + ' de haut, juste au-dessus d\'un point à ' + ppbL(W, 'm') + ' d\'un enfant.<br>L\'enfant tient la ficelle au ras du sol. Quelle est la longueur de la ficelle ?',
+    v: (W, V, D) => 'Un enfant tient au ras du sol la ficelle d\'un <span style="white-space:nowrap">cerf-volant</span> ; la ficelle, bien tendue, mesure ' + ppbL(D, 'm') + '.<br>Le <span style="white-space:nowrap">cerf-volant</span> est juste au-dessus d\'un point à ' + ppbL(W, 'm') + ' de l\'enfant. À quelle hauteur vole-t-il ?',
+    w: (W, V, D) => 'Un enfant tient au ras du sol la ficelle d\'un <span style="white-space:nowrap">cerf-volant</span> ; la ficelle, bien tendue, mesure ' + ppbL(D, 'm') + '.<br>Le <span style="white-space:nowrap">cerf-volant</span> vole à ' + ppbL(V, 'm') + ' de haut. À quelle distance de l\'enfant est le point juste en dessous ?'},
+    {c: 'longueur', v: 'hauteur', w: 'distance'}, 'la ficelle, le sol et la verticale du <span style="white-space:nowrap">cerf-volant</span> forment un triangle rectangle']
+};
+function ppbOne(lv){
+  const k = pick(Object.keys(PPB_S1)), [u, lo, hi, T, Q, gr] = PPB_S1[k];
+  const ask = lv === 1 ? 'c' : lv === 2 ? (chance(.7) ? pick(['v', 'w']) : 'c') : (chance(.55) ? pick(['v', 'w']) : 'c');
+  const t3 = ppbTri(lv, lo, hi, ask === 'c' ? 'c' : 'b', lv <= 2); if (!t3) return null;
+  let W, V; const D = t3.c;
+  if (ask === 'v'){ V = t3.b; W = t3.a; } else if (ask === 'w'){ W = t3.b; V = t3.a; } else [W, V] = k === 'ecr' && t3.a < t3.b || k === 'ech' && t3.a > t3.b ? [t3.b, t3.a] : [t3.a, t3.b];   // écran plus large que haut ; échelle : pied près du mur
+  if (k === 'ecr' && W < V) return null;                                                 // un écran plus large que haut
+  if (k === 'tob' && V > W * 1.6) return null;                                            // un toboggan pas trop raide
+  if (k === 'ech' && V < W * 1.3) return null;                                            // une échelle assez droite (pied près du mur)
+  const wst = k === 'bat' && chance(.5), lab = x => x === ask ? ppbQ : x === 'c' ? ppbL(D, u) : ppbL(x === 'v' ? V : W, u);
+  const fig = k === 'ecr' || k === 'ter' ? ppbFigRect(k, W, V, lab('w'), lab('v'), lab('c')) : k === 'bat' ? ppbFigBat(W, V, lab('w'), lab('v'), lab('c'), wst) : ppbFigV(k, W, V, lab('w'), lab('v'), lab('c'));
+  const v = ask === 'c' ? D : ask === 'v' ? V : W, p1 = ask === 'c' ? W : D, p2 = ask === 'c' ? V : ask === 'v' ? W : V, op = ask === 'c' ? ' + ' : ' − ';
+  return ppbOut({k, lv, u, v, q: Q[ask], con: T[ask](W, V, D, wst), fig, key: [W, V, ask, wst], alts: ppbAlts(p1, p2, op),
+    det: () => DIV(gr, 'gr') + ppbDet(ppbX, p1, p2, op, u, true)});
+}
+// ---------- les situations à deux étapes (★★★★) ----------
+function ppbTwo(lv){
+  const k = pick(['rac', 'toi', 'ten', 'kit2', 'gli']), trip = chance(.4);
+  if (k === 'rac'){                                                                       // raccourci par la diagonale d'un terrain
+    const t3 = ppbTri(lv, 20, 160, 'c', trip); if (!t3) return null; const {a: W, b: V, c: D} = t3, u = 'm', v = W + V - D;
+    const f = new Fig(), kk = 230 / Math.max(W, V), w = Math.max(W * kk, V * kk * .45), h = Math.max(V * kk, w * .45), P = [[0, 0], [w, 0], [w, h], [0, h]], C = [w / 2, h / 2];
+    f.poly(P, {fill: '#eaf4e4', stroke: 'none', nohit: true}); for (let i = 0; i < 4; i++) f.seg(P[i], P[(i + 1) % 4], {w: 3});
+    const arr = (A, B) => { const M = V2.lerp(A, B, .5), uu = V2.unit(V2.sub(B, A)), n = V2.perp(uu); f.poly([V2.add(M, V2.mul(uu, 9)), V2.add(V2.sub(M, V2.mul(uu, 7)), V2.mul(n, 6)), V2.sub(V2.sub(M, V2.mul(uu, 7)), V2.mul(n, 6))], {fill: INK, w: 1}); };
+    arr(P[0], P[1]); arr(P[1], P[2]); f.seg(P[0], P[2], {w: 2.6, dash: '9 7'}); rightMark(f, P[1], P[0], P[2]);
+    ['A', 'B', 'C', 'D'].forEach((n, i) => vLab(f, P[i], n, C)); ppbLab(f, P[0], P[1], ppbL(W, u), C); ppbLab(f, P[1], P[2], ppbL(V, u), C);
+    const dd = Math.sqrt(W * W + V * V);
+    return ppbOut({k, lv, u, v, q: 'différence', fig: f.svg(), key: [W, V],
+      con: 'Pour aller de A à C, Tom longe les côtés [AB] et [BC] d\'un terrain rectangulaire.<br>Combien de mètres ferait-il de moins en passant par la diagonale [AC] ?',
+      alts: [[D, 'Ça, c\'est la longueur de la diagonale. Combien de mètres de moins que par les côtés ?'], [W + V, 'Ça, c\'est le chemin par les côtés. Compare-le avec la diagonale.']].concat(ppbAlts(W, V, ' + ').map(([x, m]) => [W + V - x, m])),
+      det: () => DIV('triangle ABC rectangle en B', 'gr') + ppbDet('AC', W, V, ' + ', u, false) +
+        DIV('par les côtés : ' + fmtNum(W) + ' + ' + fmtNum(V) + ' = ' + ppbL(W + V, u), 'fin') + DIV(fmtNum(W + V) + ' − ' + (ppbEx(dd) ? fmtNum(rnd(dd)) : fmtR(dd, 1)) + ' ' + (ppbEx(v) ? '=' : '≈') + ' ' + ANS(ppbA(v, u)), 'fin')}); }
+  if (k === 'toi' || k === 'ten'){                                                         // toit d'une maison ; tente
+    const toi = k === 'toi', t3 = toi ? ppbTri(lv, 3, 9, 'b', trip) : ppbTri(lv, 1.5, 6, 'c', trip); if (!t3) return null;
+    let {a, b, c} = t3; if (!toi && DEC === false && !Number.isInteger(rnd(2 * a))) return null;
+    if (!toi && b > a * 1.3) [a, b] = [b, a];                                                // une tente plus large que haute
+    if (!toi && b < a * .55) return null;                                                     // pas une tente toute plate
+    const u = 'm', m = toi ? (DEC && chance(.4) ? ri(5, 13) / 2 : ri(3, 7)) : 0, v = toi ? m + b : c, W2 = rnd(2 * a);
+    const f = new Fig(), kk = 220 / Math.max(2 * a, (toi ? m + b : b)), A0 = [0, 0], A1 = [W2 * kk, 0], hm = m * kk, top = [a * kk, hm + b * kk], Mm = [a * kk, hm], C = [a * kk, (hm + top[1]) / 2];
+    if (toi){ ppbGround(f, -30, A1[0] + 30, 0, true); f.seg(A0, [0, hm], {w: 3}); f.seg(A1, [A1[0], hm], {w: 3}); f.seg([0, hm], A1.map((x, i) => i ? hm : x), {w: 3});
+      f.seg([0, hm], top, {w: 3}); f.seg(top, [A1[0], hm], {w: 3}); f.seg(top, Mm, {w: 2, dash: '7 6'}); rightMark(f, Mm, [A1[0], hm], top);
+      f.poly([[A1[0] * .4, 0], [A1[0] * .4, Math.min(hm * .55, 70)], [A1[0] * .4 + 34, Math.min(hm * .55, 70)], [A1[0] * .4 + 34, 0]], {w: 2});
+      ppbLab(f, A0, A1, ppbL(W2, u), C); ppbLab(f, A0, [0, hm], ppbL(m, u), [A1[0], hm / 2]); ppbLab(f, [0, hm], top, ppbL(c, u), C);
+      f.seg(top, [A1[0] + 30, top[1]], {w: 1.2, dash: '4 5', nohit: true}); ppbDim(f, [A1[0] + 30, 0], [A1[0] + 30, top[1]], ppbQ, [0, top[1] / 2], {off: 14}); }
+    else { ppbGround(f, -30, A1[0] + 30, 0, true); f.seg(A0, top, {w: 3.4}); f.seg(top, A1, {w: 3.4}); f.seg(top, Mm, {w: 2.4}); rightMark(f, Mm, A1, top);
+      ppbLab(f, A0, A1, ppbL(W2, u), top); smartLab(f, Mm, top, ppbL(b, u), {side: -1, ts: [.5, .4, .6, .3]}); ppbLab(f, A0, top, ppbQ, Mm); }
+    const con = toi ? 'Une maison a un toit à deux pans identiques. La façade mesure ' + ppbL(W2, u) + ' de large,<br>les murs ' + ppbL(m, u) + ' de haut et chaque pan du toit ' + ppbL(c, u) + '. Quelle est la hauteur de la maison ?'
+      : 'Une tente a la forme d\'un triangle isocèle vue de face. Elle mesure ' + ppbL(W2, u) + ' de large au sol<br>et son mât, au milieu, ' + ppbL(b, u) + ' de haut. Quelle est la longueur d\'un côté de la tente ?';
+    const half = toi ? [[m + Math.sqrt(Math.max(0, c * c - W2 * W2)), 'La hauteur partage la largeur en deux : prends la moitié de la largeur.'], [m + Math.sqrt(c * c + a * a), 'La longueur cherchée n\'est pas le plus grand côté du triangle rectangle : on soustrait les carrés.']]
+      : [[Math.sqrt(W2 * W2 + b * b), 'Le mât partage la largeur en deux : prends la moitié de la largeur.']];
+    return ppbOut({k, lv, u, v, q: toi ? 'hauteur' : 'côté', fig: f.svg(), key: [W2, m, c, b], con,
+      alts: half.concat(toi ? [[b, 'Ça, c\'est la hauteur du toit seul. Ajoute la hauteur des murs.']].concat(ppbAlts(c, a, ' − ').map(([x, mm]) => [m + x, mm])) : ppbAlts(a, b, ' + ')),
+      det: () => DIV('la moitié de la largeur : ' + fmtNum(W2) + ' : 2 = ' + H('cA', ppbL(a, u)), 'fin') + DIV('triangle rectangle : ' + (toi ? 'la moitié de la façade, la hauteur du toit et un pan' : 'la moitié de la largeur, le mât et un côté'), 'gr') +
+        (toi ? ppbDet(ppbY, c, a, ' − ', u, false) + DIV('hauteur de la maison : ' + fmtNum(m) + ' + ' + (ppbEx(b) ? fmtNum(rnd(b)) : fmtR(b, 1)) + ' ' + (ppbEx(v) ? '=' : '≈') + ' ' + ANS(ppbA(v, u)), 'fin')
+          : ppbDet(ppbX, a, b, ' + ', u, true))}); }
+  if (k === 'kit2'){                                                                      // cerf-volant : la main de l'enfant est au-dessus du sol
+    const t3 = ppbTri(lv, 12, 70, 'b', trip); if (!t3) return null; const {a: W, b: V, c: D} = t3, u = 'm', m = DEC && chance(.5) ? 1.5 : 1, v = V + m;
+    const f = new Fig(), kk = 220 / Math.max(W, V + m), s = chance(.5) ? 1 : -1, hm = Math.max(m * kk, 26), Hd = [s * W * kk, hm], K = [0, hm + V * kk], O = [0, hm], C = [Hd[0] / 3, hm + V * kk / 3];
+    ppbGround(f, Math.min(-40 * s, Hd[0] * 1.15), Math.max(-40 * s, Hd[0] * 1.15)); f.seg([0, 0], K, {w: 1.8, dash: '7 6'}); f.seg(Hd, O, {w: 1.8, dash: '7 6'}); f.seg(Hd, K, {w: 2});
+    f.poly([[0, K[1] + 14], [9, K[1]], [0, K[1] - 16], [-9, K[1]]], {fill: '#f3d9b8', w: 2}); f.circle([Hd[0], hm + 10], 7, {w: 2}); f.seg([Hd[0], hm + 3], [Hd[0], 0], {w: 2});
+    rightMark(f, O, Hd, K); ppbLab(f, Hd, K, ppbL(D, u), O); ppbLab(f, O, Hd, ppbL(W, u), K, {flip: true});
+    ppbDim(f, [Hd[0], 0], [Hd[0], hm], ppbL(m, u), [0, hm], {off: 16}); ppbDim(f, [0, 0], K, ppbQ, Hd, {off: 16});
+    return ppbOut({k, lv, u, v, q: 'hauteur', fig: f.svg(), key: [W, V, m],
+      con: 'Un enfant tient la ficelle d\'un <span style="white-space:nowrap">cerf-volant</span> à ' + ppbL(m, u) + ' du sol. La ficelle, bien tendue, mesure ' + ppbL(D, u) + '.<br>Le <span style="white-space:nowrap">cerf-volant</span> est juste au-dessus d\'un point à ' + ppbL(W, u) + ' de l\'enfant. À quelle hauteur du sol vole-t-il ?',
+      alts: [[V, 'Ça, c\'est la hauteur au-dessus de la main de l\'enfant. Ajoute la hauteur de la main.']].concat(ppbAlts(D, W, ' − ').map(([x, mm]) => [x + m, mm])),
+      det: () => DIV('triangle rectangle : la ficelle, l\'horizontale de la main et la verticale du <span style="white-space:nowrap">cerf-volant</span>', 'gr') + ppbDet(ppbY, D, W, ' − ', u, false) +
+        DIV('hauteur du sol : ' + (ppbEx(V) ? fmtNum(rnd(V)) : fmtR(V, 1)) + ' + ' + fmtNum(m) + ' ' + (ppbEx(v) ? '=' : '≈') + ' ' + ANS(ppbA(v, u)), 'fin')}); }
+  // échelle qui glisse : le pied s'éloigne du mur ; de combien le haut descend-il ?
+  for (let t = 0; t < 200; t++){
+    const st = DEC && chance(.5) ? .5 : 1, D = trip ? pick([5, 10, 13, 15, 25].filter(x => x <= 13 || DEC)) : rnd(ri(Math.ceil(3 / st), Math.floor(12 / st)) * st);
+    let a1, a2;
+    if (trip){ const L = PPB_T.filter(T => D % T[2] === 0), T = L.length ? pick(L) : null; if (!T) continue; const kk = D / T[2]; [a1, a2] = [T[0] * kk, T[1] * kk]; }
+    else { a1 = rnd(ri(Math.ceil(D * .25 / st), Math.floor(D * .55 / st)) * st); a2 = rnd(a1 + ri(1, Math.max(1, Math.floor(D * .3 / st))) * st); }
+    if (!(a2 > a1) || a2 > D * .8) continue;
+    const b1 = Math.sqrt(D * D - a1 * a1), b2 = Math.sqrt(D * D - a2 * a2), v = b1 - b2, e = rnd(a2 - a1), u = 'm', f10 = v * 10 - Math.floor(v * 10);
+    if (!trip && (ppbEx(v) || Math.abs(f10 - .5) < .04)) continue;
+    if (Math.abs(v - e) < .06) continue;                                                    // sinon l'erreur « le haut descend autant que le pied s'éloigne » donnerait la réponse
+    if (!ppbEx(b1) && Math.abs(b1 * 10 % 1 - .5) < .04 || !ppbEx(b2) && Math.abs(b2 * 10 % 1 - .5) < .04) continue;
+    const f = new Fig(), kk = 220 / D, s = chance(.5) ? 1 : -1, P1 = [s * a1 * kk, 0], P2 = [s * a2 * kk, 0], T1 = [0, b1 * kk], T2 = [0, b2 * kk], C = [s * 60, 60];
+    ppbGround(f, Math.min(-28 * s, P2[0] * 1.15), Math.max(-28 * s, P2[0] * 1.15)); f.seg([0, 0], [0, T1[1] * 1.12], {w: 5});
+    for (let y = 14; y < T1[1] * 1.08; y += 18) f.seg([0, y], [-10 * s, y - 9], {w: 1.2, nohit: true});
+    ppbRung(f, P1, T1, 6); f.seg(P2, T2, {w: 2.4, dash: '8 6'}); rightMark(f, [0, 0], P2, T1);
+    ppbLab(f, P1, T1, ppbL(D, u), [0, 0], {gap: 14}); const D1 = dimLine(f, [0, 0], P1, [0, 50], {off: 22}), D2 = dimLine(f, P1, P2, [0, 50], {off: 22});
+    dimTxt(f, D1, ppbL(a1, u)); dimTxt(f, D2, ppbL(e, u), {ts: [.5, .6, .4, .7, .3]}); ppbDim(f, T2, T1, ppbQ, [s * 50, (T1[1] + T2[1]) / 2], {off: 26});
+    return ppbOut({k: 'gli', lv, u, v, q: 'descente', fig: f.svg(), key: [D, a1, a2],
+      con: 'Une échelle de ' + ppbL(D, u) + ' est posée contre un mur, son pied à ' + ppbL(a1, u) + ' du mur.<br>Le pied glisse et s\'éloigne encore de ' + ppbL(e, u) + '. De combien le haut de l\'échelle descend-il ?',
+      alts: [[e, 'Le haut ne descend pas de la même longueur que le pied s\'éloigne : calcule la hauteur avant et la hauteur après.'],
+        [b1, 'Ça, c\'est la hauteur avant. On demande de combien le haut descend.'], [b2, 'Ça, c\'est la hauteur après. On demande de combien le haut descend.'],
+        [Math.round(b1 * 10) / 10 - Math.round(b2 * 10) / 10, 'Presque : tu as arrondi les hauteurs trop tôt. Garde-les au centième, puis arrondis seulement à la fin.', 'almost'],
+        [Math.sqrt(D * D - e * e), 'Le pied est maintenant à ' + ppbL(a2, u) + ' du mur (' + fmtNum(a1) + ' + ' + fmtNum(e) + ').'], [Math.sqrt(D * D + a1 * a1) - Math.sqrt(D * D + a2 * a2), 'La hauteur n\'est pas le plus grand côté du triangle rectangle : on soustrait les carrés.']],
+      det: () => COLS2(DIV('avant : le pied est à ' + ppbL(a1, u) + ' du mur', 'gr') + ppbDet('<i>h</i><sub>1</sub>', D, a1, ' − ', u, false, true),
+          DIV('après : le pied est à ' + fmtNum(a1) + ' + ' + fmtNum(e) + ' = ' + ppbL(a2, u) + ' du mur', 'gr') + ppbDet('<i>h</i><sub>2</sub>', D, a2, ' − ', u, false, true)) +
+        DIV((Number.isInteger(rnd(b1 * 100)) ? fmtNum(rnd(b1)) : fmtR(b1, 2)) + ' − ' + (Number.isInteger(rnd(b2 * 100)) ? fmtNum(rnd(b2)) : fmtR(b2, 2)) + ' ' + (ppbEx(v) ? '=' : '≈') + ' ' + ANS(ppbA(v, u)), 'fin')});
+  }
+  return null;
+}
+function ppbOut(o){
+  const ex = ppbEx(o.v), r = ex ? rnd(o.v) : Math.round(o.v * 10) / 10;
+  return {q: '<span>' + o.q + '</span>', sepA: ex ? '=' : '≈', a: ppbA(o.v, o.u), r, fig: o.fig,
+    con: o.con + (o.lv >= 3 ? '<span class="cprec">Arrondis au dixième si besoin.</span>' : ''), conBig: true, conW: true,
+    key: 'ppb' + o.k + o.key, chk: {ppb: {k: o.k, lv: o.lv, val: o.v, alts: (o.alts || []).filter(([x]) => isFinite(x) && x > 0 && Math.abs(x - o.v) > .06)}}, det: o.det};
+}
+// ---------- le piège (★★★, ★★★★) : toujours « non », au plus une fois par séance ----------
+const PPB_WHO = [['Léa', 'elle'], ['Noah', 'il'], ['Inès', 'elle'], ['Malik', 'il'], ['Zoé', 'elle'], ['Tiago', 'il'], ['Sara', 'elle'], ['Liam', 'il']];
+function ppbTrap(){
+  const T = pick(PPB_T.slice(0, 10)), k = pick([1, 1, 2]), [x, y, z] = T.map(n => n * k), [who, pr] = pick(PPB_WHO), u = pick(['cm', 'cm', 'm']), o = Math.sqrt(y * y - x * x);
+  return wordQ({a: 'non', r: false, con: who + ' affirme : « Un triangle rectangle qui a deux côtés de ' + ppbL(x, u) + ' et ' + ppbL(y, u) + '<br>a forcément un troisième côté de ' + ppbL(z, u) + '. » A-t-' + pr + ' raison ?',
+    conBig: true, conW: true, key: 'ppbtrap', cnt: 'pyLea', chk: {ppb: {k: 'trap', x, y, z, o, u}},
+    det: () => DIV('Il y a deux cas :', 'gr') +
+      DIV('1) ' + ppbL(x, u) + ' et ' + ppbL(y, u) + ' sont les côtés de l\'angle droit : ' + sqH(ppbX) + ' = ' + sqH(fmtNum(x)) + ' + ' + sqH(fmtNum(y)) + ' = ' + fmtNum(z * z) + ', ' + ppbX + ' = ' + ppbL(z, u), 'fin') +
+      DIV('2) ' + ppbL(y, u) + ' est l\'hypoténuse (le plus grand côté) : ' + sqH(ppbX) + ' = ' + sqH(fmtNum(y)) + ' − ' + sqH(fmtNum(x)) + ' = ' + fmtNum(y * y - x * x) + ', ' + ppbX + ' = ' + sq(fmtNum(y * y - x * x)) + ' ≈ ' + ppbL(rnd(Math.round(o * 10) / 10), u), 'fin') +
+      DIV('Le troisième côté ne mesure pas forcément ' + ppbL(z, u) + ' : ' + ANS('non'), 'fin')});
+}
+GL('py_pb', [1, 2, 3, 4], lv => {
+  if (lv >= 3 && !(TALLY.pyLea > 0) && !NO_RARE.has('ppbtrap') && chance(lv === 3 ? .18 : .15)) return ppbTrap();
+  return lv === 4 ? ppbTwo(lv) : ppbOne(lv);
+});
+// ---------- saisie ----------
+function ppbSpec(p){
+  const c = (p.chk || {}).ppb; if (!c) return null;
+  if (c.k === 'trap') return {t: 'ch', v: 'non', opts: ['oui', 'non'], R: () => 'Fais un croquis : le côté de ' + ppbL(c.y, c.u) + ' est-il forcément un côté de l\'angle droit ? Il pourrait aussi être l\'hypoténuse.'};
+  const v = qFromFloat(p.r); if (!v) return null;
+  return {t: 'num', v, form: 'dec', kb: {dec: true}, R: ppbR, u: unitOf(String(p.a || '')), val: p.r};
+}
+function ppbR(p, x, sp){                                                                  // erreurs ; un objet {r, m} : « presque » (arrondi)
+  const c = p.chk.ppb, X = fNum(x.q), d = (x.fp || '').length, ex = ppbEx(c.val);
+  for (const [y, m, al] of c.alts) if (al && Math.abs(X - y) < 1e-6) return {r: 'almost', m};   // arrondi trop tôt (échelle qui glisse)
+  if (!ex){
+    if (d >= 2 && Math.abs(X - c.val) < .051) return {r: 'almost', m: 'Juste, mais arrondis au dixième : un seul chiffre après la virgule.'};
+    if (d === 1 && Math.abs(X - c.val) < .151) return {r: 'almost', m: 'Presque : vérifie l\'arrondi (regarde le chiffre des centièmes).'};
+    if (d === 0 && X === Math.round(c.val)) return {r: 'almost', m: 'Presque : arrondis au dixième (un chiffre après la virgule).'};
+  }
+  const tol = Math.max(.051, .5 * 10 ** -d + 1e-9);
+  for (const [y, m, al] of c.alts) if (!al && Math.abs(X - y) <= tol) return m;
+  return null;
+}
+
 function newQuestions(){ PICK = false; LASTG = null; seqEnd(); QS = buildQuestions(); cur = 0; SNC_PEND = true; render(); }   // n° 51 : SNC_PEND, brouillon à la 1re question
 function newOrSettings(){ if (objectives(S).length) newQuestions(); else openSet(); }
 
@@ -16772,7 +17046,7 @@ var QR = (function(){
    « dans lien élèves si on clique dessus, ça pourrait permettre de coller un lien d'élève aussi » : champ « Reprendre un lien » (ses exercices
    cochés dans les réglages, son titre, ses étoiles, sa case FR) ; la fenêtre s'ouvre aussi sans exercice coché (pour coller un lien).
    Note du projet : QPC_PROJET_LIENS_ELEVES.md. */
-const QPC_VERSION = '2026-11-12';    // dossier de cette version sur le site (…/qpc/2026-11-07/) : à changer à chaque version mise en ligne
+const QPC_VERSION = '2026-11-13';    // dossier de cette version sur le site (…/qpc/2026-11-07/) : à changer à chaque version mise en ligne
 const QPC_BASE = 'https://outils-maths.github.io/qpc/';    // compte GitHub « outils-maths » (avec un s)
 const QPC_ONLINE = /(^|\.)github\.io$/i.test(location.hostname);    // ouverte depuis le site : seulement le mode élève (sans lien : un message)
 var STU = null;                       // mode élève (page ouverte par un lien élèves) ; null : page de l'enseignant
@@ -16992,7 +17266,7 @@ function linkNote(P){
 // titre proposé dans « Lien élèves » (l'enseignant, 07.11.2026) : un seul exercice d'un bloc : « Renfort » + le nom de l'exercice ; plusieurs
 // exercices d'un bloc : « Renfort » + le bloc ; deux blocs : « Renfort x et y » (chacun : le bloc ou l'exercice) ; plus de deux : « Révisions ».
 // Un nom par exercice (TNAME, par identifiant) ; un exercice ajouté plus tard sans nom : son nom affiché, sans les formules.
-const TNAME = {"m+": "addition en calcul mental", "m−": "soustraction en calcul mental", "m∙": "multiplication en calcul mental", "m:": "division en calcul mental", "liv": "livrets", "livd": "livrets : divisions", "m10": "multiplication et division par 10, 100, 0,1…", "m10x": "multiplication et division par 600, 0,3…", "mcom": "commutativité en calcul mental", "mdis": "distributivité en calcul mental", "p+": "addition en colonne", "p−": "soustraction en colonne", "p∙": "multiplication en colonne", "p:": "division en colonne", "rcmp": "comparaison de nombres relatifs", "radd": "addition de nombres relatifs", "rsub": "soustraction de nombres relatifs", "rsum": "sommes de plusieurs nombres relatifs", "rmul": "multiplication de nombres relatifs", "rdiv": "division de nombres relatifs", "rpow": "puissances de nombres relatifs", "rprio": "priorités des opérations avec les relatifs", "dvb": "critères de divisibilité", "prm": "nombres premiers", "dcp": "décomposition en facteurs premiers", "pgdc": "pgdc", "ppmc": "ppmc", "pb_1": "probabilités en une étape", "pb_2": "probabilités en plusieurs étapes", "pb_den": "dénombrement", "fs": "simplification de fractions", "fa": "amplification de fractions", "fcmp": "comparaison de fractions", "fax": "fractions sur un axe gradué", "fd": "écriture décimale d’une fraction", "f+": "addition et soustraction de fractions", "f∙": "multiplication de fractions", "f:": "division de fractions", "fpow": "puissances de fractions", "fprio": "priorités des opérations avec les fractions", "fq": "fraction d’un nombre", "fr": "fraction d’un nombre inconnu", "pc_ecr": "écritures d’un pourcentage", "fp": "pourcentage d’un nombre", "pc_init": "pourcentage d’un nombre inconnu", "pc_var": "augmentations et diminutions en pourcentage", "pc_taux": "recherche d’un pourcentage", "pwc": "calcul de puissances", "pp1": "produit de puissances de même base", "pp2": "quotient de puissances de même base", "pp3": "puissance d’une puissance", "pp4": "produit de puissances de même exposant", "pp5": "propriétés des puissances", "r2": "racines carrées", "r3": "racines cubiques", "renc2": "encadrement d’une racine carrée", "renc3": "encadrement d’une racine cubique", "rp1": "produit de racines", "rp2": "quotient de racines", "rp3": "extraction de racines", "rp4": "propriétés des racines", "q4": "quatrième proportionnelle", "pagr": "agrandissements et réductions", "pech": "échelles", "ppen": "pente", "pvit": "problèmes de vitesse", "pdeb": "problèmes de débit", "pmv": "problèmes de masse volumique", "l_tra": "traduction d’une phrase en expression littérale", "l_voc": "vocabulaire du calcul littéral", "l_sub": "substitution", "l_mulm": "multiplication de monômes", "l_addm": "addition et soustraction de monômes", "l_addp": "addition de polynômes", "l_subp": "soustraction de polynômes", "l_vocp": "vocabulaire des polynômes", "l_dev": "développement simple", "l_dev2": "développement double", "l_ir1": "développement de (a + b)²", "l_ir2": "développement de (a − b)²", "l_ir3": "développement de (a + b)(a − b)", "l_ir4": "développement de (x + a)(x + b)", "l_fme": "mise en évidence", "l_fir1": "factorisation de a² + 2ab + b²", "l_fir2": "factorisation de a² − 2ab + b²", "l_fir3": "factorisation de a² − b²", "l_fir4": "factorisation de x² + (a + b)x + ab", "l_fvi": "factorisation avec Viète", "e1_1": "équations x + a = b", "e1_2": "équations ax = b", "e1_3": "équations x : a = b", "e1_4": "équations ax + b = c", "e1_5": "équations ax + b = cx + d", "e1_6": "équations a(x + b) = c", "e1_7": "équations a(x + b) = c(x + d)", "e1_8": "équations x : a + b = c", "e2_1": "équations x² = a", "e2_2": "équations (x + a)(x + b) = 0", "e2_3": "équations ax² + bx = 0", "e2_4": "équations x² + bx + c = 0", "e2_5": "équations ax² + bx + c = 0", "sy_sub": "systèmes par substitution", "sy_com": "systèmes par combinaison", "fn_gx": "expression d’une fonction d’après son graphique", "fn_xg": "graphique d’une fonction d’après son expression", "fn_lim": "lecture d’images", "fn_im": "calcul d’images", "fn_lpi": "lecture de préimages", "fn_pi": "calcul de préimages", "fn_tab": "tableaux de valeurs", "d_car": "diagrammes cartésiens", "d_col": "diagrammes en colonnes", "d_cir": "diagrammes circulaires", "d_bar": "diagrammes en barre", "cv_lon": "conversions de longueurs", "cv_mas": "conversions de masses", "cv_cap": "conversions de capacités", "cv_air": "conversions d’aires", "cv_vol": "conversions de volumes", "cv_tem": "conversions de temps", "cv_vit": "conversions de vitesses", "cv_mv": "conversions de masses volumiques", "cv_deb": "conversions de débits", "aro": "arrondis", "enc": "encadrements", "f_car": "périmètre et aire du carré", "f_rec": "périmètre et aire du rectangle", "f_tri": "périmètre et aire du triangle", "f_par": "périmètre et aire du parallélogramme", "f_los": "périmètre et aire du losange", "f_tra": "périmètre et aire du trapèze", "f_dis": "périmètre et aire du disque", "f_sec": "périmètre et aire d’un secteur", "v_cub": "volume du cube", "v_pav": "volume du pavé droit", "v_pri": "volume du prisme droit", "v_cyl": "volume du cylindre", "v_pyr": "volume de la pyramide", "v_con": "volume du cône", "v_bou": "volume de la boule", "at_cub": "aire totale du cube", "at_pav": "aire totale du pavé droit", "at_pri": "aire totale du prisme droit", "at_cyl": "aire totale du cylindre", "at_pyr": "aire totale de la pyramide", "at_bou": "aire de la sphère", "py_calc": "calcul d’une longueur avec Pythagore", "py_rec": "réciproque du théorème de Pythagore", "py_con": "contraposée du théorème de Pythagore", "py_esp": "Pythagore dans l’espace", "th_calc": "calcul d’une longueur avec Thalès", "th_rec": "réciproque du théorème de Thalès", "th_con": "contraposée du théorème de Thalès", "g_not": "notations et codage", "g_mtr": "médiatrices", "g_bis": "bissectrices", "g_mdn": "médianes", "g_hau": "hauteurs", "g_cci": "cercle circonscrit", "g_cin": "cercle inscrit", "q_tri": "triangles particuliers", "q_con": "triangles constructibles", "q_car": "propriétés du carré", "q_rec": "propriétés du rectangle", "q_los": "propriétés du losange", "q_par": "propriétés du parallélogramme", "q_tra": "propriétés du trapèze", "q_rho": "propriétés du rhomboïde", "g_type": "types d’angles", "g_tri": "somme des angles d’un triangle", "g_opp": "angles opposés par le sommet et adjacents", "g_par": "angles alternes-internes", "g_ins": "angle inscrit et angle au centre", "g_tan": "tangente au cercle", "g_tha": "cercle de Thalès", "g_pol": "angles des polygones réguliers", "g_sym": "axes de symétrie", "g_csym": "centre de symétrie", "t_ax": "symétrie axiale", "t_ce": "symétrie centrale", "t_tr": "translation", "t_ro": "rotation", "t_ho": "homothétie", "g_rep2": "repérage dans le plan", "g_rep3": "repérage dans l’espace", "g_nsol": "noms des solides", "g_sol": "faces, sommets et arêtes", "g_pat": "développements des solides"};
+const TNAME = {"m+": "addition en calcul mental", "m−": "soustraction en calcul mental", "m∙": "multiplication en calcul mental", "m:": "division en calcul mental", "liv": "livrets", "livd": "livrets : divisions", "m10": "multiplication et division par 10, 100, 0,1…", "m10x": "multiplication et division par 600, 0,3…", "mcom": "commutativité en calcul mental", "mdis": "distributivité en calcul mental", "p+": "addition en colonne", "p−": "soustraction en colonne", "p∙": "multiplication en colonne", "p:": "division en colonne", "rcmp": "comparaison de nombres relatifs", "radd": "addition de nombres relatifs", "rsub": "soustraction de nombres relatifs", "rsum": "sommes de plusieurs nombres relatifs", "rmul": "multiplication de nombres relatifs", "rdiv": "division de nombres relatifs", "rpow": "puissances de nombres relatifs", "rprio": "priorités des opérations avec les relatifs", "dvb": "critères de divisibilité", "prm": "nombres premiers", "dcp": "décomposition en facteurs premiers", "pgdc": "pgdc", "ppmc": "ppmc", "pb_1": "probabilités en une étape", "pb_2": "probabilités en plusieurs étapes", "pb_den": "dénombrement", "fs": "simplification de fractions", "fa": "amplification de fractions", "fcmp": "comparaison de fractions", "fax": "fractions sur un axe gradué", "fd": "écriture décimale d’une fraction", "f+": "addition et soustraction de fractions", "f∙": "multiplication de fractions", "f:": "division de fractions", "fpow": "puissances de fractions", "fprio": "priorités des opérations avec les fractions", "fq": "fraction d’un nombre", "fr": "fraction d’un nombre inconnu", "pc_ecr": "écritures d’un pourcentage", "fp": "pourcentage d’un nombre", "pc_init": "pourcentage d’un nombre inconnu", "pc_var": "augmentations et diminutions en pourcentage", "pc_taux": "recherche d’un pourcentage", "pwc": "calcul de puissances", "pp1": "produit de puissances de même base", "pp2": "quotient de puissances de même base", "pp3": "puissance d’une puissance", "pp4": "produit de puissances de même exposant", "pp5": "propriétés des puissances", "r2": "racines carrées", "r3": "racines cubiques", "renc2": "encadrement d’une racine carrée", "renc3": "encadrement d’une racine cubique", "rp1": "produit de racines", "rp2": "quotient de racines", "rp3": "extraction de racines", "rp4": "propriétés des racines", "q4": "quatrième proportionnelle", "pagr": "agrandissements et réductions", "pech": "échelles", "ppen": "pente", "pvit": "problèmes de vitesse", "pdeb": "problèmes de débit", "pmv": "problèmes de masse volumique", "l_tra": "traduction d’une phrase en expression littérale", "l_voc": "vocabulaire du calcul littéral", "l_sub": "substitution", "l_mulm": "multiplication de monômes", "l_addm": "addition et soustraction de monômes", "l_addp": "addition de polynômes", "l_subp": "soustraction de polynômes", "l_vocp": "vocabulaire des polynômes", "l_dev": "développement simple", "l_dev2": "développement double", "l_ir1": "développement de (a + b)²", "l_ir2": "développement de (a − b)²", "l_ir3": "développement de (a + b)(a − b)", "l_ir4": "développement de (x + a)(x + b)", "l_fme": "mise en évidence", "l_fir1": "factorisation de a² + 2ab + b²", "l_fir2": "factorisation de a² − 2ab + b²", "l_fir3": "factorisation de a² − b²", "l_fir4": "factorisation de x² + (a + b)x + ab", "l_fvi": "factorisation avec Viète", "e1_1": "équations x + a = b", "e1_2": "équations ax = b", "e1_3": "équations x : a = b", "e1_4": "équations ax + b = c", "e1_5": "équations ax + b = cx + d", "e1_6": "équations a(x + b) = c", "e1_7": "équations a(x + b) = c(x + d)", "e1_8": "équations x : a + b = c", "e2_1": "équations x² = a", "e2_2": "équations (x + a)(x + b) = 0", "e2_3": "équations ax² + bx = 0", "e2_4": "équations x² + bx + c = 0", "e2_5": "équations ax² + bx + c = 0", "sy_sub": "systèmes par substitution", "sy_com": "systèmes par combinaison", "fn_gx": "expression d’une fonction d’après son graphique", "fn_xg": "graphique d’une fonction d’après son expression", "fn_lim": "lecture d’images", "fn_im": "calcul d’images", "fn_lpi": "lecture de préimages", "fn_pi": "calcul de préimages", "fn_tab": "tableaux de valeurs", "d_car": "diagrammes cartésiens", "d_col": "diagrammes en colonnes", "d_cir": "diagrammes circulaires", "d_bar": "diagrammes en barre", "cv_lon": "conversions de longueurs", "cv_mas": "conversions de masses", "cv_cap": "conversions de capacités", "cv_air": "conversions d’aires", "cv_vol": "conversions de volumes", "cv_tem": "conversions de temps", "cv_vit": "conversions de vitesses", "cv_mv": "conversions de masses volumiques", "cv_deb": "conversions de débits", "aro": "arrondis", "enc": "encadrements", "f_car": "périmètre et aire du carré", "f_rec": "périmètre et aire du rectangle", "f_tri": "périmètre et aire du triangle", "f_par": "périmètre et aire du parallélogramme", "f_los": "périmètre et aire du losange", "f_tra": "périmètre et aire du trapèze", "f_dis": "périmètre et aire du disque", "f_sec": "périmètre et aire d’un secteur", "v_cub": "volume du cube", "v_pav": "volume du pavé droit", "v_pri": "volume du prisme droit", "v_cyl": "volume du cylindre", "v_pyr": "volume de la pyramide", "v_con": "volume du cône", "v_bou": "volume de la boule", "at_cub": "aire totale du cube", "at_pav": "aire totale du pavé droit", "at_pri": "aire totale du prisme droit", "at_cyl": "aire totale du cylindre", "at_pyr": "aire totale de la pyramide", "at_bou": "aire de la sphère", "py_calc": "calcul d’une longueur avec Pythagore", "py_rec": "réciproque du théorème de Pythagore", "py_con": "contraposée du théorème de Pythagore", "py_esp": "Pythagore dans l’espace", "py_pb": "problèmes avec Pythagore", "th_calc": "calcul d’une longueur avec Thalès", "th_rec": "réciproque du théorème de Thalès", "th_con": "contraposée du théorème de Thalès", "g_not": "notations et codage", "g_mtr": "médiatrices", "g_bis": "bissectrices", "g_mdn": "médianes", "g_hau": "hauteurs", "g_cci": "cercle circonscrit", "g_cin": "cercle inscrit", "q_tri": "triangles particuliers", "q_con": "triangles constructibles", "q_car": "propriétés du carré", "q_rec": "propriétés du rectangle", "q_los": "propriétés du losange", "q_par": "propriétés du parallélogramme", "q_tra": "propriétés du trapèze", "q_rho": "propriétés du rhomboïde", "g_type": "types d’angles", "g_tri": "somme des angles d’un triangle", "g_opp": "angles opposés par le sommet et adjacents", "g_par": "angles alternes-internes", "g_ins": "angle inscrit et angle au centre", "g_tan": "tangente au cercle", "g_tha": "cercle de Thalès", "g_pol": "angles des polygones réguliers", "g_sym": "axes de symétrie", "g_csym": "centre de symétrie", "t_ax": "symétrie axiale", "t_ce": "symétrie centrale", "t_tr": "translation", "t_ro": "rotation", "t_ho": "homothétie", "g_rep2": "repérage dans le plan", "g_rep3": "repérage dans l’espace", "g_nsol": "noms des solides", "g_sol": "faces, sommets et arêtes", "g_pat": "développements des solides"};
 const blTitle = bl => { const n = BLOCKS[bl].name.replace(/<[^>]+>/g, ''); return bl === 'pyt' || bl === 'tha' ? n : n.charAt(0).toLowerCase() + n.slice(1); };
 function linkSugT(){                // le titre proposé d'après les exercices cochés de la fenêtre
   if (!LNK || !LNK.P) return '';
@@ -17180,7 +17454,7 @@ const IP_WORK = {
   f_car: 8, f_rec: 10, f_tri: 12, f_par: 12, f_los: 12, f_tra: 14, f_dis: 12, f_sec: 16,
   v_cub: 10, v_pav: 12, v_pri: 14, v_cyl: 14, v_pyr: 16, v_con: 16, v_bou: 14,
   at_cub: 12, at_pav: 18, at_pri: 20, at_cyl: 18, at_pyr: 20, at_bou: 12,
-  py_calc: 20, py_rec: 22, py_con: 22, py_esp: 24, th_calc: 20, th_rec: 22, th_con: 22,
+  py_calc: 20, py_rec: 22, py_con: 22, py_esp: 24, py_pb: 26, th_calc: 20, th_rec: 22, th_con: 22,
   q_con: 6, g_tri: 8, g_opp: 6, g_par: 8, g_ins: 6, g_tan: 14, g_tha: 8, g_pol: 8, g_mdn: 4, g_sol: 4
 };
 const IP_NAME = {pgdc: 'Calcul du pgdc', ppmc: 'Calcul du ppmc'};

@@ -1194,10 +1194,10 @@ body.two:not(.tall) .con.cw{max-width:44vw}
 .tmode span{padding:.18em .7em;border:.08em solid #c3cbd6;border-radius:1em;cursor:pointer;color:var(--muted);background:#fff;-webkit-user-select:none;user-select:none;white-space:nowrap}
 .tmode span.on{background:var(--accent);border-color:var(--accent);color:#fff}
 .frow.rpside{gap:1.1em;flex-wrap:nowrap;align-items:center}   /* n° 88 : problèmes de relatifs, droite graduée verticale à gauche des calculs */
-/* n° 89 : « Réessayer une question manquée » (mode élève), en haut à gauche du cadre des questions, petit ; deux lignes s'il touche les étoiles */
+/* n° 89 : « Réessayer une question manquée » (mode élève), en haut du cadre des questions (n° 90 : à droite), petit ; deux lignes s'il touche les étoiles */
 #bRet{position:fixed;z-index:5;font-size:.78em;padding:.28em .65em;border-width:1.5px;border-radius:.55em;line-height:1.15;box-shadow:0 .1em .35em rgba(0,0,0,.1)}
 #bRet[hidden]{display:none}
-#bRet.ret2{text-align:left}
+#bRet.ret2{text-align:center}
 #bRet.ret2 .rl{display:block}
 body.retpad .pane{padding-top:calc(var(--fs-ui) * 3.1)}
 </style>
@@ -11621,6 +11621,7 @@ function levelCounts(n, pct){ // parties décimales tirées au hasard (45 % de 1
   return {1: c[0], 2: c[1], 3: c[2]};
 }
 let TALLY = {};
+let GEN_ONLY = null; const GEN_IDX = new WeakMap();   // n° 91 : la fonction du générateur imposée (question semblable) ; question → place de sa fonction dans GEN[sub][lv]
 const USED = new Set();
 function leastUsed(list, key){ const m = Math.min(...list.map(x => TALLY[key + x] || 0)); return pick(list.filter(x => (TALLY[key + x] || 0) === m)); }
 const bump = key => TALLY[key] = (TALLY[key] || 0) + 1;
@@ -11739,7 +11740,7 @@ function genOne0(sub, lv, fl, mode){
   const geo = isGeo(sub); if (geo && !mode) mode = GEO_STRICT ? 'new' : 'old';
   let p = null, any = null; const old = new Map();
   for (let t = 0, nt = geo ? 300 : 80; t < nt; t++){       // géométrie : plus d'essais (générateurs rapides), pour trouver aussi la dernière question pas encore posée
-    let q = null; try { q = pick(L)(); } catch (e) { console.error(sub, lv, e); }
+    let q = null; try { const gf = GEN_ONLY !== null && L[GEN_ONLY] ? L[GEN_ONLY] : pick(L); q = gf(); if (q && typeof q === 'object') GEN_IDX.set(q, L.indexOf(gf)); } catch (e) { console.error(sub, lv, e); }   // n° 91 : GEN_ONLY, GEN_IDX
     if (!q) continue; any = any || q; if (!USED.has(q.key) || q.reuse){ p = q; break; }      // reuse : reprise voulue (vocabulaire du calcul littéral, 07.11.2026)
     if (!old.has(q.key)) old.set(q.key, q);
   }
@@ -22486,21 +22487,80 @@ function retList(){                  // les questions manquées (paires de QS) q
   const on = new Set(objectives(S).map(o => o.id)), cp = QS[cur];
   return QS.filter(x => x && !x.grp && !x.rty && x.L && x.o && on.has(x.o.id) && retMiss(x, x === cp) && !QS.some(y => y && y.rty === x && y.L && y.L.mk === 'ok'));
 }
-function retGen(x){                  // une question semblable à x.L (même sous-genre, mêmes étoiles), autre que x.L
-  const p = x.L, lv = p.level, fl = p.fl, geo = isGeo(p.sub), c = p.chk && p.chk.pb, pm = c && c.m && PB_M[c.bl] ? c.m : null;
+/* n° 91 (l'enseignant, 14.11.2026 : « actuellement le bouton remet un exercice de la même coche, mais dans la même coche on peut avoir beaucoup de
+   choses différentes (par exemple, dans vocabulaire du calcul littéral). Ce serait bien que le bouton remet la même chose (avec potentiellement
+   d'autres expressions/nombres/figures) ») : la question semblable est la même sorte de question à l'intérieur de la case. Plusieurs questions sont
+   tirées comme d'habitude (même sous-genre, mêmes étoiles), d'abord avec la même fonction du générateur (GEN_ONLY, GEN_IDX), et on garde celle qui
+   ressemble le plus à la question manquée (retScore) : même fonction ; même sorte d'après ce que le générateur range dans chk (clés et mots courts, sans
+   les nombres, les vrai / faux ni rien qui donne la réponse : retKind ; sinon la semblable aurait souvent la même réponse oui / non) ; même consigne une fois les nombres et les noms des points enlevés ; mêmes
+   mots dans la question (« Le coefficient de … est », « La partie littérale de … ») ; même sorte de case de réponse. Jamais exactement ce que l'élève a
+   déjà vu (consigne, question, ligne et figure identiques), sauf s'il n'y a rien d'autre ; la même clé avec autre chose à l'écran est permise, un peu
+   moins bien notée (géométrie : mêmes consigne et réponse, autres lettres et autre figure, une notation de demi-droite reste une notation de
+   demi-droite ; vocabulaire : « Dans la formule P = 2πr, la lettre r est une … » et « Dans la formule V = c³, … » ont la même clé). Les questions tirées pour rien ne comptent pas dans la séance (état remis, puis seule la question gardée
+   est inscrite comme dans genOne0). */
+const retTxt = h => String(h || '').replace(/<[^>]*>/g, ' ').replace(/&[#\w]+;/g, ' ').replace(/[   ]/g, ' ');
+const retNorm = h => retTxt(h).replace(/\s+/g, ' ').replace(/[−-]?\d[\d ,.]*/g, '#').replace(/\b[A-Z]{1,4}\b/g, 'P').trim();
+const retWords = h => (retTxt(h).match(/[A-Za-zÀ-ÖØ-öø-ÿœŒ'’-]{3,}/g) || []).map(w => w.toLowerCase()).join(' ');
+function retKind(p){                 // la sorte d'après chk : ses clés, et dans chacune les mots courts (pas les nombres, ni les vrai / faux, ni la réponse)
+  const c = p.chk || {}, out = [], A = retTxt(p.a).trim(), ANS = /^(yes|yn|ans|a|r|res|sol|rep|ok|good|v|val)$/;
+  // un code qui dit la réponse (« iso » pour isocèle, « ri » pour rectangle et isocèle, « tra » pour trapèze) n'est pas une sorte : sinon la
+  // question semblable aurait toujours la même réponse
+  const da = x => x.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(), AW = da(A).split(/[^a-z]+/).filter(Boolean),
+    ini = AW.filter(w => w.length > 2).map(w => w[0]).join(''), leak = x => { const v = da(x); return AW.some(w => w.startsWith(v)) || (v.length >= 2 && v === ini); };
+  const ok = (j, x) => typeof x === 'string' && x.length >= 1 && x.length <= 14 && !/\d/.test(x) && !ANS.test(j) && !/^(oui|non|vrai|faux)$/i.test(x) &&
+    !/^[A-Z]{1,3}$/.test(x) && x !== A && !leak(x);
+  Object.keys(c).sort().forEach(k => { const v = c[k]; out.push(k);
+    if (v && typeof v === 'object' && !Array.isArray(v)) Object.keys(v).sort().forEach(j => { if (ok(j, v[j])) out.push(k + '.' + j + '=' + v[j]); });
+    else if (ok(k, v)) out.push(k + '=' + v); });
+  return out;
+}
+function retFeat(p){
+  let ln = ''; try { ln = typeof p.line === 'function' ? p.line(false) : ''; } catch (e) {}
+  let sp = null; try { sp = inpSpec(p); } catch (e) {}
+  const qs = typeof p.q === 'string' ? p.q : '';
+  return {gi: GEN_IDX.get(p), con: retNorm(p.con), w: retWords(qs + ' ' + ln), k: retKind(p),
+    look: [retTxt(p.con), retTxt(qs), retTxt(ln), typeof p.fig === 'string' ? p.fig : ''].join('¦').replace(/\s+/g, ' '),   // ce que l'élève voit
+    t: sp ? [sp.t, sp.form || '', sp.mode || '', (sp.opts || []).slice().sort().join('/')].join('|') : ''};
+}
+const RET_MAX = 22;
+function retScore(a, b){             // a : la question manquée, b : une question tirée (RET_MAX : toutes les deux pareilles)
+  const K = new Set(a.k), n = b.k.filter(x => K.has(x)).length, u = new Set(a.k.concat(b.k)).size;
+  return (a.gi !== undefined && a.gi === b.gi ? 8 : 0) + 4 * n / Math.max(1, u) + (n === u ? 2 : 0) + (a.con === b.con ? 3 : 0) + (a.w === b.w ? 3 : 0) + (a.t === b.t ? 2 : 0);
+}
+function retSnap(){                  // l'état de la séance que le tirage change (pour l'enlever ensuite)
+  return {T: TALLY, U: new Set(USED), A: new Map(USEDAT), C: new Map(USECNT), N: USEDN, E: new Set(EXH), L: Object.assign({}, PB_LAST)}; }
+function retBack(z){
+  TALLY = z.T; USED.clear(); z.U.forEach(k => USED.add(k)); USEDAT.clear(); z.A.forEach((v, k) => USEDAT.set(k, v)); USECNT.clear(); z.C.forEach((v, k) => USECNT.set(k, v));
+  USEDN = z.N; EXH.clear(); z.E.forEach(k => EXH.add(k)); Object.keys(PB_LAST).forEach(k => delete PB_LAST[k]); Object.assign(PB_LAST, z.L); }
+function retGen(x){                  // une question semblable à x.L : même sous-genre, mêmes étoiles, la même sorte de question si possible, autre que x.L
+  const p = x.L, lv = p.level, fl = p.fl, geo = isGeo(p.sub), c = p.chk && p.chk.pb, pm = c && c.m && PB_M[c.bl] ? c.m : null, F0 = retFeat(p);
   const one = force => {
-    const sv = [TH_FORCE, TC_KIND, PB_ONLY];
+    const sv = [TH_FORCE, TC_KIND, PB_ONLY, GEN_ONLY];
     if (p.thc) TH_FORCE = p.thc;
     if (p.sub === 'q_con') TC_KIND = tcKind(p);
-    PB_ONLY = force ? pm : null;
+    PB_ONLY = force ? pm : null; GEN_ONLY = force && F0.gi !== undefined ? F0.gi : null;
+    USED.delete(p.key);                                               // genOne refuse une clé déjà posée : ici, la même clé avec autre chose à l'écran est permise
     try {
       if (geo){ for (const m of ['new', 'round', 'old']){ const q = genOne(p.sub, lv, fl, m); if (q) return q; } return null; }
       return genOne(p.sub, lv, fl);
-    } finally { [TH_FORCE, TC_KIND, PB_ONLY] = sv; }
+    } finally { [TH_FORCE, TC_KIND, PB_ONLY, GEN_ONLY] = sv; }
   };
-  let q = null;
-  for (let t = 0; t < 4 && (!q || q.key === p.key); t++) q = one(t < 2) || q;     // la même question : on en cherche une autre (problèmes : à la fin, une autre sorte)
-  if (!q) return null;
+  const z = retSnap(), TB = Date.now(); TALLY = Object.assign({}, z.T);
+  let best = null, bs = -1, same = null;
+  try {
+    for (let t = 0; t < 30; t++){
+      if (t >= 4 && Date.now() - TB > 350) break;
+      const q = one(t < 20); if (!q) continue;
+      const Fq = retFeat(q);
+      if (Fq.look === F0.look){ same = same || q; continue; }         // exactement ce que l'élève a déjà vu : seulement s'il n'y a rien d'autre
+      const s = retScore(F0, Fq) - (q.key === p.key ? 3.5 : 0); if (s > bs){ bs = s; best = q; }   // la même clé, autre chose à l'écran (autres lettres,
+                                                                     // autre figure, autre formule) : permise, un peu moins bien notée
+      if (bs >= RET_MAX - 1e-9) break;
+    }
+  } finally { retBack(z); }
+  const q = best || same; if (!q) return null;
+  USED.add(q.key); USEDAT.set(q.key, ++USEDN); USECNT.set(q.key, (USECNT.get(q.key) || 0) + 1);      // comme genOne0, pour la seule question gardée
+  if (q.cnt) [].concat(q.cnt).forEach(bump);
   if (p.nostar) q.nostar = true;
   return {L: q, R: null, bl: x.bl, srt: x.srt, o: x.o, rty: x};
 }
@@ -22511,7 +22571,8 @@ function retGo(){                    // le bouton : une question semblable à un
   const at = QS.length ? cur + 1 : 0;
   QS.splice(at, 0, q); go(at);
 }
-function retUI(){                    // le bouton : visible s'il y a une question manquée ; en haut à gauche du cadre des questions, à la hauteur des étoiles
+function retUI(){                    // le bouton : visible s'il y a une question manquée ; en haut à droite du cadre des questions, à la hauteur des étoiles
+  // n° 90 (l'enseignant, 14.11.2026, après la mise en ligne de la n° 89 : « tu peux bouger le bouton plutôt à droite ? (à la même hauteur) ») ; avant : à gauche
   const b = $('bRet'), B = document.body; if (!b) return;
   const on = !!(STU && !STU.start && !B.classList.contains('stumsg') && !PICK && QS[cur] && retList().length), was = B.classList.contains('retpad');
   b.hidden = !on;
@@ -22521,9 +22582,9 @@ function retUI(){                    // le bouton : visible s'il y a une questio
     const pane = $('pL'), P = pane.getBoundingClientRect(), fs = parseFloat(getComputedStyle(b).fontSize) || 12;
     const st = pane.querySelector('.badge .stars'), S0 = st && st.offsetWidth ? st.getBoundingClientRect() : null;
     const place = () => { const r = b.getBoundingClientRect(), top = S0 ? S0.top + S0.height / 2 - r.height / 2 : P.top + .3 * fs;
-      b.style.left = Math.round(P.left + .45 * fs) + 'px'; b.style.top = Math.round(Math.max(P.top + 2, top)) + 'px'; };
+      b.style.left = Math.round(P.right - .45 * fs - r.width) + 'px'; b.style.top = Math.round(Math.max(P.top + 2, top)) + 'px'; };
     place();
-    if (S0 && b.getBoundingClientRect().right > S0.left - .6 * fs){ two = true; b.classList.add('ret2'); place(); }   // pas la place à côté des étoiles : deux lignes
+    if (S0 && b.getBoundingClientRect().left < S0.right + .6 * fs){ two = true; b.classList.add('ret2'); place(); }   // pas la place à côté des étoiles : deux lignes
   }
   B.classList.toggle('retpad', two);                                               // deux lignes : un peu plus de place en haut du cadre (la question ne touche pas le bouton)
   if (two !== was) requestAnimationFrame(fitAll);

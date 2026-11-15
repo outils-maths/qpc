@@ -1200,6 +1200,17 @@ body.two:not(.tall) .con.cw{max-width:44vw}
 #bRet.ret2{text-align:center}
 #bRet.ret2 .rl{display:block}
 body.retpad .pane{padding-top:calc(var(--fs-ui) * 3.1)}
+/* n° 101 : le petit « i » de la case « problèmes » et sa fenêtre */
+.pbinf{border:0;background:none;padding:.08em;margin:0 0 0 -.3em;color:#56708f;cursor:pointer;line-height:0;display:inline-flex;align-items:center;border-radius:50%}
+.pbinf:hover,.pbinf:focus-visible{color:var(--accent);background:rgba(31,95,168,.1)}
+.pbinf .pisvg{width:1.05em;height:1.05em}
+#oPbi .pibox{width:min(94vw, 38em)}
+.pibody{line-height:1.4}
+.pibody p{margin:.1em 0 .55em}
+.pibody ul{margin:.1em 0 .6em;padding-left:1.3em}
+.pibody li{margin:.18em 0}
+.pibody .piy{list-style:none;padding-left:.6em}
+.pibody .pih{font-weight:700;margin:.7em 0 .2em;color:var(--accent)}
 </style>
 </head>
 <body>
@@ -1437,6 +1448,14 @@ body.retpad .pane{padding-top:calc(var(--fs-ui) * 3.1)}
       <div class="vbtns"><button type="button" class="btn" data-close>Annuler</button><button type="button" class="btn on" id="vGo">Lancer la vidéo<span class="kh">Entrée</span></button></div>
     </div>
     <div class="vwrap"><video id="vEl" controls playsinline preload="none"></video><p class="vmsg" id="vMsg"></p></div>
+  </div>
+</div>
+
+<!-- n° 101 (15.11.2026) : le petit « i » de la case « problèmes » (Périmètres et aires, Volumes) : quelles figures entrent dans les compositions -->
+<div class="over" id="oPbi">
+  <div class="box pibox" role="dialog" aria-labelledby="piTit">
+    <div class="boxhead"><h2 class="title" id="piTit">Information</h2><button class="hbtn" data-close>✕</button></div>
+    <div class="boxbody pibody" id="piBody"></div>
   </div>
 </div>
 
@@ -16104,6 +16123,26 @@ function pbTools(bl){                  // les cases cochées du bloc (sans « pr
   const all = b.items.map(([id]) => id).filter(id => !PB_IDS.includes(id)), on = all.filter(id => S.it[id]);
   const T = new Set(on.length ? on : all); return PB_TX[bl] ? PB_TX[bl](T) : T;
 }
+/* n° 101 (l'enseignant, 15.11.2026 : « comme disque et secteur sont en 10ème et les autres formes sont en 9ème : cocher disque ou secteur permet
+   d'avoir des figures composées avec du disque ou secteur et des formes de 9ème […] Même idée pour volume, avec : cube et pavé droit vus en 9ème ;
+   prisme droit, cylindre en 10ème ; pyramide, cône, boule en 11ème. En gros quand on coche un truc, on suppose connu ce qui est vu aux années
+   précédentes » ; « si tu coches juste disque tu ne peux pas avoir du rectangle et [carré] composé sans avoir du disque : l'idée est d'avoir du
+   disque si on coche disque » ; QCM : « si on coche carré et disque mets seulement du carré et disque dans les formes composées. Parce que
+   l'enseignant cherche à avoir du carré et disque. Quand on coche disque et aucune forme de 9ème, c'est là que on peut avoir des formes de 9ème
+   avec » ; les problèmes à plusieurs solides côte à côte (transvaser, comparer deux récipients, objets plongés, affirmations) : « Oui, aussi »).
+   Une figure (un solide) pas cochée entre dans une composition seulement si aucune figure de son année n'est cochée et si la composition contient
+   une figure cochée d'une année plus haute. Aucune case cochée : toutes (pbTools). Petit « i » à côté de la case « problèmes » : pbiOpen. */
+const PB_YR = {fig: {f_car: 9, f_rec: 9, f_tri: 9, f_par: 9, f_los: 9, f_tra: 9, f_dis: 10, f_sec: 10},
+  vol: {v_cub: 9, v_pav: 9, v_pri: 10, v_cyl: 10, v_pyr: 11, v_con: 11, v_bou: 11}};
+function pbCompOk(bl, ids){            // une composition (une case par morceau) est-elle permise ?
+  const T = pbTools(bl), Y = PB_YR[bl]; if (!Y) return ids.every(id => T.has(id));
+  const yc = new Set([...T].map(id => Y[id])), hi = Math.max(-1, ...ids.filter(id => T.has(id)).map(id => Y[id]));
+  return ids.every(id => T.has(id) || (Y[id] !== undefined && !yc.has(Y[id]) && Y[id] < hi));
+}
+function pbComp(bl, groups){           // des morceaux au choix (une liste de cases par morceau) : une composition permise existe-t-elle ?
+  let P = [[]]; for (const g of groups) P = P.flatMap(p => g.map(id => p.concat(id)));
+  return P.some(p => pbCompOk(bl, p));
+}
 const pbPts = (bl, f) => Object.entries(f || {}).reduce((s, [k, n]) => s + (PB_CFG[bl].W[k] || 0) * (n === true ? 1 : Number(n) || 0), 0);
 const pbLv = (bl, x) => 1 + PB_CFG[bl].B.filter(t => x >= t - 1e-9).length;
 function pbYN(bl){                     // oui ou non une fois sur deux, sans longues séries (correcteur d'après la séance)
@@ -16122,7 +16161,7 @@ let PB_ONLY = null;                    // n° 89 : la sorte de problème imposé
 let PB_MAIN = null;                    // n° 82 : la case dont on tire un problème (Pourcentages : chaque case est une famille de problèmes) ; null : toutes
 function pbGen(bl, lv, main){
   PB_MAIN = main || null;
-  const T = pbTools(bl), all0 = (PB_M[bl] || []).filter(m => (!main || [].concat(m.main || []).includes(main)) && m.need.every(g => g.some(id => T.has(id))) && (!m.ok || m.ok()));
+  const T = pbTools(bl), all0 = (PB_M[bl] || []).filter(m => (!main || [].concat(m.main || []).includes(main)) && (PB_YR[bl] ? pbComp(bl, m.need) : m.need.every(g => g.some(id => T.has(id)))) && (!m.ok || m.ok()));   // n° 101 : figures des années d'avant
   const all = PB_ONLY && all0.some(m => m.id === PB_ONLY) ? all0.filter(m => m.id === PB_ONLY) : all0;   // n° 89
   if (!all.length) return null;
   const dist = m => { const lo = pbR0(m.lo), hi = pbR0(m.hi); return lv < lo ? lo - lv : lv > hi ? lv - hi : 0; }, d0 = Math.min(...all.map(dist));
@@ -22318,6 +22357,7 @@ PB_CFG.fig = {W: {inv: .6, e2: .6, e3: .5, com: .5, sub: .6, bord: .3, ovl: .5, 
 const PA = {C: 'f_car', R: 'f_rec', T: 'f_tri', P: 'f_par', L: 'f_los', Z: 'f_tra', D: 'f_dis', S: 'f_sec'};
 const paT = () => pbTools('fig');
 const paHas = (...k) => { const T = paT(); return k.some(x => T.has(PA[x])); };       // une de ces figures est cochée
+const paComp = (...g) => pbComp('fig', g.map(s => [...s].map(x => PA[x])));            // n° 101 : une composition de ces figures (une chaîne de lettres par morceau) est permise
 const paPer = () => !!S.opt.perim || !S.opt.aire, paAir = () => !!S.opt.aire || !S.opt.perim;   // « le périmètre / l'aire » (aucun des deux : les deux)
 const paLvOf = f => pbLv('fig', pbPts('fig', f));
 let PA_LV = null;                      // le niveau demandé au modèle (pbGen) : paMk rend null pour un autre niveau
@@ -23116,7 +23156,7 @@ function paFigSec(kd, o){
   dimLab(f, [-R, 0], [R, 0], o.lab, [0, 10], {off: R + 22});
   return f.svg(58); }
 pbM('fig', {id: 'arr', need: [[PA.S]], lo: 1, hi: 3, gen: lv => {
-  const K = [].concat(paAir() ? ['arr', 'part'] : [], paAir() && lv >= 2 ? ['ess'] : [], paAir() && lv >= 2 && paHas('C', 'R') ? ['pel'] : [], paPer() ? ['hor', 'partP'] : []);
+  const K = [].concat(paAir() ? ['arr', 'part'] : [], paAir() && lv >= 2 ? ['ess'] : [], paAir() && lv >= 2 && paComp('C', 'S') ? ['pel'] : [], paPer() ? ['hor', 'partP'] : []);
   if (!K.length) return null;
   const kd = pick(K), w = paW(), il = pcIl(w);
   const AV = {arr: [['ded', 'use'], {}], part: [['e2', 'use'], {ded: true}], partP: [['use'], {ded: true}], ess: [['use'], {com: true, ded: true}], pel: [['use'], {com: true, ded: true}], hor: [['e2', 'use'], {ded: true}]}[kd];
@@ -23204,7 +23244,7 @@ const PA_AFF = [
   {t: 'Z', a: 'A', y: false, f: {}, s: 'Pour l\'aire d\'un trapèze, on multiplie les deux bases et la hauteur, puis on divise par 2.', why: ['on additionne les deux bases ⟹ A = (B + b) ∙ h : 2']},
   {t: 'CR', a: 'A', y: false, f: {conv: true}, s: '1 m² = 100 cm²', why: ['1 m² = 100 cm ∙ 100 cm = 10 000 cm²']},
   {t: 'D', a: 'P', y: true, d: true, f: {ded: true, dd: true}, s: 'Une roue de 70 cm de diamètre avance d\'environ 2,2 m en un tour.', why: ['P = π ∙ 70 cm ≈ 219,9 cm ≈ 2,2 m']}];
-const paAffOk = X => (X.all ? [...X.t].every(c => paHas(c)) : paHas(...X.t)) && (X.a !== 'P' || paPer()) && (X.a !== 'A' || paAir()) && (X.a !== 'PA' || (paPer() && paAir())) && (!X.d || DEC);
+const paAffOk = X => (X.all ? paComp(...X.t) : paHas(...X.t)) && (X.a !== 'P' || paPer()) && (X.a !== 'A' || paAir()) && (X.a !== 'PA' || (paPer() && paAir())) && (!X.d || DEC);
 const paAffLv = X => paLvOf(Object.assign({aff: true}, X.f));
 pbM('fig', {id: 'aff', need: [], lo: () => Math.min(2, ...PA_AFF.filter(paAffOk).map(paAffLv)), hi: () => Math.max(2, ...PA_AFF.filter(paAffOk).map(paAffLv)), w: .7,
   ok: () => !(TALLY.figAff > 0) && PA_AFF.some(paAffOk), gen: lv => {
@@ -23555,9 +23595,10 @@ pbM('fig', {id: 'fle', need: [[PA.C, PA.R], [PA.T]], lo: 2, hi: 4, gen: lv => {
    e2 : plusieurs ; conv : en m² ou en m ; use : une phrase inutile ; π gardé jusqu'au bout */
 pbM('fig', {id: 'fen', need: [[PA.C, PA.R], [PA.D, PA.S]], lo: 2, hi: 4, gen: lv => {
   const K = [].concat(paAir() ? ['A'] : [], paPer() ? ['P'] : []); if (!K.length) return null;
-  const pa = pick(K), isA = pa === 'A', X = isA && chance(.3) ? 'tun' : 'fen', w = paW();
-  const F = paCombo(lv, ['use', ['ded', 2]].concat(X === 'fen' ? ['e2', 'conv'] : [], DEC ? ['dd'] : []), Object.assign({com: 1, ded: 1}, isA ? {} : {bord: 1}), f => !f.e2 || f.conv); if (!F) return null;
-  const dd = !!F.dd, conv = !!F.conv, tot = F.ded === 2, car = !tot && paHas('C') && (!paHas('R') || chance(.3));
+  const pa = pick(K), isA = pa === 'A', w = paW(); let X = isA && chance(.3) ? 'tun' : 'fen';
+  const fF = () => paCombo(lv, ['use', ['ded', 2]].concat(X === 'fen' ? ['e2', 'conv'] : [], DEC ? ['dd'] : []), Object.assign({com: 1, ded: 1}, isA ? {} : {bord: 1}), f => (!f.e2 || f.conv) && (f.ded !== 2 || paComp('R', 'DS')));   // n° 101 : la hauteur totale, sur un rectangle seulement
+  let F = fF(); if (!F && X === 'tun'){ X = 'fen'; F = fF(); } if (!F) return null;   // n° 101 : le tunnel n'atteint pas ★★★★ : la fenêtre
+  const dd = !!F.dd, conv = !!F.conv, tot = F.ded === 2, car = !tot && paComp('C', 'DS') && (!paComp('R', 'DS') || chance(.3));
   for (let t = 0; t < 300; t++){
     const u = X === 'fen' ? 'cm' : 'm', Wd = X === 'fen' ? paV(60, 140, dd ? 5 : 10, dd) * 1 : paV(6, 12, dd ? .5 : 2, dd), H = car ? Wd : X === 'fen' ? paV(80, 180, dd ? 5 : 10, dd) : paV(3, 6, 1, dd), r = rnd(Wd / 2);
     if (!car && (H < Wd * .6 || H > Wd * 2.2)) continue; if (dd !== [Wd, H].some(paNI)) continue;
@@ -23588,7 +23629,7 @@ pbM('fig', {id: 'fen', need: [[PA.C, PA.R], [PA.D, PA.S]], lo: 2, hi: 4, gen: lv
       if (!last) D.push(paTail(F.e2 ? (isA ? 'aire totale' : 'longueur totale') : paSym(isA ? 'A' : 'P'), n, base, k1, u0, sc, U, V));
       return D.join(''); };
     const c = paMk({f: F, q: isA ? (X === 'fen' ? 'aire de verre' : 'aire de l\'entrée') : 'longueur de joint', u: U, v: V, pi: true, con, fig, key: ['fen', X, pa, car, Wd, H, n, conv, tot],
-      dat: {v: 'fen', pa, W: Wd, H, n, conv}, alts, det});
+      dat: {v: 'fen', pa, W: Wd, H, n, conv, car}, alts, det});
     if (c) return c;
   }
   return null;
@@ -23884,7 +23925,7 @@ pbM('fig', {id: 'chx', need: [[PA.C, PA.R]], lo: 2, hi: 4, ok: paAir, gen: lv =>
    jardin et du bassin ; use ; dd ; π gardé jusqu'au bout */
 pbM('fig', {id: 'tro', need: [[PA.C, PA.R], [PA.D]], lo: 2, hi: 4, gen: lv => {
   const K = [].concat(paAir() ? ['pla', 'jar'] : [], paPer() ? ['bor'] : []); if (!K.length) return null;
-  const kd = pick(K), car = paHas('C') && (!paHas('R') || chance(.4)), isA = kd !== 'bor';
+  const kd = pick(K), car = paComp('C', 'D') && (!paComp('R', 'D') || chance(.4)), isA = kd !== 'bor';   // n° 101
   const av = ['ded', 'use'].concat(kd === 'jar' ? ['e2', 'sup'] : kd === 'pla' ? ['e2'] : [], DEC ? ['dd'] : []);
   const F = paCombo(lv, av, isA ? {sub: 1} : {com: 1}, f => !!f.sup === (kd === 'jar' && !!f.e2)); if (!F) return null;
   const dd = !!F.dd, ded = !!F.ded;
@@ -23919,7 +23960,7 @@ pbM('fig', {id: 'tro', need: [[PA.C, PA.R], [PA.D]], lo: 2, hi: 4, gen: lv => {
         paEqPS('longueur de bordure', paL(base, u) + ' + ' + paPiX([kr, 1], u), V, u, true));
       return D.join(''); };
     const c = paMk({f: F, q: sacs ? 'nombre de sacs' : kd === 'bor' ? 'longueur de bordure' : kd === 'pla' ? 'aire de métal' : 'aire à semer', u: uq, v: V, pi: !sacs, con, fig, key: ['tro', kd, car, L, l, r, ded, n, cov],
-      dat: {v: 'tro', kd, L, l, r, n, cov}, alts, det});
+      dat: {v: 'tro', kd, L, l, r, n, cov, car}, alts, det});
     if (c) return c;
   }
   return null;
@@ -24419,6 +24460,7 @@ PB_CFG.vol = {W: {inv: .6, e2: .6, e3: .5, com: .5, sub: .6, conv: .5, ded: .3, 
 const VO = {C: 'v_cub', P: 'v_pav', R: 'v_pri', Y: 'v_cyl', Q: 'v_pyr', N: 'v_con', B: 'v_bou'};
 const voT = () => pbTools('vol');
 const voHas = (...k) => { const T = voT(); return k.some(x => T.has(VO[x])); };
+const voComp = (...g) => pbComp('vol', g.map(s => [...s].map(x => VO[x])));            // n° 101 : une composition de ces solides (une chaîne de lettres par morceau) est permise
 const voLvOf = f => pbLv('vol', pbPts('vol', f));
 let VO_LV = null;                      // le niveau demandé au modèle (pbGen) : voMk rend null pour un autre niveau
 function voCombo(lv, av, base, ok){    // comme paCombo (Périmètres et aires)
@@ -25297,17 +25339,19 @@ function voRFig(R, wf, lab, q, noH){
     if (lab) voRad(f, Rr, g.ry, Hh, paL(R.r, 'cm'), false); if (lab && !noH) lenLab(f, [Rr, 0], [Rr, Hh], paL(R.h, 'cm'), [0, Hh / 2]);
     if (q){ const D = dimLine(f, [-Rr, 0], [-Rr, Hh * wf], [0, Hh * wf / 2], {off: 16}); dimTxt(f, D, voQ, QL); } }
   return f; }
-pbM('vol', {id: 'ver', need: [[VO.C, VO.P, VO.Y]], lo: 2, hi: 4, gen: lv => {
-  const dA = DEC ? ['dd'] : [], T0 = ['C', 'P', 'Y'].filter(x => voHas(x)), S0 = ['C', 'P', 'Y', 'N'].filter(x => voHas(x)), cvOK = S0.some(x => x === 'C' || x === 'P');   // en litres : un 1er récipient sans π
+pbM('vol', {id: 'ver', need: [[VO.C, VO.P, VO.Y, VO.N], [VO.C, VO.P, VO.Y]], lo: 2, hi: 4, gen: lv => {     // n° 101 : départ, arrivée
+  const dA = DEC ? ['dd'] : [], PR = ['C', 'P', 'Y', 'N'].flatMap(s => ['C', 'P', 'Y'].map(t => [s, t])).filter(([s, t]) => voComp(s, t)), cvOK = PR.some(([s]) => s === 'C' || s === 'P');   // en litres : un 1er récipient sans π ; n° 101 : les paires (départ, arrivée) permises
   const pk = voKind(lv, [
     {k: 'h', base: {e2: 1, inv: 1}, av: ['use', 'conv'].concat(dA), ok: f => !f.conv || cvOK},
     {k: 'yn', base: {e2: 1, cmp: 1}, av: ['e3', 'use', 'conv'].concat(dA), ok: f => !(f.e3 && f.conv) && (!f.conv || cvOK)}]);
   if (!pk) return null;
   const [kd, F] = pk, w = paW(), il = pcIl(w);
   for (let t = 0; t < 300; t++){
-    const sT = pick(T0), sS = F.conv ? pick(S0.filter(x => x === 'C' || x === 'P')) : pick(S0), Tg = voRecip(sT, true, F.dd && chance(.5)), Sr = voRecip(sS, kd === 'yn' && !F.e3 && sS !== 'N' && chance(.5), F.dd), S2 = kd === 'yn' && F.e3 ? voRecip(sS, false) : null;
+    const pr = pick(F.conv ? PR.filter(([s]) => s === 'C' || s === 'P') : PR), sS = pr[0], sT = pr[1], Tg = voRecip(sT, sS !== 'N', F.dd && chance(.5)),   // n° 102 : un verre conique se verse dans un petit récipient (carafe, boîte) : dans un grand, l'eau ne montait jamais à 15 % (le verre ne sortait jamais)
+      Sr = voRecip(sS, kd === 'yn' && !F.e3 && sS !== 'N' && chance(.5), F.dd), S2 = kd === 'yn' && F.e3 ? voRecip(sS, false) : null;
     if (Sr && Tg && Sr.nm === Tg.nm){ Sr.nm = Sr.nm.replace(/^un (\S+)/, 'un petit $1').replace(/^une (\S+)/, 'une petite $1'); }
     if (!Tg || !Sr || (F.e3 && !S2)) continue;
+    if (Sr.cone && !paPiOk([rnd(Sr.r * Sr.r * Sr.h), 3])) continue;   // n° 102 : valeur exacte lisible (pas de 422,5π/3 avec un rayon de 6,5 cm)
     // conv : le petit récipient donné en litres (h), ou en dm (yn) : seulement s'il ne contient pas π
     const cvL = !!F.conv && !Sr.pi, conv = !!F.conv;
     if (conv && !cvL) continue;
@@ -25363,16 +25407,17 @@ pbM('vol', {id: 'ver', need: [[VO.C, VO.P, VO.Y]], lo: 2, hi: 4, gen: lv => {
    pie : l'eau monte quand on plonge une pierre : le volume de la pierre (inv : le volume d'après la montée ; e2 : raisonner) ; e3 : sa masse ; conv : la
    montée en mm ; bil : des billes plongées (boule cochée) : de combien l'eau monte-t-elle ? (e2, inv) ; cub : un cube de métal (cube coché) ; deb : ça
    déborde ? (cmp) ; use : la hauteur de l'aquarium (qui ne sert pas) ; dd */
-pbM('vol', {id: 'plo', need: [[VO.C, VO.P]], lo: 3, hi: 4, gen: lv => {
-  const dA = DEC ? ['dd'] : [], B = voHas('B'), C = voHas('C');
+pbM('vol', {id: 'plo', need: [[VO.C, VO.P, VO.B]], lo: 3, hi: 4, gen: lv => {     // n° 101 : billes (boule) dans un bocal des années d'avant
+  const dA = DEC ? ['dd'] : [], AQ = k => ['C', 'P'].filter(a => k === 'bil' ? voComp(a, 'B') : k === 'cub' ? voComp(a, 'C') : voHas(a));   // n° 101 : les aquariums (cube ou pavé) permis pour chaque sorte
+  const A9 = AQ('pie').length > 0, B = AQ('bil').length > 0, C = AQ('cub').length > 0;
   const pk = voKind(lv, [
-    {k: 'pie', base: {inv: 1, e2: 1}, av: ['e3', 'conv', 'use'].concat(dA)},
+    {k: 'pie', on: A9, base: {inv: 1, e2: 1}, av: ['e3', 'conv', 'use'].concat(dA)},
     {k: 'bil', on: B, base: {inv: 1, e2: 1}, av: ['conv', 'use'].concat(dA)},
     {k: 'cub', on: C, base: {inv: 1, e2: 1}, av: ['conv', 'use'].concat(dA)},
-    {k: 'deb', base: {inv: 1, e2: 1, cmp: 1}, av: ['use'].concat(dA)}]);
+    {k: 'deb', on: A9, base: {inv: 1, e2: 1, cmp: 1}, av: ['use'].concat(dA)}]);
   if (!pk) return null;
   const [kd, F] = pk, dd = !!F.dd, w = paW();
-  const cube = voHas('C') && (!voHas('P') || chance(.3));
+  const A0 = AQ(kd), cube = A0.includes('C') && (!A0.includes('P') || chance(.3));
   for (let t = 0; t < 300; t++){
     const bo = kd === 'bil', L = cube ? (bo ? pick([15, 20, 25]) : pick([30, 40, 50])) : bo ? paR(20, 35, 5) : paR(40, 80, 10), l = cube ? L : bo ? paR(10, 20, 5) : paR(20, 40, 5), h = cube ? L : bo ? paR(20, 30, 5) : paR(30, 50, 5), A = L * l;
     if (l >= L && !cube) continue;
@@ -25451,7 +25496,7 @@ const VO_AFF = [
   {t: 'C', y: true, f: {conv: true}, s: 'Un aquarium cubique de 50 cm d\'arête contient 125 ℓ quand il est plein.', why: ['V = 50 ∙ 50 ∙ 50 = 125 000 cm³ = 125 dm³ = 125 ℓ']},
   {t: 'Q', y: true, f: {e2: true}, s: 'Une pyramide à base carrée de 6 cm de côté et 6 cm de haut a un volume de 72 cm³.', why: ['V = 6 ∙ 6 ∙ 6 : 3 = 72 cm³']},
   {t: 'B', y: false, f: {e2: true}, d: true, s: 'Une boule de 3 cm de rayon a un volume plus petit que 100 cm³.', why: ['V = 4 ∙ π ∙ 3³ : 3 = 36π cm³ ≈ 113,1 cm³', '113,1 cm³ > 100 cm³']}];
-const voAffOk = X => (X.all ? [...X.t].every(c => voHas(c)) : voHas(...X.t)) && (!X.d || DEC);
+const voAffOk = X => (X.all ? voComp(...X.t) : voHas(...X.t)) && (!X.d || DEC);
 const voAffLv = X => voLvOf(Object.assign({aff: true}, X.f));
 pbM('vol', {id: 'aff', need: [], lo: () => Math.min(2, ...VO_AFF.filter(voAffOk).map(voAffLv)), hi: () => Math.max(2, ...VO_AFF.filter(voAffOk).map(voAffLv)), w: .7,
   ok: () => !(TALLY.volAff > 0) && VO_AFF.some(voAffOk), gen: lv => {
@@ -25754,8 +25799,11 @@ const VZ_LIQ = ['C', 'P', 'Y', 'N', 'B'], VZ_BOX = ['C', 'P', 'R', 'Y', 'Q'];
 pbM('vol', {id: 'rec', need: [[VO.C, VO.P, VO.R, VO.Y, VO.Q, VO.N, VO.B]], lo: 2, hi: 3, gen: lv => {
   const T = ['C', 'P', 'R', 'Y', 'Q', 'N', 'B'].filter(x => voHas(x)), dA = vzDA(), sk = vzSk(lv), sB = sk ? {sk: 1} : {};
   const SAME = {liq: ['Y'], box: ['Y', 'P']};                                    // deux récipients du même solide : le verre large et le verre haut…
-  const two = th => { const L0 = T.filter(x => (th === 'liq' ? VZ_LIQ : VZ_BOX).includes(x)); return L0.length >= 2 || L0.some(x => SAME[th].includes(x)); };
-  const thL = ['liq', 'box'].filter(two), liqB = T.some(x => VZ_LIQ.includes(x)), dR = T.some(x => 'YNB'.includes(x)) ? ['ded'] : [];   // un diamètre : un cylindre, un cône ou une boule
+  const vzPairs = th => { const L = ['C', 'P', 'R', 'Y', 'Q', 'N', 'B'].filter(x => (th === 'liq' ? VZ_LIQ : VZ_BOX).includes(x)), R = [];   // n° 101 : deux solides différents permis ensemble
+    L.forEach((a, i) => L.slice(i + 1).forEach(b => { if (voComp(a, b)) R.push([a, b]); })); return R; };
+  const PRL = vzPairs('liq'), PRB = vzPairs('box'), PRS = th => th === 'liq' ? PRL : PRB;
+  const two = th => PRS(th).length > 0 || T.some(x => SAME[th].includes(x));
+  const thL = ['liq', 'box'].filter(two), liqB = T.some(x => VZ_LIQ.includes(x)), dR = T.concat(...PRL, ...PRB).some(x => 'YNB'.includes(x)) ? ['ded'] : [];   // un diamètre : un cylindre, un cône ou une boule
   const pk = voKind(lv, [
     {k: 'ch', on: thL.length > 0, base: Object.assign({e2: 1, cmp: 1}, sB), av: ['use'].concat(dR, dA)},
     {k: 'bot', on: liqB, w: .6, base: Object.assign({cmp: 1, conv: 1}, sB), av: ['use'].concat(dR, dA), ok: f => !f.ded || T.some(x => 'YNB'.includes(x) && VZ_LIQ.includes(x))},
@@ -25767,9 +25815,9 @@ pbM('vol', {id: 'rec', need: [[VO.C, VO.P, VO.R, VO.Y, VO.Q, VO.N, VO.B]], lo: 2
     if (kd === 'bot'){ const L0 = T.filter(x => VZ_LIQ.includes(x)); A = vzOne(pick(L0), 'liq', null, dd);
       const caps = [[25, 'cl'], [33, 'cl'], [50, 'cl'], [75, 'cl'], [1, 'l'], [1.5, 'l']].filter(c => DEC || Number.isInteger(c[0])), c = pick(caps), cap = c[1] === 'cl' ? c[0] * 10 : c[0] * 1000;
       B = {s: 'X', cap, cv: c[0], nm: 'une bouteille de ' + paL(c[0], c[1]), le: 'la bouteille', capS: paL(c[0], c[1]), capS0: fmtNum(c[0]) + ' ' + (c[1] === 'cl' ? 'cℓ' : 'ℓ'), cap10: c[1] === 'cl', f: 1}; }
-    else { th = pick(thL); const L0 = T.filter(x => (th === 'liq' ? VZ_LIQ : VZ_BOX).includes(x));
-      if (L0.length >= 2 && (chance(.8) || !L0.some(x => SAME[th].includes(x)))){ const s = shuffle(L0.slice()); A = vzOne(s[0], th, null, dd); B = vzOne(s[1], th, null, dd); }
-      else { const s = pick(L0.filter(x => SAME[th].includes(x))); A = vzOne(s, th, 'large', dd); B = vzOne(s, th, 'haut', dd); } }
+    else { th = pick(thL); const P2 = PRS(th), SM = T.filter(x => SAME[th].includes(x));
+      if (P2.length && (chance(.8) || !SM.length)){ const s = shuffle(pick(P2).slice()); A = vzOne(s[0], th, null, dd); B = vzOne(s[1], th, null, dd); }
+      else { const s = pick(SM); A = vzOne(s, th, 'large', dd); B = vzOne(s, th, 'haut', dd); } }
     if (A.le === B.le) continue;
     if (ded && !A.r && !B.r) continue;
     const hasDec = [A, B].some(X => ['a', 'L', 'l', 'h', 'r', 'b', 'hb', 'c', 'cv'].some(k => X[k] !== undefined && paNI(X[k])));
@@ -25816,20 +25864,20 @@ const VZ_TWR = {
   clo: {nm: 'Le clocher d\'une église', g: 'Il', u: 'm', c: [3, 6], hm: [10, 20], hp: [4, 9], top: 'la flèche', col: ['#ece4d6', '#ddd2bf', '#8fa3b0', '#7d919e'], use: ['Il a été construit en 1850.', 'Ses cloches pèsent 2 t.']},
   tou: {nm: 'Une tour en bois d\'un jeu de construction', g: 'Elle', u: 'cm', c: [2, 4], hm: [6, 12], hp: [2, 5], top: 'le toit', col: ['#ead3a8', '#dbc08e', '#c98a5a', '#b7774a'], use: ['Le jeu a 40 pièces.', 'Elle est peinte.']},
   cab: {nm: 'Une cabane de jardin', g: 'Elle', u: 'm', cube: 1, a: [2, 3], hp: [1, 2], top: 'le toit', col: ['#e8d6b8', '#d9c49f', '#c98a5a', '#b7774a'], use: ['Elle a une porte et une fenêtre.', 'Elle a coûté 900 fr.']}};
-pbM('vol', {id: 'mai', need: [[VO.C, VO.P], [VO.R, VO.Q]], lo: 2, hi: () => voHas('R') || DEC ? 4 : 3, gen: lv => {     // les tours seules, sans décimaux : ★★★★ seulement sans croquis (trop rare)
-  const dA = vzDA(), sk = vzSk(lv), sB = sk ? {sk: 1} : {}, hM = voHas('R') && voHas('C', 'P'), hT = voHas('Q') && voHas('C', 'P');
+pbM('vol', {id: 'mai', need: [[VO.C, VO.P], [VO.R, VO.Q]], lo: 2, hi: () => voComp('R', 'CP') || DEC ? 4 : 3, gen: lv => {     // les tours seules, sans décimaux : ★★★★ seulement sans croquis (trop rare)
+  const dA = vzDA(), sk = vzSk(lv), sB = sk ? {sk: 1} : {}, hM = voComp('R', 'CP'), hT = voComp('Q', 'CP');   // n° 101
   const pk = voKind(lv, [
     {k: 'V', base: Object.assign({com: 1}, sB), av: ['ded', 'conv', 'use'].concat(dA)},                              // conv : les litres d'air (maison, clocher, cabane)
     {k: 'rad', on: hM, base: Object.assign({com: 1, e2: 1, sup: 1}, sB), av: ['ded', 'use'].concat(dA)},
     {k: 'inv', on: hM, base: Object.assign({com: 1, inv: 1}, sB), av: ['ded', 'use'].concat(dA)},
-    {k: 'mas', on: hT && voHas('P') && DEC, base: Object.assign({com: 1, e2: 1, dd: 1}, sB), av: ['ded', 'e3', 'use']}]);
+    {k: 'mas', on: voComp('P', 'Q') && DEC, base: Object.assign({com: 1, e2: 1, dd: 1}, sB), av: ['ded', 'e3', 'use']}]);
   if (!pk) return null;
   const [kd, F] = pk, dd = !!F.dd, ded = !!F.ded, w = paW(), il = pcIl(w);
   const house = kd === 'rad' || kd === 'inv' || (kd === 'V' && hM && (!hT || chance(.5)));
   for (let t = 0; t < 300; t++){
     let con, q, uq, v, fig = null, det, dat, key, alts = [];
     if (house){
-      const cube = !voHas('P') || (voHas('C') && chance(.3));
+      const cube = !voComp('P', 'R') || (voComp('C', 'R') && chance(.3));
       let b, hm, ht, L;
       if (cube){ b = hm = L = ri(5, 8); ht = ri(2, 4); }
       else { b = ri(6, 10); hm = ri(3, 6); ht = ri(2, 4); L = ri(8, 14); if (L <= b) continue; }
@@ -25868,7 +25916,7 @@ pbM('vol', {id: 'mai', need: [[VO.C, VO.P], [VO.R, VO.Q]], lo: 2, hi: () => voHa
       key = ['mai', kd, b, hm, ht, L, per, ded, F.conv]; dat = {v: 'mai', kd, b, hm, ht, L, per, conv: !!F.conv};
     }
     else {
-      const K = kd === 'mas' ? ['tou'] : ['clo', 'tou', 'cab'].filter(k => (k === 'cab' ? voHas('C') : voHas('P')) && (!F.conv || k !== 'tou')); if (!K.length) return null;
+      const K = kd === 'mas' ? ['tou'] : ['clo', 'tou', 'cab'].filter(k => (k === 'cab' ? voComp('C', 'Q') : voComp('P', 'Q')) && (!F.conv || k !== 'tou')); if (!K.length) return null;
       const X = VZ_TWR[pick(K)], u = X.u;
       let c, hm, hp;
       if (X.cube){ c = hm = ri(X.a[0], X.a[1]); hp = ri(X.hp[0], X.hp[1]); } else { c = ri(X.c[0], X.c[1]); hm = ri(X.hm[0], X.hm[1]); hp = ri(X.hp[0], X.hp[1]); }
@@ -25969,7 +26017,7 @@ pbM('vol', {id: 'fus', need: [[VO.Y], [VO.N]], lo: 2, hi: 4, gen: lv => {
    les voyages de camion) ; n : les cornets remplis avec un bac de glace (e2, conv, sup : arrondi au-dessous) ; use ; dd.
    Le silo demande le cylindre et la boule ; la glace, le cône et la boule. */
 pbM('vol', {id: 'sil', need: [[VO.Y, VO.N], [VO.B]], lo: 2, hi: 4, gen: lv => {
-  const dA = vzDA(), sk = vzSk(lv), sB = sk ? {sk: 1} : {}, hS = voHas('Y') && voHas('B'), hG = voHas('N') && voHas('B');
+  const dA = vzDA(), sk = vzSk(lv), sB = sk ? {sk: 1} : {}, hS = voComp('Y', 'B'), hG = voComp('N', 'B');   // n° 101
   const pk = voKind(lv, [
     {k: 'V', base: Object.assign({com: 1}, sB), av: ['ded', ['ded', 2], 'conv', 'use'].concat(dA), ok: f => (!f.conv || hG) && (f.ded !== 2 || hS)},
     {k: 'mas', on: hS, base: Object.assign({com: 1, e2: 1, conv: 1}, sB), av: ['ded', ['ded', 2], 'e3', 'sup', 'use'].concat(dA), ok: f => !!f.e3 === !!f.sup},
@@ -26131,7 +26179,7 @@ function vzHoleFig(X, L, l, h, n, r, lab){
   const D = dimLine(f, A, B, [c0[0], Zd + 40], {off: cz + 18}); dimTxt(f, D, lab.d);
   return f; }
 pbM('vol', {id: 'per', need: [[VO.C, VO.P], [VO.Y]], lo: 2, hi: 4, gen: lv => {
-  const dA = vzDA(), sk = vzSk(lv), sB = sk ? {sk: 1} : {}, C0 = VZ_PER.filter(x => x.cube ? voHas('C') : voHas('P')), mH = C0.some(x => x.n.some(m => m > 1)) ? [['sub', 2]] : [];
+  const dA = vzDA(), sk = vzSk(lv), sB = sk ? {sk: 1} : {}, C0 = VZ_PER.filter(x => x.cube ? voComp('C', 'Y') : voComp('P', 'Y')), mH = C0.some(x => x.n.some(m => m > 1)) ? [['sub', 2]] : [];
   const pk = voKind(lv, [
     {k: 'V', base: Object.assign({sub: 1}, sB), av: ['ded', 'use'].concat(mH, dA)},
     {k: 'mas', base: Object.assign({sub: 1, e2: 1}, sB), av: ['ded', 'e3', 'use'].concat(mH, dA), ok: f => f.dd ? f.sub !== 2 && C0.some(x => !x.denI) : f.sub === 2 && C0.some(x => x.denI)}]);   // la masse : bois (décimaux) ou brique (environ 2 g)
@@ -26562,7 +26610,7 @@ function optHTML(kind){
 function rowsHTML(b){
   const row = ([t, its, sub, ex, o]) => '<div class="opts' + (sub ? ' sub' : '') + (o && o.col ? ' colv' : '') + '">' + (t ? '<span class="lab2">' + t + '</span>' : '') + (sub ? '<span class="lab3">' + sub + '</span>' : '') +
     its.map(([id, lab, cls]) => { const L = '<label' + (cls ? ' class="' + cls + '"' : '') + '><input type="checkbox" data-it="' + id + '"> <span' + (cls === 'pbx' ? ' data-sur="' + (PB_SUR[id] || 'les exercices cochés') + '"' : '') + '>' + lab + '</span>' + vicoHTML(id) + (NOSTAR.has(id) && !b.hint ? '<span class="nost">(sans étoiles)</span>' : '') + '</label>';
-      return cls === 'pbx' ? '<div class="pbrow">' + L + '<span class="pbr" title="Part des problèmes dans les questions de ce bloc"><input type="range" min="0" max="100" step="1" value="50" data-pb="' + id + '" aria-label="Part des problèmes dans ce bloc"><output data-pbv="' + id + '">50\u00a0%</output></span></div>' : L; }).join('') + (ex || '') + '</div>';   // n° 71 : mini réglette
+      return cls === 'pbx' ? '<div class="pbrow">' + L + pbiHTML(id) + '<span class="pbr" title="Part des problèmes dans les questions de ce bloc"><input type="range" min="0" max="100" step="1" value="50" data-pb="' + id + '" aria-label="Part des problèmes dans ce bloc"><output data-pbv="' + id + '">50\u00a0%</output></span></div>' : L; }).join('') + (ex || '') + '</div>';   // n° 71 : mini réglette
   const rs = b.rows || []; let h = '';
   for (let i = 0; i < rs.length; i++){ const o = rs[i][4], n = rs[i + 1] && rs[i + 1][4];
     if (o && o.col === 'L' && n && n.col === 'R'){ h += '<div class="c2">' + row(rs[i]) + row(rs[i + 1]) + '</div>'; i++; } else h += row(rs[i]); }
@@ -28150,11 +28198,48 @@ const VIDEOS = [
   {f: 'fractions-addition-soustraction', t: 'Additionner et soustraire des fractions', d: 248, x: ['f+']},
   {f: 'fractions-multiplication', t: 'Multiplier des fractions', d: 219, x: ['f∙']},
   {f: 'fractions-division', t: 'Diviser des fractions', d: 201, x: ['f:']},
+  {f: 'aire-figure-composee', t: 'Aire d’une figure composée', d: 154, x: ['pa_pb']},   // n° 101 (l'enseignant, 15.11.2026 : « ajoute aussi cette vidéo sur la ligne des problèmes pour le bloc périmètre aire »)
 ];
 const VID_OF = {}; VIDEOS.forEach(v => v.x.forEach(id => { if (!VID_OF[id]) VID_OF[id] = v; }));
 const vidURL = v => QPC_BASE + 'videos/' + v.f + '.mp4';
 const vidDur = d => d < 60 ? d + ' s' : Math.floor(d / 60) + ' min' + (d % 60 ? ' ' + d % 60 + ' s' : '');
 const VSVG = '<svg class="vsvg" viewBox="0 0 20 14" aria-hidden="true"><rect x="1" y="1" width="18" height="12" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 4v6l5.2-3z" fill="currentColor"/></svg>';
+/* n° 101 (l'enseignant, 15.11.2026 : « mets un petit "i" d'information clicable (qui ouvre une petite page d'information) expliquant ce qu'on a mis
+   en place avec des exemples dans cette conversation ») : à droite de la case « problèmes » de Périmètres et aires et de Volumes (pas dans le label :
+   un clic ne coche rien) ; dessiné en SVG (ℹ peut devenir un émoji) ; fenêtre #oPbi (✕, Échap, clic à côté). */
+const PBI_SVG = '<svg class="pisvg" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.9" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="4.75" r="1.05" fill="currentColor"/><path d="M8 7.2v4.6" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>';
+function pbiHTML(id){
+  const t = {pa_pb: 'Figures composées : quelles figures les problèmes utilisent', v_pb: 'Solides composés : quels solides les problèmes utilisent'}[id];
+  return t ? '<button type="button" class="pbinf" data-pbi="' + id + '" title="' + t + '" aria-label="' + t + '">' + PBI_SVG + '</button>' : '';
+}
+function pbiOpen(id){
+  const fig = id === 'pa_pb', ex = a => '<ul class="piex">' + a.map(x => '<li>' + x + '</li>').join('') + '</ul>';
+  $('piTit').textContent = fig ? 'Problèmes : les figures composées' : 'Problèmes : les solides composés';
+  $('piBody').innerHTML = fig
+    ? '<p>Les problèmes utilisent les figures cochées. Dans une <b>figure composée</b>, les formes vues les années d’avant sont supposées connues\u00a0:</p>' +
+      '<ul class="piy"><li><b>9ème</b>\u00a0: carré, rectangle, triangle, parallélogramme, losange, trapèze</li><li><b>10ème</b>\u00a0: disque, secteur</li></ul>' +
+      '<p>Une forme <b>pas cochée</b> entre dans une figure composée seulement si <b>aucune forme de son année n’est cochée</b>, et toujours <b>avec une figure cochée d’une année plus haute</b>.</p>' +
+      '<p class="pih">Exemples</p>' + ex([
+        '<b>disque</b> seul\u00a0: les roues, les pizzas… et aussi la fenêtre (rectangle + <span class="nw">demi-disque</span>), la piste (rectangle + deux <span class="nw">demi-disques</span>), le cornet (triangle + <span class="nw">demi-disque</span>), la plaque carrée percée d’un trou rond. Jamais une façade carré + triangle\u00a0: il y a toujours du disque.',
+        '<b>carré</b> et <b>disque</b>\u00a0: les figures composées n’ont que du carré et du disque (la fenêtre carrée, la plaque carrée percée)\u00a0; ni rectangle ni triangle, puisqu’une forme de 9ème est cochée.',
+        '<b>secteur</b> seul\u00a0: l’arroseur, la part de tarte… et aussi la pelouse carrée qu’un arroseur placé dans un coin n’arrose pas en entier, la fenêtre et le cornet (un <span class="nw">demi-disque</span> est aussi un secteur).',
+        '<b>carré</b> et <b>triangle</b>\u00a0: que des formes de 9ème, donc rien de plus\u00a0: la façade carré + triangle, le fanion.',
+        'rien de coché\u00a0: toutes les figures.'])
+    : '<p>Les problèmes utilisent les solides cochés. Dans un <b>solide composé</b>, et dans un problème avec <b>plusieurs solides</b> (verser l’eau d’un récipient dans un autre, comparer deux récipients, plonger des objets dans l’eau), les solides vus les années d’avant sont supposés connus\u00a0:</p>' +
+      '<ul class="piy"><li><b>9ème</b>\u00a0: cube, pavé droit</li><li><b>10ème</b>\u00a0: prisme droit, cylindre</li><li><b>11ème</b>\u00a0: pyramide, cône, boule</li></ul>' +
+      '<p>Un solide <b>pas coché</b> vient seulement si <b>aucun solide de son année n’est coché</b>, et toujours <b>avec un solide coché d’une année plus haute</b>.</p>' +
+      '<p class="pih">Exemples</p>' + ex([
+        '<b>cylindre</b> seul\u00a0: le tronc, la boîte de conserve… et aussi le bloc de bois percé (pavé − cylindre), l’eau d’un aquarium versée dans un seau cylindrique, «\u00a0Quel récipient contient le plus\u00a0?\u00a0» entre une brique de jus et un verre.',
+        '<b>boule</b> seule\u00a0: le ballon… et aussi le silo (cylindre + <span class="nw">demi-boule</span>), les balles dans leur boîte, les billes plongées dans un bocal. Pas le cornet (cône + <span class="nw">demi-boule</span>)\u00a0: le cône est aussi de 11ème, il faut le cocher.',
+        '<b>pyramide</b> seule\u00a0: le clocher (pavé + pyramide), la cabane (cube + pyramide)\u00a0; pas la maison (pavé + prisme), qui n’a pas de pyramide.',
+        '<b>cône</b> et <b>cube</b>\u00a0: la fusée (cylindre + cône)\u00a0; «\u00a0Quel récipient contient le plus\u00a0?\u00a0» entre un verre à cocktail et un pot cubique, mais pas avec une brique de jus (pavé)\u00a0: pour la 9ème, seulement le cube, qui est coché.',
+        'rien de coché\u00a0: tous les solides.']);
+  $('piBody').scrollTop = 0; $('oPbi').classList.add('open');
+}
+document.addEventListener('click', e => {                          // le petit « i » des réglages : sans cocher l'exercice
+  const b = e.target.closest && e.target.closest('.pbinf'); if (!b) return;
+  e.preventDefault(); e.stopPropagation(); b.blur(); pbiOpen(b.dataset.pbi);
+}, true);
 function vicoHTML(id){               // réglages : le petit logo, juste à côté de la coche de l'exercice
   const v = VID_OF[id]; return v ? '<button type="button" class="vico" data-vid="' + id + '" title="Vidéo : ' + v.t + ' (' + vidDur(v.d) + ')" aria-label="Vidéo : ' + v.t + '">' + VSVG + '</button>' : '';
 }

@@ -1211,6 +1211,10 @@ body.retpad .pane{padding-top:calc(var(--fs-ui) * 3.1)}
 .pibody li{margin:.18em 0}
 .pibody .piy{list-style:none;padding-left:.6em}
 .pibody .pih{font-weight:700;margin:.7em 0 .2em;color:var(--accent)}
+.pibody .pitab{border-collapse:collapse;margin:.3em 0 .2em;width:100%}
+.pibody .pitab th,.pibody .pitab td{border:1px solid #d5dbe3;padding:.25em .55em;text-align:left;vertical-align:top}
+.pibody .pitab th{background:#eef2f7;font-weight:700}
+.pibody .pitab td:first-child{white-space:nowrap;font-weight:700}
 </style>
 </head>
 <body>
@@ -28191,6 +28195,7 @@ const VIDEOS = [
   {f: 'mediatrice-segment', t: 'Médiatrice d’un segment', d: 88, x: ['g_mtr']},
   {f: 'bissectrice-angle', t: 'Bissectrice d’un angle', d: 98, x: ['g_bis']},
   {f: 'hauteur-triangle', t: 'Hauteur d’un triangle', d: 201, x: ['g_hau']},
+  {f: 'mediane-triangle', t: 'Médiane d’un triangle', d: 169, x: ['g_mdn']},   // n° 104 (l'enseignant, 15.11.2026 : « je te laisse la mettre en ligne pour qpc (exercice médiane dans géométrie) »)
   {f: 'cercle-circonscrit', t: 'Cercle circonscrit à un triangle', d: 86, x: ['g_cci']},
   {f: 'cercle-inscrit', t: 'Cercle inscrit dans un triangle', d: 98, x: ['g_cin']},
   {f: 'mesurer-angle', t: 'Mesurer un angle aigu ou obtus', d: 200, x: ['g_type']},
@@ -28212,28 +28217,19 @@ function pbiHTML(id){
   const t = {pa_pb: 'Figures composées : quelles figures les problèmes utilisent', v_pb: 'Solides composés : quels solides les problèmes utilisent'}[id];
   return t ? '<button type="button" class="pbinf" data-pbi="' + id + '" title="' + t + '" aria-label="' + t + '">' + PBI_SVG + '</button>' : '';
 }
-function pbiOpen(id){
-  const fig = id === 'pa_pb', ex = a => '<ul class="piex">' + a.map(x => '<li>' + x + '</li>').join('') + '</ul>';
+function pbiOpen(id){                // n° 103 (l'enseignant, 15.11.2026 : « sois concis, ne donne pas d'exemple d'exercice, juste les figures qui sont admises ») : la règle, les années, « coché → admis »
+  const fig = id === 'pa_pb';
+  const pbiTab = R => '<table class="pitab"><tr><th>Coché</th><th>Admis</th></tr>' + R.map(([a, b]) => '<tr><td>' + a + '</td><td>' + b + '</td></tr>').join('') + '</table>';
   $('piTit').textContent = fig ? 'Problèmes : les figures composées' : 'Problèmes : les solides composés';
   $('piBody').innerHTML = fig
-    ? '<p>Les problèmes utilisent les figures cochées. Dans une <b>figure composée</b>, les formes vues les années d’avant sont supposées connues\u00a0:</p>' +
-      '<ul class="piy"><li><b>9ème</b>\u00a0: carré, rectangle, triangle, parallélogramme, losange, trapèze</li><li><b>10ème</b>\u00a0: disque, secteur</li></ul>' +
-      '<p>Une forme <b>pas cochée</b> entre dans une figure composée seulement si <b>aucune forme de son année n’est cochée</b>, et toujours <b>avec une figure cochée d’une année plus haute</b>.</p>' +
-      '<p class="pih">Exemples</p>' + ex([
-        '<b>disque</b> seul\u00a0: les roues, les pizzas… et aussi la fenêtre (rectangle + <span class="nw">demi-disque</span>), la piste (rectangle + deux <span class="nw">demi-disques</span>), le cornet (triangle + <span class="nw">demi-disque</span>), la plaque carrée percée d’un trou rond. Jamais une façade carré + triangle\u00a0: il y a toujours du disque.',
-        '<b>carré</b> et <b>disque</b>\u00a0: les figures composées n’ont que du carré et du disque (la fenêtre carrée, la plaque carrée percée)\u00a0; ni rectangle ni triangle, puisqu’une forme de 9ème est cochée.',
-        '<b>secteur</b> seul\u00a0: l’arroseur, la part de tarte… et aussi la pelouse carrée qu’un arroseur placé dans un coin n’arrose pas en entier, la fenêtre et le cornet (un <span class="nw">demi-disque</span> est aussi un secteur).',
-        '<b>carré</b> et <b>triangle</b>\u00a0: que des formes de 9ème, donc rien de plus\u00a0: la façade carré + triangle, le fanion.',
-        'rien de coché\u00a0: toutes les figures.'])
-    : '<p>Les problèmes utilisent les solides cochés. Dans un <b>solide composé</b>, et dans un problème avec <b>plusieurs solides</b> (verser l’eau d’un récipient dans un autre, comparer deux récipients, plonger des objets dans l’eau), les solides vus les années d’avant sont supposés connus\u00a0:</p>' +
-      '<ul class="piy"><li><b>9ème</b>\u00a0: cube, pavé droit</li><li><b>10ème</b>\u00a0: prisme droit, cylindre</li><li><b>11ème</b>\u00a0: pyramide, cône, boule</li></ul>' +
-      '<p>Un solide <b>pas coché</b> vient seulement si <b>aucun solide de son année n’est coché</b>, et toujours <b>avec un solide coché d’une année plus haute</b>.</p>' +
-      '<p class="pih">Exemples</p>' + ex([
-        '<b>cylindre</b> seul\u00a0: le tronc, la boîte de conserve… et aussi le bloc de bois percé (pavé − cylindre), l’eau d’un aquarium versée dans un seau cylindrique, «\u00a0Quel récipient contient le plus\u00a0?\u00a0» entre une brique de jus et un verre.',
-        '<b>boule</b> seule\u00a0: le ballon… et aussi le silo (cylindre + <span class="nw">demi-boule</span>), les balles dans leur boîte, les billes plongées dans un bocal. Pas le cornet (cône + <span class="nw">demi-boule</span>)\u00a0: le cône est aussi de 11ème, il faut le cocher.',
-        '<b>pyramide</b> seule\u00a0: le clocher (pavé + pyramide), la cabane (cube + pyramide)\u00a0; pas la maison (pavé + prisme), qui n’a pas de pyramide.',
-        '<b>cône</b> et <b>cube</b>\u00a0: la fusée (cylindre + cône)\u00a0; «\u00a0Quel récipient contient le plus\u00a0?\u00a0» entre un verre à cocktail et un pot cubique, mais pas avec une brique de jus (pavé)\u00a0: pour la 9ème, seulement le cube, qui est coché.',
-        'rien de coché\u00a0: tous les solides.']);
+    ? '<p>Une figure composée contient toujours une figure cochée. Elle peut aussi contenir des figures d’une <b>année plus basse</b>, si aucune figure de cette année n’est cochée.</p>' +
+      '<ul class="piy"><li><b>9ème</b> : carré, rectangle, triangle, parallélogramme, losange, trapèze</li><li><b>10ème</b> : disque, secteur</li></ul>' +
+      pbiTab([['disque', 'disque et toutes les figures de 9ème'], ['secteur', 'secteur et toutes les figures de 9ème'], ['carré, disque', 'carré, disque'],
+        ['carré, triangle', 'carré, triangle'], ['rien', 'toutes les figures']])
+    : '<p>Un solide composé, ou un problème avec plusieurs solides, contient toujours un solide coché. Il peut aussi contenir des solides d’une <b>année plus basse</b>, si aucun solide de cette année n’est coché.</p>' +
+      '<ul class="piy"><li><b>9ème</b> : cube, pavé droit</li><li><b>10ème</b> : prisme droit, cylindre</li><li><b>11ème</b> : pyramide, cône, boule</li></ul>' +
+      pbiTab([['cylindre', 'cylindre, cube, pavé droit'], ['boule', 'boule, prisme droit, cylindre, cube, pavé droit'], ['cône, cube', 'cône, prisme droit, cylindre, cube'],
+        ['rien', 'tous les solides']]);
   $('piBody').scrollTop = 0; $('oPbi').classList.add('open');
 }
 document.addEventListener('click', e => {                          // le petit « i » des réglages : sans cocher l'exercice

@@ -1215,6 +1215,94 @@ body.retpad .pane{padding-top:calc(var(--fs-ui) * 3.1)}
 .pibody .pitab th,.pibody .pitab td{border:1px solid #d5dbe3;padding:.25em .55em;text-align:left;vertical-align:top}
 .pibody .pitab th{background:#eef2f7;font-weight:700}
 .pibody .pitab td:first-child{white-space:nowrap;font-weight:700}
+/* n° 114 : « Essayer » sur téléphone : le mode élève dans un cadre, par-dessus la page (tryOpen) */
+#tryOv{position:fixed;inset:0;z-index:2147483000;display:flex;flex-direction:column;background:#fff}
+#tryOv .tryBar{flex:0 0 auto;display:flex;align-items:center;gap:.75em;padding:.4em .6em;background:#b85c00;color:#fff;font-size:15px;font-weight:600;line-height:1.2}
+#tryOv .tryBk{flex:0 0 auto;font:inherit;color:#b85c00;background:#fff;border:0;border-radius:.4em;padding:.5em .85em;cursor:pointer}
+#tryOv .tryT{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#tryOv .tryLd{position:absolute;left:0;right:0;top:45%;text-align:center;color:#666;font-size:16px}
+#tryOv iframe{flex:1 1 auto;display:block;width:100%;min-height:0;border:0;background:#fff;visibility:hidden}
+#tryOv.on iframe{visibility:visible}
+#tryOv.on .tryLd{display:none}
+/* n° 115 : problèmes des calculs en colonne : les opérations posées côte à côte, chacune avec sa petite phrase grise ; résultat rouge seulement pour la réponse */
+#oSet label.pbx>span[data-men]::after{content:" (" attr(data-men) ")"}
+.cprow{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;gap:.35em 1.5em;margin-top:.4em}
+.cpcol{display:flex;flex-direction:column;align-items:center}
+.gr.cpl{font-size:.55em;margin-bottom:.2em;max-width:11em;text-align:center;line-height:1.15}
+.cpcol.cpmid .cc.res,.cpcol.cpmid .bt .ans{color:inherit}
+.cc.rst{font-weight:700;text-decoration:underline;text-underline-offset:.12em}
+/* n° 116 (16.11.2026) : feuille en ½, ⅓ ou ¼ de A4 (morceaux identiques, traits de coupe) ; réponses à l'envers */
+.ipfmt{display:inline-flex;border:1px solid var(--line);border-radius:.4em;overflow:hidden;background:#fff}
+.ipfmt button{font:inherit;font-weight:700;min-width:2.15em;padding:.22em .55em;border:0;border-left:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;line-height:1.2}
+.ipfmt button:first-child{border-left:0}
+.ipfmt button.on{background:var(--sel);color:#fff}
+.ipfmt button:hover:not(.on){background:var(--sel-soft)}
+.ipnum button:disabled{opacity:.35;cursor:default}
+.iphint:empty{display:none}
+.ip-pc{position:absolute;overflow:hidden;background:#fff}
+.ip-cut{position:absolute;width:0;height:0}
+.ip-f3 .ip-a{left:12mm;width:186mm}
+.ip-f4 .ip-a{left:9mm;width:87mm}
+.ip-tl{display:flex;justify-content:space-between;align-items:baseline;gap:4mm;border-bottom:1.2pt solid #000;padding-bottom:.8mm}
+.ip-tlt{font-family:"Century Gothic", "URW Gothic", "URW Gothic L", "Avenir Next", Avenir, Futura, "Trebuchet MS", Arial, sans-serif;font-weight:700;font-size:13pt;line-height:1.2;min-width:0;overflow-wrap:anywhere}
+.ip-f3 .ip-tlt{font-size:12.5pt}
+.ip-f4 .ip-tlt{font-size:12pt}
+.ip-tlc{flex:none;font-size:9pt;color:#404040;white-space:nowrap}
+.ip-fs .ip-h{font-size:11.5pt}
+.ip-fs .ip-row{column-gap:5mm}
+.ip-f4 .ip-row{column-gap:4mm}
+.ip-fs .ip-qrc{font-size:7pt}
+.ip-sheet .ip-tf{left:auto;text-align:right;font-size:8.5pt;color:#404040}
+.ip-aq{display:flex;align-items:flex-end;gap:4mm}
+.ip-aq .ip-ans{flex:1 1 auto;min-width:0}
+.ip-aq .ip-qr{flex:none}
+.ip-qa1{justify-content:flex-end}
+.ip-up .ip-ans{transform:rotate(180deg)}
+/* n° 117 (16.11.2026) : bouton ↻ d'une question dans l'aperçu (jamais imprimé) ; « Tous les exercices » */
+.ip-rc{position:relative}
+.ipall .ipxn{font-weight:700}
+.ipall .ipw span{font-weight:700}
+.ip-rl{position:absolute;right:100%;top:calc(.65em - var(--iprl, 5mm) / 2);margin-right:.5mm;width:var(--iprl, 5mm);height:var(--iprl, 5mm);padding:calc(var(--iprl, 5mm) * .13);
+  border:calc(var(--iprl, 5mm) / 14) solid #aeb6bf;border-radius:28%;background:rgba(255,255,255,.88);color:#5b6470;cursor:pointer;line-height:0;box-sizing:border-box;font:inherit}
+.ip-rl:hover{color:var(--sel);border-color:var(--sel)}
+.ip-rl svg{display:block;width:100%;height:100%}
+#ipHost .ip-rl,#ipMeas .ip-rl{display:none}
+.ip-let.ips{display:block;position:relative;padding-right:0}
+.ip-let.ips .stars{position:absolute;right:100%;margin-right:.5mm;top:4.4pt;font-size:5.5pt;letter-spacing:-.12em;line-height:1;text-align:right;white-space:nowrap}
+.ip-let.ips .stars.ip-s2{top:1.9pt;line-height:.95}
+@media print{ .ip-rl{display:none !important} }
+/* n° 118 : repères de fin de page sur la réglette des parts ; champ « Titre » de la feuille */
+.ipf input#ipTi{width:15em}
+/* n° 118 (l'enseignant : « pour l'option "réponses à l'envers", affiche le seulement quand on coche "réponses à la fin", et en plus petit, juste en
+   dessous de l'option des réponses à la fin ») */
+.ipansg{flex-direction:column;align-items:flex-start;gap:.15em}
+.ipupl{font-size:.84em;padding-left:1.5em}
+.ipupl[hidden]{display:none}
+/* n° 119 (l'enseignant, 16.11.2026 : « Quand on coche ou décoche "réponses à la fin", sur ordi ça ne doit pas décaler le reste de la page.
+   Sur ordi, de toute manière il y a la place dessous. ») : sur ordinateur, « Réponses à l'envers » cachée garde sa place ; téléphone : enlevée */
+@media (hover:hover) and (pointer:fine){ .ipupl[hidden]{display:inline-flex;visibility:hidden} }
+/* n° 119 (l'enseignant : « le bouton "nouvelles questions" (dans la création de pdf) est à déplacer dans l'aperçu du pdf, en haut à gauche.
+   Change le texte en "Générer des nouvelles questions". ») : #ipNew en haut à gauche de l'aperçu (n° 120 : petit, « ↻ Nouvelles questions ») */
+.ipvb{position:relative;min-width:0}
+/* n° 120 (l'enseignant, 16.11.2026 : « oula le bouton est trop gros. Fais le du même style (couleur neutre) que les autres boutons qui change
+   la question individuellement, remet le logo de flèche et juste après ce logo met juste "nouvelles questions" ; le bouton peut manger un peu
+   dans la page de l'aperçu ») : comme .ip-rl, posé en haut à gauche du fond gris, par-dessus le bord de la page */
+.ipnew{position:absolute;left:5px;top:5px;z-index:3;display:inline-flex;align-items:center;gap:.28em;padding:.14em .45em .14em .25em;
+  border:1px solid #aeb6bf;border-radius:.4em;background:rgba(255,255,255,.92);color:#5b6470;font:inherit;font-size:.74em;font-weight:600;
+  line-height:1.2;white-space:nowrap;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.ipnew svg{display:block;width:1.15em;height:1.15em;flex:none}
+.ipnew:hover{color:var(--sel);border-color:var(--sel)}
+/* n° 119 : un clic sur le code QR = « Essayer » (fenêtre : #lQr ; aperçu : .ip-ql, aussi un lien dans le PDF) ; l'enseignant : « échange la
+   place des boutons "copier le lien" et "enregistrer en png". pour le bouton "copier l'image", mets les mêmes couleurs que le bouton
+   "copier le lien" » : en haut « Copier l'image » et « Copier le lien » (orange plein), en bas « Enregistrer en PNG » et « Essayer » */
+.lqr svg{cursor:pointer}
+.ip-ql{display:block;color:inherit;text-decoration:none}
+.ipv .ip-ql{cursor:pointer}
+#ipShare .ipbar.iptks{margin-bottom:1.2em}
+.iptk{position:absolute;top:-.3em;bottom:-.3em;width:0;border-left:2px dotted #36404c;margin-left:-1px;pointer-events:none;z-index:1}
+.iptk>span{position:absolute;top:100%;left:0;transform:translateX(-50%);margin-top:.15em;font-size:.72em;line-height:1;color:var(--muted);white-space:nowrap}
+.iptk.on{border-left-color:var(--sel)}
+.iptk.on>span{color:var(--sel);font-weight:700}
 </style>
 </head>
 <body>
@@ -1375,18 +1463,21 @@ body.retpad .pane{padding-top:calc(var(--fs-ui) * 3.1)}
       </div>
       <div class="lright">
         <div class="lqr" id="lQr"></div>
-        <div class="lbtns"><button class="btn" id="lCopyImg">Copier l'image</button><button class="btn" id="lPng">Enregistrer en PNG</button></div>
+        <div class="lbtns"><button class="btn on" id="lCopyImg">Copier l'image</button><button class="btn on" id="lCopy">Copier le lien</button></div>
         <div class="lurl" id="lUrl"></div>
-        <div class="lbtns"><button class="btn on" id="lCopy">Copier le lien</button><button class="btn" id="lTry" title="Ouvrir le mode élève, comme tes élèves le verront">Essayer</button></div>
+        <div class="lbtns"><button class="btn" id="lPng">Enregistrer en PNG</button><button class="btn" id="lTry" title="Ouvrir le mode élève, comme tes élèves le verront">Essayer</button></div>
         <div class="lmsg" id="lMsg"></div>
       </div>
       <section class="ipsec" id="ipSec" aria-label="Feuille à imprimer">
-        <div class="ipt"><h3>Feuille à imprimer</h3><button type="button" class="btn" id="ipNew" title="D'autres questions sur la feuille">Nouvelles questions</button><button type="button" class="btn on" id="ipPrint" title="La fenêtre d'impression : ton imprimante, ou « Enregistrer au format PDF »">Imprimer / PDF</button></div>
+        <div class="ipt"><h3>Feuille à imprimer</h3><button type="button" class="btn on" id="ipPrint" title="La fenêtre d'impression : ton imprimante, ou « Enregistrer au format PDF »">Imprimer / PDF</button></div>
         <div class="ipbody">
           <div class="ipo">
+            <span class="ipf">Format <span class="ipfmt" role="group" aria-label="Format de la feuille"><button type="button" data-ipf="a4" class="on" aria-pressed="true" title="Une feuille A4 par élève">A4</button><button type="button" data-ipf="2" aria-pressed="false" title="Moitié de A4 : les mêmes questions en haut et en bas de la feuille">½</button><button type="button" data-ipf="3" aria-pressed="false" title="Tiers de A4 : trois fois les mêmes questions sur la feuille">⅓</button><button type="button" data-ipf="4" aria-pressed="false" title="Quart de A4 : quatre fois les mêmes questions sur la feuille">¼</button></span></span>
+            <label class="ipf" title="Le titre de la feuille, et du lien (le même que tout en haut)">Titre <input type="text" id="ipTi" maxlength="80" autocomplete="off" spellcheck="false"></label>
             <label class="ipf">Classe <input type="text" id="ipCls" maxlength="24" placeholder="facultatif" autocomplete="off" spellcheck="false"></label>
             <span class="ipf">Pages <span class="ipnum"><button type="button" data-ipp="-1" aria-label="Une page de moins">−</button><output id="ipPg">2</output><button type="button" data-ipp="1" aria-label="Une page de plus">+</button></span></span>
-            <label class="ipf"><input type="checkbox" id="ipAns" checked> Réponses à la fin</label>
+            <span class="ipf ipansg"><label class="ipf"><input type="checkbox" id="ipAns" checked> Réponses à la fin</label>
+            <label class="ipf ipupl" title="L'encadré « Réponses » tête en bas : on tourne la feuille pour le lire"><input type="checkbox" id="ipUp"> Réponses à l'envers</label></span>
             <label class="ipf"><input type="checkbox" id="ipQr" checked> Code QR</label>
             <label class="ipf"><input type="checkbox" id="ipSt"> Étoiles à côté des questions</label>
           </div>
@@ -1394,7 +1485,9 @@ body.retpad .pane{padding-top:calc(var(--fs-ui) * 3.1)}
           <div id="ipShare"></div>
           <div class="ipx" id="ipEx"></div>
           <div class="ipmsg" id="ipMsg"></div>
-          <div class="ipv" id="ipPrev" title="Clic : une page en grand"></div>
+          <div class="ipvb"><button type="button" class="ipnew" id="ipNew" title="D'autres questions sur toute la feuille (↻ à gauche d'une question : seulement elle)"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.2 8.6A5.2 5.2 0 1 1 11.6 4.3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M12.6 1.6v3.6H9" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Nouvelles questions</span></button>
+          <div class="ipv" id="ipPrev" title="Clic : une page en grand"></div></div>
+          <div class="iphint" id="ipHintF"></div>
           <div class="iphint">« Imprimer / PDF » ouvre la fenêtre d'impression : choisis ton imprimante, ou « Enregistrer au format PDF ».</div>
         </div>
       </section>
@@ -1465,6 +1558,11 @@ body.retpad .pane{padding-top:calc(var(--fs-ui) * 3.1)}
 
 <script>
 "use strict";
+/* n° 114 : « Essayer » sur téléphone (tryOpen, fenêtre du lien) refait la page en mode élève dans un cadre : il lui faut le corps de la page tel
+   qu'il est écrit, pris ici, avant que le script ne le change (environ 24 Ko, sans le script, repris tel quel au moment de l'essai) */
+var TRY_SRC = (() => { try { const sc = document.currentScript, esc = t => t.replace(/[&<>]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;'})[c]);
+  const ser = n => n.nodeType === 1 ? n.outerHTML : n.nodeType === 3 ? esc(n.data) : n.nodeType === 8 ? '<!--' + n.data + '-->' : '';
+  return sc ? {sc, ser, body: Array.from(document.body.childNodes).filter(n => n !== sc).map(ser).join('')} : null; } catch (e) { return null; } })();
 /* =====================================================================
    1. Valeurs : entier I, décimal D (v / 10^s), fraction F, puissance pw, racine rt
    ===================================================================== */
@@ -11472,7 +11570,7 @@ const TABS = [
     {id: 'men', name: 'Calcul mental', nd: ['dec', 'rel'], kw: 'de tete livrets tables astuces',
       rows: [[null, [['m+', 'addition'], ['m−', 'soustraction'], ['m∙', 'multiplication'], ['m:', 'division'], ['liv', 'livrets (2 à 12)'], ['livd', 'livrets (divisions)']]],
         [null, [['m10', 'multiplier, diviser par 10, 100, 0,1…'], ['m10x', 'multiplier, diviser par 600, 0,3…'], ['mcom', 'commutativité (4 ∙ 7 ∙ 25)'], ['mdis', 'distributivité (99 ∙ 6)']]]]},
-    {id: 'col', name: 'Calculs à poser en colonne', nd: ['dec'], kw: 'papier poses retenues potence', rows: [[null, [['p+', 'addition'], ['p−', 'soustraction'], ['p∙', 'multiplication'], ['p:', 'division']]]]},
+    {id: 'col', name: 'Calculs à poser en colonne', nd: ['dec'], kw: 'papier poses retenues potence problemes situations courses argent monnaie', rows: [[null, [['p+', 'addition'], ['p−', 'soustraction'], ['p∙', 'multiplication'], ['p:', 'division']]], [null, [['p_pb', 'problèmes', 'pbx']]]]},          // n° 115 : problèmes, sur leur ligne (l'enseignant, 16.11.2026)
     {id: 'rel', name: 'Nombres relatifs', nd: ['dec'], kw: 'negatifs positifs signes regle des signes comparer ecriture simplifiee somme algebrique problemes situations temperatures altitudes',
       rows: [[null, [['rcmp', 'comparer'], ['radd', 'addition'], ['rsub', 'soustraction'], ['rsum', 'plusieurs termes']]], [null, [['rmul', 'multiplication'], ['rdiv', 'division'], ['rpow', 'puissances'], ['rprio', 'priorités des opérations']], null, limUI('r')], [null, [['r_pb', 'problèmes', 'pbx']]]],          // n° 88 : problèmes, sur leur ligne (l'enseignant, 14.11.2026)
       hint: 'Priorités cochées : chaque calcul mélange les opérations cochées.'},
@@ -11663,17 +11761,20 @@ function pickObjective(only){                // only : seulement ces objectifs (
   return {bl, id};
 }
 const COMB_IDS = ['pp5', 'rp4'], COMB_SHARE = .5;
-const PB_IDS = ['py_pb', 'f_pb', 'pro_pb', 'e1_pb', 'r_pb', 'pa_pb', 'v_pb', 'at_pb', 'th_pb', 'l_pb'];                     // n° 71 : cases « problèmes (sur les exercices cochés) » (mini réglette, 50 % du bloc par défaut)
+const PB_IDS = ['py_pb', 'f_pb', 'pro_pb', 'e1_pb', 'r_pb', 'pa_pb', 'v_pb', 'at_pb', 'th_pb', 'l_pb', 'p_pb'];                     // n° 71 : cases « problèmes (sur les exercices cochés) » (mini réglette, 50 % du bloc par défaut)
 // n° 97 (l'enseignant, 15.11.2026 : « Dans volume, plutôt que de dire problèmes parmi les exercices cochés, dis problèmes parmi les solides cochés. Pour
 // périmètre et aire dis parmi les figures cochées. Dans équations dis parmi les types d'équations cochés ») : la mention grise de la case (data-sur,
 // lue par le CSS ::after ; lu ainsi : « sur » gardé, comme les autres blocs) ; les autres blocs : « les exercices cochés »
+// n° 115 : les problèmes des calculs en colonne ne suivent pas les opérations cochées (l'enseignant, 16.11.2026 : « pas besoin de différencier les problèmes
+// selon les coches cochées ») : leur mention dit « (toutes les opérations) » (data-men au lieu de data-sur)
+const PB_MEN = {p_pb: 'toutes les opérations'};
 const PB_SUR = {v_pb: 'les solides cochés', at_pb: 'les solides cochés', pa_pb: 'les figures cochées', e1_pb: 'les types d\'équations cochés'};
 const flagsOf = (bl, s) => { const n = (s || S).num[bl] || {}; return {dec: !!n.dec, rel: !!n.rel || bl === 'rel', fra: !!n.fra}; };
 const THW = {nat: [4, 2, 1, 1], dec: [1, 2, 2, 2], rel: [1, 2, 2, 2], fra: [1, 1, 2, 2]};      // décimaux, relatifs, fractions : plutôt avec plus d'étoiles
 function pickTheme(list, lv, key){ const t = wpick(list, x => THW[x][lv - 1] / (1 + .6 * (TALLY[key + x] || 0))); bump(key + t); return t; }
 function subOf(o, lv, fl){ // sous-genre : naturels, décimaux, relatifs… pour le calcul mental, les calculs en colonne et les puissances
   if (o.bl === 'men' && ['m+', 'm−', 'm∙', 'm:'].includes(o.id)) return 'M' + pickTheme(['nat'].concat(fl.dec ? ['dec'] : [], fl.rel ? ['rel'] : []), lv, 't:' + o.id + ':') + o.id.slice(1);
-  if (o.bl === 'col') return 'P' + (fl.dec ? 'dec' : 'nat') + o.id.slice(1);      // « décimaux » cochée : toujours un nombre à virgule (04.11.2026 ; avant, des naturels aussi)
+  if (o.bl === 'col' && o.id !== 'p_pb') return 'P' + (fl.dec ? 'dec' : 'nat') + o.id.slice(1);      // n° 115 : sauf les problèmes      // « décimaux » cochée : toujours un nombre à virgule (04.11.2026 ; avant, des naturels aussi)
   if (o.id === 'pwc') return 'pw' + pickTheme(['nat'].concat(fl.dec ? ['dec'] : [], fl.rel ? ['rel'] : [], fl.fra ? ['fra'] : []), lv, 't:pwc:');
   if (o.id === 'f+'){ const s = leastUsed(['Mfra+', 'Mfra−'], 's:'); bump('s:' + s); return s; }
   if (o.id === 'f∙' || o.id === 'f:') return 'Mfra' + o.id.slice(1);
@@ -29530,6 +29631,647 @@ PB_M.lit.forEach(m => { const lo = m.lo, hi = m.hi, ok = m.ok; m.lo0 = typeof lo
   m.lo = () => { const L = lpRange(m); return L.length ? Math.max(pbR0(lo), Math.min(...L)) : 9; };
   m.hi = () => { const L = lpRange(m); return L.length ? Math.min(pbR0(hi), Math.max(...L)) : 0; }; m.ok = () => (!ok || ok()) && lpRange(m).length > 0; });
 
+/* ---------- n° 115 (16.11.2026) : Calculs à poser en colonne, les problèmes (case p_pb) ----------
+   L'enseignant, 16.11.2026 : « tu peux continuer avec les problèmes. peut être fais les calculs à poser en colonne : ce sont des problèmes
+   surtout pour les 9èmes. » ; puis : « ça peut être des problèmes de calcul de la vie de tous les jours. pas besoin de différencier les problèmes
+   selon les coches cochées, et tu peux mettre plus qu'une opération à faire pour un problème ».
+   QCM (16.11.2026), les quatre options recommandées : ces poids (PB_CFG.col) ; ces 12 sortes ; détail : chaque étape en ligne (le nom de ce
+   qu'on calcule devant « = »), puis les opérations posées côte à côte, chacune avec une petite phrase grise (un calcul de tête n'est pas posé) ;
+   la case « décimaux » respectée : décochée, que des nombres entiers ; cochée, toujours au moins un nombre à virgule dans l'énoncé.
+   Poids (calculés d'après les opérations du problème, cpMk) : opérations posées : soustraction 0,15 · multiplication 0,25 · division 0,45 ·
+   + 0,3 par un nombre à deux chiffres ou deux nombres à virgule · + 0,5 division par un nombre à virgule (∙ 10 d'abord) ; une opération de
+   plus 0,4, chaque opération au-delà 0,3 ; à l'envers 0,5 · donnée à déduire 0,4 · donnée inutile 0,4 · reste de la division à interpréter
+   0,4 · comparer, choisir 0,3 · décider (oui / non) 0,4 · juger une affirmation 0,5 · décimaux 0,2 · nombres plus grands (dès 1000) 0,15 ;
+   seuils ★ < 0,5 ≤ ★★ < 1,1 ≤ ★★★ < 1,9 ≤ ★★★★.
+   Choix faits sans QCM (dits à l'enseignant) : chaque problème a au moins une opération à poser (cpPose : une addition ou une soustraction de
+   petits entiers, un produit par 10, 100…, un livret ne se posent pas) ; pas de condition sur les opérations cochées (need vide) ; la pastille
+   « en colonne » ; la mention de la case « (toutes les opérations) » au lieu de « (sur les exercices cochés) » ; les sortes qui demandent des
+   virgules par nature (essence au litre, durées en h et min, fondue au kilo) n'existent qu'avec « décimaux » ; résultats exacts (pas
+   d'arrondi), argent au centime. Code : identifiants des sortes en k… (cou, rec… étaient déjà pris dans d'autres blocs). */
+PB_CFG.col = {W: {sub: .15, mul: .25, div: .45, two: .3, divd: .5, e2: .4, e3: .3, inv: .5, ded: .4, use: .4, rst: .4, cmp: .3, dec: .4, aff: .5, dd: .2, big: .15},
+  B: [.5, 1.1, 1.9]};
+const cpLvOf = f => pbLv('col', pbPts('col', f));
+const cpDig = x => String(Math.abs(rnd(x))).replace('.', '').replace(/^0+/, '').replace(/0+$/, '');      // chiffres utiles (sans les zéros des bouts)
+const cpSig = x => cpDig(x).length || 1;
+const cpP10 = x => cpDig(x) === '1';                                                              // 10, 100, 0,1…
+const cpNI = x => !Number.isInteger(rnd(x));
+const cpDecs = x => { const s = String(rnd(Math.abs(x))).split('.')[1]; return s ? s.length : 0; };
+const cpN = (x, u) => u === 'fr.' ? pfMoney(x) : pfNb(fmtNum(rnd(x)) + (u ? ' ' + u : ''));
+const cpM = x => pfMoney(x);
+const cpList = a => a.length < 2 ? a[0] || '' : a.slice(0, -1).join(', ') + ' et ' + a[a.length - 1];
+const cpW = () => pick(prW);
+// une opération à poser ? (sinon : de tête) ; '+' : a est la liste des termes
+function cpPose(op, a, b){
+  if (op === '+') return !(a.every(x => !cpNI(x)) && a.reduce((s, x) => s + cpSig(x), 0) <= 3);
+  if (op === '−') return !(!cpNI(a) && !cpNI(b) && cpSig(a) + cpSig(b) <= 3);
+  if (op === '∙') return !(cpP10(a) || cpP10(b) || cpSig(a) * cpSig(b) <= 2);
+  return !(cpP10(b) || (!cpNI(a) && !cpNI(b) && ((cpSig(b) === 1 && a / b <= 10) || (b <= 12 && a <= 12 * b && Number.isInteger(a / b)))));
+}
+// une étape : lab = a op b ; op '+' (a : la liste des termes), '−', '∙', ':', 'r' (division avec un reste : a = q ∙ b + reste) ;
+// o : u (unité de tout), ua, ub, ur (unités de a, de b, du résultat), pose (forcer), free (ne compte pas comme une opération), txt (écriture du calcul)
+function cpS(lab, op, a, b, o){
+  o = o || {}; const u = o.u || '', s = Object.assign({lab, op, a, b, ua: u, ub: u, ur: u}, o);
+  if (op === '+') s.r = rnd(a.reduce((x, y) => x + y, 0));
+  else if (op === '−') s.r = rnd(a - b);
+  else if (op === '∙') s.r = rnd(a * b);
+  else if (op === ':') s.r = rnd(a / b);
+  else { s.q = Math.floor(rnd(a / b) + 1e-9); s.rest = rnd(a - s.q * b); s.r = s.q; }
+  if (s.pose === undefined) s.pose = cpPose(op, a, b);
+  return s;
+}
+const cpLn = s => s.op === 'r' ? cpN(s.a, s.ua) + ' = ' + s.q + ' ∙ ' + cpN(s.b, s.ub) + ' + ' + cpN(s.rest, s.ua)
+  : s.lab + ' = ' + (s.txt || (s.op === '+' ? s.a.map(x => cpN(x, s.ua)).join(' + ') : cpN(s.a, s.ua) + ' ' + s.op + ' ' + cpN(s.b, s.ub))) + ' = ' + cpN(s.r, s.ur);
+const cpL = s => DIV(pfNb(cpLn(s)));                                       // une étape, en ligne
+const cpFin = s => prFin(s.lab, cpLn(s).slice(s.lab.length + 3));           // la dernière étape : son résultat en rouge
+const cpG = h => DIV(pfNb(h), 'gr');                                       // une petite explication grise
+const cpEnd = (h, a) => DIV(pfNb(h + ' ⟹ ') + ANS(a), 'fin');              // « 102 fr. > 89 fr. ⟹ l'abonnement »
+// un nombre pour les colonnes : l'argent avec ses deux décimales pour + et − (18,50) ; sinon sans zéro inutile
+const cpVal = (x, u) => { const k = cpDecs(x); return u === 'fr.' && k ? ZR(Math.round(x * 100), 2) : D(Math.round(x * 10 ** k), k); };
+// division posée d'entiers avec un reste, sans zéros ajoutés (comme colDiv) : {html, q, r}
+function cpDivR(a, b){
+  const digits = String(a).split('').map(Number), k = digits.length;
+  let i = 0, cur = 0;
+  while (true){ cur = cur * 10 + digits[i]; i++; if (cur >= b || i >= k) break; }
+  let end = i - 1; const Q = [], R = [];
+  for (let g = 0; g < 24; g++){
+    const qd = Math.floor(cur / b), prod = qd * b, rem = cur - prod;
+    Q.push(qd);
+    if (qd > 0) R.push({kind: 'p', str: String(prod), end});
+    if (i >= k){ if (qd > 0) R.push({kind: 'r', str: String(rem), end, last: true}); else if (R.length) R[R.length - 1].last = true; break; }
+    if (qd > 0) R.push({kind: 'r', str: String(rem) + digits[i], end: i});
+    else { const last = R[R.length - 1]; if (last && last.kind === 'r'){ last.str += digits[i]; last.end = i; } else R.push({kind: 'r', str: String(cur) + digits[i], end: i}); }
+    cur = rem * 10 + digits[i]; i++; end = i - 1;
+  }
+  const intQ = Q.join('').replace(/^0+(?=\d)/, '') || '0', cd = 2 + k + 1, bs = String(b), nC = cd + Math.max(bs.length, intQ.length) - 1, cells = [], lines = [];
+  digits.forEach((d, j) => cells.push({r: 1, c: 2 + j, h: d}));
+  [...bs].forEach((ch, j) => cells.push({r: 1, c: cd + j, h: ch}));
+  [...intQ].forEach((ch, j) => cells.push({r: 2, c: cd + j, h: ch, cls: 'res'}));
+  lines.push({v: true, r1: 1, r2: 2, c: cd}); lines.push({r: 1, c1: cd, c2: nC});
+  R.forEach((row, j) => {
+    const str = row.kind === 'r' ? row.str.replace(/^0+(?=\d)/, '') : row.str, r = 2 + j, c0 = 2 + row.end - str.length + 1;
+    [...str].forEach((ch, t) => cells.push({r, c: c0 + t, h: ch, cls: row.last ? 'rst' : ''}));
+    if (row.kind === 'p'){ cells.push({r, c: c0 - 1, h: '−', cls: 'op'}); lines.push({r, c1: c0 - 1, c2: 2 + row.end}); }
+  });
+  return {html: gridHTML(cells, lines, 1 + R.length, nC, Array(nC).fill(CW)), q: Number(intQ), r: a - Number(intQ) * b};
+}
+// l'opération posée d'une étape, avec sa petite phrase grise ; red : l'étape de la réponse (sinon les chiffres du résultat ne sont pas rouges)
+function cpCol(s, red){
+  let h;
+  if (s.op === '+') h = colAdd(s.a.map(x => cpVal(x, s.ua)));
+  else if (s.op === '−') h = colSub(cpVal(s.a, s.ua), cpVal(s.b, s.ub));
+  else if (s.op === '∙'){ const [x, y] = cpSig(s.a) > cpSig(s.b) || (cpSig(s.a) === cpSig(s.b) && s.a >= s.b) ? [s.a, s.b] : [s.b, s.a]; h = colMul(cpVal(x), cpVal(y)); }
+  else if (s.op === ':'){ const a = cpVal(s.a), b = cpVal(s.b), f = divFeat(a, b), x = decExp(a.v * 10 ** f.k, f.d * 10 ** (a.k === 'd' ? a.s : 0)); h = divDet(a, b, f, x, decExpH(x)); }
+  else h = cpDivR(s.a, s.b).html;
+  return '<div class="cpcol' + (red ? '' : ' cpmid') + '">' + DIV(s.cap || s.lab, 'gr cpl') + h + '</div>';
+}
+// le détail : les lignes (L, du HTML), puis les opérations posées des étapes S côte à côte ; ans : l'étape de la réponse
+function cpDet(L, S, ans){
+  const C = S.filter(s => s.pose);
+  return L.join('') + (C.length ? '<div class="cprow">' + C.map(s => cpCol(s, s === ans)).join('') + '</div>' : '');
+}
+// le candidat d'un problème (pbGen) ; o = {S (étapes), F (poids du problème), nums (nombres de l'énoncé), kind ('num', 'yn', 'ch'), q, u, v, con,
+// det, key, dat, alts, yes, ans, opts, R2, cnt} ; null s'il ne tombe pas à lv étoiles ou s'il ne respecte pas « décimaux »
+function cpMk(lv, o){
+  const S = o.S, F = Object.assign({}, o.F || {});
+  if (!S.length || !S.some(s => s.pose)) return null;                                          // au moins une opération à poser
+  const all = o.nums.concat(...S.filter(s => !s.free).map(s => [].concat(s.a, s.op === '+' ? [] : [s.b], [s.r], s.op === 'r' ? [s.rest] : [])));
+  if (all.some(x => typeof x !== 'number' || !isFinite(x) || x < 0)) return null;
+  if (!DEC && all.some(cpNI)) return null;                                                      // sans « décimaux » : que des entiers
+  if (DEC && !o.nums.some(cpNI)) return null;                                                   // avec : au moins une virgule dans l'énoncé
+  if (S.some(s => (s.op === ':' && (cpNI(s.r * 1000) || !s.b)) || (s.op === 'r' && ([s.a, s.b].some(cpNI) || s.b < 2)) || (s.ur === 'fr.' && cpNI(s.r * 100)))) return null;
+  if (o.kind !== 'yn' && o.kind !== 'ch' && (!isFinite(o.v) || o.v <= 0)) return null;
+  const n = S.filter(s => !s.free).length; if (n >= 2) F.e2 = true; if (n >= 3) F.e3 = n - 2;
+  S.forEach(s => { if (!s.pose) return; const add = k => F[k] = (F[k] || 0) + 1;
+    if (s.op === '−') add('sub');
+    else if (s.op === '∙'){ add('mul'); if (Math.min(cpSig(s.a), cpSig(s.b)) >= 2 || (cpNI(s.a) && cpNI(s.b))) add('two'); }
+    else if (s.op === ':' || s.op === 'r'){ add('div'); const k = cpDecs(s.b), d = rnd(s.b * 10 ** k); if (d >= 10 && !cpP10(d)) add('two'); if (k) add('divd'); } });
+  if (all.some(cpNI)) F.dd = true;
+  if (Math.max(...all) >= 1000) F.big = true;
+  if (cpLvOf(F) !== lv) return null;
+  const c = {kind: o.kind || 'num', exact: true, noPrec: true, f: F, u: o.u || '', v: o.v, q: o.q, con: o.con, key: o.key, det: o.det, R2: o.R2 || null, cnt: o.cnt,
+    dat: Object.assign({S: S.map(s => ({lab: s.lab, op: s.op, a: s.a, b: s.b, r: s.r, rest: s.rest, pose: s.pose, free: !!s.free}))}, o.dat || {})};
+  if (c.kind === 'num'){
+    const A = (o.alts || []).slice();
+    S.forEach(s => { if (!s.free && Math.abs(s.r - o.v) > 1e-9) A.push([s.r, 'C\'est un résultat intermédiaire (' + s.lab + ') : continue.']); });
+    if (all.some(cpNI) || cpNI(o.v)) [10, .1, 100, .01].forEach(k => A.push([rnd(o.v * k), 'Vérifie la place de la virgule.']));
+    const seen = new Set(); c.alts = A.filter(([x]) => isFinite(x) && Math.abs(x - o.v) > 1e-9 && !seen.has(rnd(x)) && seen.add(rnd(x)));
+    if (o.u === 'fr.') c.aH = pfMoney(o.v);
+  }
+  if (c.kind === 'yn'){ c.yes = !!o.yes; c.bal = true; }
+  if (c.kind === 'ch'){ c.ans = o.ans; c.opts = o.opts; }
+  return c;
+}
+// un générateur : jusqu'à N essais de « mk » (qui rend un candidat ou null)
+const cpTry = (mk, N) => { for (let t = 0; t < (N || 150); t++){ const c = mk(); if (c) return c; } return null; };
+const cpYN = () => pbYN('col');
+// les magasins et leurs articles [nom, pluriel, prix bas, prix haut, genre, plusieurs à la fois ?] ; dec : seulement avec « décimaux » (petits prix)
+const CP_SHOP = [
+  {l: 'À l\'épicerie', dec: true, it: [['pain', 'pains', 2.6, 4.8, 'm', 1], ['fromage', 'fromages', 4.5, 9.8, 'm', 0], ['sachet de pommes', 'sachets de pommes', 3.2, 5.9, 'm', 1],
+    ['tablette de chocolat', 'tablettes de chocolat', 1.5, 3.8, 'f', 1], ['jus d\'orange', 'jus d\'orange', 2.1, 4.2, 'm', 1], ['yogourt', 'yogourts', .65, 1.1, 'm', 1],
+    ['croissant', 'croissants', 1.2, 2.2, 'm', 1], ['bouteille de lait', 'bouteilles de lait', 1.15, 1.95, 'f', 1]]},
+  {l: 'À la papeterie', dec: true, it: [['cahier', 'cahiers', 2.4, 5.9, 'm', 1], ['stylo', 'stylos', 1.2, 3.5, 'm', 1], ['classeur', 'classeurs', 3.9, 8.9, 'm', 1],
+    ['livre', 'livres', 12.9, 24.9, 'm', 0], ['agenda', 'agendas', 9.9, 19.9, 'm', 0], ['trousse', 'trousses', 7.9, 19.9, 'f', 0]]},
+  {l: 'Au magasin de sport', it: [['t-shirt', 't-shirts', 15, 35, 'm', 1], ['paire de baskets', 'paires de baskets', 69, 159, 'f', 0], ['casque de vélo', 'casques de vélo', 39, 129, 'm', 0],
+    ['sac à dos', 'sacs à dos', 35, 89, 'm', 0], ['raquette de tennis', 'raquettes de tennis', 45, 139, 'f', 0], ['ballon de foot', 'ballons de foot', 19, 49, 'm', 1],
+    ['paire de chaussettes', 'paires de chaussettes', 8, 16, 'f', 1]]},
+  {l: 'Au magasin d\'électronique', it: [['console de jeux', 'consoles de jeux', 299, 499, 'f', 0], ['jeu vidéo', 'jeux vidéo', 39, 79, 'm', 1], ['casque audio', 'casques audio', 29, 149, 'm', 0],
+    ['montre', 'montres', 49, 249, 'f', 0], ['câble de recharge', 'câbles de recharge', 12, 29, 'm', 1], ['carte mémoire', 'cartes mémoire', 14, 39, 'f', 1]]}];
+// ce qu'on économise pour s'acheter (petits jobs)
+const CP_BUT = [['vélo', 289, 689, 'm'], ['trottinette', 129, 249, 'f'], ['console de jeux', 299, 499, 'f'], ['paire de baskets', 99, 179, 'f'], ['montre', 99, 249, 'f'], ['guitare', 149, 349, 'f']];
+const cpUn = it => (it[4] === 'f' || it[3] === 'f' ? 'une ' : 'un ') + it[0];
+// prix d'un article : avec « décimaux », des centimes (souvent des dizaines de centimes) ; sans, des francs entiers
+const cpPr = it => { const lo = it[2], hi = it[3]; if (!DEC) return ri(Math.ceil(lo), Math.floor(hi));
+  return hi > 60 ? rnd(ri(Math.ceil(lo), Math.floor(hi)) + pick([0, .9, .9, .5])) : chance(.6) ? rpR(lo, hi, .1) : rpR(lo, hi, .05); };
+// un magasin et k articles différents (le 1er peut s'acheter en plusieurs exemplaires si qty)
+function cpShop(k, qty){
+  const M = pick(CP_SHOP.filter(m => DEC || !m.dec)), A = shuffle(M.it.slice());
+  if (qty){ const i = A.findIndex(x => x[5]); if (i < 0) return null; A.unshift(A.splice(i, 1)[0]); }
+  return {l: M.l, A: A.slice(0, k)};
+}
+const cpQty = it => it[3] < 12 ? ri(3, 6) : it[3] < 40 ? ri(2, 4) : ri(2, 3);
+const CP_UC = [' Le magasin ferme à 19 h.', ' Il y a 4 caisses ouvertes.', ' Le ticket de caisse porte le numéro 4127.', ' Le magasin est ouvert depuis 8 h.'];
+const cpBil = (T, up) => { const B = [10, 20, 50, 100, 200, 500].filter(x => x > T + .001); return B.length ? (up && B.length > 1 && chance(.3) ? B[1] : B[0]) : null; };
+
+/* ======================== 1. Les courses (ticket de caisse) : kcou ======================== */
+pbM('col', {id: 'kcou', lo: 1, hi: 3, gen: lv => cpTry(() => {
+  const v = pick(lv === 1 ? ['two', 'three', 'qty'] : lv === 2 ? ['qty', 'ren', 'tic', 'two', 'three'] : ['ren', 'tic', 'ticq']), wq = v === 'qty' || v === 'ticq' || (v === 'ren' && chance(.6));
+  const Sh = cpShop(3, wq); if (!Sh) return null;
+  const A = Sh.A, n = cpW(), il = pcIl(n), Il = il === 'il' ? 'Il' : 'Elle', P = A.map(cpPr), use = lv >= 2 && chance(.3) ? pick(CP_UC) : '', F = use ? {use: true} : {};
+  const qty = cpQty(A[0]), qH = qty + ' ' + A[0][1] + ' à ' + cpM(P[0]) + ' pièce', at = Sh.l + ', ', sQ = () => cpS('prix des ' + A[0][1], '∙', qty, P[0], {ua: '', ub: 'fr.', ur: 'fr.', cap: A[0][1]});
+  const de = x => (x[4] === 'f' ? 'de la ' : /^[aeiouéh]/.test(x[0]) ? 'de l\'' : 'du ') + x[0], le = x => (x[4] === 'f' ? 'la ' : /^[aeiouéh]/.test(x[0]) ? 'l\'' : 'le ') + x[0];
+  let S, L, con, q, ans, nums;
+  if (v === 'two' || v === 'three'){
+    const k = v === 'two' ? 2 : 3; S = [cpS('prix total', '+', P.slice(0, k), null, {u: 'fr.'})]; q = 'prix total'; nums = P.slice(0, k);
+    con = at + n + ' achète ' + cpList(A.slice(0, k).map((x, i) => cpUn(x) + ' à ' + cpM(P[i]))) + '.' + use + '<br>Combien paie-t-' + il + ' ?';
+    L = [cpFin(S[0])]; ans = S[0];
+  } else if (v === 'qty'){
+    const s1 = sQ(), s2 = cpS('prix total', '+', [s1.r, P[1]], null, {u: 'fr.'});
+    S = [s1, s2]; q = 'prix total'; nums = [qty, P[0], P[1]];
+    con = at + n + ' achète ' + qH + ' et ' + cpUn(A[1]) + ' à ' + cpM(P[1]) + '.' + use + '<br>Combien paie-t-' + il + ' ?';
+    L = [cpL(s1), cpFin(s2)]; ans = s2;
+  } else if (v === 'ren'){
+    const s1 = wq ? sQ() : null, s2 = cpS('prix total', '+', [wq ? s1.r : P[0], P[1]], null, {u: 'fr.'}), B = cpBil(s2.r, true); if (!B) return null;
+    const s3 = cpS('monnaie rendue', '−', B, s2.r, {u: 'fr.', cap: 'monnaie'});
+    S = (wq ? [s1] : []).concat(s2, s3); q = 'monnaie rendue'; nums = (wq ? [qty] : []).concat(P[0], P[1], B);
+    con = at + n + ' achète ' + (wq ? qH : cpUn(A[0]) + ' à ' + cpM(P[0])) + ' et ' + cpUn(A[1]) + ' à ' + cpM(P[1]) + '. ' + Il + ' paie avec un billet de ' + B + ' fr.' + use + '<br>Combien lui rend-on ?';
+    L = S.slice(0, -1).map(cpL).concat(cpFin(s3)); ans = s3;
+  } else if (v === 'tic'){
+    const two = chance(.5), T = rnd(P[0] + P[1] + (two ? P[2] : 0)), kn = two ? cpS('prix des autres articles', '+', [P[1], P[2]], null, {u: 'fr.', cap: 'autres articles'}) : null;
+    const s2 = cpS('prix ' + de(A[0]), '−', T, two ? kn.r : P[1], {u: 'fr.', cap: A[0][0]});
+    S = (two ? [kn] : []).concat(s2); q = 'prix ' + de(A[0]); nums = [T, P[1]].concat(two ? [P[2]] : []); F.inv = true;
+    con = at + n + ' paie ' + cpM(T) + ' pour ' + cpList([cpUn(A[0]), cpUn(A[1]) + ' à ' + cpM(P[1])].concat(two ? [cpUn(A[2]) + ' à ' + cpM(P[2])] : [])) + '.' + use +
+      ' Sur le ticket, le prix ' + de(A[0]) + ' est effacé.<br>Combien coûte ' + le(A[0]) + ' ?';
+    L = S.slice(0, -1).map(cpL).concat(cpFin(s2)); ans = s2;
+  } else {                                                                  // ticq : le prix d'un article acheté plusieurs fois
+    const T = rnd(qty * P[0] + P[1]), s1 = cpS('prix des ' + A[0][1], '−', T, P[1], {u: 'fr.', cap: A[0][1]}), s2 = cpS('prix d\'' + cpUn(A[0]), ':', s1.r, qty, {ua: 'fr.', ub: '', ur: 'fr.'});
+    S = [s1, s2]; q = 'prix d\'' + cpUn(A[0]); nums = [T, P[1], qty]; F.inv = true;
+    con = at + n + ' achète ' + qty + ' ' + A[0][1] + ' et ' + cpUn(A[1]) + ' à ' + cpM(P[1]) + '. ' + Il + ' paie ' + cpM(T) + ' en tout.' + use + '<br>Combien coûte ' + cpUn(A[0]) + ' ?';
+    L = [cpL(s1), cpFin(s2)]; ans = s2;
+  }
+  return cpMk(lv, {S, F, nums, q, u: 'fr.', v: ans.r, con, key: ['kcou', v, nums], dat: {v}, det: () => cpDet(L, S, ans)});
+})});
+
+/* ======================== 2. Assez d'argent ? (oui / non) : karg ======================== */
+// la somme qu'on a : un nombre « rond » (multiple de 5 ou de 10) près du prix des achats, du bon côté
+const cpRound = (T, yes) => { const st = T < 40 ? 5 : 10, M = yes ? Math.ceil((T + .05) / st) * st : Math.floor((T - .05) / st) * st; return M > 0 ? M : null; };
+pbM('col', {id: 'karg', lo: 2, hi: 4, gen: lv => {
+  const want = cpYN();
+  return cpTry(() => {
+    const k = lv >= 3 && chance(.5) ? 3 : 2, nq = lv >= 4 ? (chance(.6) ? 2 : 1) : lv === 3 ? (chance(.6) ? 1 : 0) : (chance(.3) ? 1 : 0), Sh = cpShop(k, nq > 0); if (!Sh) return null;
+    const A = Sh.A, n = cpW(), il = pcIl(n), Il = il === 'il' ? 'Il' : 'Elle', P = A.map(cpPr), F = {dec: true}, S = [], items = [], tot = [], nums = [];
+    for (let i = 0; i < k; i++){
+      if (i < nq && A[i][5]){ const q = cpQty(A[i]), s = cpS('prix des ' + A[i][1], '∙', q, P[i], {ua: '', ub: 'fr.', ur: 'fr.', cap: A[i][1]}); S.push(s); tot.push(s.r); nums.push(q);
+        items.push(q + ' ' + A[i][1] + ' à ' + cpM(P[i]) + ' pièce'); }
+      else { tot.push(P[i]); items.push(cpUn(A[i]) + ' à ' + cpM(P[i])); }
+      nums.push(P[i]);
+    }
+    const sT = cpS('prix des achats', '+', tot, null, {u: 'fr.'}); S.push(sT); const T = sT.r, M = cpRound(T, want);
+    if (!M || Math.abs(M - T) > Math.max(4, T * .06) || tot.some(x => x >= M)) return null;   // on doit calculer pour décider ; aucun achat seul ne dépasse
+    let mon, pre = [];
+    const ded = lv >= 3 && chance(.45) && M >= 20 && M <= 200;
+    if (ded){                                                              // la somme à retrouver : billets et pièces
+      // billets de 50, 20, 10 fr., pièces de 5, 2, 1 fr. : au moins trois sortes différentes
+      let r = M; const C = [[50, 'billet', 'billets'], [20, 'billet', 'billets'], [10, 'billet', 'billets'], [5, 'pièce', 'pièces'], [2, 'pièce', 'pièces'], [1, 'pièce', 'pièces']].map(([x, w, ws]) => {
+        const c = x >= 20 ? Math.min(1, Math.floor(r / x)) : Math.floor(r / x); r -= c * x; return [x, c, w, ws]; }).filter(z => z[1]);
+      if (C.length < 3 || C.some(z => z[1] > 4)) return null;
+      const parts = C.map(([x, c, w, ws]) => c === 1 ? (w === 'billet' ? 'un billet' : 'une pièce') + ' de ' + x + ' fr.' : c + ' ' + ws + ' de ' + x + ' fr.');
+      mon = 'Dans son porte-monnaie, ' + n + ' a ' + cpList(parts) + '.'; F.ded = true; nums.push(C[0][0]);
+      pre.push(cpG('argent ' + paDe(n) + ' = ' + C.map(([x, c]) => (c > 1 ? c + ' ∙ ' : '') + x + ' fr.').join(' + ') + ' = ' + cpN(M, 'fr.')));
+    } else { mon = n + ' a ' + cpM(M) + '.'; nums.push(M); }
+    const con = mon + ' ' + Sh.l + ', ' + il + ' veut acheter ' + cpList(items) + '.<br>A-t-' + il + ' assez d\'argent ?', yes = T <= M;
+    return cpMk(lv, {S, F, nums, kind: 'yn', yes, con, key: ['karg', nums, M], dat: {v: 'karg', T, M}, R2: 'Calcule d\'abord combien coûtent tous les achats, puis compare.',
+      det: () => cpDet(pre.concat(S.map(cpL), cpEnd(cpN(T, 'fr.') + (yes ? ' &lt; ' : ' &gt; ') + cpN(M, 'fr.'), yes ? 'oui' : 'non')), S, null)});
+  }, 200);
+}});
+
+/* ======================== 3. Le partage (cadeau commun, restaurant, bowling) : kprt ======================== */
+const CP_RES = [['pizzas', 'pizza', 15.5, 22.5], ['plats du jour', 'plat du jour', 17.5, 24.5], ['burgers', 'burger', 14.5, 21.5]];
+const CP_OBJ = [['un cadeau', 40, 160], ['un ballon de foot', 30, 70], ['un bouquet de fleurs', 30, 90], ['une carte cadeau', 50, 200], ['un jeu de société', 35, 90], ['un gâteau d\'anniversaire', 35, 80]];
+pbM('col', {id: 'kprt', lo: 1, hi: 4, gen: lv => cpTry(() => {
+  const v = pick(lv === 1 ? ['cad', 'tot'] : lv === 2 ? ['cad', 'res', 'tot'] : lv === 3 ? ['res', 'cad', 'dbl'] : ['anv', 'dbl', 'res']), n = cpW(), F = {};
+  let S, L, con, q, nums, ans;
+  if (v === 'cad' || v === 'tot'){
+    const O = pick(CP_OBJ), k = ri(3, 8), s0 = DEC ? rpR(O[1] / k, O[2] / k, chance(.5) ? .1 : .05) : ri(Math.ceil(O[1] / k), Math.floor(O[2] / k)), T = rnd(k * s0), obj = O[0];
+    if (!(s0 > 0)) return null;
+    if (v === 'cad'){
+      S = [cpS('part de chacun', ':', T, k, {ua: 'fr.', ub: '', ur: 'fr.'})]; q = 'part de chacun'; nums = [T, k];
+      con = 'Les ' + k + ' amis ' + paDe(n) + ' achètent ' + obj + ' à ' + cpM(T) + '. Ils partagent le prix en parts égales.<br>Combien paie chacun ?';
+    } else {
+      S = [cpS('prix', '∙', k, s0, {ua: '', ub: 'fr.', ur: 'fr.'})]; q = 'prix'; nums = [k, s0];
+      con = n + ' et ses amis achètent ensemble ' + obj + '. Ils sont ' + k + ' et chacun donne ' + cpM(s0) + '.<br>Combien coûte ' + obj.replace(/^une? /, m => m === 'une ' ? 'la ' : 'le ') + ' ?';
+    }
+    L = [cpFin(S[0])]; ans = S[0];
+  } else if (v === 'res'){
+    const k = ri(4, 6), R = pick(CP_RES), np = k - ri(1, 2), pp = DEC ? rpR(R[2], R[3], .5) : ri(Math.ceil(R[2]), Math.floor(R[3])), pb = DEC ? rpR(3.2, 5.8, .1) : ri(3, 6);
+    const s1 = cpS('prix des ' + R[0], '∙', np, pp, {ua: '', ub: 'fr.', ur: 'fr.', cap: R[0]}), s2 = cpS('prix des boissons', '∙', k, pb, {ua: '', ub: 'fr.', ur: 'fr.', cap: 'boissons'});
+    const s3 = cpS('addition', '+', [s1.r, s2.r], null, {u: 'fr.'}), s4 = cpS('part de chacun', ':', s3.r, k, {ua: 'fr.', ub: '', ur: 'fr.'});
+    S = [s1, s2, s3, s4]; q = 'part de chacun'; nums = [k, np, pp, pb];
+    con = 'Au restaurant, ' + n + ' et ses amis sont ' + k + '. Ils commandent ' + np + ' ' + R[0] + ' à ' + cpM(pp) + ' et ' + k + ' boissons à ' + cpM(pb) + '. Ils partagent l\'addition en parts égales.<br>Combien paie chacun ?';
+    L = [cpL(s1), cpL(s2), cpL(s3), cpFin(s4)]; ans = s4;
+  } else if (v === 'anv'){                                                 // celui qui fête son anniversaire ne paie pas
+    const k = ri(4, 7), pa = DEC ? rpR(6.5, 9.5, .5) : ri(7, 12), pb = DEC ? rpR(3.2, 5.8, .1) : ri(3, 6), act = pick([['au bowling', 'parties'], ['au laser game', 'parties'], ['au cinéma', 'billets']]);
+    const s1 = cpS('prix des ' + act[1], '∙', k + 1, pa, {ua: '', ub: 'fr.', ur: 'fr.', cap: act[1]}), s2 = cpS('prix des boissons', '∙', k + 1, pb, {ua: '', ub: 'fr.', ur: 'fr.', cap: 'boissons'});
+    const s3 = cpS('prix total', '+', [s1.r, s2.r], null, {u: 'fr.'}), s4 = cpS('part de chacun', ':', s3.r, k, {ua: 'fr.', ub: '', ur: 'fr.'});
+    S = [s1, s2, s3, s4]; q = 'part de chacun'; nums = [k, pa, pb]; F.ded = true;
+    con = 'C\'est l\'anniversaire ' + paDe(n) + '. ' + (pcIl(n) === 'il' ? 'Il' : 'Elle') + ' va ' + act[0] + ' avec ses ' + k + ' amis : chacun a ' + (act[1] === 'billets' ? 'un billet' : 'une partie') + ' à ' + cpM(pa) +
+      ' et une boisson à ' + cpM(pb) + '. ' + n + ' ne paie rien : ses amis partagent le prix en parts égales.<br>Combien paie chacun de ses amis ?';
+    L = [cpG(k + ' amis + ' + n + ' = ' + (k + 1) + ' personnes'), cpL(s1), cpL(s2), cpL(s3), cpFin(s4)]; ans = s4;
+  } else {                                                                 // dbl : un adulte paie le double d'un enfant
+    const na = ri(2, 3), ne = ri(3, 6), e = DEC ? rpR(6.5, 18, .5) : ri(7, 18), np = 2 * na + ne, T = rnd(np * e);
+    const s1 = cpS('nombre de parts', '+', [2 * na, ne], null, {txt: '2 ∙ ' + na + ' + ' + ne, pose: false}), s2 = cpS('prix pour un enfant', ':', T, np, {ua: 'fr.', ub: '', ur: 'fr.', cap: 'prix d\'une part'});
+    S = [s1, s2]; q = 'prix pour un enfant'; nums = [na, ne, T]; F.ded = true; F.inv = true;
+    con = na + ' adultes et ' + ne + ' enfants paient ensemble ' + cpM(T) + ' pour une sortie. Un adulte paie le double d\'un enfant.<br>Combien paie un enfant ?';
+    L = [cpG('un adulte paie 2 parts ; un enfant, 1 part'), cpL(s1), cpFin(s2)]; ans = s2;
+  }
+  return cpMk(lv, {S, F, nums, q, u: 'fr.', v: ans.r, con, key: ['kprt', v, nums], dat: {v}, det: () => cpDet(L, S, ans)});
+})});
+
+/* ======================== 4. La sortie de classe : ksor ======================== */
+const CP_SOR = ['au Musée d\'histoire naturelle', 'au château de Chillon', 'au Papiliorama', 'au zoo de Servion', 'au Laténium', 'à la Maison du Salève', 'au Musée olympique'];
+const CP_US = [' Le car part à 8 h 15.', ' Le trajet dure 1 h 10 min.', ' Deux enseignants accompagnent la classe ; ils ne paient rien.', ' La visite dure 2 heures.'];
+pbM('col', {id: 'ksor', lo: 2, hi: 4, gen: lv => cpTry(() => {
+  const v = pick(lv === 2 ? ['car', 'tot', 'car'] : lv === 3 ? ['cet', 'tot', 'cai', 'car'] : ['cai', 'cet', 'tot']), k = ri(18, 26), lieu = pick(CP_SOR);
+  const car = DEC && chance(.5) ? rnd(ri(500, 1520) * .5) : ri(25, 76) * 10, en = DEC ? rpR(6, 16, .5) : ri(6, 16), use = lv >= 3 && chance(.35) ? pick(CP_US) : '', F = use ? {use: true} : {};
+  if (cpNI(car / k * 100) || car / k < 9) return null;                  // le car partagé au centime
+  let S, L, con, q, nums, ans; const d0 = 'La classe de ' + k + ' élèves va ' + lieu + '.';
+  if (v === 'car'){
+    S = [cpS('prix par élève', ':', car, k, {ua: 'fr.', ub: '', ur: 'fr.', cap: 'car par élève'})]; q = 'prix par élève'; nums = [k, car];
+    con = d0 + ' Le car coûte ' + cpM(car) + '. Les élèves partagent ce prix en parts égales.' + use + '<br>Combien paie chaque élève ?'; L = [cpFin(S[0])]; ans = S[0];
+  } else if (v === 'tot'){
+    const s1 = cpS('prix des entrées', '∙', k, en, {ua: '', ub: 'fr.', ur: 'fr.', cap: 'entrées'}), s2 = cpS('prix de la sortie', '+', [car, s1.r], null, {u: 'fr.'});
+    S = [s1, s2]; q = 'prix de la sortie'; nums = [k, car, en];
+    con = d0 + ' Le car coûte ' + cpM(car) + ' et l\'entrée ' + cpM(en) + ' par élève.' + use + '<br>Combien coûte la sortie pour toute la classe ?'; L = [cpL(s1), cpFin(s2)]; ans = s2;
+  } else if (v === 'cet'){
+    const s1 = cpS('car par élève', ':', car, k, {ua: 'fr.', ub: '', ur: 'fr.'}), s2 = cpS('prix par élève', '+', [s1.r, en], null, {u: 'fr.'});
+    S = [s1, s2]; q = 'prix par élève'; nums = [k, car, en];
+    con = d0 + ' Le car coûte ' + cpM(car) + ' pour toute la classe, et l\'entrée ' + cpM(en) + ' par élève.' + use + '<br>Combien paie chaque élève ?'; L = [cpL(s1), cpFin(s2)]; ans = s2;
+  } else {                                                                 // cai : la caisse de la classe paie une partie du car
+    const ca = ri(4, 12) * 10, rest = rnd(car - ca); if (cpNI(rest / k * 100)) return null;
+    const s1 = cpS('reste du car', '−', car, ca, {u: 'fr.', cap: 'reste du car'}), s2 = cpS('car par élève', ':', s1.r, k, {ua: 'fr.', ub: '', ur: 'fr.'}), s3 = cpS('prix par élève', '+', [s2.r, en], null, {u: 'fr.'});
+    S = [s1, s2, s3]; q = 'prix par élève'; nums = [k, car, ca, en];
+    con = d0 + ' Le car coûte ' + cpM(car) + ' et l\'entrée ' + cpM(en) + ' par élève. La caisse de la classe paie ' + cpM(ca) + ' du car.' + use +
+      ' Les élèves partagent le reste en parts égales.<br>Combien paie chaque élève ?'; L = [cpL(s1), cpL(s2), cpFin(s3)]; ans = s3;
+  }
+  return cpMk(lv, {S, F, nums, q, u: 'fr.', v: ans.r, con, key: ['ksor', v, nums], dat: {v}, det: () => cpDet(L, S, ans),
+    alts: v === 'cet' || v === 'cai' ? [[rnd(k * en + car), 'C\'est le prix pour toute la classe : partage-le entre les élèves.']] : []});
+})});
+
+/* ======================== 5. Combien de cars, de boîtes ? (le reste de la division) : krst ======================== */
+const CP_BOI = [['œufs', 'boîtes', [6, 10, 12], 'Un fermier ramasse', 'Il les range dans des boîtes de', 'peut-il'], ['bouteilles de jus', 'caisses', [6, 12, 15], 'Une école reçoit', 'On les range dans des caisses de', 'peut-on'],
+  ['photos', 'pages', [6, 8, 12], 'Noé a', 'Il les colle dans un album, à raison de', 'peut-il'], ['crayons', 'paquets', [8, 12, 24], 'Une papeterie a', 'Elle les met en paquets de', 'peut-elle']];
+const CP_CAR = [['cars', 'car', [50, 48, 54, 60], 'places'], ['minibus', 'minibus', [9, 12, 15], 'places'], ['tables', 'table', [6, 8, 10], 'places'], ['tentes', 'tente', [4, 6], 'places']];
+pbM('col', {id: 'krst', lo: 2, hi: 4, gen: lv => cpTry(() => {
+  const v = pick(lv === 2 ? ['boi', 'sup'] : lv === 3 ? ['boi', 'sup', 'rest', 'rub', 'supP'] : ['supP', 'rest', 'rub', 'sup']), F = {rst: true};
+  let S, L, con, q, nums, ans, v0, u = '', alts = [];
+  if (v === 'boi'){
+    const C = pick(CP_BOI), b = pick(C[2]), N = ri(b * 12, b * 45); if (N % b === 0 || cpSig(N) < 3) return null;
+    const s = cpS('nombre de ' + C[1], 'r', N, b, {cap: N + ' : ' + b}); S = [s]; nums = [N, b]; q = 'nombre de ' + C[1]; v0 = s.q;
+    if (DEC) return null;                                                  // seulement des entiers (avec « décimaux » : les autres sortes)
+    con = C[3] + ' ' + N + ' ' + C[0] + '. ' + C[4] + ' ' + b + (C[0] === 'photos' ? ' photos par page.' : '.') + '<br>Combien de ' + C[1] + ' ' + C[5] + ' remplir complètement ?';
+    L = [cpL(s), cpG(s.q + ' ' + C[1] + ' pleines, et il reste ' + s.rest + ' ' + C[0]), DIV(pfNb(q + ' = ') + ANS(String(s.q)), 'fin')]; ans = s;
+    alts = [[s.q + 1, 'La dernière n\'est pas pleine : on demande seulement celles qui sont complètes.'], [s.rest, 'C\'est ce qui reste : on demande combien sont pleines.']];
+  } else if (v === 'sup' || v === 'supP'){
+    const C = pick(CP_CAR), b = pick(C[2]), e = ri(b * 2, b * 9), g = C[0] === 'cars' ? ri(4, 14) : ri(2, 4), N = e + g; if (N % b === 0) return null;
+    const who = C[0] === 'cars' ? ['élèves', 'enseignants', 'partent en course d\'école'] : C[0] === 'minibus' ? ['joueurs', 'entraîneurs', 'partent à un tournoi'] : C[0] === 'tables' ? ['invités', 'enfants', 'viennent au repas'] : ['scouts', 'chefs', 'partent camper'];
+    const s1 = cpS('nombre de personnes', '+', [e, g], null, {}), s2 = cpS('nombre de ' + C[0], 'r', N, b, {cap: N + ' : ' + b}), nb = s2.q + 1;
+    S = [s1, s2]; nums = [e, g, b]; L = [cpL(s1), cpL(s2), cpG(s2.q + ' ' + C[0] + ' : il reste ' + s2.rest + (s2.rest > 1 ? ' personnes sans place' : ' personne sans place'))];
+    alts = [[s2.q, s2.q + ' ' + C[0] + ' ne suffisent pas : il reste des personnes sans place.']];
+    con = e + ' ' + who[0] + ' et ' + g + ' ' + who[1] + ' ' + who[2] + '. ' + (C[0] === 'cars' ? 'Un car a ' : C[0] === 'minibus' ? 'Un minibus a ' : C[0] === 'tables' ? 'Une table a ' : 'Une tente a ') + b + ' places.';
+    if (v === 'sup'){ q = 'nombre de ' + C[0]; v0 = nb; L.push(DIV(pfNb(q + ' = ' + s2.q + ' + 1 = ') + ANS(String(nb)), 'fin')); con += '<br>Combien de ' + C[0] + ' faut-il au minimum ?'; ans = null; }
+    else {
+      if (C[0] !== 'cars' && C[0] !== 'minibus') return null;
+      const pc = DEC ? rpR(180, 460, .5) : ri(180, 460), s3 = cpS('prix des ' + C[0], '∙', nb, pc, {ua: '', ub: 'fr.', ur: 'fr.', cap: 'prix des ' + C[0]});
+      S.push(s3); nums.push(pc); q = 'prix des ' + C[0]; v0 = s3.r; u = 'fr.'; L.push(cpG('il faut ' + nb + ' ' + C[0]), cpFin(s3)); ans = s3;
+      con += ' La location d\'un ' + C[1] + ' coûte ' + cpM(pc) + '.<br>Combien coûte la location de tous les ' + C[0] + ' ?'; q = 'prix de la location'; alts.push([rnd(s2.q * pc), s2.q + ' ' + C[0] + ' ne suffisent pas : il reste des personnes sans place.']);
+    }
+  } else if (v === 'rest'){
+    const kg = DEC ? pick([1.5, 2.5, 1.2, 3.5]) : pick([1, 2, 3]), g = kg * 1000, b = pick([75, 125, 150, 175, 225, 250, 300, 350]); if (g % b === 0) return null;
+    const s0 = cpS('conversion', '∙', kg, 1000, {free: true, pose: false}), s = cpS('nombre de sachets', 'r', g, b, {ua: 'g', ub: 'g', cap: g + ' : ' + b});
+    S = [s0, s]; nums = [kg, b]; q = 'bonbons qui restent'; v0 = s.rest; u = 'g'; F.ded = true;
+    const nm = cpW(); con = nm + ' a ' + cpN(kg, 'kg') + ' de bonbons. ' + (pcIl(nm) === 'il' ? 'Il' : 'Elle') + ' remplit des sachets de ' + b + ' g, jusqu\'à ce qu\'il n\'en reste plus assez pour un sachet.<br>Combien de grammes de bonbons restent ?';
+    L = [cpG(cpN(kg, 'kg') + ' = ' + g + ' g'), cpL(s), cpG(s.q + ' sachets pleins'), DIV(pfNb(q + ' = ') + ANS(cpN(s.rest, 'g')), 'fin')]; ans = null;
+    alts = [[s.q, 'C\'est le nombre de sachets : on demande les grammes qui restent.'], [s.q + 1, 'On demande les grammes qui restent.']];
+  } else {                                                                 // rub : morceaux de ruban
+    const m = DEC ? pick([12.5, 8.5, 6.5, 15.5, 9.5]) : pick([10, 12, 15, 20, 25]), cm = m * 100, b = pick([35, 45, 55, 65, 70, 80, 85, 90, 120, 150]); if (cm % b === 0) return null;
+    const s0 = cpS('conversion', '∙', m, 100, {free: true, pose: false}), s = cpS('nombre de morceaux', 'r', cm, b, {ua: 'cm', ub: 'cm', cap: cm + ' : ' + b});
+    S = [s0, s]; nums = [m, b]; q = 'nombre de morceaux'; v0 = s.q; F.ded = true;
+    con = 'Un rouleau de ruban mesure ' + cpN(m, 'm') + '. Pour faire des emballages, on coupe des morceaux de ' + b + ' cm.<br>Combien de morceaux entiers peut-on couper ?';
+    L = [cpG(cpN(m, 'm') + ' = ' + fmtNum(cm) + ' cm'), cpL(s), cpG('il reste ' + s.rest + ' cm : pas assez pour un morceau'), DIV(pfNb(q + ' = ') + ANS(String(s.q)), 'fin')]; ans = s;
+    alts = [[s.q + 1, 'Le dernier morceau serait trop court.'], [s.rest, 'C\'est ce qui reste : on demande le nombre de morceaux.']];
+  }
+  return cpMk(lv, {S, F, nums, q, u, v: v0, con, key: ['krst', v, nums], dat: {v}, alts, det: () => cpDet(L, S, ans)});
+})});
+
+/* ======================== 6. La recette : krec ======================== */
+const CP_REC = [['de la pâte à crêpes', [['farine', 'g', [250, 275, 375, 325], [.25, .3]], ['lait', 'dℓ', [5, 6], [4.5, 5.5, 6.5]], ['beurre', 'g', [45, 60, 75], []]]],
+  ['du gâteau aux carottes', [['carottes', 'g', [325, 375, 425], [.35, .45]], ['sucre', 'g', [175, 225, 185], []], ['farine', 'g', [180, 225, 275], [.18, .22]]]],
+  ['du risotto', [['riz', 'g', [280, 320, 360], [.32, .36]], ['bouillon', 'ℓ', [1, 2], [1.2, 1.25, 1.4]], ['parmesan', 'g', [65, 85, 95], []]]],
+  ['de la soupe de courge', [['courge', 'g', [850, 950, 1250], [1.2, 1.25, .85]], ['crème', 'dℓ', [2, 3], [2.5, 1.5]], ['oignons', 'g', [135, 165, 175], [.15]]]]];
+const cpQu = (x, u) => u === 'g' && cpNI(x) && x < 10 ? [x, 'kg'] : [x, u];                                       // 0,25 → 0,25 kg
+pbM('col', {id: 'krec', lo: 1, hi: 3, gen: lv => cpTry(() => {
+  const v = pick(lv === 1 ? ['fois'] : lv === 2 ? ['pers', 'fois', 'six'] : (DEC ? ['six', 'fon', 'pers'] : ['six', 'pers'])), R = pick(CP_REC), I0 = pick(R[1]), n = cpW();
+  let S, L, con, q, nums, ans, u;
+  if (v === 'fon'){
+    const g = pick([150, 200, 250]), p = ri(3, 8), pk = rpR(22, 32, .1), m = p * g;
+    const s1 = cpS('masse de fromage', '∙', p, g, {ua: '', ub: 'g', ur: 'g'}), s2 = cpS('prix du fromage', '∙', rnd(m / 1000), pk, {ua: 'kg', ub: 'fr.', ur: 'fr.', txt: fmtNum(m / 1000) + ' ∙ ' + cpM(pk), cap: 'prix du fromage'});
+    if (cpNI(s2.r * 100)) return null;
+    S = [s1, s2]; q = 'prix du fromage'; u = 'fr.'; nums = [g, pk, p]; L = [cpL(s1), cpG(fmtNum(m) + ' g = ' + cpN(m / 1000, 'kg')), cpFin(s2)]; ans = s2;
+    con = 'Pour une fondue, on compte ' + g + ' g de fromage par personne. Le fromage coûte ' + cpM(pk) + ' le kilo.<br>Combien coûte le fromage pour ' + p + ' personnes ?';
+    return cpMk(lv, {S, F: {ded: true}, nums, q, u, v: ans.r, con, key: ['krec', v, nums], dat: {v}, det: () => cpDet(L, S, ans)});
+  }
+  const qv = DEC && I0[3].length && chance(.6) ? pick(I0[3]) : pick(I0[2]), [x, ux] = cpQu(qv, I0[1]), base = 4, de = /^[aeiouœé]/.test(I0[0]) ? 'd\'' : 'de ', lab = (ux === 'dℓ' || ux === 'ℓ' ? 'quantité ' : 'masse ') + de + I0[0];
+  const ing = cpN(x, ux) + ' ' + de + I0[0], who = n + ' ' + pick(['prépare', 'cuisine']), qq = (ux === 'dℓ' || ux === 'ℓ' ? 'Quelle quantité ' : 'Quelle masse ') + de + I0[0] + ' lui faut-il ?';
+  if (v === 'fois'){
+    const k = ri(2, 5); S = [cpS(lab, '∙', k, x, {ua: '', ub: ux, ur: ux, cap: lab})]; nums = [base, x, k];
+    con = 'Pour ' + base + ' personnes, la recette ' + R[0] + ' demande ' + ing + '. ' + n + ' fait ' + k + ' fois la recette.<br>' + qq;
+    L = [cpFin(S[0])]; ans = S[0];
+  } else if (v === 'pers'){
+    const k = ri(2, 5), p = base * k, s1 = cpS('nombre de fois', ':', p, base, {}), s2 = cpS(lab, '∙', k, x, {ua: '', ub: ux, ur: ux, cap: lab});
+    S = [s1, s2]; nums = [base, x, p];
+    con = 'Pour ' + base + ' personnes, la recette ' + R[0] + ' demande ' + ing + '. ' + who + ' pour ' + p + ' personnes.<br>' + qq;
+    L = [cpL(s1), cpFin(s2)]; ans = s2;
+  } else {                                                                 // six : pour 6 (ou 10) personnes, en passant par 1 personne
+    const p = pick([6, 10, 3, 5, 7]), s1 = cpS(lab + ' pour 1 personne', ':', x, base, {ua: ux, ub: '', ur: ux, cap: 'pour 1 personne'}), s2 = cpS(lab, '∙', p, s1.r, {ua: '', ub: ux, ur: ux, cap: 'pour ' + p + ' personnes'});
+    if (cpDecs(s1.r) > 3) return null;
+    S = [s1, s2]; nums = [base, x, p];
+    con = 'Pour ' + base + ' personnes, la recette ' + R[0] + ' demande ' + ing + '. ' + who + ' pour ' + p + ' personnes.<br>' + qq;
+    L = [cpL(s1), cpFin(s2)]; ans = s2;
+  }
+  q = lab; u = ux;
+  return cpMk(lv, {S, F: {}, nums, q, u, v: ans.r, con, key: ['krec', v, nums, I0[0]], dat: {v}, det: () => cpDet(L, S, ans)});
+})});
+
+/* ======================== 7. Abonnement ou billets ? : kabo ======================== */
+const CP_ABO = [['à la piscine', 'Une entrée à la piscine', 5.5, 8.5, 'L\'abonnement pour tout l\'été', 69, 119, 'cet été', 'entrées'],
+  ['à la patinoire', 'Une entrée à la patinoire', 4.5, 7.5, 'L\'abonnement pour l\'hiver', 49, 89, 'cet hiver', 'entrées'],
+  ['au Salève en téléphérique', 'Un aller-retour au Salève en téléphérique', 18, 26, 'L\'abonnement pour l\'année', 110, 160, 'cette année', 'allers-retours'],
+  ['au cours de danse', 'Un cours de danse', 16, 24, 'L\'abonnement pour le trimestre', 150, 230, 'ce trimestre', 'cours']];
+pbM('col', {id: 'kabo', lo: 2, hi: 4, gen: lv => cpTry(() => {
+  const v = pick(lv === 2 ? ['ch', 'eco'] : lv === 3 ? ['ch', 'eco', 'mix'] : ['des', 'mix', 'ch']), C = pick(CP_ABO), n = cpW(), il = pcIl(n);
+  const p = DEC ? rpR(C[2], C[3], chance(.6) ? .5 : .1) : ri(Math.ceil(C[2]), Math.floor(C[3]));
+  let S, L, con, q, nums, ans, kind = 'num', v0, u = 'fr.', F = {}, extra = {};
+  if (v === 'ch'){
+    const A = DEC ? rpR(C[5], C[6], .5) : ri(C[5], C[6]), k = ri(Math.max(4, Math.round(A / p) - 6), Math.round(A / p) + 6), s1 = cpS('prix des ' + C[8], '∙', k, p, {ua: '', ub: 'fr.', ur: 'fr.', cap: C[8] + ' à l\'unité'});
+    if (Math.abs(s1.r - A) < 2) return null;
+    const best = s1.r < A ? 'les ' + C[8] + ' à l\'unité' : 'l\'abonnement';
+    S = [s1]; nums = [p, A, k]; F.cmp = true; kind = 'ch';
+    con = C[1] + ' coûte ' + cpM(p) + '. ' + C[4] + ' coûte ' + cpM(A) + '. ' + n + ' ira ' + k + ' fois ' + C[0] + ' ' + C[7] + '.<br>Que doit-' + il + ' choisir pour payer le moins ?';
+    L = [cpL(s1), cpEnd(cpN(s1.r, 'fr.') + (s1.r < A ? ' &lt; ' : ' &gt; ') + cpN(A, 'fr.'), best)]; ans = null;
+    extra = {ans: best, opts: ['les ' + C[8] + ' à l\'unité', 'l\'abonnement'], R2: 'Calcule le prix des ' + C[8] + ' à l\'unité, puis compare avec l\'abonnement.'};
+  } else if (v === 'eco'){
+    const c10 = DEC ? rnd(10 * p - rpR(4, 15, .5)) : 10 * p - ri(4, 15), s1 = cpS('prix de 10 ' + C[8], '∙', 10, p, {ua: '', ub: 'fr.', ur: 'fr.'}), s2 = cpS('économie', '−', s1.r, c10, {u: 'fr.', cap: 'économie'});
+    S = [s1, s2]; nums = [p, c10]; q = 'économie'; v0 = s2.r;
+    con = C[1] + ' coûte ' + cpM(p) + '. Une carte de 10 ' + C[8] + ' coûte ' + cpM(c10) + '.<br>Combien économise-t-on avec la carte, pour 10 ' + C[8] + ' ?';
+    L = [cpL(s1), cpFin(s2)]; ans = s2;
+  } else if (v === 'mix'){
+    const c10 = DEC ? rnd(10 * p - rpR(4, 15, .5)) : 10 * p - ri(4, 15), nc = ri(1, 3), ns = ri(2, 7), k = 10 * nc + ns, eco = lv >= 4 || chance(.4);
+    const un = C[8] + ' à l\'unité', s1 = nc > 1 ? cpS('prix des cartes', '∙', nc, c10, {ua: '', ub: 'fr.', ur: 'fr.', cap: 'cartes'}) : null, s2 = cpS('prix des ' + un, '∙', ns, p, {ua: '', ub: 'fr.', ur: 'fr.', cap: un});
+    const s3 = cpS('prix payé', '+', [nc > 1 ? s1.r : c10, s2.r], null, {u: 'fr.'});
+    S = (nc > 1 ? [s1] : []).concat(s2, s3); nums = [p, c10, k]; F.ded = true;
+    con = C[1] + ' coûte ' + cpM(p) + '. Une carte de 10 ' + C[8] + ' coûte ' + cpM(c10) + '. ' + n + ' ira ' + k + ' fois ' + C[0] + ' : ' + il + ' achète ' + (nc > 1 ? nc + ' cartes' : 'une carte') + ' et des ' + un + ' pour le reste.';
+    L = [cpG(k + ' = ' + (nc > 1 ? nc + ' ∙ ' : '') + '10 + ' + ns)].concat(nc > 1 ? [cpL(s1)] : [], cpL(s2));
+    if (eco){
+      const s4 = cpS('prix de ' + k + ' ' + un, '∙', k, p, {ua: '', ub: 'fr.', ur: 'fr.', cap: k + ' ' + un}), s5 = cpS('économie', '−', s4.r, s3.r, {u: 'fr.'});
+      S.push(s4, s5); q = 'économie'; v0 = s5.r; con += '<br>Combien économise-t-' + il + ' par rapport à des ' + un + ' ?'; L.push(cpL(s3), cpL(s4), cpFin(s5)); ans = s5;
+    } else { q = 'prix payé'; v0 = s3.r; con += '<br>Combien paie-t-' + il + ' ?'; L.push(cpFin(s3)); ans = s3; }
+  } else {                                                                 // des : dès combien d'entrées l'abonnement est-il moins cher ?
+    const A = DEC ? rpR(C[5], C[6], .5) : ri(C[5], C[6]), k = Math.floor(A / p); if (rnd(k * p) === A || k < 6) return null;
+    const N = C[8], s1 = cpS('prix de ' + k + ' ' + N, '∙', k, p, {ua: '', ub: 'fr.', ur: 'fr.', cap: k + ' ' + N}), s2 = cpS('prix de ' + (k + 1) + ' ' + N, '∙', k + 1, p, {ua: '', ub: 'fr.', ur: 'fr.', cap: (k + 1) + ' ' + N});
+    S = [s1, s2]; nums = [p, A]; q = 'nombre ' + (/^[aeiouéè]/.test(N) ? 'd\'' : 'de ') + N; v0 = k + 1; u = ''; F.inv = true; F.cmp = true;
+    con = C[1] + ' coûte ' + cpM(p) + '. ' + C[4] + ' coûte ' + cpM(A) + '.<br>À partir de combien ' + (/^[aeiouéè]/.test(N) ? 'd\'' : 'de ') + N + ' l\'abonnement coûte-t-il moins cher que les ' + N + ' à l\'unité ?';
+    L = [cpG(cpN(A, 'fr.') + ' : ' + cpN(p, 'fr.') + ' est entre ' + k + ' et ' + (k + 1) + ' ; on essaie les deux'), cpL(s1), cpL(s2),
+      cpG(cpN(s1.r, 'fr.') + ' &lt; ' + cpN(A, 'fr.') + ' &lt; ' + cpN(s2.r, 'fr.')), DIV(pfNb(q + ' = ') + ANS(String(k + 1)), 'fin')]; ans = null;
+    extra = {alts: [[k, 'Avec ' + k + ' ' + N + ', l\'abonnement coûte encore plus cher.']]};
+  }
+  return cpMk(lv, Object.assign({S, F, nums, kind, q, u, v: v0, con, key: ['kabo', v, nums], dat: {v, A: v === 'ch' || v === 'des' ? nums[1] : null}, det: () => cpDet(L, S, ans)}, extra));
+})});
+
+/* ======================== 8. Le plein, le trajet : ktra ======================== */
+const CP_VIL = [['Lausanne', 62, 23.4], ['Neuchâtel', 124, 43.6], ['Fribourg', 133, 47.8], ['Berne', 159, 51.2], ['Sion', 160, 49.8], ['Bâle', 252, 79.6], ['Zurich', 278, 88.4], ['Lugano', 380, 92.2]];
+pbM('col', {id: 'ktra', lo: 1, hi: 3, gen: lv => cpTry(() => {
+  const v = pick(lv === 1 ? ['res', 'res2'] : lv === 2 ? (DEC ? ['ess', 'cff', 'res2'] : ['cff', 'res2']) : (DEC ? ['essR', 'cff', 'con'] : ['cff', 'res2'])), V = pick(CP_VIL), n = cpW();
+  let S, L, con, q, nums, ans, u, F = {};
+  if (v === 'res' || v === 'res2'){
+    const two = v === 'res2', d1 = DEC ? rpR(25, V[1] * .45, .1) : ri(25, Math.floor(V[1] * .45)), d2 = DEC ? rpR(15, V[1] * .3, .1) : ri(15, Math.floor(V[1] * .3));
+    const s1 = two ? cpS('distance parcourue', '+', [d1, d2], null, {u: 'km'}) : null, s2 = cpS('distance qui reste', '−', V[1], two ? s1.r : d1, {u: 'km', cap: 'distance qui reste'});
+    if (s2.r < 5) return null;
+    S = (two ? [s1] : []).concat(s2); nums = [V[1], d1].concat(two ? [d2] : []); q = 'distance qui reste'; u = 'km';
+    con = 'Pour aller de Genève à ' + V[0] + ' en voiture, il faut rouler ' + V[1] + ' km. La famille ' + paDe(n) + ' a déjà roulé ' + cpN(d1, 'km') + (two ? ' avant la pause, puis ' + cpN(d2, 'km') + ' après la pause' : '') + '.<br>Combien de kilomètres reste-t-il ?';
+    L = S.slice(0, -1).map(cpL).concat(cpFin(s2)); ans = s2;
+  } else if (v === 'ess' || v === 'essR'){
+    const l = ri(18, 52), pl = rpR(1.72, 1.99, .01), s1 = cpS('prix de l\'essence', '∙', l, pl, {ua: 'ℓ', ub: 'fr.', ur: 'fr.', txt: fmtNum(l) + ' ∙ ' + cpM(pl), cap: 'prix de l\'essence'});
+    if (cpNI(s1.r * 100)) return null;
+    S = [s1]; nums = [l, pl]; q = 'prix de l\'essence'; u = 'fr.';
+    con = 'À la station-service, le père ' + paDe(n) + ' met ' + l + ' ℓ d\'essence dans sa voiture. Un litre coûte ' + cpM(pl) + '.';
+    if (v === 'essR'){ const B = cpBil(s1.r); const s2 = cpS('monnaie rendue', '−', B, s1.r, {u: 'fr.', cap: 'monnaie'}); S.push(s2); nums.push(B); q = 'monnaie rendue';
+      con += ' Il paie avec un billet de ' + B + ' fr.<br>Combien lui rend-on ?'; L = [cpL(s1), cpFin(s2)]; ans = s2; }
+    else { con += '<br>Combien paie-t-il ?'; L = [cpFin(s1)]; ans = s1; }
+  } else if (v === 'cff'){
+    const cl = !DEC, p = DEC ? V[2] : Math.round(V[2] / 2), k = cl ? ri(18, 26) : ri(2, 4), s1 = cpS('prix d\'un aller-retour', '∙', 2, p, {ua: '', ub: 'fr.', ur: 'fr.', cap: 'aller-retour'}), s2 = cpS('prix total', '∙', k, s1.r, {ua: '', ub: 'fr.', ur: 'fr.', cap: k + (cl ? ' élèves' : ' personnes')});
+    S = [s1, s2]; nums = [p, k]; q = 'prix total'; u = 'fr.'; F.ded = true;
+    con = cl ? 'Pour une course d\'école, la classe de ' + k + ' élèves va de Genève à ' + V[0] + ' en train. Un billet coûte ' + cpM(p) + ' par élève pour un aller simple. Les élèves font l\'aller-retour.<br>Combien coûtent les billets de toute la classe ?'
+      : 'Un billet de train de Genève à ' + V[0] + ' coûte ' + cpM(p) + ' pour un aller simple. ' + n + ' et ' + (k === 2 ? 'sa mère' : k === 3 ? 'ses parents' : 'ses parents et sa sœur') + ' font l\'aller-retour.<br>Combien paient-ils en tout ?';
+    L = [cpG('aller-retour : 2 billets par ' + (cl ? 'élève' : 'personne')), cpL(s1), cpFin(s2)]; ans = s2;
+  } else {                                                                 // con : consommation aux 100 km
+    const c = rpR(5.2, 8.6, .1), d = pick([150, 250, 350, 450, 230, 320]), s1 = cpS('nombre de fois 100 km', ':', d, 100, {}), s2 = cpS('quantité d\'essence', '∙', s1.r, c, {ua: '', ub: 'ℓ', ur: 'ℓ', cap: 'quantité d\'essence'});
+    S = [s1, s2]; nums = [c, d]; q = 'quantité d\'essence'; u = 'ℓ'; F.ded = true;
+    con = 'La voiture ' + paDe(n) + ' consomme ' + cpN(c, 'ℓ') + ' d\'essence pour 100 km. La famille fait un trajet de ' + d + ' km.<br>Combien de litres d\'essence la voiture consomme-t-elle ?';
+    L = [cpL(s1), cpFin(s2)]; ans = s2;
+  }
+  return cpMk(lv, {S, F, nums, q, u, v: ans.r, con, key: ['ktra', v, nums], dat: {v}, det: () => cpDet(L, S, ans)});
+})});
+
+/* ======================== 9. Argent de poche, petits jobs : kjob ======================== */
+const CP_JOB = [['garde des enfants', 'pour'], ['promène le chien d\'un voisin', 'pour'], ['aide au marché de Plainpalais', 'pour'], ['tond la pelouse des voisins', 'pour']];
+pbM('col', {id: 'kjob', lo: 1, hi: 4, gen: lv => cpTry(() => {
+  const v = pick(lv === 1 ? ['heu'] : lv === 2 ? ['heu', 'two', 'epa'] : lv === 3 ? (DEC ? ['two', 'epa', 'min'] : ['two', 'epa']) : (DEC ? ['epa', 'min', 'two'] : ['epa', 'two'])), n = cpW(), il = pcIl(n), J = pick(CP_JOB);
+  const sal = DEC ? rpR(11.5, 18.5, chance(.6) ? .5 : .1) : ri(11, 24), Il = il === 'il' ? 'Il' : 'Elle';
+  let S, L, con, q, nums, ans, v0, u = 'fr.', F = {}, alts = [];
+  if (v === 'heu'){
+    const h = DEC && chance(.4) ? rpR(2.5, 6.5, .5) : ri(3, 9), s = cpS('gain', '∙', h, sal, {ua: 'h', ub: 'fr.', ur: 'fr.', txt: fmtNum(h) + ' ∙ ' + cpM(sal), cap: 'gain'});
+    S = [s]; nums = [sal, h]; q = 'gain'; v0 = s.r;
+    con = n + ' ' + J[0] + ' ' + J[1] + ' ' + cpM(sal) + ' de l\'heure. Samedi, ' + il + ' travaille ' + cpN(h, h === 1 ? 'heure' : 'heures') + '.<br>Combien gagne-t-' + il + ' ?';
+    L = [cpFin(s)]; ans = s;
+  } else if (v === 'two'){
+    const h1 = DEC ? rpR(1.5, 4.5, .5) : ri(2, 5), h2 = DEC ? rpR(1.5, 4.5, .5) : ri(2, 6), s1 = cpS('durée', '+', [h1, h2], null, {u: 'h'}), s2 = cpS('gain', '∙', s1.r, sal, {ua: 'h', ub: 'fr.', ur: 'fr.', txt: fmtNum(s1.r) + ' ∙ ' + cpM(sal), cap: 'gain'});
+    S = [s1, s2]; nums = [sal, h1, h2]; q = 'gain'; v0 = s2.r;
+    con = n + ' ' + J[0] + ' ' + J[1] + ' ' + cpM(sal) + ' de l\'heure. ' + Il + ' travaille ' + cpN(h1, 'h') + ' le samedi et ' + cpN(h2, 'h') + ' le dimanche.<br>Combien gagne-t-' + il + ' pendant ce week-end ?';
+    L = [cpL(s1), cpFin(s2)]; ans = s2;
+  } else if (v === 'epa'){
+    const O = pick(CP_BUT), pr = DEC ? rnd(ri(O[1], O[2]) + .9) : ri(O[1], O[2]), dj = DEC ? rnd(ri(20, 90) + .9) : ri(20, 90), w = DEC ? pick([15, 20, 25, 12, 18, 24]) : ri(12, 35);
+    const s1 = cpS('somme qui manque', '−', pr, dj, {u: 'fr.', cap: 'somme qui manque'}), s2 = cpS('nombre de semaines', 'r', s1.r, w, {ua: 'fr.', ub: 'fr.', cap: s1.r + ' : ' + w});
+    if (s1.r % w === 0 || s2.q < 3) return null;
+    S = [s1, s2]; nums = [pr, dj, w]; q = 'nombre de semaines'; v0 = s2.q + 1; u = ''; F.rst = true;
+    con = n + ' a déjà ' + cpM(dj) + '. ' + Il + ' veut s\'acheter ' + cpUn(O) + ' à ' + cpM(pr) + '. Chaque semaine, ' + il + ' met ' + w + ' fr. de côté.<br>Dans combien de semaines pourra-t-' + il + ' l\'acheter ?';
+    L = [cpL(s1), cpL(s2), cpG('après ' + s2.q + ' semaines, il manque encore ' + cpN(s2.rest, 'fr.')), DIV(pfNb(q + ' = ' + s2.q + ' + 1 = ') + ANS(String(s2.q + 1)), 'fin')]; ans = null;
+    alts = [[s2.q, 'Après ' + s2.q + ' semaines, il manque encore un peu d\'argent.']];
+  } else {                                                                 // min : une durée en h et min
+    const mm = pick([15, 30, 45]), hh = ri(1, 4), h = rnd(hh + mm / 60), s = cpS('gain', '∙', h, sal, {ua: 'h', ub: 'fr.', ur: 'fr.', txt: fmtNum(h) + ' ∙ ' + cpM(sal), cap: 'gain'});
+    const sec = lv >= 4 && chance(.6), h2 = ri(1, 3) + .5, s2 = sec ? cpS('gain du dimanche', '∙', h2, sal, {ua: 'h', ub: 'fr.', ur: 'fr.', txt: fmtNum(h2) + ' ∙ ' + cpM(sal), cap: 'dimanche'}) : null;
+    if (cpNI(s.r * 100) || (sec && cpNI(s2.r * 100))) return null;
+    F.ded = true; nums = [sal, hh, mm].concat(sec ? [h2] : []); q = 'gain';
+    con = n + ' ' + J[0] + ' ' + J[1] + ' ' + cpM(sal) + ' de l\'heure. Samedi, ' + il + ' travaille ' + hh + ' h ' + mm + ' min' + (sec ? ' ; dimanche, ' + il + ' travaille ' + cpN(h2, 'h') : '') + '.<br>Combien gagne-t-' + il + (sec ? ' pendant ce week-end' : '') + ' ?';
+    if (sec){ const s3 = cpS('gain', '+', [s.r, s2.r], null, {u: 'fr.'}); s.lab = 'gain du samedi'; s.cap = 'samedi'; S = [s, s2, s3]; v0 = s3.r; L = [cpG(hh + ' h ' + mm + ' min = ' + cpN(h, 'h')), cpL(s), cpL(s2), cpFin(s3)]; ans = s3; }
+    else { S = [s]; v0 = s.r; L = [cpG(hh + ' h ' + mm + ' min = ' + cpN(h, 'h')), cpFin(s)]; ans = s; }
+    alts = [[rnd((hh + mm / 100) * sal), hh + ' h ' + mm + ' min, ce n\'est pas ' + hh + ',' + mm + ' h : une heure a 60 minutes.']];
+  }
+  return cpMk(lv, {S, F, nums, q, u, v: v0, con, key: ['kjob', v, nums], dat: {v}, alts, det: () => cpDet(L, S, ans)});
+})});
+
+/* ======================== 10. La facture : kfac ======================== */
+pbM('col', {id: 'kfac', lo: 2, hi: 4, gen: lv => cpTry(() => {
+  const v = pick(lv === 2 ? ['sms', 'ann'] : lv === 3 ? ['sms', 'ele', 'ann', 'inv'] : ['inv', 'ele', 'sms']), n = cpW(), il = pcIl(n);
+  let S, L, con, q, nums, ans, v0, u = 'fr.', F = {};
+  if (!DEC){                                                               // sans « décimaux » : le club de sport (inscription + mois)
+    const ins = ri(3, 9) * 10 + pick([0, 5]), mo = ri(18, 45), k = v === 'ann' ? 12 : ri(5, 11);
+    if (v === 'inv'){
+      const T = ins + k * mo, s1 = cpS('prix des mois', '−', T, ins, {u: 'fr.', cap: 'prix des mois'}), s2 = cpS('nombre de mois', ':', s1.r, mo, {ua: 'fr.', ub: 'fr.', ur: ''});
+      S = [s1, s2]; nums = [ins, mo, T]; q = 'nombre de mois'; v0 = k; u = ''; F.inv = true;
+      con = 'Le club de foot ' + paDe(n) + ' demande ' + ins + ' fr. d\'inscription, puis ' + mo + ' fr. par mois. Cette année, ' + n + ' a payé ' + T + ' fr. en tout.<br>Pendant combien de mois a-t-' + il + ' payé ?';
+      L = [cpL(s1), cpFin(s2)]; ans = s2;
+    } else {
+      const s1 = cpS('prix des mois', '∙', k, mo, {ua: '', ub: 'fr.', ur: 'fr.', cap: 'prix des mois'}), s2 = cpS('prix total', '+', [ins, s1.r], null, {u: 'fr.'});
+      S = [s1, s2]; nums = [ins, mo].concat(v === 'ann' ? [] : [k]); q = 'prix total'; v0 = s2.r; if (v === 'ann') F.ded = true;
+      con = 'Le club de foot ' + paDe(n) + ' demande ' + ins + ' fr. d\'inscription, puis ' + mo + ' fr. par mois.<br>Combien ' + (v === 'ann' ? 'coûte une année entière' : 'coûtent ' + k + ' mois') + ' au club, inscription comprise ?';
+      L = (v === 'ann' ? [cpG('une année : 12 mois')] : []).concat(cpL(s1), cpFin(s2)); ans = s2;
+    }
+    return cpMk(lv, {S, F, nums, q, u, v: v0, con, key: ['kfac', v, nums], dat: {v}, det: () => cpDet(L, S, ans)});
+  }
+  const ab = rpR(12.9, 29.9, .1);
+  if (v === 'ann'){
+    const s = cpS('prix pour une année', '∙', 12, ab, {ua: '', ub: 'fr.', ur: 'fr.', cap: '12 mois'}); S = [s]; nums = [ab]; q = 'prix pour une année'; v0 = s.r; F.ded = true;
+    con = 'L\'abonnement de téléphone ' + paDe(n) + ' coûte ' + cpM(ab) + ' par mois.<br>Combien paie-t-' + il + ' pour une année ?'; L = [cpG('une année : 12 mois'), cpFin(s)]; ans = s;
+  } else if (v === 'sms' || v === 'inv'){
+    const ps = pick([.1, .15, .2, .25]), k = lv === 2 && v === 'sms' ? ri(4, 9) : ri(24, 96), s1 = cpS('prix des SMS', '∙', k, ps, {ua: '', ub: 'fr.', ur: 'fr.', cap: 'prix des SMS'});
+    const s2 = cpS('facture', '+', [ab, s1.r], null, {u: 'fr.'});
+    if (v === 'sms'){ S = [s1, s2]; nums = [ab, ps, k]; q = 'facture'; v0 = s2.r;
+      con = 'L\'abonnement de téléphone ' + paDe(n) + ' coûte ' + cpM(ab) + ' par mois, plus ' + cpM(ps) + ' par SMS. En mars, ' + il + ' envoie ' + k + ' SMS.<br>Combien paie-t-' + il + ' pour le mois de mars ?';
+      L = [cpL(s1), cpFin(s2)]; ans = s2; }
+    else { const T = s2.r, t1 = cpS('prix des SMS', '−', T, ab, {u: 'fr.', cap: 'prix des SMS'}), t2 = cpS('nombre de SMS', ':', t1.r, ps, {ua: 'fr.', ub: 'fr.', ur: ''});
+      S = [t1, t2]; nums = [ab, ps, T]; q = 'nombre de SMS'; v0 = k; u = ''; F.inv = true;
+      con = 'L\'abonnement de téléphone ' + paDe(n) + ' coûte ' + cpM(ab) + ' par mois, plus ' + cpM(ps) + ' par SMS. En mars, sa facture est de ' + cpM(T) + '.<br>Combien de SMS a-t-' + il + ' envoyés en mars ?';
+      L = [cpL(t1), cpFin(t2)]; ans = t2; }
+  } else {                                                                 // ele : l'électricité
+    const ab2 = rpR(9, 18, .5), pk = rpR(.22, .34, .01), k = ri(180, 420), s1 = cpS('prix de l\'énergie', '∙', k, pk, {ua: 'kWh', ub: 'fr.', ur: 'fr.', txt: fmtNum(k) + ' ∙ ' + cpM(pk), cap: 'prix de l\'énergie'});
+    if (cpNI(s1.r * 100)) return null;
+    const s2 = cpS('facture', '+', [ab2, s1.r], null, {u: 'fr.'}); S = [s1, s2]; nums = [ab2, pk, k]; q = 'facture'; v0 = s2.r;
+    con = 'Pour l\'électricité, la famille ' + paDe(n) + ' paie ' + cpM(ab2) + ' d\'abonnement par mois, plus ' + cpM(pk) + ' par kWh. En janvier, elle utilise ' + k + ' kWh.<br>Combien paie-t-elle pour janvier ?';
+    L = [cpL(s1), cpFin(s2)]; ans = s2;
+  }
+  return cpMk(lv, {S, F, nums, q, u, v: v0, con, key: ['kfac', v, nums], dat: {v}, det: () => cpDet(L, S, ans)});
+})});
+
+/* ======================== 11. Chronos et mesures : kchr ======================== */
+pbM('col', {id: 'kchr', lo: 1, hi: 3, gen: lv => cpTry(() => {
+  const v = pick(lv === 1 ? (DEC ? ['eca', 'rel'] : ['hau', 'pla']) : lv === 2 ? ['rel2', 'pla', 'sau', 'eca'] : ['pla', 'sau', 'rel2']), a = cpW(), b = pick(prW.filter(x => x !== a));
+  let S, L, con, q, nums, ans, u, F = {};
+  if (v === 'eca'){
+    const t1 = rpR(12.8, 16.5, .01), t2 = rnd(t1 + rpR(.3, 2.4, .01)), s = cpS('écart', '−', t2, t1, {u: 's', cap: 'écart'});
+    S = [s]; nums = [t1, t2]; q = 'écart'; u = 's'; con = 'Au 100 m, ' + a + ' court en ' + cpN(t1, 's') + ' et ' + b + ' en ' + cpN(t2, 's') + '.<br>Combien de secondes les séparent ?'; L = [cpFin(s)]; ans = s;
+  } else if (v === 'hau'){
+    const M = pick([['Le sommet du Mont-Blanc', 4806], ['Le sommet du Cervin', 4478], ['Le sommet de la Dôle', 1677], ['Le sommet du Moléson', 2002]]), N = pick([['celui du Salève', 1379], ['celui du mont Pèlerin', 1080], ['le col de la Faucille', 1323]]);
+    const s = cpS('différence d\'altitude', '−', M[1], N[1], {u: 'm', cap: 'différence'}); S = [s]; nums = [M[1], N[1]]; q = 'différence d\'altitude'; u = 'm';
+    con = M[0] + ' est à ' + M[1] + ' m d\'altitude, ' + N[0] + ' à ' + N[1] + ' m.<br>Quelle est la différence d\'altitude ?'; L = [cpFin(s)]; ans = s;
+  } else if (v === 'rel' || v === 'rel2'){
+    const T = [0, 1, 2, 3].map(() => rpR(12.4, 15.8, .01)), s1 = cpS('temps de l\'équipe', '+', T, null, {u: 's', cap: 'temps de l\'équipe'});
+    S = [s1]; nums = T.slice(); q = 'temps de l\'équipe'; u = 's'; con = 'Dans une course de relais, chaque coureur court 100 m. Les quatre coureurs de l\'équipe ' + paDe(a) + ' courent en ' + cpList(T.map(x => cpN(x, 's'))) + '.';
+    if (v === 'rel2'){ const R = rnd(s1.r - rpR(.4, 3.5, .1)), s2 = cpS('écart avec le record', '−', s1.r, R, {u: 's', cap: 'écart'}); S.push(s2); nums.push(R); q = 'écart avec le record';
+      con += ' Le record de l\'école est de ' + cpN(R, 's') + '.<br>De combien de secondes l\'équipe est-elle plus lente que le record ?'; L = [cpL(s1), cpFin(s2)]; ans = s2; }
+    else { con += '<br>Quel est le temps de l\'équipe ?'; L = [cpFin(s1)]; ans = s1; }
+  } else if (v === 'pla'){
+    const cm = !DEC || chance(.4), P = cm ? (DEC ? pick([2, 3, 2.5]) : pick([180, 200, 240, 250, 300])) : rpR(1.8, 3.2, .1), k = ri(2, 4);
+    const mL = cm ? (DEC ? ri(28, 72) : ri(28, 72)) : rpR(.35, .85, .05);
+    const Pc = cm && DEC ? P * 100 : P, s1 = cpS('longueur des morceaux', '∙', k, mL, {u: cm ? 'cm' : 'm', ua: '', cap: 'morceaux'}), s2 = cpS('longueur qui reste', '−', Pc, s1.r, {u: cm ? 'cm' : 'm', cap: 'reste'});
+    if (s2.r < 5 * (cm ? 1 : .01) || s1.r >= Pc) return null;
+    S = [s1, s2]; nums = [P, mL, k]; q = 'longueur qui reste'; u = cm ? 'cm' : 'm'; if (cm && DEC) F.ded = true;
+    con = 'Une planche mesure ' + cpN(P, cm && !DEC ? 'cm' : 'm') + '. ' + a + ' y coupe ' + k + ' morceaux de ' + cpN(mL, cm ? 'cm' : 'm') + '.<br>Quelle longueur de planche reste-t-il' + (cm && DEC ? ' (en cm)' : '') + ' ?';
+    L = (cm && DEC ? [cpG(cpN(P, 'm') + ' = ' + fmtNum(Pc) + ' cm')] : []).concat(cpL(s1), cpFin(s2)); ans = s2;
+  } else {                                                                 // sau : le meilleur et le moins bon saut
+    const J = [0, 1, 2].map(() => DEC ? rpR(2.85, 4.4, .01) : ri(285, 440)), mx = Math.max(...J), mn = Math.min(...J); if (new Set(J).size < 3 || mx - mn < (DEC ? .12 : 12)) return null;
+    const s = cpS('écart', '−', mx, mn, {u: DEC ? 'm' : 'cm', cap: 'écart'}); S = [s]; nums = J; q = 'écart'; u = DEC ? 'm' : 'cm'; F.cmp = true;
+    con = 'Au saut en longueur, ' + a + ' fait trois sauts : ' + cpList(J.map(x => cpN(x, u))) + '.<br>De combien son meilleur saut dépasse-t-il son moins bon saut ?';
+    L = [cpG('meilleur saut : ' + cpN(mx, u) + ' ; moins bon : ' + cpN(mn, u)), cpFin(s)]; ans = s;
+  }
+  return cpMk(lv, {S, F, nums, q, u, v: ans.r, con, key: ['kchr', v, nums], dat: {v}, det: () => cpDet(L, S, ans)});
+})});
+
+/* ======================== 12. « Léa affirme… » (oui / non, une par séance) : kaff ======================== */
+pbM('col', {id: 'kaff', lo: 2, hi: 3, w: .7, ok: () => !(TALLY.colAff > 0), gen: lv => {
+  const want = cpYN();
+  return cpTry(() => {
+    const t = pick(['add', 'sub', 'mul', 'div', 'cmp']), w = cpW(), il = pcIl(w);
+    let S, s, yes = want, aH, wrong, why, L, Mv = null;
+    if (t === 'add'){
+      const x = DEC ? rpR(2.4, 18.9, .05) : ri(125, 789), y = DEC ? rpR(1.2, 12.8, .05) : ri(115, 689); s = cpS('prix total', '+', [x, y], null, {u: DEC ? 'fr.' : ''});
+      wrong = rnd(s.r + (DEC ? pick([-1, .1, -.1, 1]) : pick([-10, 10, -100]))); const sh = yes ? s.r : wrong;
+      aH = DEC ? 'Un ' + pick(['livre', 'jeu de cartes', 'puzzle']) + ' à ' + cpM(x) + ' et un ' + pick(['stylo', 'carnet', 'crayon']) + ' à ' + cpM(y) + ' coûtent ensemble ' + cpM(sh) + '.' : fmtNum(x) + ' + ' + fmtNum(y) + ' = ' + fmtNum(sh);
+      why = 'Attention aux retenues et à bien aligner les chiffres.';
+    } else if (t === 'sub'){
+      const B = DEC ? pick([20, 50]) : pick([1000, 500, 700]), y = DEC ? rpR(B * .3, B * .9, .05) : ri(Math.round(B * .3), Math.round(B * .9)); s = cpS(DEC ? 'monnaie rendue' : 'différence', '−', B, y, {u: DEC ? 'fr.' : ''});
+      wrong = rnd(s.r + (DEC ? 1 : 100)); const sh = yes ? s.r : wrong;
+      aH = DEC ? 'Si j\'achète pour ' + cpM(y) + ' et que je paie avec un billet de ' + B + ' fr., on me rend ' + cpM(sh) + '.' : fmtNum(B) + ' − ' + fmtNum(y) + ' = ' + fmtNum(sh);
+      why = 'Quand on « emprunte » une dizaine, il faut la rendre en dessous.';
+    } else if (t === 'mul'){
+      const x = DEC ? rpR(1.2, 9.5, .1) : ri(13, 48), y = DEC ? rpR(1.1, 4.5, .1) : ri(12, 35); s = cpS('produit', '∙', x, y, {}); if (DEC && (!cpNI(x) || !cpNI(y))) return null;
+      wrong = rnd(s.r * (DEC ? pick([10, .1]) : 1) + (DEC ? 0 : pick([-10, 10, 100]))); const sh = yes ? s.r : wrong;
+      aH = fmtNum(x) + ' ∙ ' + fmtNum(y) + ' = ' + fmtNum(sh); why = DEC ? 'Compte les chiffres après la virgule dans les deux nombres.' : 'Attention aux décalages et aux retenues.';
+    } else if (t === 'div'){
+      const k = DEC ? ri(3, 8) : ri(12, 24), part = DEC ? rpR(6, 28, .05) : ri(12, 45), T = rnd(k * part); s = cpS('part de chacun', ':', T, k, {ua: DEC ? 'fr.' : '', ub: '', ur: DEC ? 'fr.' : ''});
+      wrong = rnd(part + (DEC ? pick([-.25, .25, -.5, .5]) : pick([-1, 1, 10, -10]))); const sh = yes ? part : wrong;
+      aH = DEC ? 'Si ' + k + ' amis partagent ' + cpM(T) + ' en parts égales, chacun paie ' + cpM(sh) + '.' : fmtNum(T) + ' : ' + k + ' = ' + fmtNum(sh);
+      why = 'Vérifie : la part fois le nombre d\'amis redonne le total.';
+    } else {                                                                 // cmp : assez d'argent ?
+      const p = DEC ? rpR(4.5, 9.5, .05) : ri(24, 45), k = ri(3, 4), M = DEC ? pick([20, 30, 40]) : pick([100, 150, 200]); Mv = M; s = cpS('prix', '∙', k, p, {ua: '', ub: 'fr.', ur: 'fr.', cap: 'prix'});
+      if ((s.r <= M) !== yes || Math.abs(s.r - M) > (DEC ? 4 : 20) || s.r === M) return null;
+      aH = 'Avec ' + M + ' fr., je peux acheter ' + k + ' ' + pick(['livres', 'billets de cinéma', 'places de concert']) + ' à ' + cpM(p) + ' pièce.'; why = null;
+      L = [cpL(s), cpEnd(cpN(s.r, 'fr.') + (s.r <= M ? ' &lt; ' : ' &gt; ') + M + ' fr.', yes ? 'oui' : 'non')];
+    }
+    if (t !== 'cmp' && (!(wrong > 0) || Math.abs(wrong - s.r) < 1e-9)) return null;
+    S = [s];
+    if (!L){ const sh = s.op === ':' ? (yes ? s.r : wrong) : yes ? s.r : wrong;
+      L = [cpL(s), cpEnd(yes ? 'c\'est bien ' + cpN(s.r, s.ur) : cpN(s.r, s.ur) + ' et pas ' + cpN(sh, s.ur), yes ? 'oui' : 'non')].concat(!yes && why ? [DIV(why, 'gr')] : []); }
+    const con = w + ' affirme : « ' + aH + ' »<br>A-t-' + il + ' raison ?';
+    return cpMk(lv, {S, F: {aff: true}, nums: s.op === '+' ? s.a : [s.a, s.b], kind: 'yn', yes, con, cnt: 'colAff', key: ['kaff', t, s.a, s.b, yes], dat: {v: 'kaff', t, sh: t === 'cmp' ? null : yes ? s.r : wrong, M: Mv},
+      R2: 'Pose le calcul en colonne pour vérifier.', det: () => cpDet(L, S, null)});
+  }, 200);
+}});
+
+// la case « problèmes » (la pastille « en colonne ») ; ce qui ne se coupe pas ; les niveaux que chaque sorte atteint (mesurés, avec et sans décimaux)
+GL('p_pb', [1, 2, 3, 4], lv => { const q = pbGen('col', lv); if (q) q.paper = true; return q; });
+const cpNbs = h => pcNbs(String(h).replace(/(\d) (kg|g|ℓ|dℓ|km|m|cm|s|min|h|kWh|SMS|places|élèves|personnes|heures?|fr\.)(?![A-Za-zÀ-ÿ])/g, '$1 $2'));
+PB_M.col.forEach(m => { const g0 = m.gen; m.gen = lv => { const c = g0(lv); if (!c) return c; c.con = cpNbs(String(c.con).replace(/fr\.\./g, 'fr.')); return c; }; });
+const CP_RG = {};
+function cpRange(m){
+  const k = String(DEC), C = CP_RG[k] = CP_RG[k] || {};
+  if (!C[m.id]){ const L = [];
+    for (let lv = m.lo0; lv <= m.hi0; lv++) for (let t = 0; t < 6; t++){ let c = null; try { c = m.gen(lv); } catch (e) { break; } if (c && cpLvOf(c.f) === lv){ L.push(lv); break; } }
+    C[m.id] = L; }
+  return C[m.id];
+}
+PB_M.col.forEach(m => { const lo = m.lo, hi = m.hi, ok = m.ok; m.lo0 = lo; m.hi0 = hi;
+  m.lo = () => { const L = cpRange(m); return L.length ? Math.max(lo, Math.min(...L)) : 9; };
+  m.hi = () => { const L = cpRange(m); return L.length ? Math.min(hi, Math.max(...L)) : 0; }; m.ok = () => (!ok || ok()) && cpRange(m).length > 0; });
+
 /* ---------- n° 71 (13.11.2026) : mini réglette des problèmes ----------
    L'enseignant : « mets une mini réglette sur la ligne qui apparait quand on coche problèmes, qui ajuste la part des problèmes. Par défaut
    50% » ; QCM : 50 % **des questions du bloc** (les autres blocs gardent leur part ; reliée à la fenêtre « Proportions ») ; « de 0 à 100%,
@@ -29896,7 +30638,7 @@ function optHTML(kind){
 // lignes d'un bloc ; deux lignes qui se suivent avec {col: 'L'} puis {col: 'R'} (5e élément) : côte à côte, en colonnes (.c2 ; une seule colonne sur téléphone)
 function rowsHTML(b){
   const row = ([t, its, sub, ex, o]) => '<div class="opts' + (sub ? ' sub' : '') + (o && o.col ? ' colv' : '') + '">' + (t ? '<span class="lab2">' + t + '</span>' : '') + (sub ? '<span class="lab3">' + sub + '</span>' : '') +
-    its.map(([id, lab, cls]) => { const L = '<label' + (cls ? ' class="' + cls + '"' : '') + '><input type="checkbox" data-it="' + id + '"> <span' + (cls === 'pbx' ? ' data-sur="' + (PB_SUR[id] || 'les exercices cochés') + '"' : '') + '>' + lab + '</span>' + vicoHTML(id) + (NOSTAR.has(id) && !b.hint ? '<span class="nost">(sans étoiles)</span>' : '') + '</label>';
+    its.map(([id, lab, cls]) => { const L = '<label' + (cls ? ' class="' + cls + '"' : '') + '><input type="checkbox" data-it="' + id + '"> <span' + (cls === 'pbx' ? (PB_MEN[id] ? ' data-men="' + PB_MEN[id] + '"' : ' data-sur="' + (PB_SUR[id] || 'les exercices cochés') + '"') : '') + '>' + lab + '</span>' + vicoHTML(id) + (NOSTAR.has(id) && !b.hint ? '<span class="nost">(sans étoiles)</span>' : '') + '</label>';
       return cls === 'pbx' ? '<div class="pbrow">' + L + pbiHTML(id) + '<span class="pbr" title="Part des problèmes dans les questions de ce bloc"><input type="range" min="0" max="100" step="1" value="50" data-pb="' + id + '" aria-label="Part des problèmes dans ce bloc"><output data-pbv="' + id + '">50\u00a0%</output></span></div>' : L; }).join('') + (ex || '') + '</div>';   // n° 71 : mini réglette
   const rs = b.rows || []; let h = '';
   for (let i = 0; i < rs.length; i++){ const o = rs[i][4], n = rs[i + 1] && rs[i + 1][4];
@@ -30029,7 +30771,7 @@ function fitTab(){
   if (!$('oSet').classList.contains('open') || $('sbody').classList.contains('searching') || innerWidth <= 700) return;
   const tp = P.querySelector('.tp.on'); if (!tp || tp.dataset.t === 'gen') return;
   const over = () => P.scrollHeight - P.clientHeight, o = over();
-  if (o <= 0 || o > .18 * P.clientHeight) return;   // n° 110 : 18 % (avant 12 %), pour la ligne des problèmes du calcul littéral
+  if (o <= 0 || o > .25 * P.clientHeight) return;   // n° 110 : 18 % (avant 12 %), pour la ligne des problèmes du calcul littéral ; n° 115 : 25 %, pour la ligne des problèmes des calculs en colonne (Nombres et opérations en 1366 × 768 : 123 px de trop, maintenant 0,92 em comme avant)
   tp.style.paddingTop = tp.style.paddingBottom = '.3em'; if (over() <= 0) return;
   for (const m of ['.24em', '.14em']){ tp.querySelectorAll('.blk').forEach(b => { b.style.marginBottom = m; }); if (over() <= 0) return; }
   for (let f = .98; f >= .9 - 1e-9; f -= .02){ tp.style.fontSize = f.toFixed(2) + 'em'; if (over() <= 0) return; }
@@ -30303,6 +31045,7 @@ $('bApply').onclick = () => {
 document.querySelectorAll('[data-close]').forEach(b => b.onclick = () => b.closest('.over').classList.remove('open'));
 document.querySelectorAll('.over').forEach(o => o.addEventListener('click', e => { if (e.target === o && !FD_CLICK) o.classList.remove('open'); }));   // pas à la fin d'un glissement
 document.addEventListener('keydown', e => {
+  if (TRY){ if (e.key === 'Escape') tryBack(); return; }                         // n° 114 : essai du mode élève par-dessus (tryOpen)
   const open = [...document.querySelectorAll('.over.open')].pop();               // la fenêtre du dessus (« Lien élèves » sur les réglages)
   if (e.key === 'Escape' && !$('tPop').hidden){ timPop(false); return; }           // Échap ferme d'abord la fenêtre du minuteur
   if (e.key === 'Escape' && open && e.target === $('srch') && $('srch').value){ $('srch').value = ''; doSearch(); return; }
@@ -30542,7 +31285,7 @@ var QR = (function(){
    « dans lien élèves si on clique dessus, ça pourrait permettre de coller un lien d'élève aussi » : champ « Reprendre un lien » (ses exercices
    cochés dans les réglages, son titre, ses étoiles, sa case FR) ; la fenêtre s'ouvre aussi sans exercice coché (pour coller un lien).
    Note du projet : QPC_PROJET_LIENS_ELEVES.md. */
-const QPC_VERSION = '2026-11-15';    // dossier de cette version sur le site (…/qpc/2026-11-07/) : à changer à chaque version mise en ligne
+const QPC_VERSION = '2026-11-16';    // dossier de cette version sur le site (…/qpc/2026-11-07/) : à changer à chaque version mise en ligne
 const QPC_BASE = 'https://outils-maths.github.io/qpc/';    // compte GitHub « outils-maths » (avec un s)
 const QPC_ONLINE = /(^|\.)github\.io$/i.test(location.hostname);    // ouverte depuis le site : seulement le mode élève (sans lien : un message)
 var STU = null;                       // mode élève (page ouverte par un lien élèves) ; null : page de l'enseignant
@@ -30566,7 +31309,7 @@ const lnkDecT = s => { try { return String(s).replace(/~(7e|[a-f][0-9a-f])|['+]|
 function lnkV2End(P, f){             // q2 : parts, vidéos et % d'étoiles par défaut quand le lien ne les donne pas
   P.v2 = true; if (f.p === undefined && P.it.length + P.blk.length > 1) P.wd = true;
   const O = pObjs(P); if (f.v === undefined) P.vid = O.filter(o => VID_OF[o.id]).map(o => o.id);
-  if (P.rnd) O.forEach(o => { if ((P.sd && P.sd[o.id]) || isNoStar(o)) return; const c = P.cap[o.id] || 4; if (c >= 2) (P.sd = P.sd || {})[o.id] = ipDef(c).slice(0, c); });
+  if (P.rnd) O.forEach(o => { if ((P.sd && P.sd[o.id]) || isNoStar(o)) return; const c = P.cap[o.id] || 4; if (c >= 2) (P.sd = P.sd || {})[o.id] = lnkSd0(c).slice(0, c); });
 }
 function stateFromP(P){              // réglages (comme S) d'après un lien ou une séance
   const s = clone(DEFAULTS); s.on = {};
@@ -30603,12 +31346,15 @@ function linkFrag(P){                // n° 44 : forme q2 (liens courts : commen
   const n = Object.entries(P.num || {}).filter(([b, f]) => !lnkNumDef(b, f)).map(([b, f]) => b + '.' + f), o = Object.entries(P.opt || {}).map(([k, v]) => k + ':' + v);
   const ids = P.it.concat(P.blk), wv = P.w && ids.length > 1 ? ids.map(id => Math.round(P.w[id] || 0)) : null, wd = wv && lnkWDef(P),
     pp = wv && !(wd && ids.every((id, i) => Math.round(wd[id] || 0) === wv[i])) ? '&p=' + wv.join(',') : '';      // n° 33 : part de chaque exercice (ordre de x) ; n° 44 : rien si ce sont les parts par défaut
-  const sv = P.rnd && P.sd ? ids.map(id => { const d = P.sd[id] || [], c = (P.cap || {})[id] || 4, df = c >= 2 ? ipDef(c).slice(0, c) : [];
+  const sv = P.rnd && P.sd ? ids.map(id => { const d = P.sd[id] || [], c = (P.cap || {})[id] || 4, df = c >= 2 ? lnkSd0(c).slice(0, c) : [];
       return d.length && d.join('.') !== df.join('.') ? d.join('.') : ''; }) : [],
     ss = sv.some(Boolean) ? '&s=' + sv.join(',').replace(/,+$/, '') : '';                                                         // % d'étoiles (étoiles cachées) ; n° 44 : vide = par défaut
   return 'q2' + (P.t ? '&t=' + lnkEncT(P.t) : '') + '&x=' + x.join(',') + (n.length ? '&n=' + n.join(',') : '') + (o.length ? '&o=' + o.join(',') : '') + (P.fr ? '&f=1' : '') + (P.rnd ? '&h=1' : '') + pp + ss + vidFrag(P, ids);
 }
 const linkURL = P => QPC_BASE + QPC_VERSION + '/#' + linkFrag(P);
+// n° 121 : un lien sans &s= (étoiles cachées) veut dire l'ancien défaut 40 / 35 / 20 / 5, pas celui de ipDef : les liens déjà donnés gardent leur
+// sens, et un nouveau lien écrit ses % (33.28.23.16) en entier, lus pareil par la version en ligne
+function lnkSd0(cap){ return cap <= 1 ? [100, 0, 0, 0] : cap === 2 ? [50, 50, 0, 0] : cap === 3 ? [40, 35, 25, 0] : [40, 35, 20, 5]; }
 const LINK_ALIAS = {l_mono: 'l_mulm', l_subm: 'l_addm'};      // cases fondues dans une autre (07.11.2026) : un ancien lien garde ses exercices
 function linkParse(str){             // un lien entier, ou seulement ce qui suit # ; null s'il n'y a aucun exercice connu de cette version
   const m = /(?:^|#)(q[12](?:&[^#\s]*)?)\s*$/.exec(String(str || '').trim()); if (!m) return null;
@@ -30635,7 +31381,7 @@ function stuLabel(o, withBl){        // « Pythagore : calculer une longueur »,
 
 /* ---------- mode élève ---------- */
 function stuBoot(){                  // au chargement : true si la page est en mode élève (ou n'affiche qu'un message)
-  const h = location.hash.replace(/^#/, '');
+  const h = String(window.QPC_TRY || location.hash).replace(/^#/, '');   // n° 114 : QPC_TRY, le lien d'un essai dans le cadre (tryOpen)
   if (!/^q\d/.test(h)){ if (QPC_ONLINE){ stuMsg('Demande le lien à ton enseignant.'); return true; } return false; }
   const P = linkParse('#' + h), s = P && stateFromP(P), O = s ? objectives(s) : [];
   if (!O.length || checkDraft(s)){ stuMsg('Ce lien ne marche pas. Demande le lien à ton enseignant.'); return true; }
@@ -30726,7 +31472,7 @@ function linkOpen(){                 // les exercices cochés ; rien de coché :
   linkShow(); $('oLink').classList.add('open'); if (!none) linkCheck();
 }
 function linkShow(){                 // la fenêtre d'après LNK.P (null : aucun exercice, seulement « Reprendre un lien »)
-  if (!IP) ipInit();
+  if (!IP){ ipInit(); ipLoad(); }       // n° 117 : réglages gardés dans le navigateur
   const P = LNK.P; document.querySelector('#oLink .lbox').classList.toggle('lempty', !P); $('lMsg').textContent = '';
   if (!P){ $('lEx').innerHTML = '<p class="lnone">Aucun exercice coché : coche des exercices dans les onglets, ou colle ci-dessous un lien élèves ou l\'image de son code QR.</p>'; return; }
   $('lTitle').value = P.t; $('lFr').checked = !!P.fr; $('lRnd').checked = !!P.rnd; linkRows(); linkDraw();
@@ -30760,17 +31506,18 @@ function linkNote(P){
   if (n) t.push((n > 1 ? n + ' exercices de ce lien n\'existent' : '1 exercice de ce lien n\'existe') + ' pas dans cette version de la page : ' + (n > 1 ? 'ils ne sont pas repris.' : 'il n\'est pas repris.'));
   return t.length ? '⚠ ' + t.join(' ') : '';
 }
-// titre proposé dans « Lien élèves » (l'enseignant, 07.11.2026) : un seul exercice d'un bloc : « Renfort » + le nom de l'exercice ; plusieurs
-// exercices d'un bloc : « Renfort » + le bloc ; deux blocs : « Renfort x et y » (chacun : le bloc ou l'exercice) ; plus de deux : « Révisions ».
+// titre proposé dans « Lien élèves » (l'enseignant, 07.11.2026 ; n° 118 : sans « Renfort ») : un seul exercice d'un bloc : le nom de l'exercice ;
+// plusieurs exercices d'un bloc : le bloc ; deux blocs : « x et y » (chacun : le bloc ou l'exercice) ; plus de deux : « Révisions ». Majuscule au début.
 // Un nom par exercice (TNAME, par identifiant) ; un exercice ajouté plus tard sans nom : son nom affiché, sans les formules.
-const TNAME = {"m+": "addition en calcul mental", "m−": "soustraction en calcul mental", "m∙": "multiplication en calcul mental", "m:": "division en calcul mental", "liv": "livrets", "livd": "livrets : divisions", "m10": "multiplication et division par 10, 100, 0,1…", "m10x": "multiplication et division par 600, 0,3…", "mcom": "commutativité en calcul mental", "mdis": "distributivité en calcul mental", "p+": "addition en colonne", "p−": "soustraction en colonne", "p∙": "multiplication en colonne", "p:": "division en colonne", "rcmp": "comparaison de nombres relatifs", "radd": "addition de nombres relatifs", "rsub": "soustraction de nombres relatifs", "rsum": "sommes de plusieurs nombres relatifs", "rmul": "multiplication de nombres relatifs", "rdiv": "division de nombres relatifs", "rpow": "puissances de nombres relatifs", "rprio": "priorités des opérations avec les relatifs", "dvb": "critères de divisibilité", "prm": "nombres premiers", "dcp": "décomposition en facteurs premiers", "pgdc": "pgdc", "ppmc": "ppmc", "pb_1": "probabilités en une étape", "pb_2": "probabilités en plusieurs étapes", "pb_den": "dénombrement", "fs": "simplification de fractions", "fa": "amplification de fractions", "fcmp": "comparaison de fractions", "fax": "fractions sur un axe gradué", "fd": "écriture décimale d’une fraction", "f+": "addition et soustraction de fractions", "f∙": "multiplication de fractions", "f:": "division de fractions", "fpow": "puissances de fractions", "fprio": "priorités des opérations avec les fractions", "fq": "fraction d’un nombre", "fr": "fraction d’un nombre inconnu", "pc_ecr": "écritures d’un pourcentage", "fp": "problèmes : calculer une part en pourcentage", "pc_init": "problèmes : retrouver le total à partir d’un pourcentage", "pc_var": "problèmes : augmentations et diminutions en pourcentage", "pc_taux": "problèmes : trouver un pourcentage", "pwc": "calcul de puissances", "pp1": "produit de puissances de même base", "pp2": "quotient de puissances de même base", "pp3": "puissance d’une puissance", "pp4": "produit de puissances de même exposant", "pp5": "propriétés des puissances", "r2": "racines carrées", "r3": "racines cubiques", "renc2": "encadrement d’une racine carrée", "renc3": "encadrement d’une racine cubique", "rp1": "produit de racines", "rp2": "quotient de racines", "rp3": "extraction de racines", "rp4": "propriétés des racines", "q4": "prix, quantité, taux de change…", "pagr": "agrandissements et réductions", "pech": "échelles", "ppen": "pente", "pvit": "problèmes de vitesse", "pdeb": "problèmes de débit", "pmv": "problèmes de masse volumique", "l_tra": "traduction d’une phrase en expression littérale", "l_voc": "vocabulaire du calcul littéral", "l_sub": "substitution", "l_mulm": "multiplication de monômes", "l_addm": "addition et soustraction de monômes", "l_addp": "addition de polynômes", "l_subp": "soustraction de polynômes", "l_vocp": "vocabulaire des polynômes", "l_dev": "développement simple", "l_dev2": "développement double", "l_ir1": "développement de (a + b)²", "l_ir2": "développement de (a − b)²", "l_ir3": "développement de (a + b)(a − b)", "l_ir4": "développement de (x + a)(x + b)", "l_fme": "mise en évidence", "l_fir1": "factorisation de a² + 2ab + b²", "l_fir2": "factorisation de a² − 2ab + b²", "l_fir3": "factorisation de a² − b²", "l_fir4": "factorisation de x² + (a + b)x + ab", "l_fvi": "factorisation avec Viète", "l_pb": "problèmes de calcul littéral", "e1_1": "équations x + a = b", "e1_2": "équations ax = b", "e1_3": "équations x : a = b", "e1_4": "équations ax + b = c", "e1_5": "équations ax + b = cx + d", "e1_6": "équations a(x + b) = c", "e1_7": "équations a(x + b) = c(x + d)", "e1_8": "équations x : a + b = c", "e2_1": "équations x² = a", "e2_2": "équations (x + a)(x + b) = 0", "e2_3": "équations ax² + bx = 0", "e2_4": "équations x² + bx + c = 0", "e2_5": "équations ax² + bx + c = 0", "sy_sub": "systèmes par substitution", "sy_com": "systèmes par combinaison", "fn_gx": "expression d’une fonction d’après son graphique", "fn_xg": "graphique d’une fonction d’après son expression", "fn_lim": "lecture d’images", "fn_im": "calcul d’images", "fn_lpi": "lecture de préimages", "fn_pi": "calcul de préimages", "fn_tab": "tableaux de valeurs", "d_car": "diagrammes cartésiens", "d_col": "diagrammes en colonnes", "d_cir": "diagrammes circulaires", "d_bar": "diagrammes en barre", "cv_lon": "conversions de longueurs", "cv_mas": "conversions de masses", "cv_cap": "conversions de capacités", "cv_air": "conversions d’aires", "cv_vol": "conversions de volumes", "cv_tem": "conversions de temps", "cv_vit": "conversions de vitesses", "cv_mv": "conversions de masses volumiques", "cv_deb": "conversions de débits", "aro": "arrondis", "enc": "encadrements", "f_car": "périmètre et aire du carré", "f_rec": "périmètre et aire du rectangle", "f_tri": "périmètre et aire du triangle", "f_par": "périmètre et aire du parallélogramme", "f_los": "périmètre et aire du losange", "f_tra": "périmètre et aire du trapèze", "f_dis": "périmètre et aire du disque", "f_sec": "périmètre et aire d’un secteur", "v_cub": "volume du cube", "v_pav": "volume du pavé droit", "v_pri": "volume du prisme droit", "v_cyl": "volume du cylindre", "v_pyr": "volume de la pyramide", "v_con": "volume du cône", "v_bou": "volume de la boule", "at_cub": "aire totale du cube", "at_pav": "aire totale du pavé droit", "at_pri": "aire totale du prisme droit", "at_cyl": "aire totale du cylindre", "at_pyr": "aire totale de la pyramide", "at_bou": "aire de la sphère", "py_calc": "calcul d’une longueur avec Pythagore", "py_rec": "réciproque du théorème de Pythagore", "py_con": "contraposée du théorème de Pythagore", "py_esp": "Pythagore dans l’espace", "py_pb": "problèmes avec Pythagore", "th_pb": "problèmes avec Thalès", "f_pb": "problèmes avec les fractions", "pro_pb": "problèmes de proportionnalité", "e1_pb": "problèmes avec des équations", "r_pb": "problèmes avec les nombres relatifs", "pa_pb": "problèmes de périmètres et d'aires", "v_pb": "problèmes de volumes", "at_pb": "problèmes d'aires totales", "th_calc": "calcul d’une longueur avec Thalès", "th_rec": "réciproque du théorème de Thalès", "th_con": "contraposée du théorème de Thalès", "g_not": "notations et codage", "g_mtr": "médiatrices", "g_bis": "bissectrices", "g_mdn": "médianes", "g_hau": "hauteurs", "g_cci": "cercle circonscrit", "g_cin": "cercle inscrit", "q_tri": "triangles particuliers", "q_con": "triangles constructibles", "q_car": "propriétés du carré", "q_rec": "propriétés du rectangle", "q_los": "propriétés du losange", "q_par": "propriétés du parallélogramme", "q_tra": "propriétés du trapèze", "q_rho": "propriétés du rhomboïde", "g_type": "types d’angles", "g_tri": "somme des angles d’un triangle", "g_opp": "angles opposés par le sommet et adjacents", "g_par": "angles alternes-internes", "g_ins": "angle inscrit et angle au centre", "g_tan": "tangente au cercle", "g_tha": "cercle de Thalès", "g_pol": "angles des polygones réguliers", "g_sym": "axes de symétrie", "g_csym": "centre de symétrie", "t_ax": "symétrie axiale", "t_ce": "symétrie centrale", "t_tr": "translation", "t_ro": "rotation", "t_ho": "homothétie", "g_rep2": "repérage dans le plan", "g_rep3": "repérage dans l’espace", "g_nsol": "noms des solides", "g_sol": "faces, sommets et arêtes", "g_pat": "développements des solides"};
+const TNAME = {"m+": "addition en calcul mental", "m−": "soustraction en calcul mental", "m∙": "multiplication en calcul mental", "m:": "division en calcul mental", "liv": "livrets", "livd": "livrets : divisions", "m10": "multiplication et division par 10, 100, 0,1…", "m10x": "multiplication et division par 600, 0,3…", "mcom": "commutativité en calcul mental", "mdis": "distributivité en calcul mental", "p+": "addition en colonne", "p−": "soustraction en colonne", "p∙": "multiplication en colonne", "p:": "division en colonne", "rcmp": "comparaison de nombres relatifs", "radd": "addition de nombres relatifs", "rsub": "soustraction de nombres relatifs", "rsum": "sommes de plusieurs nombres relatifs", "rmul": "multiplication de nombres relatifs", "rdiv": "division de nombres relatifs", "rpow": "puissances de nombres relatifs", "rprio": "priorités des opérations avec les relatifs", "dvb": "critères de divisibilité", "prm": "nombres premiers", "dcp": "décomposition en facteurs premiers", "pgdc": "pgdc", "ppmc": "ppmc", "pb_1": "probabilités en une étape", "pb_2": "probabilités en plusieurs étapes", "pb_den": "dénombrement", "fs": "simplification de fractions", "fa": "amplification de fractions", "fcmp": "comparaison de fractions", "fax": "fractions sur un axe gradué", "fd": "écriture décimale d’une fraction", "f+": "addition et soustraction de fractions", "f∙": "multiplication de fractions", "f:": "division de fractions", "fpow": "puissances de fractions", "fprio": "priorités des opérations avec les fractions", "fq": "fraction d’un nombre", "fr": "fraction d’un nombre inconnu", "pc_ecr": "écritures d’un pourcentage", "fp": "problèmes : calculer une part en pourcentage", "pc_init": "problèmes : retrouver le total à partir d’un pourcentage", "pc_var": "problèmes : augmentations et diminutions en pourcentage", "pc_taux": "problèmes : trouver un pourcentage", "pwc": "calcul de puissances", "pp1": "produit de puissances de même base", "pp2": "quotient de puissances de même base", "pp3": "puissance d’une puissance", "pp4": "produit de puissances de même exposant", "pp5": "propriétés des puissances", "r2": "racines carrées", "r3": "racines cubiques", "renc2": "encadrement d’une racine carrée", "renc3": "encadrement d’une racine cubique", "rp1": "produit de racines", "rp2": "quotient de racines", "rp3": "extraction de racines", "rp4": "propriétés des racines", "q4": "prix, quantité, taux de change…", "pagr": "agrandissements et réductions", "pech": "échelles", "ppen": "pente", "pvit": "problèmes de vitesse", "pdeb": "problèmes de débit", "pmv": "problèmes de masse volumique", "l_tra": "traduction d’une phrase en expression littérale", "l_voc": "vocabulaire du calcul littéral", "l_sub": "substitution", "l_mulm": "multiplication de monômes", "l_addm": "addition et soustraction de monômes", "l_addp": "addition de polynômes", "l_subp": "soustraction de polynômes", "l_vocp": "vocabulaire des polynômes", "l_dev": "développement simple", "l_dev2": "développement double", "l_ir1": "développement de (a + b)²", "l_ir2": "développement de (a − b)²", "l_ir3": "développement de (a + b)(a − b)", "l_ir4": "développement de (x + a)(x + b)", "l_fme": "mise en évidence", "l_fir1": "factorisation de a² + 2ab + b²", "l_fir2": "factorisation de a² − 2ab + b²", "l_fir3": "factorisation de a² − b²", "l_fir4": "factorisation de x² + (a + b)x + ab", "l_fvi": "factorisation avec Viète", "l_pb": "problèmes de calcul littéral", "p_pb": "problèmes avec des calculs en colonne", "e1_1": "équations x + a = b", "e1_2": "équations ax = b", "e1_3": "équations x : a = b", "e1_4": "équations ax + b = c", "e1_5": "équations ax + b = cx + d", "e1_6": "équations a(x + b) = c", "e1_7": "équations a(x + b) = c(x + d)", "e1_8": "équations x : a + b = c", "e2_1": "équations x² = a", "e2_2": "équations (x + a)(x + b) = 0", "e2_3": "équations ax² + bx = 0", "e2_4": "équations x² + bx + c = 0", "e2_5": "équations ax² + bx + c = 0", "sy_sub": "systèmes par substitution", "sy_com": "systèmes par combinaison", "fn_gx": "expression d’une fonction d’après son graphique", "fn_xg": "graphique d’une fonction d’après son expression", "fn_lim": "lecture d’images", "fn_im": "calcul d’images", "fn_lpi": "lecture de préimages", "fn_pi": "calcul de préimages", "fn_tab": "tableaux de valeurs", "d_car": "diagrammes cartésiens", "d_col": "diagrammes en colonnes", "d_cir": "diagrammes circulaires", "d_bar": "diagrammes en barre", "cv_lon": "conversions de longueurs", "cv_mas": "conversions de masses", "cv_cap": "conversions de capacités", "cv_air": "conversions d’aires", "cv_vol": "conversions de volumes", "cv_tem": "conversions de temps", "cv_vit": "conversions de vitesses", "cv_mv": "conversions de masses volumiques", "cv_deb": "conversions de débits", "aro": "arrondis", "enc": "encadrements", "f_car": "périmètre et aire du carré", "f_rec": "périmètre et aire du rectangle", "f_tri": "périmètre et aire du triangle", "f_par": "périmètre et aire du parallélogramme", "f_los": "périmètre et aire du losange", "f_tra": "périmètre et aire du trapèze", "f_dis": "périmètre et aire du disque", "f_sec": "périmètre et aire d’un secteur", "v_cub": "volume du cube", "v_pav": "volume du pavé droit", "v_pri": "volume du prisme droit", "v_cyl": "volume du cylindre", "v_pyr": "volume de la pyramide", "v_con": "volume du cône", "v_bou": "volume de la boule", "at_cub": "aire totale du cube", "at_pav": "aire totale du pavé droit", "at_pri": "aire totale du prisme droit", "at_cyl": "aire totale du cylindre", "at_pyr": "aire totale de la pyramide", "at_bou": "aire de la sphère", "py_calc": "calcul d’une longueur avec Pythagore", "py_rec": "réciproque du théorème de Pythagore", "py_con": "contraposée du théorème de Pythagore", "py_esp": "Pythagore dans l’espace", "py_pb": "problèmes avec Pythagore", "th_pb": "problèmes avec Thalès", "f_pb": "problèmes avec les fractions", "pro_pb": "problèmes de proportionnalité", "e1_pb": "problèmes avec des équations", "r_pb": "problèmes avec les nombres relatifs", "pa_pb": "problèmes de périmètres et d'aires", "v_pb": "problèmes de volumes", "at_pb": "problèmes d'aires totales", "th_calc": "calcul d’une longueur avec Thalès", "th_rec": "réciproque du théorème de Thalès", "th_con": "contraposée du théorème de Thalès", "g_not": "notations et codage", "g_mtr": "médiatrices", "g_bis": "bissectrices", "g_mdn": "médianes", "g_hau": "hauteurs", "g_cci": "cercle circonscrit", "g_cin": "cercle inscrit", "q_tri": "triangles particuliers", "q_con": "triangles constructibles", "q_car": "propriétés du carré", "q_rec": "propriétés du rectangle", "q_los": "propriétés du losange", "q_par": "propriétés du parallélogramme", "q_tra": "propriétés du trapèze", "q_rho": "propriétés du rhomboïde", "g_type": "types d’angles", "g_tri": "somme des angles d’un triangle", "g_opp": "angles opposés par le sommet et adjacents", "g_par": "angles alternes-internes", "g_ins": "angle inscrit et angle au centre", "g_tan": "tangente au cercle", "g_tha": "cercle de Thalès", "g_pol": "angles des polygones réguliers", "g_sym": "axes de symétrie", "g_csym": "centre de symétrie", "t_ax": "symétrie axiale", "t_ce": "symétrie centrale", "t_tr": "translation", "t_ro": "rotation", "t_ho": "homothétie", "g_rep2": "repérage dans le plan", "g_rep3": "repérage dans l’espace", "g_nsol": "noms des solides", "g_sol": "faces, sommets et arêtes", "g_pat": "développements des solides"};
 const blTitle = bl => { const n = BLOCKS[bl].name.replace(/<[^>]+>/g, ''); return bl === 'pyt' || bl === 'tha' ? n : n.charAt(0).toLowerCase() + n.slice(1); };
 function linkSugT(){                // le titre proposé d'après les exercices cochés de la fenêtre
   if (!LNK || !LNK.P) return '';
   const g = new Map(); pObjs(LNK.P).filter(o => !LNK.off.has(o.id) && !(LNK.zero && LNK.zero.has(o.id))).forEach(o => { if (!g.has(o.bl)) g.set(o.bl, []); g.get(o.bl).push(o); });
   const ps = [...g].map(([bl, os]) => os.length > 1 || !BLOCKS[bl].items.length ? blTitle(bl)
     : TNAME[os[0].id] || stuLabel(os[0], false).replace(/<svg.*?<\/svg>/g, '√').replace(/<[^>]+>/g, ''));
-  return !ps.length ? '' : ps.length > 2 ? 'Révisions' : 'Renfort ' + ps.join(' et ');
+  const t = ps.join(' et ');           // n° 118 (QCM : « Partout ») : plus de « Renfort » devant, le thème seul, avec une majuscule
+  return !ps.length ? '' : ps.length > 2 ? 'Révisions' : t.charAt(0).toUpperCase() + t.slice(1);
 }
 function linkSug(){                 // en gris dans la case vide, avec le bouton « Choisir ce titre ? » (caché dès qu'un titre est écrit)
   const s = LNK ? linkSugT() : ''; if (LNK) LNK.sug = s;
@@ -30809,7 +31556,7 @@ function linkDraw(){ linkUrlDraw(); ipSync(); }
 function linkUrlDraw(){             // le lien et son QR code (n° 33 : avec la part de chaque exercice ; à 0 %, l'exercice n'est pas dans le lien)
   const E = LNK.E = linkEff(), O = pObjs(E), ok = O.length > 0;
   ['lCopyImg', 'lPng', 'lCopy', 'lTry'].forEach(id => $(id).disabled = !ok);
-  if (!ok){ LNK.url = ''; LNK.qr = null; LNK.U = null; LNK.zero = null; $('lQr').innerHTML = '<p class="lnone lqn">Coche au moins un exercice.</p>'; $('lUrl').textContent = ''; return; }
+  if (!ok){ LNK.url = ''; LNK.qr = null; LNK.U = null; LNK.zero = null; $('lQr').innerHTML = '<p class="lnone lqn">Coche au moins un exercice.</p>'; $('lQr').title = ''; $('lUrl').textContent = ''; return; }
   const v = shView(draft, O), Z = O.length > 1 ? O.filter(o => !(v[o.id] > 0)).map(o => o.id) : [];
   // n° 72 : une case à 0 % reste dans le lien (part 0, cachée à l'élève) quand la case « problèmes » de son bloc y est : ses problèmes s'en servent
   const PBK = new Set(O.filter(o => PB_IDS.includes(o.id) && v[o.id] > 0).map(o => o.bl)), Z0 = new Set(Z.filter(id => PBK.has(ITEM_BLOCK[id]) && !PB_IDS.includes(id)));
@@ -30818,7 +31565,7 @@ function linkUrlDraw(){             // le lien et son QR code (n° 33 : avec la 
   if (UO.length > 1){ const n = shLR(UO.map(o => Z0.has(o.id) ? 0 : v[o.id]), 100); U.w = {}; UO.forEach((o, i) => U.w[o.id] = Z0.has(o.id) ? 0 : Math.max(1, n[i])); }
   if (U.rnd){ U.sd = {}; UO.forEach(o => { const cap = (U.cap || {})[o.id] || 4; if (!isNoStar(o) && cap >= 2 && !Z0.has(o.id)) U.sd[o.id] = shLR(lnkDist(o.id, cap), 100); }); }
   U.vid = UO.filter(o => VID_OF[o.id] && !LNK.voff.has(o.id) && !Z0.has(o.id)).map(o => o.id);      // n° 34 : vidéos sur la liste de l'élève
-  LNK.url = linkURL(U); LNK.qr = QR.make(LNK.url, 'M'); $('lQr').innerHTML = qrSVG(LNK.qr); $('lUrl').textContent = LNK.url; linkSug(); }
+  LNK.url = linkURL(U); LNK.qr = QR.make(LNK.url, 'M'); $('lQr').innerHTML = qrSVG(LNK.qr); $('lQr').title = 'Clic : le mode élève, comme tes élèves le verront (comme « Essayer »)'; $('lUrl').textContent = LNK.url; linkSug(); }
 function linkCheck(){                // ce lien marche-t-il déjà ? (la version de cette page en ligne, sinon la dernière version en ligne) ; la place du
                                      // message est réservée (.lmsg) : la fenêtre ne grandit pas quand la réponse arrive (l'enseignant, 07.11.2026)
   const t = Date.now(), img = (u, ok, ko) => { const i = new Image(); i.onload = ok; i.onerror = ko; i.src = u + '?' + t; }, say = m => { if (LNK) $('lMsg').textContent = m; };
@@ -30891,14 +31638,47 @@ $('lCopyImg').onclick = () => { try { navigator.clipboard.write([new ClipboardIt
   catch (e) { $('lMsg').textContent = 'Copie de l\'image impossible ici : utilise « Enregistrer en PNG ».'; } };
 $('lPng').onclick = () => qrPNG(LNK.qr).then(b => { const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'QR ' + (fileSafe(LNK.P.t) || 'lien élèves') + '.png';
   document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 3000); });
-// « Essayer » : le mode élève de ce fichier, dans un nouvel onglet ; téléphone et tablette (n° 32, l'enseignant : « sur mon tél dans le qpc enseignant
-// [...] je clique sur essayer, ça me met une page sur chrome : "impossible d'accéder à votre fichier" ») : un fichier ouvert sur le téléphone ne s'ouvre
-// pas dans un nouvel onglet (Chrome Android) ; dans le même onglet (le fragment change, la page repart en mode élève), la flèche retour du téléphone
-// ramène au mode enseignant (exercices cochés gardés : sessionStorage)
+// « Essayer » : le mode élève de ce fichier, sans internet. Ordinateur : dans un nouvel onglet. Téléphone et tablette (écran tactile, ou adresse
+// content: d'un fichier ouvert depuis Drive) : dans la page, par-dessus le mode enseignant (n° 114). L'enseignant, 15.11.2026 : « Quand j'ouvre qpc
+// sur mon téléphone, puis que je choisis des exos et je vais dans lien/impression élèves, et que je choisis essayer, ça ne marche pas » (Chrome :
+// « Impossible d'accéder à votre fichier », ERR_FILE_NOT_FOUND) ; « Aucun problème sur ordi ». Un fichier ouvert sur le téléphone ne se recharge
+// pas et ne s'ouvre pas dans un autre onglet : la n° 32 changeait le fragment, puis la page repartait (location.reload) : même erreur.
+// Maintenant rien n'est rechargé : un cadre (iframe srcdoc) avec une copie de la page (l'en-tête, le corps tel qu'il est écrit : TRY_SRC, le script)
+// qui démarre en mode élève (QPC_TRY lu par stuBoot) ; « ← Revenir », la flèche retour du téléphone (pushState, popstate) ou Échap le
+// referment, et le mode enseignant est resté tel quel (réglages, questions, fenêtre du lien).
 const TRY_SAME = () => location.protocol === 'content:' || !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
-$('lTry').onclick = () => { if (!LNK.url) return; const h = '#' + linkFrag(LNK.U);
-  if (TRY_SAME()){ location.hash = h; return; }
-  window.open(location.href.split('#')[0] + h, '_blank'); };
+var TRY = null;                           // l'essai ouvert : {ov (#tryOv), fr (le cadre), pushed (une entrée d'historique à enlever)}
+function tryOpen(h){
+  if (TRY) return;
+  if (!TRY_SRC || !TRY_SRC.sc.text){ $('lMsg').textContent = 'Essai impossible ici : ouvre le lien (« Copier le lien ») ou scanne le code QR.'; return; }
+  const head = Array.from(document.head.childNodes).filter(n => n.id !== 'ipPageCss').map(TRY_SRC.ser).join('');
+  const js = 'var QPC_TRY = ' + JSON.stringify(h).replace(/</g, '\\u003c') + ';';
+  const ov = document.createElement('div'); ov.id = 'tryOv'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', 'Essai du mode élève');
+  ov.innerHTML = '<div class="tryBar"><button type="button" class="tryBk">← Revenir</button><span class="tryT">Essai du mode élève</span></div><div class="tryLd">Chargement…</div>';
+  const fr = document.createElement('iframe'); fr.title = 'Essai du mode élève';
+  fr.addEventListener('load', () => { ov.classList.add('on'); try { fr.contentWindow.focus(); } catch (e) {} });
+  fr.srcdoc = '<!DOCTYPE html>\n<html lang="fr">\n<head>' + head + '</head>\n<body>' + TRY_SRC.body + '<script>' + js + '<\/script>\n<script>' + TRY_SRC.sc.text + '<\/script>\n</body>\n</html>\n';
+  ov.appendChild(fr); ov.querySelector('.tryBk').onclick = tryBack;
+  document.body.appendChild(ov); TRY = {ov, fr, pushed: false};
+  try { history.pushState({qpcTry: 1}, ''); TRY.pushed = true; } catch (e) {}   // la flèche retour du téléphone referme l'essai (même adresse : rien ne se recharge)
+  if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+}
+function tryClose(){ if (!TRY) return; TRY.ov.remove(); TRY = null; }
+function tryBack(){                       // « ← Revenir », Échap : comme la flèche retour (l'entrée d'historique de l'essai part aussi)
+  const t = TRY; if (!t) return;
+  if (t.pushed){ t.pushed = false; history.back(); setTimeout(() => { if (TRY === t) tryClose(); }, 700); } else tryClose();   // pas un essai rouvert entre-temps
+}
+window.addEventListener('popstate', () => { if (TRY){ TRY.pushed = false; tryClose(); } });
+function tryLink(){ if (!LNK.url) return; const h = '#' + linkFrag(LNK.U);
+  if (TRY_SAME()){ tryOpen(h); return; }
+  window.open(location.href.split('#')[0] + h, '_blank'); }
+$('lTry').onclick = tryLink;
+// n° 119 (l'enseignant, 16.11.2026 : « Fais en sorte que cliquer sur le code qr amène sur la page que voit les élèves. (même fonction que
+// "essayer".) ») : le code QR de la fenêtre, et celui de la feuille dans l'aperçu (.ip-ql, dans le clic de #ipSec) ; dans le PDF, le
+// code QR de la feuille est un lien vers la page en ligne (la même adresse que le code QR)
+$('lQr').addEventListener('click', e => { if (e.target.closest('svg')) tryLink(); });
+function ipQrA(q){ const u = LNK && LNK.url ? ipEsc(LNK.url) : '';
+  return u ? '<a class="ip-ql" href="' + u + '" title="Clic : le mode élève, comme tes élèves le verront (comme « Essayer »)">' + qrSVG(q) + '</a>' : qrSVG(q); }
 $('bLink').onclick = () => linkOpen();
 
 /* =====================================================================
@@ -30926,9 +31706,42 @@ $('bLink').onclick = () => linkOpen();
    aux questions de la classe. Rien n'est gardé d'une ouverture de la page à l'autre.
    ===================================================================== */
 const IP_PX = 96 / 25.4;                                         // px CSS par mm
-const IP_W = 210, IP_H = 297, IP_MX = 15, IP_CW = IP_W - 2 * IP_MX;      // A4 ; marges gauche et droite ; largeur utile (mm)
-const IP_HT = 8, IP_TOP2 = 17.5, IP_BOT = IP_H - 17.5;            // en-tête dès 8 mm du bord ; contenu de 17,5 mm à 279,5 mm ; pied de page à 8 mm du bas
-const IP_GX = 5, IP_GR = 2.5, IP_GC = 6, IP_GA = 5;               // écarts (mm) : avant un exercice, sous une ligne de questions, entre deux colonnes, au-dessus des réponses
+let IP_W = 210, IP_H = 297, IP_MX = 15, IP_CW = IP_W - 2 * IP_MX;        // A4 (n° 116 : ou le morceau de la feuille, ipGeo) ; marges gauche et droite ; largeur utile (mm)
+let IP_HT = 8, IP_TOP2 = 17.5, IP_BOT = IP_H - 17.5;              // en-tête dès 8 mm du bord ; contenu de 17,5 mm à 279,5 mm ; pied de page à 8 mm du bas
+/* n° 116 (16.11.2026) : formats ½, ⅓ et ¼ de A4. L'enseignant : « pour qpc, dans les pdf générés, dans la boite de réponse, quand une question
+   (1, 2, 3, ...) va sur deux colonnes, pas besoin de réécrire le numéro » ; « un format "moitié de A4", où la feuille se partage en deux (haut et
+   bas) : avec un petit trait pour indiquer où est la moitié de la page (trait très très fin qui fait disons 1cm depuis la gauche de la feuille,
+   c'est juste pour aider au découpage). En haut et en bas il y a les mêmes exercices. Les exercices continuent au verso où c'est aussi la même
+   chose en haut et en bas de la page. » ; « un format "tiers de A4" et un format "quart de A4" dans la même idée. (pour le quart, il faut
+   partager la feuille verticalement et horizontalement, avec une marque en bas et une marque à gauche) ».
+   Maquettes, puis QCM : ½ « B : compacte », ⅓ « C : en-tête en haut », ¼ « F : compacte » (titre et classe sur une ligne ; code QR au verso,
+   à droite des réponses) ; réponses : « Case à cocher » (« Réponses à l'envers », pour tous les formats, A4 compris). Choix de Claude,
+   acceptés (« Je suis d'accord avec tes choix ») : case décochée par défaut ; « Pages » 1 ou 2 dans les petits formats (recto, recto verso) ;
+   ligne d'aide « 1 feuille A4 = 2 élèves : pour 24 élèves, imprime 12 exemplaires… ».
+   Un morceau se met en page comme une page (IP_W, IP_H, IP_CW… posés par ipGeo) ; chaque face de la feuille A4 reçoit 2, 3 ou 4 copies de la
+   même face du morceau, et les traits de coupe (0,25 pt, 10 mm depuis le bord : ipCuts). */
+const IP_SW = 210, IP_SH = 297;                                   // la feuille, toujours A4 (aperçu, impression)
+const IP_FMT = {a4: {n: 1, w: 210, h: 297, mx: 15}, 2: {n: 2, w: 210, h: 148.5, mx: 15}, 3: {n: 3, w: 210, h: 99, mx: 12}, 4: {n: 4, w: 105, h: 148.5, mx: 9}};
+let IP_F = 'a4';                                                  // le format de la dernière mise en page
+function ipGeo(f){            // la page (A4) ou le morceau (½, ⅓, ¼) : dimensions, marges, haut et bas du contenu (mm)
+  if (!IP_FMT[f]) f = 'a4';
+  const G = IP_FMT[f]; IP_F = f; IP_W = G.w; IP_H = G.h; IP_MX = G.mx; IP_CW = IP_W - 2 * IP_MX;
+  if (f === 'a4'){ IP_HT = 8; IP_TOP2 = 17.5; IP_BOT = IP_H - 17.5; IP_GX = 5; IP_GC = 6; IP_GA = 5; }
+  else { IP_HT = 7; IP_TOP2 = 7; IP_BOT = IP_H - 12; IP_GX = 3.5; IP_GC = f === '4' ? 4 : 5; IP_GA = 3.5; }          // titre à 7 mm du bord du morceau ; « Tourne la feuille » finit à 7 mm du bas
+  ipMeas().className = 'ip-sheet' + (f === 'a4' ? '' : ' ip-fs ip-f' + f);    // mesures avec les tailles du format (titres des exercices)
+}
+const ipPgMax = () => IP && IP.fmt !== 'a4' ? 2 : 8;               // petits formats : recto, ou recto verso
+const ipPcPos = f => f === '2' ? [[0, 0], [0, 148.5]] : f === '3' ? [[0, 0], [0, 99], [0, 198]] : [[0, 0], [105, 0], [0, 148.5], [105, 148.5]];   // copies (mm)
+function ipCuts(f){           // traits de coupe : très fins, 1 cm depuis le bord gauche (¼ : aussi depuis le bas, au milieu)
+  const hz = y => '<div class="ip-cut" style="left:0;top:' + y + 'mm;width:10mm;border-top:.25pt solid #000"></div>';
+  const vt = x => '<div class="ip-cut" style="left:' + x + 'mm;top:' + (IP_SH - 10) + 'mm;height:10mm;border-left:.25pt solid #000"></div>';
+  return f === '2' ? hz(148.5) : f === '3' ? hz(99) + hz(198) : f === '4' ? hz(148.5) + vt(105) : ''; }
+function ipHintF(){           // la ligne d'aide d'un petit format
+  if (!IP || IP.fmt === 'a4') return '';
+  const n = IP_FMT[IP.fmt].n;
+  return '1 feuille A4 = ' + n + ' élèves : pour 24 élèves, imprime ' + Math.ceil(24 / n) + ' exemplaires' + (IP.pages > 1 ? ', en recto verso' : '') +
+    ', puis coupe ' + (n === 2 ? 'au petit trait à gauche' : n === 3 ? 'aux petits traits à gauche' : 'aux petits traits (à gauche et en bas)') + '.'; }
+let IP_GX = 5, IP_GR = 2.5, IP_GC = 6, IP_GA = 5;                 // écarts (mm) : avant un exercice, sous une ligne de questions, entre deux colonnes, au-dessus des réponses (n° 116 : plus serrés dans un petit format, ipGeo)
 const IP_LET = 6.5, IP_STW = 1.75;                                 // colonne de la lettre a) (mm) ; n° 37 : largeur d'une étoile (6 pt), à gauche de la lettre
 const IP_WL = ['aucune', 'petite', 'normale', 'grande', 'très grande'];   // place pour répondre, − / + (−2 à 2)
 const IP_WK = [0, .55, 1, 1.5, 2.1], IP_WMIN = [0, 0, 0, 8, 15];          // facteur ; au moins (mm) pour « grande » et « très grande »
@@ -30938,7 +31751,7 @@ const IP_WLV = [.85, 1, 1.15, 1.3];                               // la place gr
 // figures pour les questions de quadrilatères ») ; choisi par Claude, à revoir avec l'enseignant (« Si tu veux je regarderai aussi
 // moi même et te dirai plus tard s'il faut faire des modifs »)
 const IP_WORK = {
-  'p+': 30, 'p−': 28, 'p∙': 36, 'p:': 42,                                     // calculs à poser en colonne
+  'p+': 30, 'p−': 28, 'p∙': 36, 'p:': 42, p_pb: 34,                          // calculs à poser en colonne (n° 115 : problèmes)
   rsum: 8, rprio: 20, pri: 20, prm: 4, dcp: 16, pgdc: 14, ppmc: 14, pb_1: 6, pb_2: 14, pb_den: 10,
   fs: 6, fcmp: 8, fd: 14, 'f+': 14, 'f∙': 12, 'f:': 12, fpow: 8, fprio: 22, fq: 6, fr: 8, f_pb: 16, pro_pb: 18, e1_pb: 20, r_pb: 16, pa_pb: 18, v_pb: 18, at_pb: 18,
   pc_ecr: 6, fp: 14, pc_init: 16, pc_var: 16, pc_taux: 14,
@@ -30971,7 +31784,22 @@ const IP_STC = ['#fff6d6', '#ffe9a8', '#ffd96f', '#f3c43f'];                    
 let IP = null;        // la feuille : options, réglages des exercices, questions tirées (pool), séance à part (ses), dernière mise en page (L)
 let IPD = null;       // glissement d'une séparation d'une barre
 const ipSes0 = () => ({TALLY: {}, USEDN: 0, U: [], UA: [], UC: [], X: [], RQ: {}, SV: {}});
-function ipInit(){ IP = {sig: '', S: null, E: null, O: [], U: [], mix: {}, ord: [], pages: 2, cls: '', ans: true, qr: true, stars: false, ex: {}, share: {}, pool: {}, keys: new Set(), ses: ipSes0(), ac: new Map(), L: null, t0: null}; }
+function ipInit(){ IP = {sig: '', S: null, E: null, O: [], U: [], mix: {}, ord: [], pages: 2, cls: '', ans: true, qr: true, stars: false, fmt: 'a4', up: false, rl: [], brk: {}, ticks: [], ex: {}, share: {}, pool: {}, keys: new Set(), ses: ipSes0(), ac: new Map(), L: null, t0: null}; }
+/* n° 117 (l'enseignant, 16.11.2026 : « fais en sorte que les réglages choisis pour les pdf soient sauvegardés dans le navigateur ») : format,
+   pages, classe, réponses (à la fin, à l'envers), code QR, étoiles, place pour répondre de chaque exercice, blocs mélangés (n° 118 : plus de ticket de sortie) ;
+   pas les % d'étoiles (ce sont aussi ceux du lien) ni l'ordre des exercices */
+const IP_KEY = 'qpc-feuille';
+function ipLoad(){ try { const o = JSON.parse(localStorage.getItem(IP_KEY) || 'null'); if (!o || o.v !== 1) return;
+    if (IP_FMT[o.fmt]) IP.fmt = o.fmt; ['ans', 'up', 'qr', 'stars'].forEach(k => { if (typeof o[k] === 'boolean') IP[k] = o[k]; });
+    if (typeof o.cls === 'string') IP.cls = o.cls.slice(0, 24);
+    if (o.pages >= 1) IP.pages = Math.min(ipPgMax(), Math.round(o.pages));
+    Object.entries(o.w || {}).forEach(([id, w]) => { if (w >= -2 && w <= 2) ipEx(id).w = Math.round(w); });
+    Object.entries(o.mix || {}).forEach(([bl, m]) => { if (m) IP.mix[bl] = true; });
+  } catch (e) {} }
+function ipSave(){ if (!IP || STU) return;
+  try { const w = {}; Object.entries(IP.ex).forEach(([id, x]) => { if (x.w) w[id] = x.w; });
+    const mix = {}; Object.entries(IP.mix).forEach(([bl, m]) => { if (m) mix[bl] = 1; });
+    localStorage.setItem(IP_KEY, JSON.stringify({v: 1, fmt: IP.fmt, pages: IP.pages, cls: IP.cls, ans: IP.ans, up: IP.up, qr: IP.qr, stars: IP.stars, w, mix})); } catch (e) {} }
 function ipReset(){ IP.pool = {}; IP.keys = new Set(); IP.ses = ipSes0(); IP.ac = new Map(); }      // « Nouvelles questions »
 const ipEsc = s => String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'})[c]);
 const ipLetter = i => i < 26 ? String.fromCharCode(97 + i) : String.fromCharCode(97 + Math.floor(i / 26) - 1) + String.fromCharCode(97 + i % 26);
@@ -30979,9 +31807,14 @@ const ipItal = s => s.replace(/(^|[^A-Za-zÀ-ÿ’'])([abcdmnpqxy]{1,2})(?![A-Za
 function ipName(o){           // le thème d'un exercice (« 1) Addition et soustraction de fractions ») : son nom des liens (TNAME)
   const b = BLOCKS[o.bl]; let t = IP_NAME[o.id] || (b.items.length ? TNAME[o.id] || stuLabel(o, false).replace(/<[^>]+>/g, '') : b.name.replace(/<[^>]+>/g, ''));
   t = t.charAt(0).toUpperCase() + t.slice(1); return ipItal(t); }
+// n° 118 (l'enseignant, 16.11.2026 : « Bon en fait enlève l'option ticket de sortie, et enlève le mot renfort. Par défaut il y a juste le thème
+// des exercices. ») : la case « Ticket de sortie » de la n° 117 est enlevée (ne pas la remettre) ; le titre de la feuille = celui du lien
 const ipTitle = () => ((IP.E && IP.E.t) || linkSugT() || '').trim();
 const ipCap = o => isNoStar(o) ? 4 : ((IP.E && IP.E.cap) || {})[o.id] || 4;
-const ipDef = cap => cap <= 1 ? [100, 0, 0, 0] : cap === 2 ? [50, 50, 0, 0] : cap === 3 ? [40, 35, 25, 0] : [40, 35, 20, 5];   // jusqu'à ★★★★ : 5 % (QCM du 09.11.2026, 40 / 35 / 20 / 5)
+// % d'étoiles par défaut d'un exercice (la barre de la feuille, aussi celle du lien) ; n° 121 (l'enseignant, 16.11.2026 : « tu peux plutôt faire par
+// défaut cette proportion d'étoiles, pour les pdf ? », image : 33 / 28 / 23 / 16 ; QCM : « Lien aussi à 33/28/23/16 », « Mêmes rapports » quand
+// moins d'étoiles sont permises) ; avant : 40 / 35 / 20 / 5 (QCM du 09.11.2026), gardé pour lire les liens sans &s= (lnkSd0)
+const ipDef = cap => cap <= 1 ? [100, 0, 0, 0] : cap === 2 ? [54, 46, 0, 0] : cap === 3 ? [39, 33, 28, 0] : [33, 28, 23, 16];
 const ipPool = id => IP.pool[id] || (IP.pool[id] = {1: [], 2: [], 3: [], 4: [], x: {}});
 const ipEx = id => IP.ex[id] || (IP.ex[id] = {d: null, w: 0});
 function ipMeas(){ let m = $('ipMeas'); if (!m){ m = document.createElement('div'); m.id = 'ipMeas'; m.className = 'ip-sheet'; document.body.appendChild(m); } return m; }
@@ -30999,11 +31832,10 @@ function ipRun(f){            // f avec les réglages du lien et la séance de l
     S = sv.S; TALLY = sv.TALLY; USEDN = sv.USEDN; NO_RARE = sv.NO_RARE; TQ_FIX = sv.TQ_FIX; TC_FORCE = sv.TC_FORCE; TH_FORCE = sv.TH_FORCE; put(sv);
   }
 }
-function ipGen(o, lv){        // une question de plus pour l'exercice o, à lv étoiles (sorte lv sans étoiles), pas encore sur la feuille ; false : plus rien
-  const P = ipPool(o.id); if (P.x[lv]) return false;
+function ipDraw(o, lv, tries){   // n° 117 : une question de l'exercice o, à lv étoiles (sorte lv sans étoiles), pas encore sur la feuille ; null : plus rien
   const geo = isGeo(o.id), p = ipRun(() => {
     const fl = flagsOf(o.bl);
-    for (let t = 0; t < 4; t++){
+    for (let t = 0; t < (tries || 4); t++){
       let q = null;
       try { q = geo ? geoOne([o, lv], [], 'P', null)[0] : genOne(subOf(o, lv, fl), lv, fl); } catch (e) { console.error('feuille', o.id, lv, e); return null; }
       if (!q) return null;
@@ -31011,10 +31843,26 @@ function ipGen(o, lv){        // une question de plus pour l'exercice o, à lv �
       if (geo) return null;                    // géométrie : rien de nouveau à ce niveau (geoOne reprend une question déjà sur la feuille)
     }
     return null; });
-  if (!p){ P.x[lv] = true; return false; }
+  if (!p) return null;
   if (p.key != null) IP.keys.add(p.key);
   if (isNoStar(o)) p.nostar = true;
-  p.level = lv; p._o = o; P[lv].push(p); return true;
+  p.level = lv; p._o = o; return p;
+}
+function ipGen(o, lv){        // une question de plus pour l'exercice o, à lv étoiles (sorte lv sans étoiles), pas encore sur la feuille ; false : plus rien
+  const P = ipPool(o.id); if (P.x[lv]) return false;
+  const p = ipDraw(o, lv); if (!p){ P.x[lv] = true; return false; }
+  P[lv].push(p); return true;
+}
+/* n° 117 (16.11.2026) : l'enseignant : « pour chaque item de l'aperçu, permettre de recharger individuellement chaque item, sans changer les
+   autres ? ce serait un petit bouton (logo flèche qui tourne) placé à gauche des lettres a), b), etc. ; il n'apparait pas quand on télécharge
+   le pdf ». La nouvelle question prend la place de l'ancienne dans les questions gardées (IP.pool : même exercice, même nombre d'étoiles,
+   même rang) ; l'ancienne ne revient pas (sa clé reste dans IP.keys) ; la feuille est refaite, les autres questions restent. */
+function ipReload(i){
+  const p = IP && IP.rl && IP.rl[i]; if (!p || !p._o) return;
+  const L = ipPool(p._o.id)[p.level], j = L ? L.indexOf(p) : -1; if (j < 0) return;
+  const q = ipDraw(p._o, p.level, 16);        // 16 essais (4 ne suffisaient pas : livrets à ★ presque tous sur la feuille)
+  if (!q){ $('ipMsg').textContent = 'Pas d\'autre question différente pour cet exercice à ce niveau.'; return; }
+  L[j] = q; ipSync(true);
 }
 function ipDist(o){           // parts (%) des niveaux 1 à 4 : la barre de l'exercice, dans ses étoiles permises ; sans étoiles : ses quatre sortes (NSW)
   if (isNoStar(o)) return [30, 30, 20, 20];
@@ -31077,8 +31925,13 @@ function ipPrep(p){           // une fois par question : pointillés de la large
   const r = m.querySelector('.ip-ai').getBoundingClientRect(); I.kw = r.width / IP_PX; I.kh = r.height / IP_PX;
   return p._ip = I;
 }
+/* n° 117 (l'enseignant, 16.11.2026 : « quand on affiche les étoiles dans le pdf, il faut pas que ça décale les items vers la droite. mets les étoiles à
+   gauche sans décaler ») : les étoiles dans la marge ou l'écart entre deux colonnes, à gauche de la lettre ; 3 et 4 étoiles sur deux lignes (★★ puis
+   ★ ou ★★ : au plus 4 mm de large, l'écart entre deux colonnes) */
+const ipStarsH = n => '<span class="stars' + (n > 2 ? ' ip-s2' : '') + '">' + (n > 2 ? '★★<br>' + '★'.repeat(n - 2) : '★'.repeat(n)) + '</span>';
+const ipStW = p => IP.stars && !p.nostar ? Math.min(2, p.level) * 1.7 + .5 : 0;      // largeur des étoiles à gauche de la lettre (mm)
 const ipCellHTML = (p, let_, x) => '<div class="ip-cell"><span class="ip-let' + (IP.stars ? ' ips' : '') + '" style="width:' + x.lw + 'mm">' +
-  (IP.stars && !p.nostar ? '<span class="stars">' + '★'.repeat(p.level) + '</span>' : '') + let_ + ')</span>' + ipQaHTML(p, ipPrep(p).line, x.con, x.work, x.side) + '</div>';   // n° 37 : étoiles à gauche de la lettre
+  (IP.stars && !p.nostar ? ipStarsH(p.level) : '') + let_ + ')</span>' + ipQaHTML(p, ipPrep(p).line, x.con, x.work, x.side) + '</div>';
 const ipCK = x => x.w.toFixed(2) + '|' + (x.con ? 'c' : '') + (x.side || '') + (IP.stars ? '*' : '') + '|' + x.lw + '|' + x.work.toFixed(2);
 function ipMeasCells(list){   // hauteurs (mm) des questions, place pour répondre comprise, en une fois : [{p, w (largeur de la case), con, work, side}]
   const todo = list.filter(x => ipPrep(x.p).h[ipCK(x)] == null); if (!todo.length) return;
@@ -31090,7 +31943,7 @@ function ipWork(o, p){        // place pour répondre sous une question (mm)
   const w = ipEx(o.id).w + 2; return Math.max(IP_WMIN[w], (IP_WORK[o.id] || 0) * IP_WLV[(p.level || 1) - 1] * IP_WK[w]); }
 const IP_TH = new Map();
 function ipTxtH(html, w, cls){    // hauteur (mm) d'un texte de la feuille (titre d'exercice, consigne, titre de la feuille)
-  const k = cls + '|' + w.toFixed(2) + '|' + html; if (IP_TH.has(k)) return IP_TH.get(k);
+  const k = IP_F + '|' + cls + '|' + w.toFixed(2) + '|' + html; if (IP_TH.has(k)) return IP_TH.get(k);      // n° 116 : les tailles dépendent du format
   const m = ipMeas(); m.style.width = w + 'mm'; m.innerHTML = '<div class="' + cls + '">' + html + '</div>'; mathify(m);
   const h = m.firstChild.getBoundingClientRect().height / IP_PX; IP_TH.set(k, h); return h; }
 
@@ -31133,15 +31986,22 @@ function ipQsU(u, n){         // les n questions d'un exercice de la feuille ; b
     T.sort((a, b) => a[0] - b[0] || a[1] - b[1]).forEach(t => { out.push(t[2]); last = t[3]; }); }
   return out;
 }
+// n° 116 : dans un petit format, chaque question à figure a la figure à gauche quand elle y tient (A4 : tout l'exercice, ou rien)
+const ipSideOf = (u, p, cw, lw) => p.fig && cw - lw - p._ip.fw - 4 >= Math.max(30, p._ip.rw) ? (u.bl === 'don' ? 2 : 1) : 0;
 function ipBlock(u, idx, rows){   // un exercice : ses questions (rows lignes), colonnes, hauteurs
   u.os.forEach(o => { const P = ipPool(o.id); if ([1, 2, 3, 4].reduce((n, l) => n + P[l].length, 0) < 4) ipQs(o, 4); });     // un échantillon pour choisir les colonnes
   const all = u.os.flatMap(o => [1, 2, 3, 4].flatMap(l => ipPool(o.id)[l])); all.forEach(ipPrep);
-  const smx = IP.stars ? Math.max(0, ...u.os.filter(o => !isNoStar(o)).map(o => { const d = ipDist(o).slice(0, ipCap(o)); let m = 0; d.forEach((v, l) => { if (v > 0) m = l + 1; }); return m; })) : 0;
-  const lwOf = n => (n > 26 ? 9 : IP_LET) + (smx ? smx * IP_STW + .8 : 0);      // colonne de la lettre : plus large dès aa) ; n° 37 : les étoiles à gauche (plus haut niveau de l'exercice)
+  const lwOf = n => n > 26 ? 9 : IP_LET;      // colonne de la lettre : plus large dès aa) ; n° 117 : les étoiles dans la marge, à gauche (la colonne ne s'élargit plus)
   const need = Math.max(0, ...all.map(p => p._ip.need)) + lwOf(rows * 4) + 1.5;
   const cn = all.map(ipCon), sameCon = all.length > 1 && cn.every(c => c && c === cn[0]);
   const cmax = !sameCon && all.some(p => p._ip.cl > 80) ? 2 : all.some(p => p.fig) ? 3 : 4;
   let c = cmax; while (c > 1 && (IP_CW - (c - 1) * IP_GC) / c < need) c--;
+  if (IP_F !== 'a4' && c > 1 && all.some(p => p.fig)){     // n° 116 : morceau peu haut ; moins de colonnes si la figure passe alors à gauche des calculs
+    const lw0 = lwOf(rows * c); let best = null;            // (moins haut) : le plus de questions par mm de hauteur, d'après l'échantillon
+    for (let cc = c; cc >= 1; cc--){ const cw0 = (IP_CW - (cc - 1) * IP_GC) / cc;
+      const XS = all.map(p => ({p, w: cw0, con: true, work: ipWork(p._o || u.o, p), side: ipSideOf(u, p, cw0, lw0), lw: lw0})); ipMeasCells(XS);
+      const d = cc / (Math.max(...XS.map(x => x.p._ip.h[ipCK(x)])) + IP_GR); if (!best || d > best.d + 1e-9) best = {cc, d}; }
+    c = best.cc; }
   let Q = ipQsU(u, rows * c); Q.forEach(ipPrep);
   for (let t = 0; t < 4 && c > 1; t++){        // une question tirée à l'instant est plus large : moins de colonnes
     const nd = Math.max(...Q.map(p => p._ip.need)) + lwOf(Q.length) + 1.5; if ((IP_CW - (c - 1) * IP_GC) / c >= nd) break;
@@ -31149,24 +32009,26 @@ function ipBlock(u, idx, rows){   // un exercice : ses questions (rows lignes), 
   const cons = Q.map(ipCon), common = Q.length > 1 && cons.every(x => x && x === cons[0]) ? cons[0] : '';
   const lw = lwOf(Q.length), cw = (IP_CW - (c - 1) * IP_GC) / c;
   const AQ = all.concat(Q.filter(p => !all.includes(p))), side = AQ.some(p => p.fig) && AQ.every(p => !p.fig || cw - lw - p._ip.fw - 4 >= Math.max(30, p._ip.rw)) ? (u.bl === 'don' ? 2 : 1) : 0;
-  const X = Q.map(p => ({p, w: cw, con: !common, work: ipWork(p._o || u.o, p), side, lw})); ipMeasCells(X);
+  const X = Q.map(p => ({p, w: cw, con: !common, work: ipWork(p._o || u.o, p), side: IP_F === 'a4' ? side : ipSideOf(u, p, cw, lw), lw})); ipMeasCells(X);
   const R = []; for (let i = 0; i < Q.length; i += c){ const xs = X.slice(i, i + c);
     R.push({qs: xs.map(x => x.p), xs, i, work: Math.max(...xs.map(x => x.work)), h: Math.max(...xs.map(x => x.p._ip.h[ipCK(x)])) + IP_GR}); }
   const name = '<span class="ip-hn">' + (idx + 1) + ')</span> ' + ipUName(u), con = common ? ipNb(common) + (/[.?!:…]\s*$/.test(common.replace(/<[^>]+>/g, '')) ? '' : '.') : '';
-  return {u, o: u.o, id: u.id, os: u.os, mix: u.mix, idx, Q, c, cw, side, rows: R, name, con, hh: ipTxtH(name, IP_CW, 'ip-h'), hc: con ? ipTxtH(con, IP_CW, 'ip-cc') : 0, short: Q.length < rows * c};
+  const wide = IP_F !== 'a4' && Q.length > 0 && Math.max(...Q.map(p => p._ip.need)) + lw + 1.5 > IP_CW + .5;     // n° 116 : plus large que le morceau (figure jamais réduite)
+  return {u, o: u.o, id: u.id, os: u.os, mix: u.mix, idx, Q, c, cw, side, rows: R, name, con, hh: ipTxtH(name, IP_CW, 'ip-h'), hc: con ? ipTxtH(con, IP_CW, 'ip-cc') : 0, short: Q.length < rows * c, wide};
 }
-function ipAnsPrep(B){        // l'encadré « Réponses » (comme ses fiches : les réponses seulement, en rangées alignées par exercice) : colonnes, rangées,
-  // hauteurs (mm) ; cols1 : en un seul morceau, colonnes de même hauteur ; h : sa hauteur mesurée ; oh : titre, cadre et marges
-  const G = B.filter(b => b.Q.length), kmax = Math.max(0, ...G.flatMap(b => b.Q.map(p => p._ip.kw)));
-  const C = kmax + 6 <= (IP_CW - 6 - 2 * 5) / 3 ? 3 : kmax + 6 <= (IP_CW - 6 - 5) / 2 ? 2 : 1, cw = (IP_CW - 6 - (C - 1) * 5) / C, iw = cw - 5.5;
+function ipAnsPrep(B, aw){    // l'encadré « Réponses » (comme ses fiches : les réponses seulement, en rangées alignées par exercice) : colonnes, rangées,
+  // hauteurs (mm) ; cols1 : en un seul morceau, colonnes de même hauteur ; h : sa hauteur mesurée ; oh : titre, cadre et marges ;
+  // aw (n° 116) : sa largeur (petits formats : le code QR est à sa droite)
+  const W = aw || IP_CW, G = B.filter(b => b.Q.length), kmax = Math.max(0, ...G.flatMap(b => b.Q.map(p => p._ip.kw))), solo = G.length === 1;   // n° 117 : un seul exercice, sans « 1) »
+  const C = kmax + 6 <= (W - 6 - 2 * 5) / 3 ? 3 : kmax + 6 <= (W - 6 - 5) / 2 ? 2 : 1, cw = (W - 6 - (C - 1) * 5) / C, iw = cw - (solo ? 0 : 5.5);
   const lines = []; G.forEach(b => { const kw = Math.min(iw, Math.max(...b.Q.map(p => p._ip.kw)) + .3), per = Math.max(1, Math.floor((iw + 2.5) / (kw + 2.5)));
     for (let i = 0; i < b.Q.length; i += per){ const qs = b.Q.slice(i, i + per); lines.push({b, i, qs, kw, h: Math.max(4.3, ...qs.map(p => p._ip.kh)) + .4, g: !i}); } });
-  const A = {C, cw, lines};
+  const A = {C, cw, lines, W, solo};
   const bal = L => { const tot = L.reduce((a, l) => a + l.h + .9, 0); let lo = tot / C / 2, hi = tot + 1;      // colonnes de même hauteur, au plus C
     for (let t = 0; t < 30; t++){ const mid = (lo + hi) / 2; if (ipAnsFill(L, C, mid).length <= C) hi = mid; else lo = mid; } return ipAnsFill(L, C, hi); };
   A.bal = bal; A.cols1 = bal(lines);
-  const k = B.map(b => b.id + ':' + b.Q.map(p => p.key != null ? p.key : p.level).join(',')).join('|');
-  if (!IP.ac.has(k)){ const m = ipMeas(); m.style.width = IP_CW + 'mm'; m.innerHTML = ipAnsBox(A, A.cols1, 'Réponses'); mathify(m); IP.ac.set(k, m.firstChild.getBoundingClientRect().height / IP_PX); }
+  const k = IP_F + '|' + W.toFixed(2) + '|' + (solo ? 's|' : '') + B.map(b => b.id + ':' + b.Q.map(p => p.key != null ? p.key : p.level).join(',')).join('|');
+  if (!IP.ac.has(k)){ const m = ipMeas(); m.style.width = W + 'mm'; m.innerHTML = ipAnsBox(A, A.cols1, 'Réponses'); mathify(m); IP.ac.set(k, m.firstChild.getBoundingClientRect().height / IP_PX); }
   A.h = IP.ac.get(k); A.oh = Math.max(6, A.h - Math.max(...A.cols1.map(ipColH)));
   return A;
 }
@@ -31176,15 +32038,18 @@ function ipAnsFill(L, C, H){  // les rangées dans des colonnes d'au plus H (mm)
   L.forEach(l => { const h = l.h + (l.g && cols[cols.length - 1].length ? .9 : 0); if (y + h > H + .01 && cols[cols.length - 1].length){ cols.push([]); y = 0; } cols[cols.length - 1].push(l); y += l.h + (l.g && y ? .9 : 0); });
   return cols;
 }
-function ipAnsBox(A, cols, title){   // un morceau de l'encadré : un exercice coupé reprend son numéro en haut de la colonne suivante
+function ipAnsBox(A, cols, title){   // un morceau de l'encadré ; n° 116 (l'enseignant, 16.11.2026 : « quand une question (1, 2, 3, ...) va sur deux
+  // colonnes, pas besoin de réécrire le numéro ») : le numéro d'un exercice une seule fois par encadré ; repris seulement en haut à gauche d'un
+  // encadré « Réponses (suite) » d'une autre page, qui commence au milieu d'un exercice
   return '<div class="ip-ans"><div class="ip-at">' + title + '</div><div class="ip-acs">' + cols.map((col, ci) => {
     const ch = []; col.forEach(l => { const last = ch[ch.length - 1]; if (last && last.b === l.b) last.ls.push(l); else ch.push({b: l.b, g: l.g, ls: [l]}); });
-    return '<div class="ip-ac" style="width:' + (A.cw + (ci ? 2.5 : 0)).toFixed(2) + 'mm">' + ch.map(c => '<div class="ip-ag' + (c.g ? '' : ' ip-cont') + '"><span class="ip-an">' + c.b.num + ')</span><div class="ip-ais">' +
+    return '<div class="ip-ac" style="width:' + (A.cw + (ci ? 2.5 : 0)).toFixed(2) + 'mm">' + ch.map((c, gi) => '<div class="ip-ag' + (c.g ? '' : ' ip-cont') + '">' + (A.solo ? '' : '<span class="ip-an">' + (c.g || (!ci && !gi) ? c.b.num + ')' : '') + '</span>') + '<div class="ip-ais">' +
       c.ls.flatMap(l => l.qs.map((p, j) => '<span class="ip-ai" style="width:' + l.kw.toFixed(2) + 'mm"><b>' + ipLetter(l.i + j) + ')</b> ' + p._ip.key + '</span>')).join('') + '</div></div>').join('') + '</div>';
   }).join('') + '</div></div>';
 }
-function ipAnsFlow(A, k, y, N){   // l'encadré trop haut pour une page : il commence sous les questions (ou à la page suivante) et continue sur les pages
-  // suivantes, en morceaux de C colonnes ; le dernier morceau a des colonnes de même hauteur (en haut de sa page, ou en bas s'il est sous les questions)
+function ipAnsFlow(A, k, y, N, qb){   // l'encadré trop haut pour une page : il commence sous les questions (ou à la page suivante) et continue sur les pages
+  // suivantes, en morceaux de C colonnes ; le dernier morceau a des colonnes de même hauteur (en haut de sa page, ou en bas s'il est sous les questions) ;
+  // qb (n° 116, petits formats) : hauteur du code QR, à droite du dernier morceau
   const ch = [], L = A.lines; let i = 0; y += IP_GA;
   if (IP_BOT - y < A.oh + 14){ k++; y = IP_TOP2; }
   while (i < L.length){
@@ -31196,12 +32061,19 @@ function ipAnsFlow(A, k, y, N){   // l'encadré trop haut pour une page : il com
     ch.push({k, y, cols, i0: i}); i = j; k++; y = IP_TOP2;
   }
   const z = ch[ch.length - 1]; z.cols = A.bal(L.slice(z.i0)); z.h = A.oh + Math.max(...z.cols.map(ipColH)) + 1;
-  if (ch.length === 1 || z.k === ch[0].k) z.y = IP_BOT - z.h;          // sous les questions : en bas de la page
+  if (qb){ z.q = true; z.hq = Math.max(z.h, qb); }
+  if (ch.length === 1 || z.k === ch[0].k) z.y = IP_BOT - (z.hq || z.h);          // sous les questions : en bas de la page
   ch.forEach((c, n) => c.title = n ? 'Réponses (suite)' : 'Réponses');
   return ch;
 }
 function ipHead(){            // en-tête de la 1re page : classe, titre entre deux traits, QR code ; rend le haut du contenu (mm)
-  const qr = IP.qr && LNK && LNK.qr ? LNK.qr : null, qs = qr ? Math.min(28, Math.max(20, (qr.size + 8) * .38)) : 0, cls = IP.cls.trim();
+  const qr = IP.qr && LNK && LNK.qr ? LNK.qr : null, cls = IP.cls.trim();
+  if (IP_F !== 'a4'){         // n° 116, petits formats (QCM : B, C, F) : titre et classe sur une ligne ; le code QR en bas de la dernière page (ipLay)
+    const tl = '<span class="ip-tlt">' + ipEsc(ipTitle() || ' ') + '</span>' + (cls ? '<span class="ip-tlc">Classe : ' + ipEsc(cls) + '</span>' : ''), th = ipTxtH(tl, IP_CW, 'ip-tl');
+    const qs = qr ? Math.min(22, Math.max(17, (qr.size + 8) * .32)) : 0;     // 0,32 mm par module (A4 : 0,38)
+    return {qr, qs, qh: qr ? qs + 6.3 : 0, cls, y: IP_HT, tl, th, top: IP_HT + th + 3.5, small: true};
+  }
+  const qs = qr ? Math.min(28, Math.max(20, (qr.size + 8) * .38)) : 0;
   const y = cls ? 14 : 10, tw = IP_CW - (qr ? qs + 4 : 0), th = Math.max(15, ipTxtH(ipEsc(ipTitle() || ' '), tw, 'ip-tt') + 2);
   const tb = Math.max(th, qr ? qs : 0);
   return {qr, qs, cls, y, tw, tb, top: y + Math.max(tb, qr ? qs + 6.5 : 0) + 5};
@@ -31209,24 +32081,56 @@ function ipHead(){            // en-tête de la 1re page : classe, titre entre d
 function ipLay(X, r){         // exercices X avec r[i] lignes : pages, place de chaque exercice, tout tient-il ?
   const N = IP.pages, Hd = ipHead(), B = X.map((x, i) => ipBlock(x.u, i, r[i])); let nb = 0;
   B.forEach(b => { if (b.Q.length) b.num = ++nb; b.name = '<span class="ip-hn">' + (b.num || 0) + ')</span> ' + ipUName(b.u); });   // 1), 2)… sans trou (un exercice sans question)
-  const A = IP.ans ? ipAnsPrep(B) : null, top = k => k ? IP_TOP2 : Hd.top;
-  const one = !A || A.h + IP_GA <= IP_BOT - top(N - 1) + .01;          // l'encadré tient en bas de la dernière page (sinon : sur plusieurs pages)
-  const bq = k => one && A && k === N - 1 ? IP_BOT - A.h - IP_GA : IP_BOT;
-  const pages = [[]], H = B.map(() => 0); let k = 0, y = top(0), fits = true;
+  // n° 117 (l'enseignant, 16.11.2026 : « Quand il y a un seul exercice ça ne sert à rien d'avoir la ligne 1) Multiplication de monômes. Après le
+  // titre, dans ce cas, on peut donc directement passer aux items a), b), ... » ; QCM : tous les formats) : la consigne commune reste
+  if (nb === 1) B.forEach(b => { if (b.Q.length){ b.name = ''; b.hh = 0; } });
+  const qb = Hd.small && Hd.qr ? Hd.qh : 0;                            // n° 116 : petits formats, le code QR en bas de la dernière page, à droite des réponses
+  const A = IP.ans ? ipAnsPrep(B, qb ? IP_CW - Hd.qs - 4 : IP_CW) : null, top = k => k ? IP_TOP2 : Hd.top;
+  const hb = A ? Math.max(A.h, qb) : qb;                               // le bas de la dernière page : réponses (et code QR)
+  const one = !A || hb + IP_GA <= IP_BOT - top(N - 1) + .01;          // l'encadré tient en bas de la dernière page (sinon : sur plusieurs pages)
+  const bq = k => one && hb && k === N - 1 ? IP_BOT - hb - IP_GA : IP_BOT;
+  const pages = [[]], H = B.map(() => 0), tall = new Set(); let k = 0, y = top(0), fits = true;     // tall (n° 116) : exercices dont une ligne dépasse
   B.forEach((b, i) => b.rows.forEach((row, j) => {
+    if (!j && i && IP.brk && IP.brk[b.id] && y > top(k) + .01){ pages[k].end = y; k++; pages.push([]); y = top(k); }     // n° 118 : l'exercice commence une page
     const head = j ? 0 : (y > top(k) + .01 ? IP_GX : 0) + b.hh + b.hc;
     if (y + head + row.h > bq(k) + .01 && y > top(k) + .01){ pages[k].end = y; k++; pages.push([]); y = top(k); }
     if (!j){ if (y > top(k) + .01) y += IP_GX; pages[k].push({t: 'h', b, y}); y += b.hh + b.hc; H[i] += b.hh + b.hc; }
     pages[k].push({t: 'r', b, row, y}); y += row.h; H[i] += row.h;
-    if (y > bq(k) + .01) fits = false; }));
+    if (y > bq(k) + .01){ fits = false; tall.add(b.num); } }));
   pages[k].end = y;
-  let ans = A && one ? [{k: N - 1, y: IP_BOT - A.h, cols: A.cols1, title: 'Réponses'}] : null, np = Math.max(pages.length, A && one ? N : 0);
-  if (A && !one){ ans = ipAnsFlow(A, k, y, N); if (!ans) fits = false; else np = Math.max(pages.length, ans[ans.length - 1].k + 1); }
+  let ans = A && one ? [{k: N - 1, y: IP_BOT - (qb ? hb : A.h), cols: A.cols1, title: 'Réponses', q: !!qb, hq: hb}] : null, np = Math.max(pages.length, (A || qb) && one ? N : 0);
+  if (A && !one){ ans = ipAnsFlow(A, k, y, N, qb); if (!ans) fits = false; else np = Math.max(pages.length, ans[ans.length - 1].k + 1); }
+  const qrb = !A && qb ? {k: N - 1, y: IP_BOT - qb} : null;           // sans les réponses : le code QR seul, en bas à droite
   const bot = k => ans && !one && ans[0].k === k ? ans[0].y - IP_GA : bq(k);     // la place des questions de chaque page (ipFill)
   if (np > N) fits = false;
-  return {N, Hd, B, A, ans, one, np, pages, H, fits, top, bot};
+  const wide = B.filter(b => b.wide).map(b => b.num); if (wide.length) fits = false;
+  return {N, Hd, B, A, ans, one, np, pages, H, fits, top, bot, qb, qrb, wide, tall: [...tall]};
+}
+/* n° 118 (l'enseignant, 16.11.2026 : « Dans la réglette qui décide de la place occupée de chaque exercice dans le pdf, mets un petit indicateur qui
+   montre où placer les barres pour que l'exercice se termine à la fin de la page (pour qu'en allant à la prochaine page ça commence un nouvel
+   exercice.) » ; « mets par exemple des petits pointillés et un texte en minuscule "fin page 1" » ; QCM : « Repère + aimant »).
+   Repères (ipTicks) : la place des questions de chaque page (L.bot − L.top), en % de toutes les pages ; « fin page 1 », « fin page 2 »… (petit
+   format : « fin recto »). Aimant (ipBarMove) : une séparation glissée à 2 % au plus d'un repère s'y colle, et l'exercice qui la suit commence
+   en haut d'une nouvelle page (IP.brk : identifiants des exercices de la feuille qui commencent une page ; ipLay) ; plus près d'aucun repère
+   (5 % : les repères bougent un peu avec la hauteur de l'encadré des réponses), la règle tombe (ipBrkCheck) ; pendant un glissement, les
+   repères ne bougent pas. Pas gardé d'une ouverture à l'autre. */
+const ipSepAt = id => { let c = 0; for (const u of IP.U){ if (u.id === id) return c; c += IP.share[u.id] || 0; } return null; };   // la séparation avant l'exercice id (%)
+function ipBrkCheck(){ Object.keys(IP.brk).forEach(id => { const c = ipSepAt(id); if (c == null || c <= .01 || !IP.ticks.some(t => Math.abs(t.p - c) <= 5)) delete IP.brk[id]; }); }
+function ipTicks(L){
+  const drag = IPD && IPD.bar && IPD.bar.dataset.k === 'share';   // pendant un glissement, les repères ne bougent pas (la cible reste fixe ; sinon
+  if (!drag) IP.ticks = [];                                         // ils suivaient la hauteur de l'encadré des réponses)
+  if (!drag && L && L.N > 1){ const cap = []; for (let k = 0; k < L.N; k++) cap.push(Math.max(0, L.bot(k) - L.top(k)));
+    const tot = cap.reduce((a, b) => a + b, 0); let c = 0;
+    if (tot > 0) for (let k = 0; k < L.N - 1; k++){ c += cap[k]; IP.ticks.push({p: 100 * c / tot, k}); } }
+  const bar = document.querySelector('#ipShare .ipbar'); if (!bar) return;
+  bar.querySelectorAll('.iptk').forEach(e => e.remove());
+  const on = Object.keys(IP.brk).map(ipSepAt).filter(c => c != null);
+  IP.ticks.forEach(t => { const e = document.createElement('span'); e.className = 'iptk' + (on.some(c => Math.abs(c - t.p) <= 5) ? ' on' : ''); e.style.left = t.p.toFixed(2) + '%';
+    e.innerHTML = '<span>' + (L.Hd.small ? 'fin recto' : 'fin page ' + (t.k + 1)) + '</span>'; bar.appendChild(e); });
+  bar.classList.toggle('iptks', IP.ticks.length > 0);
 }
 function ipFit(){             // les lignes de chaque exercice : une de plus à l'exercice le plus en retard sur sa part, tant que tout tient
+  ipGeo(IP.fmt);              // n° 116 : la page, ou le morceau de la feuille
   const X = IP.U.filter(ipOn).map(u => ({u, s: Math.max(1, IP.share[u.id] || 1)})), r = X.map(() => 1), full = X.map(() => false);   // part 0 : pas sur la feuille (n° 32)
   let L = ipLay(X, r);
   for (let it = 0; it < 600 && L.fits; it++){
@@ -31251,31 +32155,48 @@ function ipFill(L){           // la place libre de chaque page va à la place po
 }
 
 /* ---------- pages (aperçu et impression) ---------- */
-function ipPagesHTML(L){
-  const N = Math.max(L.N, L.np), Hd = L.Hd, t = ipEsc(ipTitle()), cls = Hd.cls ? 'Classe : ' + ipEsc(Hd.cls) : '';
+function ipPageIn(L, k, N){   // une page (A4) ou une face du morceau (n° 116 : ½, ⅓, ¼) : tout ce qu'elle contient, en mm depuis son coin
+  const Hd = L.Hd, t = ipEsc(ipTitle()), cls = Hd.cls ? 'Classe : ' + ipEsc(Hd.cls) : '';
+  const P = L.pages[k] || [], a = (y, s) => 'class="ip-a ' + s + '" style="top:' + y.toFixed(2) + 'mm';
   let h = '';
-  for (let k = 0; k < N; k++){
-    const P = L.pages[k] || [], a = (y, s) => 'class="ip-a ' + s + '" style="top:' + y.toFixed(2) + 'mm';
-    h += '<div class="ip-pw"><div class="ip-pg ip-sheet">';
+  if (Hd.small){ if (!k) h += '<div ' + a(Hd.y, 'ip-tl') + '">' + Hd.tl + '</div>'; }      // titre et classe sur une ligne ; rien au verso
+  else {
     if (k || cls) h += '<div ' + a(IP_HT, 'ip-hdr' + (k ? '' : ' ip-h1')) + '"><span>' + cls + '</span><span>' + (k ? t : '') + '</span></div>';
     if (!k) h += '<div ' + a(Hd.y, 'ip-tb') + '"><div class="ip-tt" style="height:' + Hd.tb.toFixed(2) + 'mm">' + t + '</div>' + (Hd.qr ? '<div class="ip-qr" style="width:' +
-      Hd.qs.toFixed(2) + 'mm">' + qrSVG(Hd.qr) + '<div class="ip-qrc">Entraîne-toi<br>en ligne</div></div>' : '') + '</div>';
-    P.forEach(x => {
-      if (x.t === 'h'){ h += '<div ' + a(x.y, 'ip-hb') + '"><div class="ip-h">' + x.b.name + '</div>' + (x.b.con ? '<div class="ip-cc">' + x.b.con + '</div>' : '') + '</div>'; return; }
-      const b = x.b, hh = x.row.h + (x.ex || 0) - IP_GR;
-      h += '<div ' + a(x.y, 'ip-row') + ';height:' + hh.toFixed(2) + 'mm">' + x.row.xs.map((c, j) => '<div style="width:' + b.cw.toFixed(2) + 'mm">' +
-        ipCellHTML(c.p, ipLetter(x.row.i + j), c) + '</div>').join('') + '</div>';
-    });
-    (L.ans || []).filter(c => c.k === k).forEach(c => { h += '<div ' + a(c.y, 'ip-answ') + '">' + ipAnsBox(L.A, c.cols, c.title) + '</div>'; });
-    h += '<div class="ip-ft" style="top:' + (IP_H - IP_HT - 4.2) + 'mm">Page ' + (k + 1) + ' sur ' + N + '</div></div></div>';
+      Hd.qs.toFixed(2) + 'mm">' + ipQrA(Hd.qr) + '<div class="ip-qrc">Entraîne-toi<br>en ligne</div></div>' : '') + '</div>';
+  }
+  P.forEach(x => {
+    if (x.t === 'h'){ if (x.b.name || x.b.con) h += '<div ' + a(x.y, 'ip-hb') + '">' + (x.b.name ? '<div class="ip-h">' + x.b.name + '</div>' : '') + (x.b.con ? '<div class="ip-cc">' + x.b.con + '</div>' : '') + '</div>'; return; }
+    const b = x.b, hh = x.row.h + (x.ex || 0) - IP_GR;
+    h += '<div ' + a(x.y, 'ip-row') + ';height:' + hh.toFixed(2) + 'mm">' + x.row.xs.map((c, j) => '<div class="ip-rc" style="width:' + b.cw.toFixed(2) + 'mm">' +
+      '<button type="button" class="ip-rl" data-ipr="' + (IP.rl.push(c.p) - 1) + '"' + (ipStW(c.p) ? ' style="margin-right:' + (ipStW(c.p) + .5).toFixed(2) + 'mm"' : '') + ' title="Une autre question à la place de celle-ci" aria-label="Une autre question">' + IP_RL + '</button>' +   // n° 117
+      ipCellHTML(c.p, ipLetter(x.row.i + j), c) + '</div>').join('') + '</div>';
+  });
+  const qrH = () => '<div class="ip-qr" style="width:' + Hd.qs.toFixed(2) + 'mm">' + ipQrA(Hd.qr) + '<div class="ip-qrc">Entraîne-toi<br>en ligne</div></div>';
+  (L.ans || []).filter(c => c.k === k).forEach(c => { h += '<div ' + a(c.y, 'ip-answ' + (IP.up ? ' ip-up' : '') + (c.q ? ' ip-aq' : '')) + (c.q ? ';height:' + c.hq.toFixed(2) + 'mm' : '') + '">' +
+    ipAnsBox(L.A, c.cols, c.title) + (c.q ? qrH() : '') + '</div>'; });            // n° 116 : à l'envers (case de la fenêtre) ; code QR à droite (petits formats)
+  if (L.qrb && L.qrb.k === k) h += '<div ' + a(L.qrb.y, 'ip-aq ip-qa1') + ';height:' + L.qb.toFixed(2) + 'mm">' + qrH() + '</div>';
+  if (!Hd.small) h += '<div class="ip-ft" style="top:' + (IP_H - IP_HT - 4.2) + 'mm">Page ' + (k + 1) + ' sur ' + N + '</div>';
+  else if (k < N - 1) h += '<div class="ip-ft ip-tf" style="top:' + (IP_H - 10.6).toFixed(2) + 'mm;right:' + IP_MX + 'mm">Tourne la feuille →</div>';
+  return h;
+}
+const IP_RL = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.2 8.6A5.2 5.2 0 1 1 11.6 4.3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M12.6 1.6v3.6H9" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+function ipPagesHTML(L){      // les pages à imprimer ; petits formats (n° 116) : chaque face de la feuille A4 = les copies de la même face du morceau
+  const N = Math.max(L.N, L.np); let h = ''; IP.rl = [];     // n° 117 : les questions des boutons ↻ (les copies d'un morceau ont les mêmes)
+  for (let k = 0; k < N; k++){
+    const inn = ipPageIn(L, k, N);
+    if (!L.Hd.small){ h += '<div class="ip-pw"><div class="ip-pg ip-sheet">' + inn + '</div></div>'; continue; }
+    h += '<div class="ip-pw"><div class="ip-pg">' + ipPcPos(IP_F).map(([x, y]) => '<div class="ip-pc ip-sheet ip-fs ip-f' + IP_F + '" style="left:' + x + 'mm;top:' + y + 'mm;width:' +
+      IP_W + 'mm;height:' + IP_H + 'mm">' + inn + '</div>').join('') + ipCuts(IP_F) + '</div></div>';
   }
   return h;
 }
 function ipScale(){           // l'aperçu : deux pages côte à côte quand elles ont la place ; un clic : une page en grand
   const v = $('ipPrev'); if (!v || !v.querySelector('.ip-pw') || $('ipHost')) return;
-  const W = v.clientWidth - 24, pw = IP_W * IP_PX, big = v.classList.contains('ipbig'), per = big || W < 2 * 280 + 16 ? 1 : 2;
+  const W = v.clientWidth - 24, pw = IP_SW * IP_PX, big = v.classList.contains('ipbig'), per = big || W < 2 * 280 + 16 ? 1 : 2;     // n° 116 : la feuille (A4)
   const k = Math.max(.2, Math.min(big ? 1.25 : .62, (W - (per - 1) * 16) / per / pw));
-  v.querySelectorAll('.ip-pw').forEach(w => { w.style.width = pw * k + 'px'; w.style.height = IP_H * IP_PX * k + 'px'; w.firstChild.style.transform = 'scale(' + k + ')'; });
+  v.querySelectorAll('.ip-pw').forEach(w => { w.style.width = pw * k + 'px'; w.style.height = IP_SH * IP_PX * k + 'px'; w.firstChild.style.transform = 'scale(' + k + ')'; });
+  v.style.setProperty('--iprl', Math.min(15 / k, 6 * IP_PX).toFixed(2) + 'px');      // n° 117 : bouton ↻ d'environ 15 px à l'écran, au plus 6 mm sur la feuille
 }
 function ipShow(L){ ipUnprint(); const v = $('ipPrev'); v.innerHTML = ipPagesHTML(L); mathify(v); ipScale(); }
 function ipPrint(){           // la fenêtre d'impression du navigateur (imprimante, ou « Enregistrer au format PDF ») : seulement les pages
@@ -31332,6 +32253,12 @@ function ipNums(){ const n = {}; let k = 0; IP.U.forEach(u => n[u.id] = ipOn(u) 
 function ipUI(){              // la section de la fenêtre : options, barre des exercices, une ligne par exercice (bloc mélangé : son titre, puis ses exercices)
   $('ipCls').value !== IP.cls && ($('ipCls').value = IP.cls);
   $('ipPg').textContent = IP.pages; $('ipAns').checked = IP.ans; $('ipQr').checked = IP.qr; $('ipSt').checked = IP.stars;
+  document.querySelectorAll('#ipSec button[data-ipf]').forEach(b => { const on = b.dataset.ipf === IP.fmt; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });   // n° 116
+  $('ipUp').checked = IP.up; $('ipUp').closest('label').hidden = !IP.ans;     // n° 118 : seulement avec « Réponses à la fin »
+  if (document.activeElement !== $('ipTi')) $('ipTi').value = $('lTitle').value;          // n° 118 : le titre du lien, aussi ici
+  $('ipTi').placeholder = (LNK && LNK.sug) || linkSugT() || 'Titre de la feuille';
+  document.querySelector('#ipSec button[data-ipp="1"]').disabled = IP.pages >= ipPgMax(); document.querySelector('#ipSec button[data-ipp="-1"]').disabled = IP.pages <= 1;
+  $('ipHintF').textContent = ipHintF();
   const U = IP.U, one = U.length < 2, many = bl => IP.O.filter(x => x.bl === bl).length > 1, done = {};
   $('ipShareL').hidden = one; $('ipShare').innerHTML = one ? '' : ipBarHTML('share', U.map(u => IP.share[u.id]), 0,
     U.map(u => u.mix ? ipBlName(u.bl).replace(/<[^>]+>/g, '') : shName(u.o)));   // 0 % permis (n° 32) ; n° 37 : le nom de chaque exercice
@@ -31341,7 +32268,13 @@ function ipUI(){              // la section de la fenêtre : options, barre des 
       (isNoStar(o) ? '<span class="ipns">sans étoiles</span>' : cap < 2 ? '<span class="ipns">★ seulement</span>' : ipBarHTML('st:' + o.id, d, 0)) + '</div>' +
       '<div class="ipw"><button type="button" data-ipw="' + o.id + '" data-d="-1"' + (e.w <= -2 ? ' disabled' : '') + ' aria-label="Moins de place">−</button><span>' + IP_WL[e.w + 2] +
       '</span><button type="button" data-ipw="' + o.id + '" data-d="1"' + (e.w >= 2 ? ' disabled' : '') + ' aria-label="Plus de place">+</button></div></div>'; };
-  $('ipEx').innerHTML = '<div class="ipxh">Exercice</div><div class="ipxh">Étoiles</div><div class="ipxh">Place pour répondre</div>' + U.map((u, i) => {
+  // n° 117 (l'enseignant, 16.11.2026 : « permets aussi de modifier la place pour répondre pour tous les exos d'un coup ») : une ligne « Tous les
+  // exercices » ; − / + font un pas pour chaque exercice (les écarts entre exercices restent) ; le libellé : la place commune, sinon « différentes »
+  const WS = IP.O.map(o => ipEx(o.id).w), w0 = WS.every(v => v === WS[0]) ? WS[0] : null;
+  const allW = IP.O.length < 2 ? '' : '<div class="ipxr ipall"><div class="ipxn">Tous les exercices</div><div class="ipxs"></div><div class="ipw"><button type="button" data-ipw="*" data-d="-1"' +
+    (WS.every(v => v <= -2) ? ' disabled' : '') + ' aria-label="Moins de place pour tous les exercices">−</button><span>' + (w0 === null ? 'différentes' : IP_WL[w0 + 2]) +
+    '</span><button type="button" data-ipw="*" data-d="1"' + (WS.every(v => v >= 2) ? ' disabled' : '') + ' aria-label="Plus de place pour tous les exercices">+</button></div></div>';
+  $('ipEx').innerHTML = '<div class="ipxh">Exercice</div><div class="ipxh">Étoiles</div><div class="ipxh">Place pour répondre</div>' + allW + U.map((u, i) => {
     let h = '';
     if (many(u.bl) && !done[u.bl]){ done[u.bl] = 1;          // case « mélanger » (QCM du 09.11.2026 : une par bloc, au moins deux exercices du bloc)
       h += '<label class="ipmx' + (u.mix ? ' on' : '') + (u.mix && !ipOn(u) ? ' ipoff' : '') + '" title="Un seul exercice sur la feuille : les questions de ces exercices mélangées, avec le nom du bloc">' + (u.mix ? ipMvH(u, i, U.length) : '') + '<input type="checkbox" data-ipmix="' + u.bl + '"' + (u.mix ? ' checked' : '') + '> ' +
@@ -31356,16 +32289,21 @@ function ipRefresh(live){     // après chaque changement de la fenêtre : régl
   const E = LNK.E, O = E && LNK.url ? pObjs(E) : [];
   $('ipSec').classList.toggle('ipnone', !O.length);
   if (!O.length){ $('ipPrev').innerHTML = ''; return; }
-  if (!IP) ipInit();
+  if (!IP){ ipInit(); ipLoad(); }       // n° 117 : réglages gardés dans le navigateur
   const sig = JSON.stringify([E.num, E.opt]);
   if (IP.sig !== sig){ IP.sig = sig; ipReset(); }
   IP.E = E; IP.O = O; IP.U = ipUnits(); IP.S = Object.assign(stateFromP(E), {two: false, twoSame: false});
-  ipShares(); if (!live) ipUI();
+  ipShares(); ipBrkCheck(); if (!live) ipUI();
   let L = null;
   try { L = ipFit(); } catch (e) { console.error('feuille', e); $('ipMsg').textContent = 'La feuille n\'a pas pu être préparée.'; return; }
-  IP.L = L; ipShow(L);
+  IP.L = L; ipShow(L); ipSave(); ipTicks(L);
   const need = L.np, msg = [];
-  if (need > L.N) msg.push('Tout ne tient pas sur ' + L.N + (L.N > 1 ? ' pages' : ' page') + ' : il en faut au moins ' + need + '.');
+  const exs = a => (a.length > 1 ? 'Exercices ' + a.slice(0, -1).join(', ') + ' et ' + a[a.length - 1] : 'Exercice ' + a[0]) + ' : ' + (a.length > 1 ? 'des questions' : 'une question');   // n° 116
+  if (L.wide && L.wide.length) msg.push(exs(L.wide) + ' trop large' + (L.wide.length > 1 ? 's' : '') + ' pour ce format : prends un format plus grand.');
+  else if (!L.fits && need <= L.N) msg.push((L.tall && L.tall.length ? exs(L.tall) + ' trop haute' + (L.tall.length > 1 ? 's' : '') : 'Une question trop haute') + ' pour ' + (L.Hd.small ? 'ce format' : 'une page') +
+    ' : diminue sa place pour répondre (− / +)' + (L.Hd.small ? ', enlève le code QR ou les réponses, ou prends un format plus grand.' : '.'));
+  if (need > L.N) msg.push(L.Hd.small ? 'Tout ne tient pas sur ' + (L.N > 1 ? 'le recto et le verso' : 'le recto') + ' : ' + (L.N < 2 ? 'ajoute le verso (Pages : 2), ' : '') +   // n° 116
+    'enlève un exercice ou de la place pour répondre, ou prends un format plus grand.' : 'Tout ne tient pas sur ' + L.N + (L.N > 1 ? ' pages' : ' page') + ' : il en faut au moins ' + need + '.');
   // à côté du nombre de questions : la part de la feuille (barre du dessus ; n° 32, l'enseignant : « tu as la place de marquer avec le nombre de
   // questions, également la place que ça prend dans le pdf »)
   const pc = u => IP.U.length > 1 && u ? ' <span class="nw">· ' + Math.round(IP.share[u.id] || 0) + ' % de la feuille</span>' : '';
@@ -31378,19 +32316,26 @@ function ipRefresh(live){     // après chaque changement de la fenêtre : régl
   $('ipMsg').textContent = msg.join(' ');
 }
 $('ipCls').addEventListener('input', () => { if (!IP) return; IP.cls = $('ipCls').value; ipSync(); });
+// n° 118 (l'enseignant : « Propose aussi un champ pour inscrire le titre du pdf (même que le titre en haut pour le code qr) » ; QCM : « Même titre
+// que le lien ») : écrire ici écrit dans le titre du haut (le lien, le code QR et la feuille changent ensemble)
+$('ipTi').addEventListener('input', () => { const l = $('lTitle'); l.value = $('ipTi').value; l.dispatchEvent(new Event('input')); });
 $('ipSec').addEventListener('click', e => {
   const t = e.target; if (!IP) return;
-  const pg = t.closest('button[data-ipp]'); if (pg){ IP.pages = Math.max(1, Math.min(8, IP.pages + Number(pg.dataset.ipp))); $('ipPg').textContent = IP.pages; ipSync(); return; }
-  const w = t.closest('button[data-ipw]'); if (w){ const x = ipEx(w.dataset.ipw); x.w = Math.max(-2, Math.min(2, x.w + Number(w.dataset.d))); ipSync(true); return; }
+  const pg = t.closest('button[data-ipp]'); if (pg){ IP.pages = Math.max(1, Math.min(ipPgMax(), IP.pages + Number(pg.dataset.ipp))); $('ipPg').textContent = IP.pages; ipSync(); return; }
+  const fm = t.closest('button[data-ipf]'); if (fm){ if (IP.fmt !== fm.dataset.ipf){ IP.fmt = fm.dataset.ipf; IP.pages = Math.min(IP.pages, ipPgMax()); ipSync(true); } return; }   // n° 116
+  const w = t.closest('button[data-ipw]'); if (w){ (w.dataset.ipw === '*' ? IP.O.map(o => o.id) : [w.dataset.ipw]).forEach(id => { const x = ipEx(id); x.w = Math.max(-2, Math.min(2, x.w + Number(w.dataset.d))); });   // n° 117 : « * » = tous
+    ipSync(true); return; }
   const mo = t.closest('button[data-ipo]'); if (mo){ e.preventDefault(); if (!mo.disabled) ipOrdMove(mo.dataset.ipo, Number(mo.dataset.d)); return; }   // n° 37 : ▲ ▼
   if (t.closest('.ipdg')){ e.preventDefault(); return; }                // la poignée (dans l'étiquette « mélanger » : ne coche rien)
   if (t.closest('#ipNew')){ ipReset(); ipSync(true); return; }
   if (t.closest('#ipPrint')){ ipSync(true); ipPrint(); return; }
+  if (t.closest('.ip-ql')){ e.preventDefault(); tryLink(); return; }        // n° 119 : le code QR de l'aperçu, comme « Essayer »
+  const rl = t.closest('.ip-rl'); if (rl){ e.preventDefault(); ipReload(Number(rl.dataset.ipr)); return; }     // n° 117 : avant le clic qui agrandit la page
   if (t.closest('.ip-pw')){ $('ipPrev').classList.toggle('ipbig'); ipScale(); }
 });
 $('ipSec').addEventListener('change', e => { const t = e.target; if (!IP) return;
   if (t.dataset.ipmix){ IP.mix[t.dataset.ipmix] = t.checked; ipSync(true); return; }
-  if (t.id === 'ipAns') IP.ans = t.checked; else if (t.id === 'ipQr') IP.qr = t.checked; else if (t.id === 'ipSt') IP.stars = t.checked; else return;
+  if (t.id === 'ipAns') IP.ans = t.checked; else if (t.id === 'ipQr') IP.qr = t.checked; else if (t.id === 'ipSt') IP.stars = t.checked; else if (t.id === 'ipUp') IP.up = t.checked; else return;
   ipSync(true); });
 // barres à glisser (QCM du 08.11.2026 : « Barres à glisser ») : une séparation suit le pointeur, **% par %** (n° 32 ; avant : pas de 5 %) ;
 // deux séparations au même endroit (un morceau à 0 %) : celle de gauche si on glisse vers la gauche, celle de droite si on glisse vers la droite.
@@ -31400,6 +32345,9 @@ function ipBarMove(D, cx){
   const V = D.V, h = D.h, a = V.slice(0, h).reduce((s, v) => s + v, 0), b = a + V[h] + V[h + 1];
   let p = Math.round((cx - D.r.left) / D.r.width * 100);
   p = Math.max(a + D.min, Math.min(b - D.min, p));
+  if (D.bar.dataset.k === 'share' && IP && IP.ticks){       // n° 118 : aimant des repères de fin de page
+    const raw = (cx - D.r.left) / D.r.width * 100, t = IP.ticks.find(t => Math.abs(t.p - raw) <= 2 && t.p >= a + D.min && t.p <= b - D.min);
+    D.snap = t ? t.p : null; if (t) p = t.p; }
   V[h] = p - a; V[h + 1] = b - p; [h, h + 1].forEach(j => { if (Math.abs(V[j]) < .01) V[j] = 0; }); D.moved = true; ipBarSet(D.bar, V); ipLive();   // n° 33 : 0 exact (sinon 1e-14 : l'exercice restait dans le lien)
 }
 function ipBarDown(e){
@@ -31430,7 +32378,8 @@ function ipBarKeep(D){         // les valeurs d'une barre dans l'état : parts (
   else if (k === 'lsh') shWrite(draft, LNK.EO || pObjs(LNK.E), V);     // lien : ses exercices (sans ceux décochés dans la fenêtre ; ceux de sa barre)
   else if (k === 'share'){ const v = shView(draft, IP.O), nv = {};      // feuille : un morceau par exercice de la feuille ; bloc mélangé : ses exercices gardent leurs proportions
     IP.U.forEach((u, i) => { if (!u.mix){ nv[u.o.id] = V[i]; return; } const t = u.os.reduce((a, o) => a + v[o.id], 0); u.os.forEach(o => nv[o.id] = t > 0 ? V[i] * v[o.id] / t : V[i] / u.os.length); });
-    shWrite(draft, IP.O, IP.O.map(o => nv[o.id])); }
+    shWrite(draft, IP.O, IP.O.map(o => nv[o.id]));
+    const nx = IP.U[D.h + 1]; if (nx && D.h != null){ if (D.snap != null) IP.brk[nx.id] = true; else delete IP.brk[nx.id]; } }     // n° 118 : collée à un repère
   else { const id = k.slice(3), d = [0, 0, 0, 0]; V.forEach((v, i) => d[i] = v); ipEx(id).d = d; }   // étoiles : la même barre dans la feuille et dans le lien
 }
 // pendant le glissement (n° 32, l'enseignant : « quand on fait glisser les réglettes (mais sans les lacher), tu pourrais actualiser en temps réel (ou presque

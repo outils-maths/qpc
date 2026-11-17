@@ -838,6 +838,7 @@ body.sturnd .lvb{display:none !important}
 .ip-sheet .frac{font-size:.92em}
 .ip-sheet .qbox{color:transparent;border-bottom:1pt dotted #000;min-width:12mm;line-height:1.3}
 .ip-sheet td .qbox{min-width:8mm}
+.ip-sheet .qbox.ipnd{border-bottom-color:transparent}   /* n° 124 : réponse d'un calcul, sans pointillés (place gardée) */
 .ip-sheet .ipnw{white-space:nowrap}
 .ip-sheet .fig{line-height:0}
 .ip-ans{border:.8pt solid #000;padding:1.6mm 3mm 2mm;font-size:9pt;line-height:1.35}
@@ -1257,6 +1258,7 @@ body.retpad .pane{padding-top:calc(var(--fs-ui) * 3.1)}
 .ip-aq .ip-ans{flex:1 1 auto;min-width:0}
 .ip-aq .ip-qr{flex:none}
 .ip-qa1{justify-content:flex-end}
+.ip-qa1.ip-qv{justify-content:flex-start}   /* n° 124 : au verso, le code QR seul en bas à gauche (les trous de perforation sont à droite) */
 .ip-up .ip-ans{transform:rotate(180deg)}
 /* n° 117 (16.11.2026) : bouton ↻ d'une question dans l'aperçu (jamais imprimé) ; « Tous les exercices » */
 .ip-rc{position:relative}
@@ -1303,6 +1305,77 @@ body.retpad .pane{padding-top:calc(var(--fs-ui) * 3.1)}
 .iptk>span{position:absolute;top:100%;left:0;transform:translateX(-50%);margin-top:.15em;font-size:.72em;line-height:1;color:var(--muted);white-space:nowrap}
 .iptk.on{border-left-color:var(--sel)}
 .iptk.on>span{color:var(--sel);font-weight:700}
+
+/* n° 125 : projeter la feuille */
+.ipt .prjgo{border-color:#aeb6bf;color:#5b6470;background:#fff;display:inline-flex;align-items:center;gap:.4em}
+.ipt .prjgo:hover,.ipt .prjgo:focus-visible{border-color:#7d8794;color:#2f3640}
+.prjgo svg{width:.68em;height:.68em}
+.prjopen{--accent:#1f5fa8}
+.prjg{display:inline-flex;align-items:flex-start;gap:.5em .8em;flex-wrap:wrap}
+.prjob{display:inline-flex;flex-direction:column;align-items:center;gap:.12em}
+.prjhint{font-size:.72em;color:var(--muted);font-weight:400;white-space:nowrap}
+.prjinf{border:0;background:none;padding:.08em;margin:0;color:#56708f;cursor:pointer;line-height:0;display:inline-flex;align-items:center;border-radius:50%;align-self:flex-start;margin-top:.45em}
+.prjinf:hover,.prjinf:focus-visible{color:#1f5fa8;background:rgba(31,95,168,.1)}
+.prjinf .pisvg{width:1.15em;height:1.15em}
+/* n° 131 (l'enseignant, 17.11.2026 : « bouton "essayer" : dans le bouton en très petit, marque "(mode élève)" » ; « aligne verticalement les trois
+   boutons "télécharger PDF", "projeter cette feuille" et "ouvrir une feuille" » ; « Mets le bouton "projeter cette feuille" juste à droite du texte
+   "feuille à imprimer", et change ce qui est marqué sur le bouton en : "projeter les questions de cette feuille" (sur deux lignes, en petit) » ;
+   « Le "réponses à la fin" doit être aligné verticalement avec les choix de classe et pages. » ; « dans le bouton "copier le lien", marque en très petit
+   "ex. pour Classroom" (en deuxième ligne) ») : lu ainsi : les trois boutons à la même hauteur
+   (centrés sur une ligne, même hauteur), « ou glisse le PDF sur la page » sous « Ouvrir », hors de la ligne ; le ▶ gardé devant « Projeter ».
+   Options : chaque réglage dans une case de même hauteur, alignée en haut : la 1re ligne de « Réponses à la fin » est à la hauteur des autres,
+   « Réponses à l'envers » dessous (sa place reste gardée sur ordinateur, n° 119). */
+#lTry .ltrym{font-size:.6em;font-weight:600;margin-left:.35em;opacity:.85}
+.lcpm{display:block;font-size:.6em;font-weight:600;line-height:1.1;opacity:.9}   /* n° 131 : « Copier le lien » / « ex. pour Classroom » (2e ligne, très petit) */
+.ipt{padding-bottom:1.1em}
+.ipt h3{margin:0}
+.iptr{margin-left:auto;display:inline-flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:.5em .8em}   /* « Enregistrer PDF » et « Ouvrir » ensemble, à droite */
+.ipt .btn{min-height:2.45em;display:inline-flex;align-items:center;justify-content:center}
+.ipt .prjgo{padding:.2em .75em}
+.prjgt{font-size:.74em;line-height:1.15;text-align:left;white-space:nowrap}
+.ipt .prjg{align-items:center}
+.ipt .prjob{position:relative}
+.ipt .prjhint{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:.15em}
+.ipt .prjinf{align-self:center;margin-top:0}
+.ipo{align-items:flex-start}
+.ipo>.ipf,.ipansg>.ipf:first-child{min-height:2.35em}
+.ipansg>.ipupl{margin-top:-.55em}
+/* n° 133 : confirmer « Projeter les questions de ce PDF » (#oPrjQ, comme la vidéo) ; 1★ … 4★ grisés sur une question de la feuille */
+#oPrjQ .vbox{max-width:none;width:min(94vw, 31em)}
+#lvBtns .btn:disabled{opacity:.35;cursor:default}
+/* n° 132 (l'enseignant, 17.11.2026 : « bouge le bouton "projeter les questions de cette feuille" juste à droite du bouton "nouvelles questions" (fais pareil
+   que ce bouton, i.e. mange un petit morceau de l'aperçu.) et change le "de cette feuille" en "de ce pdf". Change le nom du bouton "ouvrir une feuille (PDF)"
+   en "ouvrir un PDF" » ; puis « en dessous de copier l'image, écris "pour docs imprimés" » : 2e ligne du bouton, comme « ex. pour Classroom ») : « ↻ Nouvelles questions » et « ▶ Projeter les questions de ce PDF » côte à côte en haut à gauche de l'aperçu (.ipvbt), même style
+   (.ipnew), sur une ligne (lu ainsi : comme « Nouvelles questions ») ; l'en-tête de la section n'a plus que « Enregistrer PDF » et « Ouvrir un PDF ». */
+.ipvbt{position:absolute;left:5px;top:5px;z-index:3;display:flex;flex-wrap:wrap;align-items:stretch;gap:5px;max-width:calc(100% - 10px);font-size:.74em}
+.ipvbt .ipnew{position:static;font-size:1em}
+.ipvbt .prjgo svg{width:.75em;height:.75em;margin:0 .1em 0 .2em}
+.prje0{display:none}
+.lempty .prje0{display:flex;align-items:flex-start;gap:.5em;flex-wrap:wrap;margin-top:1.1em}
+.prjtoast{position:fixed;top:4.2em;left:50%;transform:translateX(-50%);z-index:9999;background:#fff4e5;border:1.5px solid #c25b00;color:#5a2d00;border-radius:.6em;padding:.5em 1em;font-weight:600;box-shadow:0 4px 18px rgba(0,0,0,.15);max-width:90vw}
+.prjtoast[hidden]{display:none}
+.prje{display:inline-flex;align-items:center;flex-wrap:wrap;gap:.22em;justify-content:center}
+.prje+.prje{margin-left:.45em}
+.prjn{font-weight:700;font-size:.8em;color:var(--muted);margin-right:.08em}
+.dot.pl{width:1.45em;height:1.45em;font-size:.72em;font-weight:700;line-height:1;display:inline-flex;align-items:center;justify-content:center;color:var(--ink)}
+.dot.pl.cur{color:#fff}
+.dot.pl.mk{width:1.45em;height:1.45em}
+.dot.hf{border-style:dashed;width:.78em;height:.78em}
+body.prjsm .dot.pl{width:.62em;height:.62em;font-size:inherit}
+body.prjsm .dot.pl .prjlt{display:none}
+.badge .prjl{font-weight:700;color:var(--ink);letter-spacing:.02em}
+.badge .prjhf{font-size:.78em;font-weight:600;color:var(--muted);border:1.5px dashed currentColor;border-radius:.5em;padding:.02em .45em}
+.prjend{display:none}
+body.prjfin .slot,body.prjfin .gview,body.prjfin .gmini,body.prjfin .emptymsg{display:none !important}
+body.prjfin .prjend{display:flex;flex:1;min-width:0;flex-direction:column;align-items:center;justify-content:center;gap:.8em;height:100%;font-size:calc(var(--fs-ui) * 1.3)}
+.prjft{margin:0 0 .5em;font-size:1.45em;font-weight:700;color:var(--ink);text-align:center}
+.prjfn{color:var(--muted);font-weight:600}
+body.prjfin #bAns,body.prjfin #bDet{visibility:hidden}
+body.prjfin #bRep,body.prjfin #bRet,body.prjfin #kb{display:none !important}
+.prjtri{width:.62em;height:.62em;vertical-align:.02em}
+body.prj header .title{flex:0 1 auto;min-width:6em;white-space:normal;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;line-height:1.2}   /* titre de la feuille : deux lignes au plus */
+body.prj header.hc2 .title{flex:1 1 14em}   /* ronds sur leur ligne : le titre reste à côté des boutons */
+.ip-qd{position:absolute;left:2mm;top:2mm;width:1px;height:1px;display:block;overflow:hidden;pointer-events:none}   /* n° 128 : la feuille cachée dans le PDF (jamais visible) */
 </style>
 </head>
 <body>
@@ -1340,6 +1413,7 @@ body.retpad .pane{padding-top:calc(var(--fs-ui) * 3.1)}
   </div>
   <div class="gview" id="grp"></div>
   <div class="gmini" id="gmini" hidden></div>
+  <div class="prjend" id="prjEnd"></div>
   <div class="emptymsg"><p class="em0">Aucune question : choisis les exercices dans les réglages.</p><button class="btn on em0" id="bEmpty">⚙ Réglages</button><span class="em1 rlv" id="rlv"><button class="btn" data-lv="1" title="Une question à 1 étoile (touche 1)">1</button><button class="btn" data-lv="2" title="Une question à 2 étoiles (touche 2)">2</button><button class="btn" data-lv="3" title="Une question à 3 étoiles (touche 3)">3</button><button class="btn" data-lv="4" title="Une question à 4 étoiles (touche 4)">4</button><button class="btn rlm keyl" data-m="1" title="Questions multiples (touche M)">M</button></span></div>
   <!-- mode élève (lien élèves, 06.11.2026) : liste des exercices, message -->
   <section class="stuS" id="stuS" aria-label="Exercices">
@@ -1354,6 +1428,7 @@ body.retpad .pane{padding-top:calc(var(--fs-ui) * 3.1)}
 </main>
 
 <div class="seqbox" id="seq" hidden aria-live="polite"></div>
+<input type="file" id="prjFile" accept=".pdf,application/pdf" hidden>
 <div class="gmeas" id="gmeas" aria-hidden="true"></div>
 
 <div class="kb" id="kb" hidden></div>
@@ -1418,7 +1493,7 @@ body.retpad .pane{padding-top:calc(var(--fs-ui) * 3.1)}
           <div class="lab keyl">Clavier</div>
           <div class="klist keyl">
             <span><kbd>Entrée</kbd> réponse, puis détail, puis question seule · <kbd>8</kbd> une ou deux questions · <kbd>M</kbd> questions multiples</span>
-            <span><kbd>→</kbd> suivante · <kbd>←</kbd> précédente · <kbd>R</kbd> réglages · <kbd>F</kbd> plein écran · <kbd>J</kbd> toutes les questions</span>
+            <span><kbd>→</kbd> suivante · <kbd>←</kbd> précédente · <kbd>R</kbd> réglages · <kbd>P</kbd> lien et impression · <kbd>F</kbd> plein écran · <kbd>J</kbd> toutes les questions</span>
             <span><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> question à <span class="stars">★</span> … <span class="stars">★★★★</span> · <kbd>7</kbd> <kbd>9</kbd> réponse seulement <span class="kw">à gauche / à droite</span><span class="kt">en haut / en bas</span></span>
             <span><kbd>Espace</kbd> (ou clic sur le « ? ») ouvrir la case, <kbd>Espace</kbd> encore la fermer · <kbd>Entrée</kbd> vérifier · <kbd>Échap</kbd> (ou clic à côté) fermer la case</span>
             <span>Dans la case : <kbd>Maj</kbd> <kbd>←</kbd> <kbd>→</kbd> le curseur · <kbd>↑</kbd> <kbd>↓</kbd> en haut, en bas · <kbd>/</kbd> fraction · <kbd>P</kbd> période · <kbd>*</kbd> ∙</span>
@@ -1438,7 +1513,7 @@ body.retpad .pane{padding-top:calc(var(--fs-ui) * 3.1)}
     <div class="boxfoot">
       <span class="warn" id="setWarn"></span>
       <button class="btn" id="bSnc" title="Séances personnalisées : enregistrer les exercices cochés, lancer une séance enregistrée"><span class="sncPl sncPlB" aria-hidden="true"><svg class="tri" viewBox="0 0 10 10"><path d="M10 5L0 0V10Z"/></svg></span>Séances<span class="lbx3"> personnalisées</span></button>
-      <button class="btn" id="bLink" title="Lien/impression élèves : un lien et un QR code pour que tes élèves s'entraînent sur les exercices cochés, et une feuille à imprimer">Lien/impression<span class="lbx"> élèves</span></button>
+      <button class="btn" id="bLink" title="Lien/impression élèves : un lien et un QR code pour que tes élèves s'entraînent sur les exercices cochés, et une feuille à imprimer (touche P)">Lien/impression<span class="lbx"> élèves</span></button>
       
 <button class="btn" id="bProp" title="La proportion de chaque exercice quand on joue (la même dans le lien élèves et sur la feuille à imprimer)">Proportions</button>
       <button class="btn" id="bNone" title="Décocher toutes les questions, dans tous les onglets (touche ⟵ effacer)">Tout décocher<span class="kh kbs">⟵</span></button>
@@ -1460,16 +1535,17 @@ body.retpad .pane{padding-top:calc(var(--fs-ui) * 3.1)}
         <label class="lfr lfr2"><input type="checkbox" id="lFr"> <span>Bouton <b>FR</b> pour les élèves (le calcul lu en français)</span></label>
         <div class="lpaste"><span class="lab2">Reprendre un lien</span><input type="text" id="lPaste" placeholder="Colle ici un lien élèves ou l'image de son code QR" autocomplete="off" spellcheck="false"><span class="lpw" id="lPw"></span></div>
         <p class="lnote" id="lNote"></p>
+        <div class="prje0"><span class="prjob"><button type="button" class="btn on prjopen" title="Choisir le PDF d’une feuille (enregistré avec « Enregistrer PDF ») et projeter ses questions">Projeter un PDF</button><span class="prjhint">ou glisse le PDF sur la page</span></span><button type="button" class="prjinf" title="Projeter un PDF : comment ça marche" aria-label="Projeter un PDF : comment ça marche"><svg class="pisvg" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.9" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="4.75" r="1.05" fill="currentColor"/><path d="M8 7.2v4.6" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg></button></div>
       </div>
       <div class="lright">
         <div class="lqr" id="lQr"></div>
-        <div class="lbtns"><button class="btn on" id="lCopyImg">Copier l'image</button><button class="btn on" id="lCopy">Copier le lien</button></div>
+        <div class="lbtns"><button class="btn on" id="lCopyImg">Copier l'image<span class="lcpm">pour docs imprimés</span></button><button class="btn on" id="lCopy">Copier le lien<span class="lcpm">ex. pour Classroom</span></button></div>
         <div class="lurl" id="lUrl"></div>
-        <div class="lbtns"><button class="btn" id="lPng">Enregistrer en PNG</button><button class="btn" id="lTry" title="Ouvrir le mode élève, comme tes élèves le verront">Essayer</button></div>
+        <div class="lbtns"><button class="btn" id="lPng">Enregistrer en PNG</button><button class="btn" id="lTry" title="Ouvrir le mode élève, comme tes élèves le verront">Essayer<span class="ltrym">(mode élève)</span></button></div>
         <div class="lmsg" id="lMsg"></div>
       </div>
       <section class="ipsec" id="ipSec" aria-label="Feuille à imprimer">
-        <div class="ipt"><h3>Feuille à imprimer</h3><button type="button" class="btn on" id="ipPrint" title="La fenêtre d'impression : ton imprimante, ou « Enregistrer au format PDF »">Imprimer / PDF</button></div>
+        <div class="ipt"><h3>Feuille à imprimer</h3><span class="iptr"><button type="button" class="btn on" id="ipPrint" title="La fenêtre d'impression : choisis « Enregistrer au format PDF » (le PDF garde les questions, pour les projeter), ou ton imprimante">Enregistrer PDF</button><span class="prjg"><span class="prjob"><button type="button" class="btn on prjopen" title="Choisir le PDF d’une feuille (enregistré avec « Enregistrer PDF ») et projeter ses questions">Projeter un PDF</button><span class="prjhint">ou glisse le PDF sur la page</span></span><button type="button" class="prjinf" title="Projeter un PDF : comment ça marche" aria-label="Projeter un PDF : comment ça marche"><svg class="pisvg" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.9" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="4.75" r="1.05" fill="currentColor"/><path d="M8 7.2v4.6" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg></button></span></span></div>
         <div class="ipbody">
           <div class="ipo">
             <span class="ipf">Format <span class="ipfmt" role="group" aria-label="Format de la feuille"><button type="button" data-ipf="a4" class="on" aria-pressed="true" title="Une feuille A4 par élève">A4</button><button type="button" data-ipf="2" aria-pressed="false" title="Moitié de A4 : les mêmes questions en haut et en bas de la feuille">½</button><button type="button" data-ipf="3" aria-pressed="false" title="Tiers de A4 : trois fois les mêmes questions sur la feuille">⅓</button><button type="button" data-ipf="4" aria-pressed="false" title="Quart de A4 : quatre fois les mêmes questions sur la feuille">¼</button></span></span>
@@ -1485,10 +1561,10 @@ body.retpad .pane{padding-top:calc(var(--fs-ui) * 3.1)}
           <div id="ipShare"></div>
           <div class="ipx" id="ipEx"></div>
           <div class="ipmsg" id="ipMsg"></div>
-          <div class="ipvb"><button type="button" class="ipnew" id="ipNew" title="D'autres questions sur toute la feuille (↻ à gauche d'une question : seulement elle)"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.2 8.6A5.2 5.2 0 1 1 11.6 4.3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M12.6 1.6v3.6H9" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Nouvelles questions</span></button>
+          <div class="ipvb"><div class="ipvbt"><button type="button" class="ipnew" id="ipNew" title="D'autres questions sur toute la feuille (↻ à gauche d'une question : seulement elle)"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.2 8.6A5.2 5.2 0 1 1 11.6 4.3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M12.6 1.6v3.6H9" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Nouvelles questions</span></button><button type="button" class="ipnew prjgo" id="prjGo" title="Présenter les questions de cette feuille au beamer, une à la fois, comme quand on joue"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1.5 .5L9.5 5L1.5 9.5Z" fill="currentColor"/></svg><span>Projeter les questions de ce PDF</span></button></div>
           <div class="ipv" id="ipPrev" title="Clic : une page en grand"></div></div>
           <div class="iphint" id="ipHintF"></div>
-          <div class="iphint">« Imprimer / PDF » ouvre la fenêtre d'impression : choisis ton imprimante, ou « Enregistrer au format PDF ».</div>
+          <div class="iphint">« Enregistrer PDF » ouvre la fenêtre d'impression : choisis « Enregistrer au format PDF » (ou ton imprimante).</div>
         </div>
       </section>
     </div>
@@ -1545,6 +1621,18 @@ body.retpad .pane{padding-top:calc(var(--fs-ui) * 3.1)}
       <div class="vbtns"><button type="button" class="btn" data-close>Annuler</button><button type="button" class="btn on" id="vGo">Lancer la vidéo<span class="kh">Entrée</span></button></div>
     </div>
     <div class="vwrap"><video id="vEl" controls playsinline preload="none"></video><p class="vmsg" id="vMsg"></p></div>
+  </div>
+</div>
+
+<!-- n° 133 (17.11.2026, l'enseignant : « ajoute une nécessité de confirmer quand on clique sur projeter les questions de ce pdf ») -->
+<div class="over" id="oPrjQ">
+  <div class="box vbox vq" role="dialog" aria-label="Projeter les questions de ce PDF">
+    <div class="boxhead"><h2 class="title">Projeter les questions de ce PDF</h2><button class="hbtn" data-close>✕</button></div>
+    <div class="vask">
+      <p>Projeter les questions de cette feuille, une à la fois ?</p>
+      <p class="vnet">Les questions en cours sont remplacées par celles de la feuille.</p>
+      <div class="vbtns"><button type="button" class="btn" data-close>Annuler</button><button type="button" class="btn on" id="prjQGo">Projeter<span class="kh">Entrée</span></button></div>
+    </div>
   </div>
 </div>
 
@@ -12292,15 +12380,16 @@ const frOn = () => !!S.accFr;
 
 /* ---------- en-tête : libellés courts, puis ronds sur leur propre ligne, si la fenêtre est étroite (écran partagé en deux…) ---------- */
 function fitHeader(){
+  document.body.classList.remove('prjsm');
   const h = document.querySelector('header'), d = $('dots'), n = d.children.length;
-  const ok = () => { if (h.scrollWidth > h.clientWidth + 1) return false; if (n < 2) return true;
+  const ok = () => { if (h.scrollWidth > h.clientWidth + 1) return false; if (PRJ && prjRows(d) > 1) return false; if (n < 2) return true;
     const mid = x => x.offsetTop + x.offsetHeight / 2, m0 = mid(d.children[0]), per = [...d.children].filter(x => Math.abs(mid(x) - m0) < 3).length;   // ronds sur la 1re ligne (centrés : bulles numérotées d'un groupe plus grandes)
     return per >= Math.min(n, 12); };
   document.body.classList.toggle('tall', innerWidth > 700 && innerWidth < innerHeight * 1.15);
   h.classList.remove('hc0', 'hc1', 'hc2'); if (ok()) return;
   h.classList.add('hc0'); if (ok()) return;                                      // boutons un peu moins larges (05.11.2026 : bouton « Questions multiples »)
   h.classList.replace('hc0', 'hc1'); if (ok()) return;
-  h.classList.add('hc2');
+  h.classList.add('hc2'); if (PRJ && prjRows(d) > 2) document.body.classList.add('prjsm');   // n° 125 : plus de deux lignes de ronds : sans lettre
 }
 const PENCIL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1.2-4.6L16.4 4.2a2 2 0 0 1 2.8 0l.6.6a2 2 0 0 1 0 2.8L8.6 18.8z"/><path d="M14.5 6.1l3.4 3.4"/></svg>';
 const starsHTML = lv => '<span class="stars">' + '★'.repeat(lv) + '</span>';
@@ -12324,7 +12413,7 @@ function fillPane(pane, p){
   pane.classList.toggle('dopen', p.shown.det);
   pane.classList.toggle('qfig', !!(p.fig && !p.figDet));
   pane.classList.toggle('qgood', inpGood(p));                                    // n° 46 : trouvée par l'élève → réponse en vert                         // une figure dans la question (réponse plus petite avec le détail)
-  pane.querySelector('.badge').innerHTML = (p.nostar ? '' : starsHTML(p.level)) + (p.paper ? '<span class="paper">' + PENCIL + 'en colonne</span>' : '');
+  pane.querySelector('.badge').innerHTML = prjBadge(p) + (p.nostar ? '' : starsHTML(p.level)) + (p.paper ? '<span class="paper">' + PENCIL + 'en colonne</span>' : '');
   const fr = frOn() ? frOf(p, p.shown.ans || p.shown.det) : null;                     // classe d'accueil : le calcul en français
   pane.querySelector('.qa').innerHTML = qaHTML(p, p.shown.ans || p.shown.det) + inpFbHTML(p, p.shown.ans || p.shown.det) + (fr ? '<div class="frl" lang="fr">' + fr + '</div>' : '');
   const det = pane.querySelector('.det');
@@ -12435,6 +12524,7 @@ function ansLab(t, ti){ const b = $('bAns'), n = b.firstChild; if (n && n.nodeTy
 // numérotées quand il est affiché ; compteur : un groupe compte pour 1)
 const gCol = G => { const c = [...new Set(G.qs.map(dotCol))]; return c.length === 1 ? c[0] : 'var(--muted)'; };   // plusieurs onglets : gris
 function dotsHTML(){
+  if (PRJ) return prjDots();                                   // n° 125 : présentation d'une feuille
   const seen = x => x && (x.seen || x.shown.ans || x.shown.det);
   return QS.map((x, i) => { const on = i === cur && !PICK;
     if (x.grp){
@@ -12458,6 +12548,7 @@ function render(){
   grpBtnUI();
   if (INP && ((STU && STU.start) || inG() || PICK)) INP = null; kbDraw();          // saisie (n° 38) : pas de case sur la liste de l'élève ni dans un groupe                                                                     // libellé du bouton « Questions multiples » (avant fitHeader)
   if (STU && STU.start){ kbTrack(null); return stuRender(); }                 // mode élève : liste des exercices (n° 49 : on quitte la question)
+  document.body.classList.remove('prjfin'); if (PRJ && PRJ.end) return prjEndRender();      // n° 125 : écran « Fin de la feuille »
   if (inG()){ kbTrack(null); return renderGrp(); }                               // plusieurs questions à la fois (touche M)
   if (GRZ) [$('pL'), $('pR')].forEach(p => p.getAnimations({subtree: true}).forEach(a => a.cancel()));   // on quitte le groupe pendant une animation du détail
   gfxClear(); GRZ = null;
@@ -12473,7 +12564,7 @@ function render(){
     if (PICK){ $('bPrev').disabled = false; $('bNext').disabled = false; $('bNext').classList.remove('more', 'on'); navTitles(); }   // ← revient au groupe
     fitHeader(); return; }
   $('main').classList.toggle('single', !s.R);
-  $('count').textContent = (cur + 1) + ' / ' + QS.length;
+  $('count').textContent = prjCount() ?? ((cur + 1) + ' / ' + QS.length);
   [s.L, s.R].forEach(p => { if (p && (p.shown.ans || p.shown.det)) p.seen = true; });      // rond teinté, même quand on a recaché la réponse
   $('dots').innerHTML = dotsHTML();
   // détail qu'on ouvre ou qu'on referme (l'enseignant, 01.11.2026 : « quand on affiche le détail, ce serait bien qu'il y ait l'animation de la question
@@ -12539,7 +12630,7 @@ function cycleSide(i){
   if (p.shown.det){ p.shown.det = false; p.shown.ans = false; } else if (p.shown.ans) p.shown.det = true; else p.shown.ans = true;
   render();
 }
-const pairs = () => { const s = PICK ? null : QS[cur]; return s && !s.grp ? [s.L, s.R].filter(Boolean) : []; };
+const pairs = () => { const s = PICK || (PRJ && PRJ.end) ? null : QS[cur]; return s && !s.grp ? [s.L, s.R].filter(Boolean) : []; };
 function showAnswer(){ const on = !pairs().every(p => p.shown.ans || p.shown.det); pairs().forEach(p => { p.shown.ans = on; if (!on) p.shown.det = false; }); render(); }
 function cycleEnter(){ // Entrée : réponse, puis détail, puis la question seule (et on recommence)
   const ps = pairs(); if (!ps.length) return;
@@ -12551,20 +12642,22 @@ function cycleEnter(){ // Entrée : réponse, puis détail, puis la question seu
 function showDetail(){ const on = !pairs().every(p => p.shown.det); pairs().forEach(p => { p.shown.det = on; if (on) p.shown.ans = true; }); render(); }
 // un seul historique (05.11.2026, 13e conversation) : QS a les questions seules (ou deux questions) et les groupes (questions multiples, G.grp), dans
 // l'ordre où on les a présentés ; ← → passent de l'un à l'autre, chacun revient tel qu'on l'avait laissé (un groupe : détail en grand refermé)
-function go(i){ if (i < 0 || i >= QS.length) return; if (inG()) grpLeave(); PICK = false; NAV_DIR = Math.sign(i - cur); cur = i; render(); }
+function go(i){ if (i < 0 || i >= QS.length) return; if (PRJ) PRJ.end = false; if (inG()) grpLeave(); PICK = false; NAV_DIR = Math.sign(i - cur); cur = i; render(); }
 // → à la dernière question : une question de la même difficulté (même nombre d'étoiles, ou même sorte), prise dans la réserve (05.11.2026) ; au
 // dernier groupe : un autre groupe avec les mêmes étoiles ; « choisis la difficulté » après le groupe, à la fin : rien (comme au départ)
 function next(){
+  if (prjNext()) return;                                       // n° 125 : présentation d'une feuille (fin, groupes)
   if (cur < QS.length - 1) return go(cur + 1);
   const s = QS[cur]; if (!s || PICK) return;
   if (s.grp) grpAdd(s.pat); else futTake(STU && STU.lv ? STU.lv : (s.L.level || 1), false);     // mode élève : la difficulté qu'il a choisie
 }
-function back(){ if (PICK && QS[cur]){ PICK = false; NAV_DIR = -1; render(); } else go(cur - 1); }   // ← ; après M dans un groupe : le groupe
+function back(){ if (PRJ && PRJ.end){ PRJ.end = false; NAV_DIR = -1; render(); return; } if (PICK && QS[cur]){ PICK = false; NAV_DIR = -1; render(); } else go(cur - 1); }   // ← ; après M dans un groupe : le groupe
 // touches 1 à 4 (l'enseignant, 30.10.2026, 5e conversation : « forcer la prochaine question à être de la difficulté choisie. En appuyant sur 1, ça
 // lance une prochaine question à 1 étoile ») : tout de suite une question à lv étoiles, à la place de la suivante si on ne l'a pas encore vue (même
 // objectif, s'il a des étoiles), sinon juste après celle-ci (après la dernière : en plus, comme « Continuer »). Objectif tiré parmi ceux qui ont des
 // étoiles ; s'il n'y a que des questions sans étoiles (définitions, livrets), lv choisit la sorte de question (1 reconnaître … 4 utiliser).
 function forceLevel(lv){ // depuis le 05.11.2026 : prise dans la réserve (futTake), juste après la question affichée
+  if (prjOnSheet()) return;   // n° 133 (l'enseignant, 17.11.2026 : « enlève la possibilité d'appuyer sur 1 à 4 pour ajouter une question quand on est sur les questions d'un PDF »)
   const O = objectives(S); if (!O.length){ openSet(); return; }
   futTake(lv, O.some(o => !isNoStar(o)));
 }
@@ -12589,7 +12682,9 @@ function toggleTwo(){
   const goneR = S.two && s.R && !ANIM_OFF() ? $('pR') : null, rR = goneR && goneR.getBoundingClientRect();
   const vars = goneR ? ['--fs-calc', '--fs-det'].map(v => [v, getComputedStyle(goneR).getPropertyValue(v)]) : [];
   S.two = !S.two; save();
+  if (PRJ){ if (S.two) prjPair(); else prjUnpair(); }         // n° 133 : présentation d'une feuille, deux questions de suite de la feuille
   QS.forEach((q, i) => { if (q.grp) return;                     // un groupe : une question par carte, rien à droite
+    if (PRJ && q.L && q.L.shL) return;                          // n° 133 : jamais une question hors feuille à côté d'une question de la feuille
     if (!S.two){ if (q.R){ q.Rh = q.R; q.R = null; } return; }
     if (q.R) return;
     if (q.Rh){ q.R = q.Rh; q.Rh = null; return; }
@@ -12631,11 +12726,12 @@ const GRP_MAX = 6;
 let PICK = false, LASTG = null, SEQ = null;                    // SEQ : étoiles en cours de saisie
 const curGrp = () => !PICK && QS[cur] && QS[cur].grp ? QS[cur] : null;        // le groupe affiché, ou null
 const inG = () => !!curGrp();
-function seqStart(){ if (!objectives(S).length){ openSet(); return; } SEQ = []; seqUI(); }
+function seqStart(){ if (!objectives(S).length){ openSet(); return; } SEQ = []; if (PRJ) PRJ.gn = 0; seqUI(); }
 function seqEnd(){ SEQ = null; seqUI(); }
 function seqUI(){
   grpBtnUI();
   const b = $('seq'); if (!SEQ){ b.hidden = true; return; }
+  if (prjSeqAt() >= 0){ prjSeqUI(b); b.hidden = false; const f0 = document.querySelector('footer').getBoundingClientRect(); b.style.bottom = (innerHeight - f0.top + 10) + 'px'; return; }   // n° 125
   const n = SEQ.length;
   b.innerHTML = SEQ.map(l => starsHTML(l))   // sans le « M » à gauche (l'enseignant, 05.11.2026, 11e conversation)
     .join('<span class="sqs">·</span>') + (n < GRP_MAX ? '<span class="sqc"></span>' : '') +
@@ -12664,6 +12760,7 @@ function grpBtnUI(){
 function grpKey(){ if (inG()) grpOff(); else if (SEQ) seqEnd(); else seqStart(); }   // touche M et clic sur le bouton : questions multiples, et retour
 function seqGo(){
   const pat = SEQ; seqEnd();
+  const pa = prjSeqAt(); if (pa >= 0){ prjGroupAt(pa, PRJ.gn || GRP_MAX); return; }   // n° 125 : les questions suivantes de la feuille
   if (!pat.length){ const k = QS.indexOf(LASTG); if (k >= 0) go(k); return; }     // M Entrée : le dernier groupe affiché, tel qu'on l'avait laissé
   grpAdd(pat);
 }
@@ -12684,7 +12781,8 @@ const gSet = (q, st) => { q.gs = st; q.L.shown.ans = st > 0; q.L.shown.det = st 
 function grpLeave(){ const G = curGrp(); if (G && G.z >= 0){ gSet(G.qs[G.z], 3); G.z = -1; } $('pL')._an = {p: null}; $('pR')._an = {p: null}; $('grp')._g = null; }
 // M dans un groupe : « choisis la difficulté » (1 2 3 4 M, comme au départ), juste après le groupe ; ← y revient (QCM, 05.11.2026, 13e conversation ;
 // avant : la question où l'on était avant le groupe)
-function grpOff(){ grpLeave(); PICK = true; render(); }
+function grpOff(){ const G0 = curGrp(); grpLeave(); if (PRJ && G0 && G0.prjn){ if (cur < QS.length - 1) go(cur + 1); else { PRJ.end = true; render(); } return; }   // n° 125 : M dans un groupe de la feuille : la question suivante
+  PICK = true; render(); }
 function grpCycle(i){
   const G = curGrp(), q = G && G.qs[i]; if (!q) return;
   if (G.z >= 0 && G.z !== i){ gSet(G.qs[G.z], 3); NAV_DIR = Math.sign(i - G.z); gSet(q, 2); G.z = i; }   // un autre numéro, détail ouvert : son détail
@@ -12718,7 +12816,7 @@ function renderGrp(){
   B.classList.add('grpm'); B.classList.toggle('grpz', !!z); B.classList.remove('empty', 'two', 'pick', 'pnext');
   if (!z) $('pL').style.paddingLeft = '';                                        // place laissée à la miniature : seulement pendant un détail
   timOnRender(G);                                                                // minuteur : il repart à chaque autre groupe
-  $('count').textContent = (cur + 1) + ' / ' + QS.length;                       // un groupe compte pour 1 (avant : « Groupe 2 / 3 »)
+  $('count').textContent = prjCount() ?? ((cur + 1) + ' / ' + QS.length);                       // un groupe compte pour 1 (avant : « Groupe 2 / 3 »)
   $('dots').innerHTML = dotsHTML();
   const last = cur === QS.length - 1;
   $('bPrev').disabled = cur === 0; $('bNext').disabled = false;
@@ -12739,7 +12837,7 @@ function renderGrp(){
   }
   const g = $('grp'), fresh = g._g !== G;
   g.innerHTML = '<div class="gin">' + G.qs.map((q, i) => '<div class="gcard" data-g="' + i + '" data-sh="' + (q.gs > 0 ? 1 : 0) + '" title="Touche ' + (i + 1) + '\u00a0: réponse, puis détail">' + gNum(i, q) +
-    '<div class="badge">' + (q.L.nostar ? '' : starsHTML(q.L.level)) + (q.L.paper ? '<span class="paper">' + PENCIL + 'en colonne</span>' : '') + '</div>' +
+    '<div class="badge">' + prjBadge(q.L) + (q.L.nostar ? '' : starsHTML(q.L.level)) + (q.L.paper ? '<span class="paper">' + PENCIL + 'en colonne</span>' : '') + '</div>' +
     '<div class="qa">' + qaHTML(q.L, q.gs > 0) + '</div></div>').join('') + '</div>';
   mathify(g);
   fitHeader(); fitFooter(); fitGrp(); requestAnimationFrame(fitGrp);
@@ -14989,7 +15087,8 @@ function noPD(nm){                                                     // trois 
 function lvbMark(){
   const s = PICK ? null : QS[cur], ps = s && !s.grp && !inG() ? [s.L, s.R].filter(Boolean) : [];
   const L = !S.hideStars && ps.length && ps.every(p => p.level === ps[0].level) ? ps[0].level : 0;
-  document.querySelectorAll('#lvBtns button[data-lv]').forEach(b => { b.hidden = false; b.classList.toggle('on', Number(b.dataset.lv) === L); });
+  const off = prjOnSheet();                                   // n° 133 : sur une question de la feuille, 1★ … 4★ grisés
+  document.querySelectorAll('#lvBtns button[data-lv]').forEach(b => { b.hidden = false; b.disabled = off; b.classList.toggle('on', Number(b.dataset.lv) === L); });
   const a = document.activeElement; if (a && a.closest && a.closest('#lvBtns')) a.blur();
 }
 
@@ -30805,7 +30904,310 @@ function retUI(){                    // le bouton : visible s'il y a une questio
 }
 $('bRet').onclick = e => { e.currentTarget.blur(); retGo(); };
 window.addEventListener('resize', retUI);
-function newQuestions(){ PICK = false; LASTG = null; seqEnd(); QS = buildQuestions(); cur = 0; SNC_PEND = true; render(); }   // n° 51 : SNC_PEND, brouillon à la 1re question
+/* ---------- n° 125 : projeter la feuille à imprimer (fichier .qpc) ----------
+   L'enseignant, 17.11.2026 : « ce serait bien effectivement d'avoir un moyen d'aller en format présentation (comme quand on "joue") qui reprend les
+   mêmes questions que celles du papier » ; un fichier .qpc enregistré tout seul à chaque « Imprimer / PDF » (« Oui tout seul, si possible ») ; l'ouvrir
+   en glissant le fichier sur la page ou par un bouton ; « il faudra pouvoir aller facilement à une question de notre choix » ; « un petit tuto qui
+   indique ce que fait et comment utiliser concrètement cette fonctionnalité (petit i à côté du bouton) ».
+   QCM (17.11.2026) : à côté de « Imprimer / PDF », « ▶ Projeter cette feuille » (gris) et « Ouvrir une feuille (.qpc) » (bleu, comme « Nouvelles
+   questions avec ces réglages » ; il ouvre l'explorateur de fichiers), dessous « ou glisse le fichier sur la page » ; le même « Ouvrir » dans la fenêtre
+   sans exercice coché ; une question à la fois, « 1) b) » au-dessus (à la place des étoiles) ; en-tête : le titre de la feuille et, dès le début, un
+   rond par question avec sa lettre, le numéro de l'exercice devant chaque exercice, un clic y va (pas la place : deux lignes, puis ronds sans lettre) ;
+   à la fin de la feuille, un écran « Fin de la feuille » (nouvelles questions, pas sur la feuille ; revenir à la 1re question) ; une question hors
+   feuille : « hors feuille » à la place de la lettre, rond en pointillé (aussi celles des touches 1 à 4 et la question de droite de la touche 8) ;
+   questions multiples : M Entrée = les questions suivantes de la feuille, jusqu'à 6, sans mélanger deux exercices ; M 2 à 6 Entrée : ce nombre.
+   Le fichier garde les questions exactes (texte, figures, réponse, détail ; jamais recalculées) : la ligne de la question et le détail sont écrits
+   une fois (ce que la page calcule à l'affichage) ; un détail animé (curseur, pliage) garde ses données, et la page le redessine (sinon : la figure
+   de départ, fixe). Choix de Claude, dits à l'enseignant : le groupe commence à la question affichée si sa réponse n'a pas encore été montrée,
+   sinon à la suivante ; → après un groupe de la feuille : un groupe de même taille avec les suivantes ; M dans un groupe : la question suivante ;
+   les réglages deviennent les exercices de la feuille (pour les questions hors feuille), sans être enregistrés. */
+var PRJ = null;                                             // la présentation en cours : {t, N, end, gn, t0}
+const PRJ_SKIP = new Set(['shown', 'seen', 'mk', 'kbm', 'vis', 'gs', 'shL', 'sh', 'cnt']);
+const prjTxt = h => String(h || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+function prjFn(name){                                       // une fonction de la page d'après son nom (dessin d'un curseur) ; null si elle n'existe plus
+  if (!/^[A-Za-z_$][\w$]*$/.test(name || '')) return null;
+  try { return Function('"use strict"; return typeof ' + name + ' === "function" ? ' + name + ' : null;')(); } catch (e) { return null; }
+}
+function prjSer(p){                                         // une question → objet JSON (sans fonctions)
+  const o = {};
+  Object.keys(p).forEach(k => { const v = p[k]; if (k[0] === '_' || k[0] === '$' || PRJ_SKIP.has(k) || typeof v === 'function') return; o[k] = v; });
+  setFlags(p.fl);
+  if (typeof p.line === 'function'){ o.$l0 = p.line(false); o.$l1 = p.line(true); }
+  if (typeof p.det === 'function'){ let h = ''; try { h = p.det(); } catch (e) { console.error(e); h = DIV(ANS(p.a), 'fin'); }
+    const reg = [];
+    h.replace(/data-tid="(ts\d+)"/g, (m, id) => { const T = TCAS[id]; if (T) reg.push({k: 'ts', id, sp: T.sp, draw: T.draw && T.draw.name || '', o: T.o || null}); return m; });
+    h.replace(/data-fid="(fd\d+)"/g, (m, id) => { const sp = FOLDS[id]; if (sp) reg.push({k: 'fd', id, sp}); return m; });
+    o.$det = h; if (reg.length) o.$reg = reg; }
+  return JSON.parse(JSON.stringify(o, (k, v) => Object.is(v, -0) ? PRJ_N0 : v));      // −0 gardé (un dessin s'en sert : atan2)
+}
+const PRJ_N0 = '\u0000-0', prjN0 = v => v === PRJ_N0 ? -0 : Array.isArray(v) ? v.map(prjN0) : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, prjN0(x)])) : v;
+function prjDes(o){                                         // objet du fichier → question (comme genOne la rend)
+  o = prjN0(o); const p = {};
+  Object.keys(o).forEach(k => { if (k[0] !== '$') p[k] = o[k]; });
+  if ('$l0' in o){ const a = o.$l0, b = o.$l1; p.line = show => show ? b : a; }
+  if ('$det' in o){ let h = String(o.$det);
+    (o.$reg || []).forEach(r => {
+      if (r.k === 'ts'){ const id = 'ts' + (++TCASN), i = h.indexOf('data-tid="' + r.id + '"'), a = h.indexOf('<div class="tcsv">', i), z = h.indexOf('</div><div class="frng"', a);
+        const f0 = a > 0 && z > a ? h.slice(a + 18, z) : '', fn = prjFn(r.draw);
+        TCAS[id] = {sp: r.sp, draw: fn || (() => f0), o: r.o || undefined}; h = h.split('data-tid="' + r.id + '"').join('data-tid="' + id + '"'); }
+      else if (r.k === 'fd'){ const id = 'fd' + (++FOLDN); FOLDS[id] = r.sp; h = h.split('data-fid="' + r.id + '"').join('data-fid="' + id + '"'); } });
+    p.det = () => h; }
+  p.shown = {ans: false, det: false};
+  return p;
+}
+function prjSheet(){                                        // la feuille de l'aperçu → ses données (cachées dans le PDF, n° 128 ; avant : le fichier .qpc) ; null sans feuille
+  if (!IP || !IP.L || !IP.L.pages) return null;
+  const L = IP.L, items = [], seen = new Set();
+  L.pages.forEach(P => (P || []).forEach(x => { if (x.t === 'h' || !x.row) return;
+    x.row.xs.forEach((c, j) => { if (!c.p || seen.has(c.p)) return; seen.add(c.p); items.push({p: c.p, e: x.b.num || 1, i: x.row.i + j, name: prjTxt(ipUName(x.b.u))}); }); }));
+  if (!items.length) return null;
+  const solo = new Set(items.map(x => x.e)).size < 2, ex = [];
+  items.forEach(x => { if (!ex.some(y => y.n === x.e)) ex.push({n: x.e, name: x.name}); });
+  const qs = ipRun(() => items.map((x, k) => ({e: x.e, k: k + 1, lab: (solo ? '' : x.e + ') ') + ipLetter(x.i) + ')', oid: x.p._o ? x.p._o.id : '', bl: x.p._o ? x.p._o.bl : '', p: prjSer(x.p)})));
+  return {qpc: 1, v: QPC_VERSION, d: new Date().toISOString().slice(0, 10), t: ipTitle() || 'Feuille', P: JSON.parse(JSON.stringify(IP.E || LNK.E)), solo, ex, qs};
+}
+function prjMsg(t){                                         // petit message en haut de la page (fichier illisible…)
+  let b = $('prjToast'); if (!b){ b = document.createElement('div'); b.id = 'prjToast'; b.className = 'prjtoast'; b.setAttribute('role', 'status'); document.body.appendChild(b); }
+  b.textContent = t; b.hidden = false; clearTimeout(b._t); b._t = setTimeout(() => b.hidden = true, 4500);
+}
+function prjStart(D){                                       // la présentation : les questions de la feuille, une à la fois
+  if (!D || D.qpc !== 1 || !Array.isArray(D.qs) || !D.qs.length){ prjMsg('Ce fichier n’est pas une feuille de « Questions pour des champions ».'); return; }
+  const keep = {}; GEN_KEYS.concat('accFr').forEach(k => { if (k in S) keep[k] = S[k]; });
+  S = Object.assign(stateFromP(D.P || {}), keep);           // les questions hors feuille : les exercices de la feuille (réglages pas enregistrés)
+  document.querySelectorAll('.over.open').forEach(o => o.classList.remove('open'));
+  const O = objectives(S);
+  PICK = false; LASTG = null; seqEnd(); QS = []; if (O.length) buildQuestions(); else { USED.clear(); USEDAT.clear(); }
+  QS = D.qs.map(x => { const p = prjDes(x.p); p.shL = String(x.lab || ''); p.sh = {e: x.e, k: x.k};
+    const o = O.find(y => y.id === x.oid) || {id: x.oid, bl: x.bl};
+    return {L: p, R: null, bl: o.bl || x.bl, srt: p.level || 1, o}; });
+  QS.forEach(x => { if (x.L.key != null){ USED.add(x.L.key); USEDAT.set(x.L.key, ++USEDN); } });     // jamais une question de la feuille en question hors feuille
+  if (O.length) futRegen();
+  PRJ = {t: String(D.t || ''), N: QS.length, solo: !!D.solo, end: false, gn: 0, t0: PRJ ? PRJ.t0 : document.querySelector('header .title').textContent};
+  cur = 0; if (S.two) prjPair();                              // n° 133 : deux questions déjà choisies : les deux premières de la feuille
+  document.querySelector('header .title').textContent = PRJ.t; document.body.classList.add('prj');
+  cur = 0; SNC_PEND = false; render();
+}
+function prjOff(){ if (!PRJ) return; document.querySelector('header .title').textContent = PRJ.t0; PRJ = null; document.body.classList.remove('prj', 'prjfin', 'prjsm'); }
+function prjGoSheet(){ let D = null; try { D = prjSheet(); } catch (e) { console.error('qpc', e); } if (!D){ prjMsg('Pas de feuille à projeter.'); return; } prjStart(JSON.parse(JSON.stringify(D))); }
+function prjRead(f){
+  if (!f) return;
+  if (/\.pdf$/i.test(f.name || '') || f.type === 'application/pdf'){ f.arrayBuffer().then(prjPdfOpen, () => prjMsg('Je n’arrive pas à ouvrir ce fichier.')); return; }   // n° 128
+  if (!/\.qpc$/i.test(f.name || '')){ prjMsg('Choisis le PDF d’une feuille (enregistré avec « Enregistrer PDF »).'); return; }
+  f.text().then(t => { let D = null; try { D = JSON.parse(t); } catch (e) {} prjStart(D); }, () => prjMsg('Je n’arrive pas à ouvrir ce fichier.'));
+}
+const prjSheetQ = x => !!(x && (x.grp ? x.qs.some(q => q.L.shL) : x.L && x.L.shL));
+const prjOnSheet = () => !!(PRJ && !PRJ.end && !PICK && prjSheetQ(QS[cur]));   // n° 133 : une question (ou un groupe) de la feuille est affichée
+/* n° 133 (l'enseignant, 17.11.2026, fenêtre « i » : « 8 : Deux questions consécutives du PDF en même temps » ; QCM « Deux de suite du PDF » : la question
+   de la feuille et la suivante côte à côte, → passe aux deux suivantes, la dernière seule si le nombre est impair). Lu ainsi (dit à l'enseignant) : deux
+   questions du même exercice (comme M) ; la question affichée commence une paire. Une paire : l'élément de la 1re question, QS[i].R = la 2e question,
+   son élément gardé dans QS[i].pq ; en rappuyant sur 8, les paires se séparent (prjUnpair). Un groupe (M) sépare les paires qu'il prend (prjGroupAt). */
+const prjSolo = x => !!(x && !x.grp && x.L && x.L.shL && !x.pq);
+function prjPair(){
+  const c0 = QS[cur], out = []; let i = 0;
+  while (i < QS.length){ const x = QS[i]; if (!prjSolo(x)){ out.push(x); i++; continue; }
+    let j = i; while (j < QS.length && prjSolo(QS[j]) && QS[j].L.sh.e === x.L.sh.e) j++;         // les questions seules du même exercice, de suite
+    const run = QS.slice(i, j), k = run.indexOf(c0); let t = k > 0 ? k % 2 : 0;                   // la question affichée commence une paire
+    if (t) out.push(run[0]);
+    for (; t < run.length; t += 2){ const a = run[t], b = run[t + 1]; if (b){ a.R = b.L; a.pq = b; } out.push(a); }
+    i = j; }
+  QS = out; const n = QS.findIndex(x => x === c0 || x.pq === c0); cur = n < 0 ? Math.min(cur, QS.length - 1) : n;
+}
+function prjUnpair(){ const c0 = QS[cur], out = []; QS.forEach(x => { if (x.pq){ const b = x.pq; x.R = null; delete x.pq; out.push(x, b); } else out.push(x); });
+  QS = out; cur = Math.max(0, QS.indexOf(c0)); }
+function prjBadge(p){ if (!PRJ || !p) return ''; return p.shL ? '<span class="prjl">' + ipEsc(p.shL) + '</span>' : '<span class="prjl prjhf">hors feuille</span>'; }
+function prjCount(){                                        // « 5 / 24 » : la place dans la feuille (groupe : « 5–8 / 24 ») ; hors feuille : rien
+  if (!PRJ) return null; const s = QS[cur]; if (PRJ.end || !s) return '';
+  const K = (s.grp ? s.qs.map(q => q.L) : [s.L, s.R]).filter(p => p && p.sh).map(p => p.sh.k); if (!K.length) return '';     // n° 133 : une paire « 5–6 / 24 »
+  const a = Math.min(...K), b = Math.max(...K); return (a === b ? a : a + '–' + b) + ' / ' + PRJ.N;
+}
+function prjDots(){                                         // un rond par question, avec sa lettre, groupés par exercice (numéro devant) ; hors feuille : en pointillé
+  const seen = x => x && (x.seen || x.shown.ans || x.shown.det); let h = '', seg = null, out = '';
+  const close = () => { if (seg !== null) out += h + '</span>'; h = ''; };
+  QS.forEach((x, i) => { const on = i === cur && !PICK && !PRJ.end, f = x.grp ? (x.qs.find(q => q.L.sh) || {}).L : x.L, e = f && f.sh ? f.sh.e : 'h';
+    if (seg === null || e !== seg){ close(); seg = e; h = '<span class="prje' + (e === 'h' ? ' prjh' : '') + '">' + (e !== 'h' && !PRJ.solo ? '<span class="prjn">' + e + ')</span>' : ''); }
+    if (x.grp){
+      if (on){ h += '<span class="dgrp">' + x.qs.map((q, j) => '<button class="dot gn' + (j === x.z ? ' cur' : q.gs ? ' done' : '') + '" data-g="' + j + '" title="' + (q.L.shL ? ipEsc(q.L.shL) + ' · ' : '') + 'touche ' + (j + 1) +
+        '" style="--dc:' + dotCol(q) + '">' + (j + 1) + '</button>').join('') + '</span>'; return; }
+      h += '<button class="dot gsq' + (x.qs.some(q => seen(q.L)) ? ' done' : '') + '" data-i="' + i + '" title="Questions multiples : ' + ipEsc(x.qs.map(q => q.L.shL || 'hors feuille').join(', ')) + '" style="--dc:' + gCol(x) + '"></button>'; return; }
+    (x.pq ? [x.L, x.R] : [x.L]).forEach(p => {                  // n° 133 : une paire (touche 8) : un rond par question
+    const mk = p && p.mk, sh = p && p.shL, lt = sh ? sh.replace(/^\d+\)\s*/, '').replace(/\)$/, '') : '', dn = x.pq ? seen(p) : seen(x.L) || seen(x.R);
+    h += '<button class="dot ' + (sh ? 'pl' : 'hf') + (on ? ' cur' : (dn ? ' done' : '')) + (mk ? ' mk mk-' + mk : '') + '" data-i="' + i + '" title="' + (sh ? ipEsc(sh) : 'Hors feuille') +
+      (mk ? ' (' + {ok: 'juste', mid: 'presque', ko: 'pas trouvée'}[mk] + ')' : '') + '" style="--dc:' + dotCol(x) + '">' +
+      (mk ? '<svg viewBox="0 0 16 16" aria-hidden="true">' + FB_ICO[mk === 'ok' ? 'ok' : mk === 'mid' ? 'almost' : 'ko'] + '</svg>' : sh ? '<span class="prjlt">' + ipEsc(lt) + '</span>' : '') + '</button>'; }); });
+  close(); return out;
+}
+function prjRows(d){ const R = [...d.querySelectorAll('.dot')].map(b => { const r = b.getBoundingClientRect(); return r.top + r.height / 2; }); if (!R.length) return 0;
+  const s = R.sort((a, b) => a - b); let n = 1; for (let i = 1; i < s.length; i++) if (s[i] - s[i - 1] > 6) n++; return n; }
+// le groupe commence à la question affichée si sa réponse n'a pas encore été montrée, sinon à la suivante ; -1 : pas une question de la feuille
+function prjSeqAt(){
+  if (!PRJ || PRJ.end || PICK) return -1; const s = QS[cur]; if (!s || s.grp) return -1;
+  const fresh = x => x && !x.grp && x.L && x.L.shL;
+  if (fresh(s) && !(s.L.seen || s.L.shown.ans || s.L.shown.det)) return cur;
+  return fresh(QS[cur + 1]) ? cur + 1 : -1;
+}
+function prjGroupAt(i, n){                                  // jusqu'à n questions de la feuille à partir de QS[i], du même exercice : un groupe
+  const list = []; for (let j = i; j < QS.length && list.length < n; j++){ const x = QS[j];
+    if (x && x.pq){ const b = x.pq; x.R = null; delete x.pq; QS.splice(j + 1, 0, b); }        // n° 133 : une paire (touche 8) se sépare
+    if (!x || x.grp || !x.L || !x.L.shL || (list.length && x.L.sh.e !== list[0].L.sh.e)) break; list.push(x); }
+  if (!list.length) return false;
+  if (list.length < 2){ go(i); return true; }
+  list.forEach(x => { if (x.R){ x.Rh = x.R; x.R = null; } const sh = x.L.shown.ans || x.L.shown.det || x.L.seen; x.L.shown.det = false; x.L.shown.ans = !!sh; x.gs = sh ? 3 : 0; });
+  const G = {grp: true, qs: list, pat: list.map(x => x.L.level || 1), prjn: n, z: -1};
+  QS.splice(i, list.length, G); go(i); return true;
+}
+function prjNext(){                                         // → et ▶ pendant la présentation ; true : fait ici
+  if (!PRJ) return false; if (PRJ.end) return true;
+  const s = QS[cur]; if (!s || PICK) return false;
+  if (cur < QS.length - 1){ if (s.grp && s.prjn && QS[cur + 1] && !QS[cur + 1].grp && QS[cur + 1].L.shL && !QS[cur + 1].vis) return prjGroupAt(cur + 1, s.prjn); return false; }
+  if (prjSheetQ(s)){ if (inG()) grpLeave(); PRJ.end = true; render(); return true; }
+  return false;
+}
+function prjEndRender(){                                    // écran « Fin de la feuille »
+  kbTrack(null); gfxClear(); GRZ = null; INP = null;
+  const B = document.body; B.classList.remove('empty', 'ready', 'pick', 'pnext', 'two', 'grpm', 'grpz'); B.classList.add('prjfin');
+  $('prjEnd').innerHTML = '<p class="prjft">Fin de la feuille <span class="prjfn">· ' + PRJ.N + ' question' + (PRJ.N > 1 ? 's' : '') + '</span></p>' +
+    '<button type="button" class="btn on" data-pe="new">Nouvelles questions (pas sur la feuille)</button><button type="button" class="btn" data-pe="first">Revenir à la 1re question</button>';
+  $('count').textContent = ''; $('dots').innerHTML = dotsHTML();
+  $('bPrev').disabled = false; $('bNext').disabled = true; $('bNext').classList.remove('more', 'on'); $('bPrev').title = 'Dernière question (←)'; $('bNext').title = '';
+  lvbMark(); fitHeader(); fitFooter();
+}
+function prjEndClick(w){
+  if (!PRJ) return; PRJ.end = false;
+  if (w === 'first'){ NAV_DIR = -1; go(0); return; }
+  const s = QS[cur], lv = s ? (s.grp ? s.qs[s.qs.length - 1].L.level : s.L.level) : 1;
+  if (!objectives(S).length){ prjMsg('Les exercices de cette feuille n’existent pas dans cette version de la page.'); PRJ.end = true; return; }
+  if (inG()) grpLeave(); futTake(lv || 1, false);
+}
+function prjSeqUI(b){                                       // M pendant la présentation, sur une question de la feuille
+  const n = PRJ.gn;
+  b.innerHTML = '<span class="sqh">' + (n ? '<b>' + n + ' questions</b> · <kbd>Entrée</kbd> afficher' : '<kbd>Entrée</kbd> les questions suivantes de l’exercice (6 au plus) · <kbd>2</kbd> … <kbd>6</kbd> combien') +
+    ' · <kbd>M</kbd> annuler</span>';
+}
+function prjPbi(){                                          // le petit « i » : ce que fait la présentation, comment s'en servir (concis)
+  // n° 133 (l'enseignant, 17.11.2026 : « Pour la fenetre d'information : j'ai copié collé ton texte et édité. Donc marque ceci » ; QCM : « les » ajouté
+  // dans la 1re phrase ; touche 8 : deux questions de suite de la feuille, prjPair)
+  $('piTit').textContent = 'Projeter un PDF';
+  $('piBody').innerHTML = '<p><svg class="prjtri" viewBox="0 0 10 10" aria-hidden="true"><path d="M1.5 .5L9.5 5L1.5 9.5Z" fill="currentColor"/></svg> Projeter les mêmes questions que celles du PDF, avec les mêmes numéros de questions. Accès aux réponses et au détail.</p>' +
+    '<p>Comment ça marche : le code des questions est caché dans le PDF enregistré, permettant de les projeter à partir du PDF, même sur un autre ordinateur.</p>' +
+    '<table class="pitab"><tr><th>Touches</th><th>Pendant la présentation</th></tr>' +
+    '<tr><td><kbd>M</kbd> <kbd>Entrée</kbd></td><td>Multiples questions consécutives en même temps (6 au plus)</td></tr>' +
+    '<tr><td><kbd>M</kbd> <kbd>3</kbd> <kbd>Entrée</kbd></td><td>3 questions en même temps (2 à 6)</td></tr>' +
+    '<tr><td><kbd>8</kbd></td><td>Deux questions consécutives du PDF en même temps</td></tr></table>' +
+    '<p>À la fin de la feuille, on peut continuer avec de nouvelles questions : elles sont marquées « hors feuille » (rond en pointillé).</p>';
+  $('piBody').scrollTop = 0; $('oPbi').classList.add('open');
+}
+document.addEventListener('click', e => {
+  const t = e.target.closest && e.target.closest('#prjGo, #prjQGo, .prjopen, [data-pe], .prjinf'); if (!t) return;
+  if (t.classList.contains('prjinf')){ e.preventDefault(); e.stopPropagation(); t.blur(); prjPbi(); return; }
+  t.blur();
+  if (t.id === 'prjGo'){ $('oPrjQ').classList.add('open'); $('prjQGo').focus({preventScroll: true}); } else if (t.id === 'prjQGo'){ $('oPrjQ').classList.remove('open'); prjGoSheet(); } else if (t.classList.contains('prjopen')){ $('prjFile').value = ''; $('prjFile').click(); } else prjEndClick(t.dataset.pe);
+}, true);
+$('prjFile').addEventListener('change', e => prjRead(e.target.files && e.target.files[0]));
+// glisser un PDF (n° 128 ; ou un ancien .qpc) n'importe où sur la page ; les autres fichiers vont où ils allaient (image d'un code QR dans la fenêtre du lien, fichier
+// des séances), et la page ne s'en va jamais. n° 126 (l'enseignant, 17.11.2026 : « je n'arrive pas à drag le fichier .qpc […] ça ouvre un nouvel
+// onglet avec le code affiché […] ou bien ça ne fait rien ») : selon d'où on le glisse (dossier, liste des téléchargements de Chrome), le fichier arrive
+// comme un fichier, sans nom en .qpc, ou seulement comme une adresse (text/uri-list) ; avant, la page laissait passer l'adresse (Chrome l'ouvrait
+// dans un onglet) et ignorait un fichier sans le nom attendu. Maintenant : tout fichier ou adresse glissé est retenu ; hors des fenêtres du lien et
+// des séances, le contenu décide (une feuille .qpc s'ouvre) ; sinon un message, jamais rien.
+const prjDT = e => e.dataTransfer && [...(e.dataTransfer.types || [])];
+const prjFiles = e => { const T = prjDT(e); return !!T && T.some(t => t === 'Files' || t === 'text/uri-list' || t === 'DownloadURL'); };
+const PRJ_NO = 'Je n’arrive pas à ouvrir ce fichier ici : glisse-le depuis ton dossier (Téléchargements), ou clique « Projeter un PDF » (fenêtre Lien/impression élèves).';
+function prjTryText(t, quiet){ let D = null; try { D = JSON.parse(t); } catch (x) {} if (D && D.qpc === 1){ prjStart(D); return true; } if (!quiet) prjMsg('Ce n’est pas une feuille de « Questions pour des champions » : glisse le PDF d’une feuille (enregistré avec « Enregistrer PDF »).'); return false; }
+document.addEventListener('dragover', e => { if (!prjFiles(e) || STU || TRY) return; e.preventDefault(); }, true);
+document.addEventListener('drop', e => { if (!prjFiles(e) || STU || TRY) return; e.preventDefault();
+  const dt = e.dataTransfer, F = [...(dt.files || [])], f = F.find(x => /\.(qpc|pdf)$/i.test(x.name || '') || x.type === 'application/pdf');   // n° 128 : un PDF aussi
+  if (f){ e.stopPropagation(); prjRead(f); return; }
+  const zone = e.target.closest && e.target.closest('#oLink .lbox, #sncPane');              // fenêtre du lien (image, lien) ou des séances : comme avant
+  const u = String(dt.getData('text/uri-list') || '').split(/\r?\n/).map(x => x.trim()).find(x => x && x[0] !== '#') || '';
+  const dl = String(dt.getData('DownloadURL') || ''), du = dl.slice(dl.indexOf(':', dl.indexOf(':') + 1) + 1);   // « type:nom:adresse »
+  const url = /\.(qpc|pdf)(?:[?#]|$)/i.test(u) ? u : /\.(qpc|pdf)|^application\/pdf:/i.test(dl) ? du : '';
+  if (url){ e.stopPropagation();
+    try { fetch(url).then(r => r.ok ? r.arrayBuffer() : Promise.reject()).then(prjBufOpen, () => prjMsg(PRJ_NO)); } catch (x) { prjMsg(PRJ_NO); } return; }
+  if (zone) return;
+  e.stopPropagation();
+  const g = F.find(x => !/^image\//.test(x.type || ''));
+  if (g){ g.arrayBuffer().then(prjBufOpen, () => prjMsg(PRJ_NO)); return; }
+  prjMsg(F.length ? 'Glisse le PDF d’une feuille (enregistré avec « Enregistrer PDF »).' : PRJ_NO);
+}, true);
+/* n° 128 : la feuille cachée dans le PDF (l'enseignant, 17.11.2026 : « ce ne serait pas possible de drag un pdf dans le logiciel et ça retrouve les
+   exercices avec le détail ? » ; « la praticité serait énorme, ça ne ferait qu'un fichier à enregistrer, pas deux. Et personne n'imprime un pdf sans
+   l'enregistrer » ; si ça ne marche pas avec Firefox à l'école : « j'ai presque envie de dire tant pis »). À l'impression (ipPrint), un lien invisible
+   (1 px, sans texte, jamais dessiné) sur la 1re page, dans une seule copie des petits formats : son adresse contient la feuille (le .qpc) compressée
+   (deflate) en base64url ; « Enregistrer au format PDF » (Chrome) garde le lien, donc la feuille. « Ouvrir une feuille (PDF) » et le glisser lisent un
+   PDF : l'adresse cherchée dans le fichier (chaînes /URI), aussi dans ses flux compressés (un PDF réenregistré par un autre logiciel).
+   QCM (17.11.2026) : « Ouvrir une feuille (PDF) », dessous « ou glisse le PDF sur la page » (un .qpc s'ouvre encore, sans être nommé) ; un PDF sans
+   feuille cachée (imprimé avant, ou pas par la page) : « un seul message qui dit que le PDF ne contient pas l'information nécessaire pour afficher les
+   questions ».
+   n° 129 (l'enseignant, 17.11.2026, après l'essai dans Chrome et dans Firefox : « bon bah ça fonctionne » ; « Supprime l'histoire des fichiers en .qpc » ;
+   « Le bouton "imprimer/pdf" peut plutot s'appeler "Enregistrer PDF" » ; « On peut enlever le bouton qui enregistre le .qpc évidemment aussi ») : plus de
+   .qpc enregistré (ni à l'impression, ni bouton), plus de .qpc nommé nulle part ; lu ainsi : un ancien .qpc glissé sur la page s'ouvre encore, sans
+   bruit (les feuilles imprimées avant la n° 128 n'ont que lui). Plus d'attente de 0,7 s avant la fenêtre d'impression (elle servait au .qpc). */
+const PRJ_PDF = 'https://outils-maths.github.io/qpc/#qpcfeuille1.';  // l'adresse du lien caché ; la feuille suit le point
+const PRJ_PDF_RX = /qpcfeuille1\.([A-Za-z0-9_-]{16,})/;
+const PRJ_NOPDF = 'Ce PDF ne contient pas les informations nécessaires pour afficher les questions.';
+function prjLat(b){ let s = ''; for (let i = 0; i < b.length; i += 32768) s += String.fromCharCode.apply(null, b.subarray(i, i + 32768)); return s; }   // octets → texte (un caractère par octet)
+const prjB64 = b => btoa(prjLat(b)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+function prjUnB64(t){ t = t.replace(/-/g, '+').replace(/_/g, '/'); const a = atob(t + '='.repeat((4 - t.length % 4) % 4)), b = new Uint8Array(a.length); for (let i = 0; i < a.length; i++) b[i] = a.charCodeAt(i); return b; }
+async function prjZip(bytes, pack, loose){                  // deflate (zlib) : pack vrai = compresser ; loose : garder ce qui sort avant une erreur (flux d'un PDF)
+  const r = new Blob([bytes]).stream().pipeThrough(pack ? new CompressionStream('deflate') : new DecompressionStream('deflate')).getReader(), C = []; let n = 0;
+  try { for (;;){ const x = await r.read(); if (x.done) break; C.push(x.value); n += x.value.length; } } catch (e) { if (!loose || !n) throw e; }
+  const o = new Uint8Array(n); let k = 0; C.forEach(c => { o.set(c, k); k += c.length; }); return o;
+}
+async function prjPdfHref(D){                               // la feuille → l'adresse du lien caché ; '' sans feuille ou sans CompressionStream
+  if (!D || typeof CompressionStream === 'undefined') return '';
+  return PRJ_PDF + prjB64(await prjZip(new TextEncoder().encode(JSON.stringify(D)), true));
+}
+function prjPdfLink(host, u){                               // le lien caché, sur la 1re page (petits formats : la 1re copie) ; enlevé par ipUnprint
+  const s = u && host.querySelector('.ip-sheet'); if (!s) return;
+  const a = document.createElement('a'); a.className = 'ip-qd'; a.href = u; a.tabIndex = -1; a.setAttribute('aria-hidden', 'true'); s.appendChild(a);
+}
+function prjPdfStr(s, i){                                   // la chaîne PDF qui commence en s[i] (« ( … ) » ou « < … > ») → son texte ; null sinon
+  let o = null;
+  if (s[i] === '('){ let n = 1, j = i + 1; o = '';
+    for (; j < s.length; j++){ const c = s[j];
+      if (c === '\\'){ const d = s[++j];
+        if ('nrtbf'.includes(d)) o += {n: '\n', r: '\r', t: '\t', b: '\b', f: '\f'}[d];
+        else if (d === '\r'){ if (s[j + 1] === '\n') j++; } else if (d === '\n'){}            // fin de ligne échappée : rien
+        else if (/[0-7]/.test(d)){ let k = d; while (k.length < 3 && /[0-7]/.test(s[j + 1] || '')) k += s[++j]; o += String.fromCharCode(parseInt(k, 8) & 255); }
+        else o += d; continue; }
+      if (c === '(') n++; else if (c === ')' && !--n) break;
+      o += c; }
+    if (j >= s.length) return null; }
+  else if (s[i] === '<' && s[i + 1] !== '<'){ const z = s.indexOf('>', i); if (z < 0) return null; let h = s.slice(i + 1, z).replace(/\s+/g, ''); if (h.length % 2) h += '0'; o = '';
+    for (let k = 0; k < h.length; k += 2) o += String.fromCharCode(parseInt(h.substr(k, 2), 16)); }
+  if (o && o.charCodeAt(0) === 254 && o.charCodeAt(1) === 255){ let u = ''; for (let k = 2; k + 1 < o.length; k += 2) u += String.fromCharCode(o.charCodeAt(k) * 256 + o.charCodeAt(k + 1)); o = u; }   // UTF-16
+  return o;
+}
+function prjPdfFind(s){                                     // dans le texte d'un PDF (ou d'un de ses flux) : la feuille cachée (base64url) ; '' sinon
+  for (let i = s.indexOf('/URI'); i >= 0; i = s.indexOf('/URI', i + 4)){
+    let j = i + 4; while (/\s/.test(s[j] || '')) j++;
+    const t = prjPdfStr(s, j), m = t && PRJ_PDF_RX.exec(t); if (m) return m[1]; }
+  const m = PRJ_PDF_RX.exec(s); return m ? m[1] : '';
+}
+async function prjPdfRead(buf){                             // un PDF → la feuille (l'objet de prjSheet) ; null : pas de feuille cachée
+  const B = new Uint8Array(buf), s = prjLat(B);
+  let d = prjPdfFind(s);
+  if (!d){                                                  // objets dans des flux compressés : d'abord les flux d'objets (/ObjStm), puis les autres
+    const S = [], rx = />>\s*stream\r?\n/g; let m;
+    while ((m = rx.exec(s))){ const a = m.index + m[0].length, z = s.indexOf('endstream', a); if (z < 0) break;
+      const dict = s.slice(Math.max(0, s.lastIndexOf('obj', m.index)), m.index);
+      if (/FlateDecode/.test(dict)) S.push({a, z: z - (s[z - 2] === '\r' ? 2 : s[z - 1] === '\n' || s[z - 1] === '\r' ? 1 : 0), o: /\/ObjStm/.test(dict) ? 0 : 1});
+      rx.lastIndex = z + 9; }
+    S.sort((x, y) => x.o - y.o);
+    for (const x of S){ let o; try { o = await prjZip(B.subarray(x.a, x.z), false, true); } catch (e) { continue; } d = prjPdfFind(prjLat(o)); if (d) break; }
+  }
+  if (!d) return null;
+  return JSON.parse(new TextDecoder().decode(await prjZip(prjUnB64(d), false)));
+}
+function prjPdfOpen(buf){                                   // un PDF ouvert ou glissé → la présentation de sa feuille, sinon un message
+  if (typeof DecompressionStream === 'undefined'){ prjMsg('Ce navigateur ne sait pas lire les questions cachées dans un PDF : essaie avec Chrome, ou avec une version plus récente de Firefox.'); return; }
+  prjPdfRead(buf).then(D => { if (D && D.qpc === 1) prjStart(D); else prjMsg(PRJ_NOPDF); }, e => { console.error('qpc', e); prjMsg(PRJ_NOPDF); });
+}
+function prjBufOpen(buf){                                   // un fichier glissé sans le nom attendu : un PDF (d'après son début), sinon un ancien .qpc
+  const b = new Uint8Array(buf); if (prjLat(b.subarray(0, 1024)).includes('%PDF-')){ prjPdfOpen(buf); return; }
+  prjTryText(new TextDecoder().decode(b));
+}
+function newQuestions(){ prjOff(); PICK = false; LASTG = null; seqEnd(); QS = buildQuestions(); cur = 0; SNC_PEND = true; render(); }   // n° 51 : SNC_PEND, brouillon à la 1re question
 function newOrSettings(){ if (objectives(S).length) newQuestions(); else openSet(); }
 
 /* ---------- toutes les questions ---------- */
@@ -31258,12 +31660,15 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && open && e.target === $('srch') && $('srch').value){ $('srch').value = ''; doSearch(); return; }
   if (e.key === 'Escape' && open){ open.classList.remove('open'); return; }
   if (open && (open.id === 'oVid' || open.id === 'oProp')){ vpKey(e, open); return; }       // n° 34 : vidéo, proportions (avant le mode élève)
+  if (open && open.id === 'oPrjQ'){ if (e.key === 'Enter' && !e.repeat && !e.target.closest('[data-close]')){ e.preventDefault(); $('prjQGo').click(); } return; }   // n° 133 : Entrée projette
   const typing = e.target.closest && e.target.closest('input[type="text"], input[type="search"], input:not([type]), textarea, [contenteditable]');
   if (STU || STU_MSG()){ stuKey(e); return; }                                       // mode élève : ses touches seulement ; page message : aucune
                                                                                      // (l'enseignant, 07.11.2026 : « Si on appuie sur R on a quand même la page des réglages »)
   if (!open && INP && inpKeyDown(e)) return;                                       // saisie (n° 38) : pendant la saisie, les touches écrivent dans la case
   if (!open && e.key === ' ' && !typing && !e.altKey && !e.ctrlKey && !e.metaKey && !SEQ && inpCan()){ e.preventDefault(); inpNoFocus(); INP_SWALLOW = true; inpOpen(); return; }   // Espace : ouvrir la case
   if ((e.key === 'f' || e.key === 'F') && !typing && !e.altKey && !e.ctrlKey && !e.metaKey){ e.preventDefault(); toggleFull(); return; }   // F : plein écran, aussi dans les réglages (02.11.2026, 3e conversation), sauf en tapant dans la recherche
+  if ((e.key === 'p' || e.key === 'P') && !typing && !SEQ && !e.altKey && !e.ctrlKey && !e.metaKey && (!open || open === $('oSet') || open === $('oLink'))){   // n° 133 : P, « Lien/impression élèves »
+    e.preventDefault(); if (open === $('oLink')) open.classList.remove('open'); else { if (!open) openSet(); if ($('oSet').classList.contains('open')) linkOpen(); } return; }
   if ((e.key === 'r' || e.key === 'R') && open === $('oSet') && !typing && !e.altKey && !e.ctrlKey && !e.metaKey){ e.preventDefault(); open.classList.remove('open'); return; }   // R ferme aussi les réglages (comme Échap ; utile en plein écran, où Échap sort du plein écran)
   if (open === $('oSet') && !e.altKey && !e.ctrlKey && !e.metaKey){                 // réglages (l'enseignant, 02.11.2026) :
     if (e.key === 'Backspace' && !typing){ e.preventDefault(); $('bNone').click(); return; }   // ⟵ (effacer, Backspace) : tout décocher, sauf en tapant dans la recherche
@@ -31276,6 +31681,8 @@ document.addEventListener('keydown', e => {
   // plusieurs questions à la fois (05.11.2026 ; touche M depuis la 5e conversation, avant 5) : M, puis les étoiles de chaque question (1 à 4),
   // puis Entrée ; M de nouveau annule ; dans le groupe, M revient à une question (avant 0)
   if (SEQ){
+    if (prjSeqAt() >= 0){ if (d){ e.preventDefault(); if (d >= '2' && d <= '6'){ PRJ.gn = Number(d); seqUI(); } return; }   // n° 125 : combien de questions de la feuille
+      if (e.key === 'Backspace'){ e.preventDefault(); PRJ.gn = 0; seqUI(); return; } }
     if (d >= '1' && d <= '4'){ e.preventDefault(); if (SEQ.length < GRP_MAX) SEQ.push(Number(d)); seqUI(); return; }
     if (e.key === 'Enter'){ e.preventDefault(); if (!e.repeat) seqGo(); return; }
     if (kM || e.key === 'Escape'){ e.preventDefault(); seqEnd(); return; }
@@ -31283,7 +31690,8 @@ document.addEventListener('keydown', e => {
     if (d){ e.preventDefault(); return; }                                                                    // 5 à 9, 0 : rien
     if (!/^(Shift|CapsLock|NumLock|Dead)$/.test(e.key)) seqEnd();                                       // une autre touche (→, R…) annule, puis fait son travail
   }
-  if (inG()){ // groupe affiché : 1 à 6 la question de ce numéro, Entrée toutes les réponses, → ← dans l'historique, M « choisis la difficulté »
+  // n° 134 : pas à l'écran de fin de la feuille (l'enseignant, 17.11.2026 : « ok tu peux corriger le défaut ») : juste après un groupe, 1 à 4 y donnent une question hors feuille
+  if (inG() && !(PRJ && PRJ.end)){ // groupe affiché : 1 à 6 la question de ce numéro, Entrée toutes les réponses, → ← dans l'historique, M « choisis la difficulté »
     if (kM){ e.preventDefault(); grpOff(); return; }
     if (d){ e.preventDefault(); grpCycle(Number(d) - 1); return; }
     if (e.key === 'ArrowRight' || e.key === 'PageDown'){ e.preventDefault(); next(); return; }
@@ -31492,7 +31900,11 @@ var QR = (function(){
    « dans lien élèves si on clique dessus, ça pourrait permettre de coller un lien d'élève aussi » : champ « Reprendre un lien » (ses exercices
    cochés dans les réglages, son titre, ses étoiles, sa case FR) ; la fenêtre s'ouvre aussi sans exercice coché (pour coller un lien).
    Note du projet : QPC_PROJET_LIENS_ELEVES.md. */
-const QPC_VERSION = '2026-11-17';    // dossier de cette version sur le site (…/qpc/2026-11-07/) : à changer à chaque version mise en ligne
+/* n° 130 (l'enseignant, 17.11.2026 : « Dans le lien de la page, tu mets la date […] tu veux pas commencer la date d'aujourd'hui à 1, et chaque
+   jour tu rajoutes 1 ? (un peu comme sur excel je crois) » ; « oui passe au compteur de jours ») : le dossier d'une version en ligne est le numéro
+   du jour de sa mise en ligne, 17.11.2026 = 1 (verDay), et non plus sa date : lien plus court de 6 à 9 caractères (code QR d'un palier plus
+   petit pour environ un lien sur trois). Les dossiers datés (2026-11-07/ à 2026-11-17/) restent en ligne pour leurs liens : verDay lit les deux formes. */
+const QPC_VERSION = '1';    // dossier de cette version sur le site (…/qpc/1/) : numéro du jour de la mise en ligne (17.11.2026 = 1), à changer à chaque version mise en ligne
 const QPC_BASE = 'https://outils-maths.github.io/qpc/';    // compte GitHub « outils-maths » (avec un s)
 const QPC_ONLINE = /(^|\.)github\.io$/i.test(location.hostname);    // ouverte depuis le site : seulement le mode élève (sans lien : un message)
 var STU = null;                       // mode élève (page ouverte par un lien élèves) ; null : page de l'enseignant
@@ -31567,7 +31979,7 @@ function linkParse(str){             // un lien entier, ou seulement ce qui suit
   const m = /(?:^|#)(q[12](?:&[^#\s]*)?)\s*$/.exec(String(str || '').trim()); if (!m) return null;
   const v2 = m[1][1] === '2', dId = v2 ? lnkDecId : lnkDec;          // n° 44 : forme q2 (liens courts)
   const f = {}; m[1].split('&').slice(1).forEach(kv => { const i = kv.indexOf('='); if (i > 0) f[kv.slice(0, i)] = kv.slice(i + 1); });
-  const vm = /\/qpc\/(\d{4}-\d{2}-\d{2})\/(?:index\.html)?#/.exec(String(str || ''));     // la version de la page qui a fait le lien (lien entier seulement)
+  const vm = /\/qpc\/(\d{4}-\d{2}-\d{2}|\d{1,5})\/(?:index\.html)?#/.exec(String(str || ''));     // la version de la page qui a fait le lien (lien entier seulement)
   const P = {t: f.t ? ((v2 ? lnkDecT : lnkDec)(f.t) || '').trim().slice(0, 120) : '', it: [], blk: [], num: {}, opt: {}, cap: {}, fr: f.f === '1', rnd: f.h === '1', ver: vm ? vm[1] : '', lost: 0};
   (f.x || '').split(',').forEach((e, i) => { const r = /^(.*?)(?:\*([1-3]))?$/.exec(e), id0 = r && dId(r[1]), id = id0 && (LINK_ALIAS[id0] || id0); if (!id) return;
     if (id[0] === '@'){ const b = id.slice(1); if (BLOCKS[b] && !BLOCKS[b].items.length){ if (!P.blk.includes(b)){ P.blk.push(b); if (r[2]) P.cap[b] = Number(r[2]); lnkWS(P, f, b, i); } } else P.lost++; }
@@ -31692,8 +32104,8 @@ function pToDraft(P){                // les exercices d'un lien dans le brouillo
 }
 function linkPaste(){                // « Reprendre un lien » : un lien élèves collé
   const v = $('lPaste').value.trim(); if (!v){ $('lPw').textContent = ''; return; }
-  const P = linkParse(v), vm = /\/qpc\/(\d{4}-\d{2}-\d{2})\//.exec(v);
-  if (!P || !pObjs(P).length){ $('lPw').textContent = vm && vm[1] > QPC_VERSION ? 'Ce lien a été fait avec une version plus récente de la page (' + verFr(vm[1]) +
+  const P = linkParse(v), vm = /\/qpc\/(\d{4}-\d{2}-\d{2}|\d{1,5})\//.exec(v);
+  if (!P || !pObjs(P).length){ $('lPw').textContent = vm && verCmp(vm[1], QPC_VERSION) > 0 ? 'Ce lien a été fait avec une version plus récente de la page (' + verFr(vm[1]) +
     ') : prends la dernière version de « Questions pour des champions ».' : 'Ce n\'est pas un lien de « Questions pour des champions ».'; return; }
   pToDraft(P); $('setWarn').textContent = ''; syncUI(); lnkTakeWS(P);
   LNK.P = Object.assign(pFromState(draft, P.t, P.cap), {fr: !!P.fr, rnd: !!P.rnd}); LNK.off = new Set(); LNK.voff = vidOff(P); $('lPaste').value = ''; $('lPw').textContent = '';
@@ -31703,12 +32115,18 @@ function linkPaste(){                // « Reprendre un lien » : un lien élèv
 // va pas forcément être les mêmes exos que les élèves avaient … il faudrait un attention pour ça ») : les exercices sont repris par leur nom fixe,
 // mais leurs questions ont pu changer, et un exercice qui n'existe pas dans cette version n'est pas repris
 const MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
-const verFr = v => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v); return m ? 'du ' + Number(m[3]) + (m[3] === '01' ? 'er' : '') + ' ' + MOIS[Number(m[2]) - 1] + ' ' + m[1] : v; };
+// n° 130 : une version est le numéro de son jour (17.11.2026 = 1) ou, avant, sa date (AAAA-MM-JJ) ; null pour une autre (« essai ») : rien à comparer
+const VER_D0 = Date.UTC(2026, 10, 16);                                 // le jour 0 : le 16.11.2026
+const verDay = v => { v = String(v || ''); if (/^\d{1,5}$/.test(v)) return Number(v);
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v); return m ? Math.round((Date.UTC(+m[1], m[2] - 1, +m[3]) - VER_D0) / 864e5) : null; };
+const verCmp = (a, b) => { const x = verDay(a), y = verDay(b); return x === null || y === null ? 0 : x - y; };   // < 0 : a plus ancienne que b
+const verFr = v => { const d = verDay(v); if (d === null) return v; const t = new Date(VER_D0 + d * 864e5), j = t.getUTCDate();
+  return 'du ' + j + (j === 1 ? 'er' : '') + ' ' + MOIS[t.getUTCMonth()] + ' ' + t.getUTCFullYear(); };
 function linkNote(P){
   const t = [], n = P.lost;
-  if (P.ver && P.ver < QPC_VERSION) t.push('Ce lien a été fait avec une version plus ancienne de la page (' + verFr(P.ver) + ') : il ouvre toujours cette ' +
+  if (P.ver && verCmp(P.ver, QPC_VERSION) < 0) t.push('Ce lien a été fait avec une version plus ancienne de la page (' + verFr(P.ver) + ') : il ouvre toujours cette ' +
     'ancienne version. Le nouveau lien ouvre la version de cette page : mêmes exercices, mais ils ont pu un peu changer depuis.');
-  if (P.ver && P.ver > QPC_VERSION) t.push('Ce lien a été fait avec une version plus récente de la page (' + verFr(P.ver) + ') : prends la dernière version de ' +
+  if (P.ver && verCmp(P.ver, QPC_VERSION) > 0) t.push('Ce lien a été fait avec une version plus récente de la page (' + verFr(P.ver) + ') : prends la dernière version de ' +
     '« Questions pour des champions ».');
   if (n) t.push((n > 1 ? n + ' exercices de ce lien n\'existent' : '1 exercice de ce lien n\'existe') + ' pas dans cette version de la page : ' + (n > 1 ? 'ils ne sont pas repris.' : 'il n\'est pas repris.'));
   return t.length ? '⚠ ' + t.join(' ') : '';
@@ -31797,7 +32215,8 @@ function qrPNG(q, copy){             // enregistrer : modules entiers, au moins 
   q.mods.forEach((r, y) => r.forEach((b, x) => { if (b) g.fillRect((x + 4) * px, (y + 4) * px, px, px); }));
   return new Promise((ok, ko) => c.toBlob(b => b ? b.arrayBuffer().then(a => ok(new Blob([pngDpi(new Uint8Array(a), copy ? 96 : c.width / (QR_CM / 2.54))], {type: 'image/png'})), ko) : ko(new Error('png')), 'image/png'));
 }
-function flash(b, t){ if (!b.dataset.lab) b.dataset.lab = b.textContent; b.textContent = t; clearTimeout(b._ft); b._ft = setTimeout(() => b.textContent = b.dataset.lab, 1600); }
+function flash(b, t){ if (!b.dataset.lab) b.dataset.lab = b.innerHTML; if (!b._ft) b.style.minHeight = b.getBoundingClientRect().height + 'px'; b.textContent = t; clearTimeout(b._ft);      // n° 131 : innerHTML et hauteur gardés (« ex. pour Classroom »)
+  b._ft = setTimeout(() => { b.innerHTML = b.dataset.lab; b.style.minHeight = ''; b._ft = 0; }, 1600); }
 function copyOld(t){ const a = document.createElement('textarea'); a.value = t; a.style.position = 'fixed'; a.style.opacity = '0'; document.body.appendChild(a); a.select();
   let ok = false; try { ok = document.execCommand('copy'); } catch (e) {} a.remove(); return ok; }
 const copyText = t => navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(t).then(() => true, () => copyOld(t)) : Promise.resolve(copyOld(t));
@@ -31939,15 +32358,15 @@ function ipGeo(f){            // la page (A4) ou le morceau (½, ⅓, ¼) : dime
 }
 const ipPgMax = () => IP && IP.fmt !== 'a4' ? 2 : 8;               // petits formats : recto, ou recto verso
 const ipPcPos = f => f === '2' ? [[0, 0], [0, 148.5]] : f === '3' ? [[0, 0], [0, 99], [0, 198]] : [[0, 0], [105, 0], [0, 148.5], [105, 148.5]];   // copies (mm)
-function ipCuts(f){           // traits de coupe : très fins, 1 cm depuis le bord gauche (¼ : aussi depuis le bas, au milieu)
+function ipCuts(f){           // traits de coupe : très fins, 1 cm depuis le bord gauche ; n° 124 : aucun en ¼ (« la découpeuse a déjà des marques pour ce format »)
   const hz = y => '<div class="ip-cut" style="left:0;top:' + y + 'mm;width:10mm;border-top:.25pt solid #000"></div>';
   const vt = x => '<div class="ip-cut" style="left:' + x + 'mm;top:' + (IP_SH - 10) + 'mm;height:10mm;border-left:.25pt solid #000"></div>';
-  return f === '2' ? hz(148.5) : f === '3' ? hz(99) + hz(198) : f === '4' ? hz(148.5) + vt(105) : ''; }
+  return f === '2' ? hz(148.5) : f === '3' ? hz(99) + hz(198) : ''; }
 function ipHintF(){           // la ligne d'aide d'un petit format
   if (!IP || IP.fmt === 'a4') return '';
   const n = IP_FMT[IP.fmt].n;
   return '1 feuille A4 = ' + n + ' élèves : pour 24 élèves, imprime ' + Math.ceil(24 / n) + ' exemplaires' + (IP.pages > 1 ? ', en recto verso' : '') +
-    ', puis coupe ' + (n === 2 ? 'au petit trait à gauche' : n === 3 ? 'aux petits traits à gauche' : 'aux petits traits (à gauche et en bas)') + '.'; }
+    ', puis coupe ' + (n === 2 ? 'au petit trait à gauche' : n === 3 ? 'aux petits traits à gauche' : 'en quatre') + '.'; }
 let IP_GX = 5, IP_GR = 2.5, IP_GC = 6, IP_GA = 5;                 // écarts (mm) : avant un exercice, sous une ligne de questions, entre deux colonnes, au-dessus des réponses (n° 116 : plus serrés dans un petit format, ipGeo)
 const IP_LET = 6.5, IP_STW = 1.75;                                 // colonne de la lettre a) (mm) ; n° 37 : largeur d'une étoile (6 pt), à gauche de la lettre
 const IP_WL = ['aucune', 'petite', 'normale', 'grande', 'très grande'];   // place pour répondre, − / + (−2 à 2)
@@ -31983,7 +32402,7 @@ const IP_FIGK = {fon: 1.15, rep: 1.15};          // graphiques et repères un pe
 const ipCon = p => p.con && !/^\s*Complète\s*\.?\s*$/.test(String(p.con).replace(/<[^>]+>/g, '')) ? p.con : '';
 // pointillés : une largeur d'un nombre impair de px (Chromium dessine sinon deux points collés, un tiret, au début du pointillé : mesuré
 // sur le PDF à 600 dpi) ; le signe qui suit les pointillés reste avec eux (« cercle ……… . » : le point seul en début de ligne)
-const ipQb = mm => '<span class="qbox" style="width:' + (2 * Math.max(4, Math.round((mm * IP_PX - 1) / 2)) + 1) + 'px;min-width:0">?</span>';
+const ipQb = (mm, nd) => '<span class="qbox' + (nd ? ' ipnd' : '') + '" style="width:' + (2 * Math.max(4, Math.round((mm * IP_PX - 1) / 2)) + 1) + 'px;min-width:0">?</span>';   // nd : sans pointillés (n° 124)
 const ipGlue = h => h.replace(/(<span class="qbox"[^>]*>\?<\/span>)([.,;:!?»)\u00a0]*[.,;:!?»)])/g, '<span class="ipnw">$1$2</span>');
 const ipNb = h => String(h).replace(/ ([?!:;»])/g, '\u00a0$1').replace(/« /g, '«\u00a0');   // pas de « ? » seul en début de ligne (instructions, A4)
 const IP_SEGC = ['#dce8f7', '#fde3c7', '#dcefdc', '#f5dce7', '#e6e0f5', '#f6eecb', '#d4eef0', '#efe1d6'];   // morceaux de la barre des exercices
@@ -32121,7 +32540,15 @@ function ipPrep(p){           // une fois par question : pointillés de la large
   m.innerHTML = '<div class="qa"><div class="calc">' + q0 + '</div></div>';
   const qb = [...m.querySelectorAll('.qbox')], W = qb.map((b, i) => { const a = aw.length === qb.length ? aw[i] : 8;
     return b.closest('td') ? Math.max(8, a + 3) : b.closest('.phr') ? Math.min(45, Math.max(14, a * 1.25 + 4)) : Math.min(42, Math.max(12, a * 1.3 + 5)); });
-  const line = ipGlue(ipNb(parts.length - 1 === qb.length ? parts.reduce((s, x, i) => s + (i ? ipQb(W[i - 1]) : '') + x, '') : q0));
+  /* n° 124 (l'enseignant, 17.11.2026 : « enlève les pointillés pour répondre pour les calculs : tu peux les garder juste quand il faut compléter ») :
+     la réponse d'un calcul (case juste après « = » ou « ≈ », rien après, ou seulement « ≈ » et la valeur arrondie) n'a plus de pointillés, mais garde sa place (même largeur) ;
+     les cases à compléter (au milieu : « 3 m = … cm », « 3/4 = …/8 » ; dans une phrase ou un tableau) gardent leurs pointillés. */
+  const txt = s => s.replace(/<[^>]+>/g, '').replace(/[\s\u00a0\u202f]+/g, ' ');
+  const ND = qb.map(() => false);      // « V = … ≈ … » : les deux cases sont la réponse du calcul
+  if (parts.length - 1 === qb.length) for (let i = qb.length - 1; i >= 0; i--){
+    const af = txt(parts[i + 1]).replace(/[ .]/g, '');
+    ND[i] = !qb[i].closest('td, .phr') && /[=≈] ?$/.test(txt(parts.slice(0, i + 1).join(''))) && (i === qb.length - 1 ? !af : af === '≈' && ND[i + 1]); }
+  const line = ipGlue(ipNb(parts.length - 1 === qb.length ? parts.reduce((s, x, i) => s + (i ? ipQb(W[i - 1], ND[i - 1]) : '') + x, '') : q0));
   m.innerHTML = ipQaHTML(p, line, false, 0, false); mathify(m);
   const wd = sel => { const e = m.querySelector(sel); return e ? e.getBoundingClientRect().width / IP_PX : 0; };
   const key = ipKey(p);
@@ -32195,7 +32622,16 @@ function ipQsU(u, n){         // les n questions d'un exercice de la feuille ; b
 }
 // n° 116 : dans un petit format, chaque question à figure a la figure à gauche quand elle y tient (A4 : tout l'exercice, ou rien)
 const ipSideOf = (u, p, cw, lw) => p.fig && cw - lw - p._ip.fw - 4 >= Math.max(30, p._ip.rw) ? (u.bl === 'don' ? 2 : 1) : 0;
-function ipBlock(u, idx, rows){   // un exercice : ses questions (rows lignes), colonnes, hauteurs
+/* n° 131 (l'enseignant, 17.11.2026, image d'une feuille en ¼ sans « Réponses à la fin » : « Quand on ne met pas les réponses […], il peut y avoir plus de
+   questions dans la colonne de droite au verso ») : petits formats, code QR seul en bas de la dernière face (sans l'encadré des réponses) : le dernier
+   exercice de cette face continue, sous ses lignes, dans les colonnes à côté du code QR (au verso : à droite, le code QR étant à gauche ; au recto
+   d'une feuille d'une page : à gauche), jusqu'au bas du contenu (IP_BOT). Lignes de queue (row.tail) : fc questions, décalées de row.off colonnes ;
+   lettres à la suite ; ipTail (dans ipFit) en essaie le plus possible, une fois toutes les lignes entières posées. */
+function ipTailFc(c, tl){     // colonnes libres à côté du code QR (tl : {qs : sa largeur, left : à gauche}) : leur nombre (à droite si left, à gauche sinon)
+  const cw = (IP_CW - (c - 1) * IP_GC) / c; let n = 0;
+  for (let j = 0; j < c; j++){ const x0 = j * (cw + IP_GC), x1 = x0 + cw; if (tl.left ? x0 >= tl.qs + 3 - .01 : x1 <= IP_CW - tl.qs - 3 + .01) n++; }
+  return n; }
+function ipBlock(u, idx, rows, tl){   // un exercice : ses questions (rows lignes), colonnes, hauteurs ; tl (n° 131) : {T lignes de queue, qs, left}
   u.os.forEach(o => { const P = ipPool(o.id); if ([1, 2, 3, 4].reduce((n, l) => n + P[l].length, 0) < 4) ipQs(o, 4); });     // un échantillon pour choisir les colonnes
   const all = u.os.flatMap(o => [1, 2, 3, 4].flatMap(l => ipPool(o.id)[l])); all.forEach(ipPrep);
   const lwOf = n => n > 26 ? 9 : IP_LET;      // colonne de la lettre : plus large dès aa) ; n° 117 : les étoiles dans la marge, à gauche (la colonne ne s'élargit plus)
@@ -32209,19 +32645,21 @@ function ipBlock(u, idx, rows){   // un exercice : ses questions (rows lignes), 
       const XS = all.map(p => ({p, w: cw0, con: true, work: ipWork(p._o || u.o, p), side: ipSideOf(u, p, cw0, lw0), lw: lw0})); ipMeasCells(XS);
       const d = cc / (Math.max(...XS.map(x => x.p._ip.h[ipCK(x)])) + IP_GR); if (!best || d > best.d + 1e-9) best = {cc, d}; }
     c = best.cc; }
-  let Q = ipQsU(u, rows * c); Q.forEach(ipPrep);
+  const nQ = cc => rows * cc + (tl ? tl.T * ipTailFc(cc, tl) : 0);      // n° 131 : avec les lignes de queue
+  let Q = ipQsU(u, nQ(c)); Q.forEach(ipPrep);
   for (let t = 0; t < 4 && c > 1; t++){        // une question tirée à l'instant est plus large : moins de colonnes
     const nd = Math.max(...Q.map(p => p._ip.need)) + lwOf(Q.length) + 1.5; if ((IP_CW - (c - 1) * IP_GC) / c >= nd) break;
-    while (c > 1 && (IP_CW - (c - 1) * IP_GC) / c < nd) c--; Q = ipQsU(u, rows * c); Q.forEach(ipPrep); }
+    while (c > 1 && (IP_CW - (c - 1) * IP_GC) / c < nd) c--; Q = ipQsU(u, nQ(c)); Q.forEach(ipPrep); }
   const cons = Q.map(ipCon), common = Q.length > 1 && cons.every(x => x && x === cons[0]) ? cons[0] : '';
   const lw = lwOf(Q.length), cw = (IP_CW - (c - 1) * IP_GC) / c;
   const AQ = all.concat(Q.filter(p => !all.includes(p))), side = AQ.some(p => p.fig) && AQ.every(p => !p.fig || cw - lw - p._ip.fw - 4 >= Math.max(30, p._ip.rw)) ? (u.bl === 'don' ? 2 : 1) : 0;
   const X = Q.map(p => ({p, w: cw, con: !common, work: ipWork(p._o || u.o, p), side: IP_F === 'a4' ? side : ipSideOf(u, p, cw, lw), lw})); ipMeasCells(X);
-  const R = []; for (let i = 0; i < Q.length; i += c){ const xs = X.slice(i, i + c);
-    R.push({qs: xs.map(x => x.p), xs, i, work: Math.max(...xs.map(x => x.work)), h: Math.max(...xs.map(x => x.p._ip.h[ipCK(x)])) + IP_GR}); }
+  const nf = Math.min(Q.length, rows * c), fc = tl ? ipTailFc(c, tl) : 0;      // n° 131 : après les lignes entières, les lignes de queue (fc questions)
+  const R = []; for (let i = 0; i < Q.length;){ const tail = i >= nf, n = tail ? fc : c; if (!n) break; const xs = X.slice(i, i + n);
+    R.push({qs: xs.map(x => x.p), xs, i, work: Math.max(...xs.map(x => x.work)), h: Math.max(...xs.map(x => x.p._ip.h[ipCK(x)])) + IP_GR, tail, off: tail && tl.left ? c - fc : 0}); i += n; }
   const name = '<span class="ip-hn">' + (idx + 1) + ')</span> ' + ipUName(u), con = common ? ipNb(common) + (/[.?!:…]\s*$/.test(common.replace(/<[^>]+>/g, '')) ? '' : '.') : '';
   const wide = IP_F !== 'a4' && Q.length > 0 && Math.max(...Q.map(p => p._ip.need)) + lw + 1.5 > IP_CW + .5;     // n° 116 : plus large que le morceau (figure jamais réduite)
-  return {u, o: u.o, id: u.id, os: u.os, mix: u.mix, idx, Q, c, cw, side, rows: R, name, con, hh: ipTxtH(name, IP_CW, 'ip-h'), hc: con ? ipTxtH(con, IP_CW, 'ip-cc') : 0, short: Q.length < rows * c, wide};
+  return {u, o: u.o, id: u.id, os: u.os, mix: u.mix, idx, Q, c, cw, side, rows: R, name, con, hh: ipTxtH(name, IP_CW, 'ip-h'), hc: con ? ipTxtH(con, IP_CW, 'ip-cc') : 0, short: Q.length < nQ(c), wide};
 }
 function ipAnsPrep(B, aw){    // l'encadré « Réponses » (comme ses fiches : les réponses seulement, en rangées alignées par exercice) : colonnes, rangées,
   // hauteurs (mm) ; cols1 : en un seul morceau, colonnes de même hauteur ; h : sa hauteur mesurée ; oh : titre, cadre et marges ;
@@ -32285,8 +32723,8 @@ function ipHead(){            // en-tête de la 1re page : classe, titre entre d
   const tb = Math.max(th, qr ? qs : 0);
   return {qr, qs, cls, y, tw, tb, top: y + Math.max(tb, qr ? qs + 6.5 : 0) + 5};
 }
-function ipLay(X, r){         // exercices X avec r[i] lignes : pages, place de chaque exercice, tout tient-il ?
-  const N = IP.pages, Hd = ipHead(), B = X.map((x, i) => ipBlock(x.u, i, r[i])); let nb = 0;
+function ipLay(X, r, tq){     // exercices X avec r[i] lignes : pages, place de chaque exercice, tout tient-il ? tq (n° 131) : {i, T} lignes de queue de l'exercice i
+  const N = IP.pages, Hd = ipHead(), B = X.map((x, i) => ipBlock(x.u, i, r[i], tq && tq.i === i ? {T: tq.T, qs: Hd.qs, left: (N - 1) % 2 === 1} : null)); let nb = 0;
   B.forEach(b => { if (b.Q.length) b.num = ++nb; b.name = '<span class="ip-hn">' + (b.num || 0) + ')</span> ' + ipUName(b.u); });   // 1), 2)… sans trou (un exercice sans question)
   // n° 117 (l'enseignant, 16.11.2026 : « Quand il y a un seul exercice ça ne sert à rien d'avoir la ligne 1) Multiplication de monômes. Après le
   // titre, dans ce cas, on peut donc directement passer aux items a), b), ... » ; QCM : tous les formats) : la consigne commune reste
@@ -32299,11 +32737,12 @@ function ipLay(X, r){         // exercices X avec r[i] lignes : pages, place de 
   const pages = [[]], H = B.map(() => 0), tall = new Set(); let k = 0, y = top(0), fits = true;     // tall (n° 116) : exercices dont une ligne dépasse
   B.forEach((b, i) => b.rows.forEach((row, j) => {
     if (!j && i && IP.brk && IP.brk[b.id] && y > top(k) + .01){ pages[k].end = y; k++; pages.push([]); y = top(k); }     // n° 118 : l'exercice commence une page
-    const head = j ? 0 : (y > top(k) + .01 ? IP_GX : 0) + b.hh + b.hc;
-    if (y + head + row.h > bq(k) + .01 && y > top(k) + .01){ pages[k].end = y; k++; pages.push([]); y = top(k); }
+    const head = j ? 0 : (y > top(k) + .01 ? IP_GX : 0) + b.hh + b.hc, lim = row.tail ? IP_BOT : bq(k);     // n° 131 : une ligne de queue va jusqu'en bas
+    if (y + head + row.h > lim + .01 && y > top(k) + .01){ pages[k].end = y; k++; pages.push([]); y = top(k); }
     if (!j){ if (y > top(k) + .01) y += IP_GX; pages[k].push({t: 'h', b, y}); y += b.hh + b.hc; H[i] += b.hh + b.hc; }
     pages[k].push({t: 'r', b, row, y}); y += row.h; H[i] += row.h;
-    if (y > bq(k) + .01){ fits = false; tall.add(b.num); } }));
+    if (row.tail && k !== N - 1) fits = false;                          // n° 131 : seulement sur la dernière face, à côté du code QR
+    if (y > (row.tail ? IP_BOT : bq(k)) + .01){ fits = false; if (!row.tail) tall.add(b.num); } }));
   pages[k].end = y;
   let ans = A && one ? [{k: N - 1, y: IP_BOT - (qb ? hb : A.h), cols: A.cols1, title: 'Réponses', q: !!qb, hq: hb}] : null, np = Math.max(pages.length, (A || qb) && one ? N : 0);
   if (A && !one){ ans = ipAnsFlow(A, k, y, N, qb); if (!ans) fits = false; else np = Math.max(pages.length, ans[ans.length - 1].k + 1); }
@@ -32348,7 +32787,18 @@ function ipFit(){             // les lignes de chaque exercice : une de plus à 
       r[i]--; full[i] = true; }
     if (!ok) break;
   }
+  if (L.fits) L = ipTail(X, r, L) || L;                                  // n° 131
   return ipFill(L.fits ? L : ipLay(X, r));
+}
+function ipTail(X, r, L){     // n° 131 : sans les réponses, le plus de lignes de queue possible à côté du code QR (dernière face) ; null : aucune
+  if (!L.qrb || L.np > L.N) return null;
+  const k = L.N - 1, P = L.pages[k], last = P && P[P.length - 1]; if (!last || last.t !== 'r') return null;
+  const i = L.B.indexOf(last.b); if (i < 0 || last.b.short || L.B.slice(i + 1).some(b => b.rows.length)) return null;
+  if (!ipTailFc(last.b.c, {qs: L.Hd.qs, left: k % 2 === 1})) return null;
+  const rh = Math.max(...last.b.rows.map(x => x.h)), T0 = Math.min(40, Math.floor((IP_BOT - P.end + .01) / rh) + 1);
+  for (let T = T0; T >= 1; T--){ const L2 = ipLay(X, r, {i, T}), b2 = L2.B[i];
+    if (L2.fits && !b2.short && b2.rows.filter(x => x.tail).length === T && b2.rows.filter(x => !x.tail).length === r[i]) return L2; }
+  return null;
 }
 function ipFill(L){           // la place libre de chaque page va à la place pour répondre de ses lignes (au plus 60 % de plus, ou 12 mm)
   L.pages.forEach((P, k) => {
@@ -32375,14 +32825,15 @@ function ipPageIn(L, k, N){   // une page (A4) ou une face du morceau (n° 116 :
   P.forEach(x => {
     if (x.t === 'h'){ if (x.b.name || x.b.con) h += '<div ' + a(x.y, 'ip-hb') + '">' + (x.b.name ? '<div class="ip-h">' + x.b.name + '</div>' : '') + (x.b.con ? '<div class="ip-cc">' + x.b.con + '</div>' : '') + '</div>'; return; }
     const b = x.b, hh = x.row.h + (x.ex || 0) - IP_GR;
-    h += '<div ' + a(x.y, 'ip-row') + ';height:' + hh.toFixed(2) + 'mm">' + x.row.xs.map((c, j) => '<div class="ip-rc" style="width:' + b.cw.toFixed(2) + 'mm">' +
+    h += '<div ' + a(x.y, 'ip-row') + ';height:' + hh.toFixed(2) + 'mm">' + x.row.xs.map((c, j) => '<div class="ip-rc" style="width:' + b.cw.toFixed(2) + 'mm' +
+      (!j && x.row.off ? ';margin-left:' + (x.row.off * (b.cw + IP_GC)).toFixed(2) + 'mm' : '') + '">' +        // n° 131 : ligne de queue décalée (à droite du code QR)
       '<button type="button" class="ip-rl" data-ipr="' + (IP.rl.push(c.p) - 1) + '"' + (ipStW(c.p) ? ' style="margin-right:' + (ipStW(c.p) + .5).toFixed(2) + 'mm"' : '') + ' title="Une autre question à la place de celle-ci" aria-label="Une autre question">' + IP_RL + '</button>' +   // n° 117
       ipCellHTML(c.p, ipLetter(x.row.i + j), c) + '</div>').join('') + '</div>';
   });
   const qrH = () => '<div class="ip-qr" style="width:' + Hd.qs.toFixed(2) + 'mm">' + ipQrA(Hd.qr) + '<div class="ip-qrc">Entraîne-toi<br>en ligne</div></div>';
   (L.ans || []).filter(c => c.k === k).forEach(c => { h += '<div ' + a(c.y, 'ip-answ' + (IP.up ? ' ip-up' : '') + (c.q ? ' ip-aq' : '')) + (c.q ? ';height:' + c.hq.toFixed(2) + 'mm' : '') + '">' +
-    ipAnsBox(L.A, c.cols, c.title) + (c.q ? qrH() : '') + '</div>'; });            // n° 116 : à l'envers (case de la fenêtre) ; code QR à droite (petits formats)
-  if (L.qrb && L.qrb.k === k) h += '<div ' + a(L.qrb.y, 'ip-aq ip-qa1') + ';height:' + L.qb.toFixed(2) + 'mm">' + qrH() + '</div>';
+    (c.q && k % 2 ? qrH() : '') + ipAnsBox(L.A, c.cols, c.title) + (c.q && !(k % 2) ? qrH() : '') + '</div>'; });   // n° 124 : au verso, le code QR à gauche (les trous sont à droite)            // n° 116 : à l'envers (case de la fenêtre) ; code QR à droite (petits formats)
+  if (L.qrb && L.qrb.k === k) h += '<div ' + a(L.qrb.y, 'ip-aq ip-qa1' + (k % 2 ? ' ip-qv' : '')) + ';height:' + L.qb.toFixed(2) + 'mm">' + qrH() + '</div>';
   if (!Hd.small) h += '<div class="ip-ft" style="top:' + (IP_H - IP_HT - 4.2) + 'mm">Page ' + (k + 1) + ' sur ' + N + '</div>';
   else if (k < N - 1) h += '<div class="ip-ft ip-tf" style="top:' + (IP_H - 10.6).toFixed(2) + 'mm;right:' + IP_MX + 'mm">Tourne la feuille →</div>';
   return h;
@@ -32404,13 +32855,39 @@ function ipScale(){           // l'aperçu : deux pages côte à côte quand ell
   const k = Math.max(.2, Math.min(big ? 1.25 : .62, (W - (per - 1) * 16) / per / pw));
   v.querySelectorAll('.ip-pw').forEach(w => { w.style.width = pw * k + 'px'; w.style.height = IP_SH * IP_PX * k + 'px'; w.firstChild.style.transform = 'scale(' + k + ')'; });
   v.style.setProperty('--iprl', Math.min(15 / k, 6 * IP_PX).toFixed(2) + 'px');      // n° 117 : bouton ↻ d'environ 15 px à l'écran, au plus 6 mm sur la feuille
+  const bt = document.querySelector('.ipvbt'); v.style.paddingTop = '';            // n° 132 : « Nouvelles questions » et « Projeter… » mangent le haut de l'aperçu,
+  if (bt && bt.offsetParent){ const B = bt.getBoundingClientRect(); let need = 0;    // sans cacher de texte : sinon l'aperçu descend juste ce qu'il faut
+    v.querySelectorAll('.ip-tl, .ip-tb, .ip-hdr, .ip-hb, .ip-row, .ip-answ, .ip-aq').forEach(e => { const r = e.getBoundingClientRect();
+      if (r.width && r.left < B.right && B.left < r.right && r.top < B.bottom + 3) need = Math.max(need, B.bottom + 3 - r.top); });
+    if (need > 0) v.style.paddingTop = (12 + Math.ceil(need)) + 'px'; }
 }
-function ipShow(L){ ipUnprint(); const v = $('ipPrev'); v.innerHTML = ipPagesHTML(L); mathify(v); ipScale(); }
-function ipPrint(){           // la fenêtre d'impression du navigateur (imprimante, ou « Enregistrer au format PDF ») : seulement les pages
+function ipShow(L){ ipUnprint(); const v = $('ipPrev'); v.innerHTML = ipPagesHTML(L); mathify(v); ipLetAlign(v); ipScale();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (v.contains(v.querySelector('.ip-cell'))) ipLetAlign(v); }); }
+/* n° 124 (l'enseignant, 17.11.2026 : « les lettres des items sont trop haut par rapport aux calculs (je crois que c'est à cause des fractions) ») :
+   quand la question commence par son calcul (ni consigne, ni figure, ni données), la lettre a) est centrée sur la hauteur du calcul (sa ligne,
+   centrée elle aussi : align-items:center), comme le « = » ; sinon (consigne, figure, phrase sur plusieurs lignes, tableau, calcul très haut)
+   elle reste en haut, sur la 1re ligne. Le ↻ de l'aperçu suit la lettre. Mesures en px de mise en page (offsetHeight : sans l'échelle de l'aperçu). */
+function ipLetAlign(root){
+  root.querySelectorAll('.ip-cell').forEach(c => {
+    const l = c.firstElementChild, q = l && l.nextElementSibling, f = q && q.firstElementChild, b = c.parentNode && c.parentNode.querySelector(':scope > .ip-rl');
+    if (!l) return; l.style.marginTop = ''; if (b) b.style.marginTop = '';
+    if (!f || !f.classList.contains('calc') || f.classList.contains('wrap63') || f.querySelector('table')) return;
+    const lh = l.offsetHeight, fh = f.offsetHeight;
+    if (!lh || fh > 4 * lh || [...f.querySelectorAll('.phr')].some(e => e.offsetHeight > 1.6 * lh)) return;
+    const d = (fh - lh) / 2; if (d < .3) return;
+    l.style.marginTop = d.toFixed(2) + 'px'; if (b) b.style.marginTop = d.toFixed(2) + 'px';
+  });
+}
+function ipPrint(go){         // « Enregistrer PDF » : la fenêtre d'impression du navigateur (« Enregistrer au format PDF », ou l'imprimante) : seulement les pages ; go === ipPrint : le 2e temps
   if (!IP || !IP.L) return;
+  if (go !== ipPrint){ if (ipPrint.go) return;             // n° 128 : un 2e clic pendant l'attente ne fait rien (avant : une feuille de plus, sans rien de caché)
+    ipPrint.go = true; let D = null; try { D = prjSheet(); } catch (e) { console.error('qpc', e); }   // n° 129 : plus de fichier .qpc, plus d'attente de 0,7 s
+    prjPdfHref(D).catch(e => { console.error('qpc', e); return ''; }).then(u => { ipPrint.qd = u;      // n° 128 : la feuille, cachée dans le PDF
+      setTimeout(() => { try { ipPrint(ipPrint); } finally { ipPrint.go = false; ipPrint.qd = ''; } }, 0); });
+    return; }
   ipUnprint();
   const v = $('ipPrev'), host = document.createElement('div'); host.id = 'ipHost';
-  [...v.children].forEach(w => host.appendChild(w)); document.body.appendChild(host);
+  [...v.children].forEach(w => host.appendChild(w)); document.body.appendChild(host); prjPdfLink(host, ipPrint.qd);
   const st = document.createElement('style'); st.id = 'ipPageCss'; st.textContent = '@page{size:A4 portrait;margin:0}'; document.head.appendChild(st);
   document.documentElement.classList.add('ipprint'); IP.t0 = document.title; document.title = fileSafe(ipTitle()) || 'Questions pour des champions';
   window.addEventListener('afterprint', ipUnprint, {once: true});
@@ -32418,6 +32895,7 @@ function ipPrint(){           // la fenêtre d'impression du navigateur (imprima
 }
 function ipUnprint(){         // après l'impression : les pages reviennent dans l'aperçu
   const host = $('ipHost'); if (!host) return;
+  host.querySelectorAll('.ip-qd').forEach(a => a.remove());   // n° 128 : le lien caché, seulement à l'impression
   const v = $('ipPrev'); [...host.children].forEach(w => v.appendChild(w)); host.remove();
   const st = $('ipPageCss'); if (st) st.remove();
   document.documentElement.classList.remove('ipprint'); if (IP && IP.t0 != null){ document.title = IP.t0; IP.t0 = null; }

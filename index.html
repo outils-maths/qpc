@@ -1382,6 +1382,17 @@ body.prjfin #bRep,body.prjfin #bRet,body.prjfin #kb{display:none !important}
 body.prj header .title{flex:0 1 auto;min-width:6em;white-space:normal;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;line-height:1.2}   /* titre de la feuille : deux lignes au plus */
 body.prj header.hc2 .title{flex:1 1 14em}   /* ronds sur leur ligne : le titre reste à côté des boutons */
 .ip-qd{position:absolute;left:2mm;top:2mm;width:1px;height:1px;display:block;overflow:hidden;pointer-events:none}   /* n° 128 : la feuille cachée dans le PDF (jamais visible) */
+/* n° 138 : exportateur PDF dans la page (prototype) : la copie des pages hors de l'écran, à taille réelle ; « ou imprimer » sous le bouton */
+.pdxhost{position:fixed;left:-300mm;top:0;width:210mm;pointer-events:none;z-index:-1}
+.pdxhost .ip-pw{width:210mm;height:296.5mm;box-shadow:none;margin:0}
+.pdxhost .ip-pg{transform:none !important}
+.pdxhost .ip-rl{display:none}
+.pdxob{position:relative;display:inline-flex}
+.pdxprn{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:.15em;font:inherit;font-size:.72em;color:var(--muted);background:none;border:0;padding:0;white-space:nowrap;cursor:pointer;text-decoration:underline dotted;text-underline-offset:.15em}
+.pdxprn:hover{color:var(--sel)}
+#ipPrint.pdxbusy{cursor:progress;opacity:.7}
+html.pdxno #pdxPrn,html.pdxno .pdxy,html:not(.pdxno) .pdxn{display:none}   /* n° 140 : sans « Enregistrer sous » (Firefox…), la fenêtre d'impression */
+@media (max-width:700px){.pdxob{flex-direction:column;align-items:center;gap:.1em}.pdxprn{position:static;transform:none;margin-top:0}}   /* téléphone : les boutons passent à la ligne, le lien reste dessous */
 </style>
 </head>
 <body>
@@ -1551,7 +1562,7 @@ body.prj header.hc2 .title{flex:1 1 14em}   /* ronds sur leur ligne : le titre r
         <div class="lmsg" id="lMsg"></div>
       </div>
       <section class="ipsec" id="ipSec" aria-label="Feuille à imprimer">
-        <div class="ipt"><h3>Feuille à imprimer</h3><span class="iptr"><button type="button" class="btn on" id="ipPrint" title="La fenêtre d'impression : choisis « Enregistrer au format PDF » (le PDF garde les questions, pour les projeter), ou ton imprimante">Enregistrer PDF</button><span class="prjg"><span class="prjob"><button type="button" class="btn on prjopen" title="Choisir le PDF d’une feuille (enregistré avec « Enregistrer PDF ») et projeter ses questions">Projeter les questions d’un PDF</button><span class="prjhint">ou glisse le PDF sur la page</span></span><button type="button" class="prjinf" title="Projeter un PDF : comment ça marche" aria-label="Projeter un PDF : comment ça marche"><svg class="pisvg" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.9" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="4.75" r="1.05" fill="currentColor"/><path d="M8 7.2v4.6" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg></button></span></span></div>
+        <div class="ipt"><h3>Feuille à imprimer</h3><span class="iptr"><span class="pdxob"><button type="button" class="btn on" id="ipPrint" title="Enregistrer la feuille en PDF (le PDF garde les questions, pour les projeter)">Enregistrer PDF</button><button type="button" class="pdxprn" id="pdxPrn" title="La fenêtre d'impression du navigateur : ton imprimante, ou « Enregistrer au format PDF »">ou imprimer</button></span><span class="prjg"><span class="prjob"><button type="button" class="btn on prjopen" title="Choisir le PDF d’une feuille (enregistré avec « Enregistrer PDF ») et projeter ses questions">Projeter les questions d’un PDF</button><span class="prjhint">ou glisse le PDF sur la page</span></span><button type="button" class="prjinf" title="Projeter un PDF : comment ça marche" aria-label="Projeter un PDF : comment ça marche"><svg class="pisvg" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.9" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="4.75" r="1.05" fill="currentColor"/><path d="M8 7.2v4.6" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg></button></span></span></div>
         <div class="ipbody">
           <div class="ipo">
             <span class="ipf">Format <span class="ipfmt" role="group" aria-label="Format de la feuille"><button type="button" data-ipf="a4" class="on" aria-pressed="true" title="Une feuille A4 par élève">A4</button><button type="button" data-ipf="2" aria-pressed="false" title="Moitié de A4 : les mêmes questions en haut et en bas de la feuille">½</button><button type="button" data-ipf="3" aria-pressed="false" title="Tiers de A4 : trois fois les mêmes questions sur la feuille">⅓</button><button type="button" data-ipf="4" aria-pressed="false" title="Quart de A4 : quatre fois les mêmes questions sur la feuille">¼</button></span></span>
@@ -1570,7 +1581,7 @@ body.prj header.hc2 .title{flex:1 1 14em}   /* ronds sur leur ligne : le titre r
           <div class="ipvb"><div class="ipvbt"><button type="button" class="ipnew" id="ipNew" title="D'autres questions sur toute la feuille (↻ à gauche d'une question : seulement elle)"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.2 8.6A5.2 5.2 0 1 1 11.6 4.3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M12.6 1.6v3.6H9" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Nouvelles questions</span></button><button type="button" class="ipnew prjgo" id="prjGo" title="Présenter les questions de cette feuille au beamer, une à la fois, comme quand on joue"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1.5 .5L9.5 5L1.5 9.5Z" fill="currentColor"/></svg><span>Projeter les questions de ce PDF</span></button></div>
           <div class="ipv" id="ipPrev" title="Clic : une page en grand"></div></div>
           <div class="iphint" id="ipHintF"></div>
-          <div class="iphint">« Enregistrer PDF » ouvre la fenêtre d'impression : choisis « Enregistrer au format PDF » (ou ton imprimante).</div>
+          <div class="iphint"><span class="pdxy">« Enregistrer PDF » fait le PDF dans la page : tu choisis où l'enregistrer. « ou imprimer » ouvre la fenêtre d'impression.</span><span class="pdxn">« Enregistrer PDF » ouvre la fenêtre d'impression : choisis « Enregistrer au format PDF » (ou ton imprimante).</span></div>
         </div>
       </section>
     </div>
@@ -31213,6 +31224,433 @@ function prjBufOpen(buf){                                   // un fichier gliss�
   const b = new Uint8Array(buf); if (prjLat(b.subarray(0, 1024)).includes('%PDF-')){ prjPdfOpen(buf); return; }
   prjTryText(new TextDecoder().decode(b));
 }
+/* ---------- n° 138 : exportateur PDF dans la page (prototype) ---------- */
+/* L'enseignant, 17.11.2026 : « tu n'arriverais pas à développer un exportateur natif de PDF qui prendrait moins de place ? » ; bouton
+   « Enregistrer PDF » comme maintenant, qui ouvre une fenêtre pour choisir l'emplacement et le nom, « comme le ferait un téléchargement
+   normal » ; nom « classe - titre » ; « je voudrais vraiment mes lettres cambria math » ; « fais comme tu penses est le mieux » (choix laissés
+   à Claude) ; un prototype : « si ça me plait pas on enlève ».
+   « Photocopie vectorielle » des pages de l'aperçu : une copie à taille réelle hors de l'écran ; chaque mot (sa place lue dans la page),
+   chaque bordure et chaque figure SVG est réécrit en PDF, sans bibliothèque. Chaque mot est étiré à sa largeur dans la page : même mise en
+   page que l'aperçu. Polices : texte et titres en Helvetica (celle des lecteurs de PDF, mêmes largeurs qu'Arial) ; lettres des formules : celles
+   de Pagella de la page quand l'écran les montre ainsi, sinon (Cambria Math de l'ordinateur) dessinées par le navigateur, comme à l'écran ;
+   symboles (−, ≈, ′, ⟹…) : Symbol ; un caractère qu'aucune police du PDF n'a (★, →, ℓ, ℝ, ∥…) : dessiné par le navigateur, en masque de
+   960 points par pouce. Liens du PDF : les codes QR et la feuille cachée (n° 128). Enregistrer : showSaveFilePicker ; en cas d'échec, la
+   fenêtre d'impression (« ou imprimer »).
+   n° 139 (« sur firefox ça donne ce que tu vois », lettres des formules élargies) : les lettres de Pagella étaient étirées aux largeurs de
+   Cambria Math ; un morceau dessiné à l'écran avec une autre police que celle du PDF (largeur à plus de 3 %, pdxOther) passe en masques.
+   n° 140 (« sur firefox tu ferais pas mieux de ne pas utiliser cet exportateur natif, et d'ouvrir la fenetre normale ? », lettres trop hautes) :
+   l'exportateur seulement avec la fenêtre « Enregistrer sous » (showSaveFilePicker : Chrome, Edge, sur ordinateur) ; ailleurs (Firefox, Safari,
+   téléphones) la fenêtre d'impression, sans « ou imprimer » (html.pdxno). Cause probable, pas corrigée : Firefox donne au texte en Cambria Math
+   une hauteur plus grande que celle mesurée sur « Hx » (pdxBase).
+   n° 141 (« c'est un peu embetant de devoir cliquer sur autoriser pour les polices » ; QCM : « Ne plus demander : titres en Helvetica ») : plus
+   de queryLocalFonts (accord de Chrome) ni de police de l'ordinateur dans le PDF (de la n° 138 à la n° 140 : Cambria Math et Century Gothic
+   réduites aux glyphes employés) : lettres des formules dessinées par le navigateur (n° 139), titres en Helvetica gras. Pagella ou masques :
+   décidé pour toute la feuille (X.PMok), d'après la largeur d'un texte de ces lettres à l'écran, pour ne jamais mélanger les deux dessins.
+   Pour enlever le prototype : ce bloc, la CSS « n° 138 », le bouton « ou imprimer » (#pdxPrn), les deux lignes d'aide .pdxy et .pdxn (garder
+   le texte de .pdxn) et la ligne du clic de #ipPrint (ipPrint). */
+const pdxOn = () => typeof window.showSaveFilePicker === 'function';   // n° 140 : l'exportateur seulement avec la fenêtre « Enregistrer sous »
+if (!pdxOn()){ document.documentElement.classList.add('pdxno');
+  const b = $('ipPrint'); if (b) b.title = 'La fenêtre d’impression : choisis « Enregistrer au format PDF » (le PDF garde les questions, pour les projeter), ou ton imprimante'; }
+const PDX_HW = ['7q7q9vfgfgopij5b9999atg87q997q7qfgfgfgfgfgfgfgfgfgfg7q7qg8g8g8fgs7ijijk2k2ijgzlmk27qdwijfgn5k2lmijlmk2ijgzk2ijq8ijijgz7q7q7qd1fg99fgfgdwfgfg7qfgfg6666dw66n5fgfgfgfg99dw7qfgdwk2dwdwdw9a789ag89qfg9q66fg99rsfgfg99rsij99rs9qgz9q9q666699999qfgrs99rsdw99q89qdwij7q99fgfgfgfg78fg99khaafgg899kh99b4g8999999fgex7q9999a5fgn6n6n6gzijijijijijijrsk2ijijijij7q7q7q7qk2k2lmlmlmlmlmg8lmk2k2k2k2ijijgzfgfgfgfgfgfgopdwfgfgfgfg7q7q7q7qfgfgfgfgfgfgfgg8gzfgfgfgfgdwfgdw',
+  '7q99d6fgfgopk26m9999atg87q997q7qfgfgfgfgfgfgfgfgfgfg9999g8g8g8gzr3k2k2k2k2ijgzlmk27qfgk2gzn5k2lmijlmk2ijgzk2ijq8ijijgz997q99g8fg99fggzfggzfg99gzgz7q7qfg7qopgzgzgzgzatfg99gzfglmfgfgdwat7satg89qfg9q7qfgdwrsfgfg99rsij99rs9qgz9q9q7q7qdwdw9qfgrs99rsfg99q89qdwij7q99fgfgfgfg7sfg99khaafgg899kh99b4g8999999gzfg7q9999a5fgn6n6n6gzk2k2k2k2k2k2rsk2ijijijij7q7q7q7qk2k2lmlmlmlmlmg8lmk2k2k2k2ijijgzfgfgfgfgfgfgopfgfgfgfgfg7q7q7q7qgzgzgzgzgzgzgzg8gzgzgzgzgzfggzfg'].map(s => { const a = []; for (let i = 0; i < s.length; i += 2) a.push(parseInt(s.substr(i, 2), 36)); return a; });   // Helvetica, Helvetica gras : largeurs des codes 32 à 255 (WinAnsi), en millièmes
+const PDX_WA = {0x20AC: 128, 0x201A: 130, 0x192: 131, 0x201E: 132, 0x2026: 133, 0x2020: 134, 0x2021: 135, 0x2C6: 136, 0x2030: 137, 0x160: 138,
+  0x2039: 139, 0x152: 140, 0x17D: 142, 0x2018: 145, 0x2019: 146, 0x201C: 147, 0x201D: 148, 0x2022: 149, 0x2013: 150, 0x2014: 151, 0x2DC: 152,
+  0x2122: 153, 0x161: 154, 0x203A: 155, 0x153: 156, 0x17E: 158, 0x178: 159, 0x2010: 45, 0x2011: 45, 0x2219: 183};     // ∙ : le point d'Arial (·)
+const PDX_SY = {0x2212: [45, 549], 0x22C5: [215, 250], 0x2032: [162, 247], 0x2033: [178, 411], 0x21D2: [222, 987], 0x27F9: [222, 987], 0x21D4: [219, 1042], 0x2248: [187, 549], 0x2260: [185, 549], 0x2264: [163, 549],
+  0x2265: [179, 549], 0x2261: [186, 549], 0x223C: [126, 549], 0x2205: [198, 823], 0x22A5: [94, 658], 0x221E: [165, 713], 0x2208: [206, 713],
+  0x2229: [199, 768], 0x222A: [200, 768], 0x2282: [204, 713], 0x2286: [205, 713], 0x2220: [208, 768], 0x221A: [214, 549], 0x2202: [182, 494],
+  0x2234: [92, 863], 0x2211: [229, 713], 0x3C0: [112, 549], 0x3B1: [97, 631], 0x3B2: [98, 549], 0x3B3: [103, 411], 0x3B4: [100, 494],
+  0x3B8: [113, 521], 0x3BB: [108, 549], 0x3C3: [115, 603], 0x3C9: [119, 686], 0x394: [68, 612], 0x3A9: [87, 768]};
+const PDX_UP = {0x2B: 80, 0x3D: 77, 0x3C: 76, 0x3E: 76, 0xB1: 45, 0xD7: 80, 0xF7: 81, 0x7E: 79, 0xB7: 19, 0x2219: 19, 0x2212: 72, 0x2248: 65, 0x2260: 68,
+  0x2264: -19, 0x2265: -19};   // signes plus bas (ou plus hauts) dans Helvetica et Symbol que dans Arial : remontés (millièmes)
+const pdxWA = c => c > 31 && c < 127 || c > 0xA0 && c < 256 && c !== 0xAD ? c : PDX_WA[c] || 0;
+const pdxN = v => String(Math.round(v * 100) / 100);
+const pdxMath = c => c >= 0x1D400 && c <= 0x1D7FF || c === 0x210E;   // lettres des formules (mathify)
+function pdxCol(s){                                         // couleur CSS → « r g b » du PDF ; null si transparente
+  const m = /rgba?\(([^)]*)\)/.exec(s || ''); if (!m) return null;
+  const p = m[1].split(/[\s,\/]+/).filter(Boolean).map(parseFloat); if (p.length > 3 && !(p[3] > 0)) return null;
+  return p.slice(0, 3).map(v => pdxN(v / 255)).join(' ');
+}
+const pdxEsc = s => s.replace(/[\\()]/g, '\\$&');
+const pdxHex16 = s => { let h = 'FEFF'; for (let i = 0; i < s.length; i++) h += s.charCodeAt(i).toString(16).padStart(4, '0'); return '<' + h + '>'; };
+
+/* ---- polices OpenType et TrueType : lecture, sous-ensemble ---- */
+function pdxSfnt(buf){                                     // police OpenType (fichier entier) → {dv, T (tables), upm, nh, gid (cmap), …}
+  const dv = new DataView(buf), tag = o => String.fromCharCode(dv.getUint8(o), dv.getUint8(o + 1), dv.getUint8(o + 2), dv.getUint8(o + 3)), T = {};
+  for (let i = 0, n = dv.getUint16(4); i < n; i++){ const r = 12 + 16 * i; T[tag(r)] = {o: dv.getUint32(r + 8), l: dv.getUint32(r + 12)}; }
+  if (!T.head || !T.hhea || !T.hmtx || !T.cmap || !T['CFF ']) return null;
+  const f = {dv, T, buf, upm: dv.getUint16(T.head.o + 18), nh: dv.getUint16(T.hhea.o + 34), asc: dv.getInt16(T.hhea.o + 4), desc: dv.getInt16(T.hhea.o + 6),
+    bbox: [36, 38, 40, 42].map(k => dv.getInt16(T.head.o + k))};
+  f.gid = pdxCmap(f); return f;
+}
+function pdxCmap(f){                                        // caractère → numéro de glyphe (cmap formats 4 et 12)
+  const {dv, T} = f, o = T.cmap.o; let s4 = 0, s12 = 0;
+  for (let i = 0, n = dv.getUint16(o + 2); i < n; i++){ const pid = dv.getUint16(o + 4 + 8 * i), eid = dv.getUint16(o + 6 + 8 * i), s = o + dv.getUint32(o + 8 + 8 * i), fm = dv.getUint16(s);
+    if (fm === 12 && (pid === 3 && eid === 10 || pid === 0)) s12 = s; else if (fm === 4 && (pid === 3 && eid < 2 || pid === 0) && !s4) s4 = s; }
+  return c => {
+    if (s12){ for (let i = 0, n = dv.getUint32(s12 + 12); i < n; i++){ const g = s12 + 16 + 12 * i, a = dv.getUint32(g);
+      if (c < a) break; if (c <= dv.getUint32(g + 4)) return dv.getUint32(g + 8) + c - a; } return 0; }
+    if (!s4 || c > 0xFFFF) return 0;
+    const sc = dv.getUint16(s4 + 6) / 2, e0 = s4 + 14, s0 = e0 + 2 * sc + 2, d0 = s0 + 2 * sc, r0 = d0 + 2 * sc;
+    for (let i = 0; i < sc; i++){ if (c > dv.getUint16(e0 + 2 * i)) continue; const a = dv.getUint16(s0 + 2 * i); if (c < a) return 0;
+      const ro = dv.getUint16(r0 + 2 * i), d = dv.getInt16(d0 + 2 * i);
+      if (!ro) return (c + d) & 0xFFFF; const g = dv.getUint16(r0 + 2 * i + ro + 2 * (c - a)); return g ? (g + d) & 0xFFFF : 0; }
+    return 0;
+  };
+}
+const pdxAdv = (f, g) => f.dv.getUint16(f.T.hmtx.o + 4 * Math.min(g, f.nh - 1));
+function pdxSfntWrite(ver, tb){                             // tables → fichier de police
+  const tags = Object.keys(tb).sort(), n = tags.length; let len = 12 + 16 * n; tags.forEach(t => len += (tb[t].length + 3) & ~3);
+  const out = new Uint8Array(len), dv = new DataView(out.buffer); let e = 0; while (2 << e <= n) e++;
+  dv.setUint32(0, ver); dv.setUint16(4, n); dv.setUint16(6, 16 << e); dv.setUint16(8, e); dv.setUint16(10, 16 * n - (16 << e));
+  let off = 12 + 16 * n;
+  tags.forEach((t, i) => { const b = tb[t], r = 12 + 16 * i; for (let k = 0; k < 4; k++) dv.setUint8(r + k, t.charCodeAt(k));
+    out.set(b, off); let s = 0; for (let k = 0; k < b.length; k += 4) s = (s + dv.getUint32(off + k)) >>> 0;     // octets de remplissage à 0
+    dv.setUint32(r + 4, s); dv.setUint32(r + 8, off); dv.setUint32(r + 12, b.length); off += (b.length + 3) & ~3; });
+  return out;
+}
+async function pdxWoff(b64){                                // police WOFF (base64, celle de la page) → fichier OpenType
+  const a = atob(b64), u = new Uint8Array(a.length); for (let i = 0; i < a.length; i++) u[i] = a.charCodeAt(i);
+  const dv = new DataView(u.buffer), tb = {};
+  for (let i = 0, n = dv.getUint16(12); i < n; i++){ const r = 44 + 20 * i, t = String.fromCharCode(u[r], u[r + 1], u[r + 2], u[r + 3]);
+    const o = dv.getUint32(r + 4), cl = dv.getUint32(r + 8), ol = dv.getUint32(r + 12), d = u.subarray(o, o + cl);
+    tb[t] = cl < ol ? await prjZip(d, false) : d.slice(); }
+  return pdxSfntWrite(dv.getUint32(4), tb);
+}
+let PDX_PM = null;                                          // les lettres de Pagella de la page (QPC Maths)
+const pdxHas = {};                                          // pdxHas.c : un canvas pour mesurer
+async function pdxPageMath(){                               // les deux polices « QPC Maths » de la page (italique, gras italique)
+  if (PDX_PM) return PDX_PM; PDX_PM = [];
+  const css = [...document.querySelectorAll('style')].map(s => s.textContent).join('');
+  for (const m of css.matchAll(/font-family:"QPC Maths";[^}]*?url\(data:font\/woff;base64,([A-Za-z0-9+\/=]+)\)/g)){
+    try { const f = pdxSfnt((await pdxWoff(m[1])).buffer); if (f) PDX_PM.push(f); } catch (e) { console.error('pdf', e); } }
+  return PDX_PM;
+}
+/* ---- la copie des pages : mots, bordures, figures ---- */
+function pdxFonts(X){                                       // les polices du PDF (communes à toutes les pages)
+  const std = (k, base, w, enc) => ({res: '/' + k, base, w: c => w ? w[c - 32] || 0 : 0, enc});
+  X.S = {H: std('H', 'Helvetica', PDX_HW[0], 1), HB: std('HB', 'Helvetica-Bold', PDX_HW[1], 1), HI: std('HI', 'Helvetica-Oblique', PDX_HW[0], 1),
+    HBI: std('HBI', 'Helvetica-BoldOblique', PDX_HW[1], 1), S: std('S', 'Symbol')};
+  X.S.S.w = c => { for (const k in PDX_SY) if (PDX_SY[k][0] === c) return PDX_SY[k][1]; return 500; };
+  X.E = [];                                                 // polices intégrées (Pagella de la page) : {f, name, res, uni (glyphe → caractère)}
+  X.ef = (f, name) => { let E = X.E.find(e => e.f === f); if (!E){ E = {f, name, res: '/E' + X.E.length, uni: new Map()}; X.E.push(E); } return E; };
+}
+function pdxFont(cp, cs, X){                                // le caractère cp dans le style cs → {F (police), c (code)} ; null : à dessiner (masque)
+  const fam = cs.fontFamily.split(',')[0].replace(/["']/g, '').trim().toLowerCase(), b = parseFloat(cs.fontWeight) >= 600, it = cs.fontStyle !== 'normal';
+  if (pdxMath(cp)){ for (const [k, f] of X.PM.entries()){ const g = f.gid(cp); if (!g) continue; if (!X.PMok[k]) return null;   // l'écran : Cambria Math
+    const E = X.ef(f, 'QPCMaths' + (k ? '-Bold' : '')); E.uni.set(g, String.fromCodePoint(cp)); return {F: E, c: g}; } return null; }
+  if (fam === 'cambria math') return null;                  // ℝ, ∅ de .mset : comme à l'écran (masque)
+  const u = (cp === 0xB7 || cp === 0x2219) && b ? 81 : PDX_UP[cp] || 0;
+  const w = pdxWA(cp); if (w) return {F: X.S['H' + (b ? 'B' : '') + (it ? 'I' : '')], c: w, u};
+  const s = PDX_SY[cp]; if (s) return {F: X.S.S, c: s[0], u};
+  return null;
+}
+function pdxOther(F, codes, size, w){                     // n° 139 : police intégrée, mais la page a dessiné ces caractères avec une autre (largeur à plus de 3 %)
+  if (!F.f) return false; let nat = 0; codes.forEach(c => nat += pdxW(F, c)); nat *= size / 1000; return nat > 0 && Math.abs(w / nat - 1) > .03;
+}
+const pdxW = (F, c) => F.f ? pdxAdv(F.f, c) * 1000 / F.f.upm : F.w(c);
+function pdxBase(cs, X){                                    // du haut du texte (rectangle d'un Range) à sa ligne de base, en px : mesuré une fois par police
+  const k = cs.fontStyle + '|' + cs.fontWeight + '|' + cs.fontSize + '|' + cs.fontFamily; if (k in X.B) return X.B[k];
+  const s = document.createElement('span');
+  s.style.cssText = 'position:absolute;left:0;top:0;white-space:nowrap;line-height:normal;font-style:' + cs.fontStyle + ';font-weight:' + cs.fontWeight + ';font-size:' + cs.fontSize + ';font-family:' + cs.fontFamily;
+  s.innerHTML = 'Hx<span style="display:inline-block;width:0;height:0;vertical-align:baseline"></span>'; X.host.appendChild(s);
+  const r = document.createRange(); r.selectNodeContents(s.firstChild);
+  const v = s.lastChild.getBoundingClientRect().bottom - r.getBoundingClientRect().top; s.remove(); return X.B[k] = v;
+}
+function pdxRun(X, F, codes, size, x, y, w, ls, col){      // un morceau de texte d'une même police, étiré à sa largeur mesurée w
+  let nat = 0; codes.forEach(c => nat += pdxW(F, c)); nat = nat * size / 1000 + ls * codes.length;
+  const h = nat > 0 && w > 0 ? Math.max(.4, Math.min(2.5, w / nat)) : 1, two = !!F.f;
+  X.o.push(col + ' rg BT ' + F.res + ' ' + pdxN(size) + ' Tf ' + (ls ? pdxN(ls) + ' Tc ' : '') + (Math.round(h * 1000) / 1000) + ' 0 0 -1 ' + pdxN(x) + ' ' + pdxN(y) +
+    ' Tm <' + codes.map(c => c.toString(16).padStart(two ? 4 : 2, '0')).join('') + '> Tj ET' + (ls ? ' 0 Tc' : '')); X.used.add(F);
+}
+function pdxMask(ch, cs, X){                                // un caractère qu'aucune police du PDF n'a : dessiné par le navigateur (masque d'un bit)
+  const font = cs.fontStyle + ' ' + cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily, k = font + '|' + ch; if (X.R.has(k)) return X.R.get(k);
+  const K = 10, c = document.createElement('canvas'), x = c.getContext('2d'); x.font = font; const m = x.measureText(ch);
+  const l = Math.floor(-m.actualBoundingBoxLeft) - 1, r = Math.ceil(m.actualBoundingBoxRight) + 1, a = Math.ceil(m.actualBoundingBoxAscent) + 1, d = Math.ceil(m.actualBoundingBoxDescent) + 1;
+  const W = Math.max(1, (r - l) * K), H = Math.max(1, (a + d) * K); c.width = W; c.height = H;
+  x.scale(K, K); x.font = font; x.fillStyle = '#000'; x.fillText(ch, -l, a);
+  const D = x.getImageData(0, 0, W, H).data, rb = (W + 7) >> 3, bits = new Uint8Array(rb * H);
+  for (let y = 0; y < H; y++) for (let i = 0; i < W; i++) if (D[4 * (y * W + i) + 3] > 110) bits[y * rb + (i >> 3)] |= 128 >> (i & 7);
+  const g = {res: '/G' + X.R.size, W, H, x: l, y: -a, w: r - l, h: a + d, bits, adv: m.width}; X.R.set(k, g); return g;
+}
+function pdxMaskDo(X, g, x, y, col){ X.o.push(col + ' rg q ' + pdxN(g.w) + ' 0 0 ' + pdxN(-g.h) + ' ' + pdxN(x + g.x) + ' ' + pdxN(y + g.y + g.h) + ' cm ' + g.res + ' Do Q'); }
+function pdxText(n, cs, X){                                 // un nœud de texte : mot par mot, police par police (positions lues dans la page)
+  if (cs.visibility !== 'visible') return; const col = pdxCol(cs.color); if (!col) return;
+  const s = n.data, rg = X.rg, size = parseFloat(cs.fontSize), ls = parseFloat(cs.letterSpacing) || 0, base = pdxBase(cs, X);
+  const seg = [];                                            // morceaux : [début, fin, police ou null (masque), codes]
+  for (let i = 0; i < s.length;){
+    const cp = s.codePointAt(i), L = cp > 0xFFFF ? 2 : 1;
+    if (/[\s​⁠﻿­]/.test(s[i])){ i += L; continue; }
+    const f = pdxFont(cp, cs, X), p = seg[seg.length - 1];
+    if (f && !f.u && p && p[1] === i && p[2] && p[2].F === f.F && !p[2].u){ p[1] = i + L; p[3].push(f.c); }
+    else seg.push([i, i + L, f, f ? [f.c] : [String.fromCodePoint(cp)]]);
+    i += L;
+  }
+  const one = (a, b, f, codes) => {
+    rg.setStart(n, a); rg.setEnd(n, b); const R = [...rg.getClientRects()].filter(r => r.width > .01 || r.height > .01);
+    if (R.length !== 1){ if (R.length > 1 && f && codes.length > 1){ let k = a; codes.forEach(c => { const L2 = s.codePointAt(k) > 0xFFFF ? 2 : 1; one(k, k + L2, f, [c]); k += L2; }); } return; }
+    const r = R[0], x = r.left - X.P.x, y = r.top - X.P.y + base;
+    if (f && pdxOther(f.F, codes, size, r.width)){           // n° 139 : la page dessine ces lettres avec une autre police (Cambria Math de l'ordinateur, que le
+      let k = a; codes.forEach(() => { const ch = String.fromCodePoint(s.codePointAt(k)); rg.setStart(n, k); rg.setEnd(n, k + ch.length);   // PDF ne peut pas lire :
+        const q = rg.getClientRects()[0]; if (q) pdxMaskDo(X, pdxMask(ch, cs, X), q.left - X.P.x, y, col); k += ch.length; });     // Firefox) : ses lettres, en masques
+    }
+    else if (f) pdxRun(X, f.F, codes, size, x, y - (f.u || 0) * size / 1000, r.width, ls, col); else pdxMaskDo(X, pdxMask(codes[0], cs, X), x, y, col);
+    X.deco.forEach(d => { const t = d.t, yy = d.k === 'u' ? y + Math.max(t, size * .1) : d.k === 'o' ? r.top - X.P.y : y - size * .3;
+      X.o.push(d.c + ' rg ' + pdxN(x) + ' ' + pdxN(yy) + ' ' + pdxN(r.width) + ' ' + pdxN(t) + ' re f'); });
+  };
+  seg.forEach(([a, b, f, codes]) => one(a, b, f, codes));
+}
+function pdxBox(el, cs, X, r){                              // fond et bordures d'un élément
+  if (cs.visibility !== 'visible' || (!r.width && !r.height)) return;
+  const x = r.left - X.P.x, y = r.top - X.P.y, W = r.width, H = r.height, o = X.o;
+  const bg = pdxCol(cs.backgroundColor); if (bg) o.push(bg + ' rg ' + [x, y, W, H].map(pdxN).join(' ') + ' re f');
+  const tb = (el.tagName === 'TD' || el.tagName === 'TH') && el.closest('table'), cl = tb && getComputedStyle(tb).borderCollapse === 'collapse';
+  [['Top', 0], ['Right', 1], ['Bottom', 2], ['Left', 3]].forEach(([s, i]) => {
+    const w = parseFloat(cs['border' + s + 'Width']), st = cs['border' + s + 'Style'], c = pdxCol(cs['border' + s + 'Color']);
+    if (!(w > 0) || !c || st === 'none' || st === 'hidden') return;
+    const h = cl ? w / 2 : 0;                               // tableau à bordures fusionnées : le trait est centré sur le bord de la case
+    const R = [[x - h, y - h, W + 2 * h, w], [x + W - w + h, y - h, w, H + 2 * h], [x - h, y + H - w + h, W + 2 * h, w], [x - h, y - h, w, H + 2 * h]][i];
+    if (st !== 'dotted' && st !== 'dashed'){ o.push(c + ' rg ' + R.map(pdxN).join(' ') + ' re f'); return; }
+    const hz = i % 2 === 0, len = hz ? R[2] : R[3], x0 = hz ? R[0] : R[0] + w / 2, y0 = hz ? R[1] + w / 2 : R[1];
+    let dash;
+    if (st === 'dotted'){ const n = Math.max(1, Math.round((len / w - 1) / 2)), g = (len - w * (n + 1)) / n; dash = '[' + pdxN(w) + ' ' + pdxN(Math.max(0, g)) + '] 0'; }   // un point à chaque bout
+    else { const d = Math.max(2 * w, 3), n = Math.max(1, Math.round((len - d) / (2 * d))), g = (len - d * (n + 1)) / n; dash = '[' + pdxN(d) + ' ' + pdxN(Math.max(0, g)) + '] 0'; }
+    o.push('q ' + c + ' RG ' + pdxN(w) + ' w 0 J ' + dash + ' d ' + pdxN(x0) + ' ' + pdxN(y0) + ' m ' + pdxN(hz ? x0 + len : x0) + ' ' + pdxN(hz ? y0 : y0 + len) + ' l S Q');
+  });
+}
+function pdxWalk(el, X){                                    // un élément de la page et ce qu'il contient, dans l'ordre de la page
+  if (el.classList.contains('ip-rl')) return;
+  const cs = getComputedStyle(el); if (cs.display === 'none' || parseFloat(cs.opacity) === 0) return;
+  const r = el.getBoundingClientRect(), tm = X.TM.get(el); let q = 0;
+  if (tm){ const ox = r.left - X.P.x + tm.ox, oy = r.top - X.P.y + tm.oy, m = new DOMMatrix().translate(ox, oy).multiply(tm.m).translate(-ox, -oy);
+    X.o.push('q ' + [m.a, m.b, m.c, m.d, m.e, m.f].map(v => Math.round(v * 1e4) / 1e4).join(' ') + ' cm'); q++; }
+  pdxBox(el, cs, X, r);
+  if (el.tagName === 'A' && /^https?:/.test(el.href) && !tm) X.an.push([r.left - X.P.x, r.top - X.P.y, Math.max(r.width, 1), Math.max(r.height, 1), el.href]);
+  if (el instanceof SVGSVGElement){ pdxSvg(el, X); }
+  else {
+    if (cs.overflow !== 'visible' && el !== X.pg){ const bl = parseFloat(cs.borderLeftWidth) || 0, bt = parseFloat(cs.borderTopWidth) || 0;
+      X.o.push('q ' + [r.left - X.P.x + bl, r.top - X.P.y + bt, el.clientWidth, el.clientHeight].map(pdxN).join(' ') + ' re W n'); q++; }
+    const dl = cs.textDecorationLine, nd = X.deco.length;
+    if (dl && dl !== 'none'){ const c = pdxCol(cs.textDecorationColor) || pdxCol(cs.color), t = parseFloat(cs.textDecorationThickness) || parseFloat(cs.fontSize) / 14;
+      if (c) [['underline', 'u'], ['overline', 'o'], ['line-through', 'l']].forEach(([w, k]) => { if (dl.includes(w)) X.deco.push({k, c, t}); }); }
+    for (const n of el.childNodes){ if (n.nodeType === 3) pdxText(n, cs, X); else if (n.nodeType === 1) pdxWalk(n, X); }
+    X.deco.length = nd;
+  }
+  while (q--) X.o.push('Q');
+}
+
+/* ---- figures SVG ---- */
+function pdxPath(d){                                        // chemin SVG → [['M', x, y], ['L', x, y], ['C', x1, y1, x2, y2, x, y], ['Z']] (absolus, arcs en courbes)
+  const T = (d || '').match(/[MmLlHhVvCcSsQqTtAaZz]|[-+]?(?:\d*\.\d+|\d+\.?)(?:[eE][-+]?\d+)?/g) || [], out = [];
+  let i = 0, c = '', x = 0, y = 0, sx = 0, sy = 0, px = 0, py = 0, pc = '';
+  const num = () => parseFloat(T[i++]), isN = () => i < T.length && !/[A-Za-z]/.test(T[i]);
+  const C = (a, b, e, f, g, h) => { out.push(['C', a, b, e, f, g, h]); px = e; py = f; x = g; y = h; };
+  while (i < T.length){
+    if (/[A-Za-z]/.test(T[i])) c = T[i++]; else if (!c) break;
+    const rel = c === c.toLowerCase() && c !== 'z', U = c.toUpperCase(), ox = rel ? x : 0, oy = rel ? y : 0;
+    if (U === 'Z'){ out.push(['Z']); x = sx; y = sy; pc = 'Z'; continue; }
+    if (!isN()) { c = ''; continue; }
+    if (U === 'M'){ x = ox + num(); y = oy + num(); sx = x; sy = y; out.push(['M', x, y]); c = rel ? 'l' : 'L'; }
+    else if (U === 'L'){ x = ox + num(); y = oy + num(); out.push(['L', x, y]); }
+    else if (U === 'H'){ x = ox + num(); out.push(['L', x, y]); }
+    else if (U === 'V'){ y = oy + num(); out.push(['L', x, y]); }
+    else if (U === 'C'){ const a = ox + num(), b = oy + num(), e = ox + num(), f = oy + num(); C(a, b, e, f, ox + num(), oy + num()); }
+    else if (U === 'S'){ const a = /[CS]/.test(pc) ? 2 * x - px : x, b = /[CS]/.test(pc) ? 2 * y - py : y, e = ox + num(), f = oy + num(); C(a, b, e, f, ox + num(), oy + num()); }
+    else if (U === 'Q' || U === 'T'){ let qx, qy; if (U === 'Q'){ qx = ox + num(); qy = oy + num(); } else { qx = /[QT]/.test(pc) ? 2 * x - px : x; qy = /[QT]/.test(pc) ? 2 * y - py : y; }
+      const ex = ox + num(), ey = oy + num(); C(x + 2 / 3 * (qx - x), y + 2 / 3 * (qy - y), ex + 2 / 3 * (qx - ex), ey + 2 / 3 * (qy - ey), ex, ey); px = qx; py = qy; }
+    else if (U === 'A'){ const rx = Math.abs(num()), ry = Math.abs(num()), ph = num() * Math.PI / 180, la = num(), sw = num(), ex = ox + num(), ey = oy + num();
+      pdxArc(x, y, rx, ry, ph, la, sw, ex, ey).forEach(s => C(...s)); x = ex; y = ey; }
+    pc = U;
+  }
+  return out;
+}
+function pdxArc(x1, y1, rx, ry, ph, la, sw, x2, y2){        // arc elliptique SVG → courbes de Bézier (au plus 90° chacune)
+  if (!rx || !ry) return [[x1, y1, x2, y2, x2, y2]];
+  const co = Math.cos(ph), si = Math.sin(ph), dx = (x1 - x2) / 2, dy = (y1 - y2) / 2, x1p = co * dx + si * dy, y1p = -si * dx + co * dy;
+  const lam = x1p * x1p / (rx * rx) + y1p * y1p / (ry * ry); if (lam > 1){ rx *= Math.sqrt(lam); ry *= Math.sqrt(lam); }
+  const num = rx * rx * ry * ry - rx * rx * y1p * y1p - ry * ry * x1p * x1p, den = rx * rx * y1p * y1p + ry * ry * x1p * x1p;
+  const k = (la === sw ? -1 : 1) * Math.sqrt(Math.max(0, num / den)), cxp = k * rx * y1p / ry, cyp = -k * ry * x1p / rx;
+  const cx = co * cxp - si * cyp + (x1 + x2) / 2, cy = si * cxp + co * cyp + (y1 + y2) / 2;
+  const ang = (ux, uy, vx, vy) => Math.atan2(ux * vy - uy * vx, ux * vx + uy * vy);
+  let t1 = ang(1, 0, (x1p - cxp) / rx, (y1p - cyp) / ry), dt = ang((x1p - cxp) / rx, (y1p - cyp) / ry, (-x1p - cxp) / rx, (-y1p - cyp) / ry);
+  if (!sw && dt > 0) dt -= 2 * Math.PI; else if (sw && dt < 0) dt += 2 * Math.PI;
+  const n = Math.max(1, Math.ceil(Math.abs(dt) / (Math.PI / 2) - 1e-9)), h = dt / n, a = 4 / 3 * Math.tan(h / 4), out = [];
+  const P = t => [cx + rx * Math.cos(t) * co - ry * Math.sin(t) * si, cy + rx * Math.cos(t) * si + ry * Math.sin(t) * co];
+  const D = t => [-rx * Math.sin(t) * co - ry * Math.cos(t) * si, -rx * Math.sin(t) * si + ry * Math.cos(t) * co];
+  for (let j = 0; j < n; j++){ const ta = t1 + j * h, tb = ta + h, A = P(ta), B = P(tb), da = D(ta), db = D(tb);
+    out.push([A[0] + a * da[0], A[1] + a * da[1], B[0] - a * db[0], B[1] - a * db[1], B[0], B[1]]); }
+  return out;
+}
+function pdxGeom(el){                                       // forme SVG → chemin (absolu)
+  const v = a => el[a] && el[a].baseVal ? el[a].baseVal.value : 0, t = el.tagName;
+  if (t === 'path') return pdxPath(el.getAttribute('d'));
+  if (t === 'line') return [['M', v('x1'), v('y1')], ['L', v('x2'), v('y2')]];
+  if (t === 'polyline' || t === 'polygon'){ const p = [...el.points].map((q, i) => [i ? 'L' : 'M', q.x, q.y]); if (t === 'polygon' && p.length) p.push(['Z']); return p; }
+  if (t === 'rect'){ const x = v('x'), y = v('y'), w = v('width'), h = v('height'); let rx = v('rx'), ry = v('ry');
+    if (!el.hasAttribute('rx')) rx = ry; if (!el.hasAttribute('ry')) ry = rx; rx = Math.min(rx, w / 2); ry = Math.min(ry, h / 2);
+    if (!rx || !ry) return [['M', x, y], ['L', x + w, y], ['L', x + w, y + h], ['L', x, y + h], ['Z']];
+    return pdxPath('M' + (x + rx) + ' ' + y + 'H' + (x + w - rx) + 'A' + rx + ' ' + ry + ' 0 0 1 ' + (x + w) + ' ' + (y + ry) + 'V' + (y + h - ry) + 'A' + rx + ' ' + ry + ' 0 0 1 ' + (x + w - rx) + ' ' + (y + h) +
+      'H' + (x + rx) + 'A' + rx + ' ' + ry + ' 0 0 1 ' + x + ' ' + (y + h - ry) + 'V' + (y + ry) + 'A' + rx + ' ' + ry + ' 0 0 1 ' + (x + rx) + ' ' + y + 'Z'); }
+  if (t === 'circle' || t === 'ellipse'){ const cx = v('cx'), cy = v('cy'), rx = t === 'circle' ? v('r') : v('rx'), ry = t === 'circle' ? rx : v('ry'); if (!rx || !ry) return [];
+    return pdxPath('M' + (cx + rx) + ' ' + cy + 'A' + rx + ' ' + ry + ' 0 0 1 ' + (cx - rx) + ' ' + cy + 'A' + rx + ' ' + ry + ' 0 0 1 ' + (cx + rx) + ' ' + cy + 'Z'); }
+  return [];
+}
+function pdxGs(X, a, k){                                    // transparence (ExtGState) ; k : 'ca' (remplissage) ou 'CA' (trait)
+  const v = Math.round(a * 100) / 100, n = '/A' + k + Math.round(v * 100); X.gs.set(n, '<< /' + k + ' ' + v + ' >>'); return n + ' gs ';
+}
+function pdxSvg(svg, X){                                    // une figure : chaque forme (points ramenés à la page) et chaque texte
+  for (const el of svg.querySelectorAll('path,rect,circle,ellipse,line,polyline,polygon,text')){
+    if (el.closest('defs,clipPath,mask,marker,pattern,symbol')) continue;
+    const cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility !== 'visible') continue;
+    let op = 1; for (let e = el; e && e !== svg.parentNode; e = e.parentNode) op *= parseFloat(getComputedStyle(e).opacity);
+    if (!(op > 0)) continue;
+    const M = el.getScreenCTM(); if (!M) continue;
+    if (el.tagName === 'text'){ pdxSvgText(el, M, X); continue; }
+    const G = pdxGeom(el); if (!G.length) continue;
+    const P = (x, y) => pdxN(M.a * x + M.c * y + M.e - X.P.x) + ' ' + pdxN(M.b * x + M.d * y + M.f - X.P.y);
+    const path = G.map(s => s[0] === 'Z' ? 'h' : s[0] === 'C' ? P(s[1], s[2]) + ' ' + P(s[3], s[4]) + ' ' + P(s[5], s[6]) + ' c' : P(s[1], s[2]) + (s[0] === 'M' ? ' m' : ' l')).join(' ');
+    const fc = /^url/.test(cs.fill) ? null : pdxCol(cs.fill), sc = /^url/.test(cs.stroke) ? null : pdxCol(cs.stroke);
+    const sk = cs.vectorEffect === 'non-scaling-stroke' ? 1 : Math.sqrt(Math.abs(M.a * M.d - M.b * M.c)), sw = parseFloat(cs.strokeWidth) * sk;
+    const fa = op * parseFloat(cs.fillOpacity) * (/rgba/.test(cs.fill) ? parseFloat(cs.fill.split(',')[3]) : 1), sa = op * parseFloat(cs.strokeOpacity);
+    const doF = fc && fa > 0, doS = sc && sw > 0 && sa > 0; if (!doF && !doS) continue;
+    let g = 'q ';
+    if (doF) g += (fa < 1 ? pdxGs(X, fa, 'ca') : '') + fc + ' rg ';
+    if (doS){ g += (sa < 1 ? pdxGs(X, sa, 'CA') : '') + sc + ' RG ' + pdxN(sw) + ' w ' + ({round: 1, square: 2}[cs.strokeLinecap] || 0) + ' J ' + ({round: 1, bevel: 2}[cs.strokeLinejoin] || 0) + ' j ' +
+      (parseFloat(cs.strokeMiterlimit) || 4) + ' M ';
+      const da = cs.strokeDasharray === 'none' ? [] : cs.strokeDasharray.split(/[\s,]+/).map(parseFloat).filter(v => v >= 0);
+      if (da.length && da.some(v => v > 0)) g += '[' + (da.length % 2 ? da.concat(da) : da).map(v => pdxN(v * sk)).join(' ') + '] ' + pdxN((parseFloat(cs.strokeDashoffset) || 0) * sk) + ' d '; }
+    const eo = cs.fillRule === 'evenodd' ? '*' : '';
+    X.o.push(g + path + ' ' + (doF && doS ? 'B' + eo : doF ? 'f' + eo : 'S') + ' Q');
+  }
+}
+function pdxSvgText(t, M, X){                               // un texte de figure : ses caractères placés par le navigateur (lignes de base comprises)
+  const n = t.getNumberOfChars(); if (!n) return;
+  const E = [], tw = document.createTreeWalker(t, NodeFilter.SHOW_TEXT); let nd;
+  while ((nd = tw.nextNode())) for (const ch of nd.data){ E.push(nd.parentNode); if (ch.length > 1) E.push(null); }   // un caractère hors du plan de base : deux unités
+  const ext = i => { try { return t.getExtentOfChar(i); } catch (e) { return null; } }, C0 = [];
+  for (let i = 0; i < n; i++) C0.push(E[i] ? ext(i) : null);
+  [t, ...t.querySelectorAll('tspan')].forEach(e => e.style.dominantBaseline = 'alphabetic');     // la copie : base alphabétique, puis on reporte le décalage
+  const s = t.textContent, cps = [...s], mtx = 'q ' + [M.a, M.b, M.c, M.d, M.e - X.P.x, M.f - X.P.y].map(v => Math.round(v * 1e4) / 1e4).join(' ') + ' cm';
+  let run = null, k = 0;
+  const flush = () => { if (!run) return; X.o.push(mtx);
+    if (pdxOther(run.f.F, run.codes, run.size, run.w)) run.chs.forEach(([ch, x, cs]) => pdxMaskDo(X, pdxMask(ch, cs, X), x, run.y, run.col));   // n° 139 : comme pdxText
+    else pdxRun(X, run.f.F, run.codes, run.size, run.x, run.y - (run.f.u || 0) * run.size / 1000, run.w, 0, run.col);
+    X.o.push('Q'); run = null; };
+  for (let i = 0; i < n; i++){
+    const el = E[i]; if (!el){ continue; } const ch = cps[k++]; if (!ch || /\s/.test(ch)) { flush(); continue; }
+    const cs = getComputedStyle(el), col = pdxCol(cs.fill); let A, p; try { A = t.getExtentOfChar(i); p = t.getStartPositionOfChar(i); } catch (e) { flush(); continue; }
+    const c0 = C0[i]; if (!col || !A || !c0){ flush(); continue; }
+    const y = p.y + c0.y - A.y, size = parseFloat(cs.fontSize), f = pdxFont(ch.codePointAt(0), cs, X);
+    if (!f){ flush(); X.o.push(mtx); pdxMaskDo(X, pdxMask(ch, cs, X), p.x, y, col); X.o.push('Q'); continue; }
+    if (run && !f.u && !run.f.u && run.f.F === f.F && run.col === col && run.size === size && Math.abs(run.y - y) < .01 && Math.abs(run.x + run.w - p.x) < .3){ run.codes.push(f.c); run.chs.push([ch, p.x, cs]); run.w = p.x + A.width - run.x; }
+    else { flush(); run = {f, col, size, x: p.x, y, w: A.width, codes: [f.c], chs: [[ch, p.x, cs]]}; }
+  }
+  flush();
+}
+
+/* ---- le fichier PDF ---- */
+async function pdxBuild(){                                  // l'aperçu → les octets du PDF
+  const L = IP && IP.L; if (!L) throw new Error('pas de feuille');
+  let D = null; try { D = prjSheet(); } catch (e) { console.error('qpc', e); }
+  const qd = await prjPdfHref(D).catch(() => '');           // n° 128 : la feuille, cachée dans le PDF (lien invisible)
+  const X = {B: {}, R: new Map(), gs: new Map(), used: new Set(), rg: document.createRange(), deco: [], PM: await pdxPageMath()};
+  X.PMok = await Promise.all(X.PM.map(async (f, k) => {     // n° 141 : l'écran montre-t-il ces lettres en Pagella ? (sinon Cambria Math : masques pour toutes,
+    const t = k ? '𝒂𝒃𝒄𝒎𝒏𝒙𝒚𝒛' : '𝑎𝑏𝑐𝑚𝑛𝑥𝑦𝑧', F = '100px "QPC Maths"'; let n = 0;   // jamais un mélange) : largeur d'un texte comparée à la sienne
+    try { await document.fonts.load(F, t); } catch (e) {}
+    const c = pdxHas.c || (pdxHas.c = document.createElement('canvas').getContext('2d')); c.font = F;
+    for (const ch of t) n += pdxAdv(f, f.gid(ch.codePointAt(0))) * 100 / f.upm;
+    return Math.abs(c.measureText(t).width / n - 1) < .01; }));
+  pdxFonts(X);
+  const host = document.createElement('div'); host.className = 'pdxhost';
+  $('ipPrev').querySelectorAll('.ip-pw').forEach(w => { const c = w.cloneNode(true); c.removeAttribute('style'); c.querySelectorAll('.ip-pg').forEach(p => p.style.transform = 'none'); host.appendChild(c); });
+  document.body.appendChild(host); X.host = host; prjPdfLink(host, qd);
+  const pages = [];
+  try {
+    if (document.fonts && document.fonts.ready) await document.fonts.ready;
+    X.TM = new Map();                                       // transformations CSS (encadré à l'envers, ∥ penché) : notées, puis enlevées de la copie
+    host.querySelectorAll('.ip-pg *').forEach(e => { if (e instanceof SVGElement && !(e instanceof SVGSVGElement)) return; const cs = getComputedStyle(e);
+      if (cs.transform && cs.transform !== 'none'){ const o = cs.transformOrigin.split(' ').map(parseFloat); X.TM.set(e, {m: new DOMMatrix(cs.transform), ox: o[0], oy: o[1]}); } });
+    X.TM.forEach((v, e) => e.style.setProperty('transform', 'none', 'important'));
+    host.querySelectorAll('.ip-pg').forEach(pg => {
+      const r = pg.getBoundingClientRect(); X.P = {x: r.left, y: r.top}; X.pg = pg; X.o = []; X.an = [];
+      pdxWalk(pg, X); pages.push({c: X.o.join('\n'), an: X.an});
+    });
+  } finally { host.remove(); }
+  return pdxWrite(pages, X, ipTitle());
+}
+function pdxToUni(E){                                       // CMap ToUnicode (copier le texte du PDF)
+  const L = [...E.uni].map(([c, u]) => { let h = ''; for (let i = 0; i < u.length; i++) h += u.charCodeAt(i).toString(16).padStart(4, '0'); return '<' + c.toString(16).padStart(4, '0') + '> <' + h + '>'; });
+  let b = ''; for (let i = 0; i < L.length; i += 100){ const p = L.slice(i, i + 100); b += p.length + ' beginbfchar\n' + p.join('\n') + '\nendbfchar\n'; }
+  return '/CIDInit /ProcSet findresource begin 12 dict begin begincmap /CIDSystemInfo << /Registry (Adobe) /Ordering (UCS) /Supplement 0 >> def /CMapName /Adobe-Identity-UCS def /CMapType 2 def\n' +
+    '1 begincodespacerange <0000> <FFFF> endcodespacerange\n' + b + 'endcmap CMapName currentdict /CMap defineresource pop end end';
+}
+async function pdxWrite(pages, X, title){                   // les objets du PDF, flux compressés (CompressionStream) quand c'est possible
+  const O = [], add = (d, s) => { O.push({d, s}); return O.length; }, enc = s => new TextEncoder().encode(s), R = n => n + ' 0 R';
+  const zip = typeof CompressionStream !== 'undefined';
+  const st = async (d, bytes) => { const z = zip ? await prjZip(bytes, true) : bytes; return add(d + (zip ? ' /Filter /FlateDecode' : '') + ' /Length ' + z.length + ' >>', z); };
+  add('<< /Type /Catalog /Pages 2 0 R >>'); add('');       // 1 catalogue, 2 pages (rempli à la fin)
+  const fr = [];
+  for (const F of X.used) if (!F.f) fr.push(F.res + ' ' + R(add('<< /Type /Font /Subtype /Type1 /BaseFont /' + F.base + (F.enc ? ' /Encoding /WinAnsiEncoding' : '') + ' >>')));
+  for (const E of X.E){ if (!X.used.has(E)) continue;
+    const f = E.f, k = 1000 / f.upm, tag = 'PDX' + String.fromCharCode(65 + X.E.indexOf(E)) + 'AA+' + E.name;
+    const ff = await st('<< /Subtype /OpenType', new Uint8Array(f.buf));          // la police entière (environ 8 Ko)
+    const fd = add('<< /Type /FontDescriptor /FontName /' + tag + ' /Flags 4 /FontBBox [' + f.bbox.map(v => Math.round(v * k)).join(' ') + '] /ItalicAngle 0 /Ascent ' + Math.round(f.asc * k) +
+      ' /Descent ' + Math.round(f.desc * k) + ' /CapHeight ' + Math.round(f.asc * k) + ' /StemV 80 /FontFile3 ' + R(ff) + ' >>');
+    const W = [...E.uni.keys()].sort((a, b) => a - b).map(c => c + ' [' + Math.round(pdxW(E, c)) + ']').join(' ');
+    const cid = add('<< /Type /Font /Subtype /CIDFontType0 /BaseFont /' + tag + ' /CIDSystemInfo << /Registry (Adobe) /Ordering (Identity) /Supplement 0 >> /FontDescriptor ' + R(fd) +
+      ' /DW 1000 /W [' + W + '] >>');
+    const tu = await st('<<', enc(pdxToUni(E)));
+    fr.push(E.res + ' ' + R(add('<< /Type /Font /Subtype /Type0 /BaseFont /' + tag + ' /Encoding /Identity-H /DescendantFonts [' + R(cid) + '] /ToUnicode ' + R(tu) + ' >>')));
+  }
+  const xo = [];
+  for (const g of X.R.values()) xo.push(g.res + ' ' + R(await st('<< /Type /XObject /Subtype /Image /Width ' + g.W + ' /Height ' + g.H + ' /ImageMask true /BitsPerComponent 1 /Decode [1 0]', g.bits)));
+  const res = add('<< /Font << ' + fr.join(' ') + ' >>' + (xo.length ? ' /XObject << ' + xo.join(' ') + ' >>' : '') + (X.gs.size ? ' /ExtGState << ' + [...X.gs].map(([n, d]) => n + ' ' + d).join(' ') + ' >>' : '') + ' >>');
+  const kids = [], pw = 595.28, ph = 841.89;
+  for (const p of pages){
+    const c = await st('<<', enc('0.75 0 0 -0.75 0 ' + ph + ' cm\n' + p.c));
+    const an = p.an.map(([x, y, w, h, u]) => R(add('<< /Type /Annot /Subtype /Link /Rect [' + [x * .75, ph - (y + h) * .75, (x + w) * .75, ph - y * .75].map(pdxN).join(' ') +
+      '] /Border [0 0 0] /A << /S /URI /URI (' + pdxEsc(u) + ') >> >>')));
+    kids.push(R(add('<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' + pw + ' ' + ph + '] /Resources ' + R(res) + ' /Contents ' + R(c) + (an.length ? ' /Annots [' + an.join(' ') + ']' : '') + ' >>')));
+  }
+  O[1].d = '<< /Type /Pages /Kids [' + kids.join(' ') + '] /Count ' + kids.length + ' >>';
+  const d = new Date(), z = v => String(v).padStart(2, '0');
+  const info = add('<< /Title ' + pdxHex16(title || '') + ' /Producer (Questions pour des champions) /CreationDate (D:' + d.getFullYear() + z(d.getMonth() + 1) + z(d.getDate()) + z(d.getHours()) + z(d.getMinutes()) + z(d.getSeconds()) + ') >>');
+  const parts = [enc('%PDF-1.7\n%\xE2\xE3\xCF\xD3\n')], off = []; let pos = parts[0].length;
+  O.forEach((o, i) => { off.push(pos); const h = enc((i + 1) + ' 0 obj\n' + o.d + (o.s ? '\nstream\n' : '\n')); parts.push(h); pos += h.length;
+    if (o.s){ parts.push(o.s); pos += o.s.length; const e = enc('\nendstream'); parts.push(e); pos += e.length; }
+    const e2 = enc('\nendobj\n'); parts.push(e2); pos += e2.length; });
+  parts.push(enc('xref\n0 ' + (O.length + 1) + '\n0000000000 65535 f \n' + off.map(v => String(v).padStart(10, '0') + ' 00000 n \n').join('') +
+    'trailer\n<< /Size ' + (O.length + 1) + ' /Root 1 0 R /Info ' + R(info) + ' >>\nstartxref\n' + pos + '\n%%EOF\n'));
+  return new Blob(parts, {type: 'application/pdf'});
+}
+
+/* ---- le bouton « Enregistrer PDF » ---- */
+function pdxName(){                                         // « classe - titre.pdf » (sans classe : le titre seul) ; « : » → « - », autres caractères interdits → espace
+  const f = s => { let t = String(s || '').replace(/\s*:\s*/g, ' - ').replace(/[\\/*?"<>|\u0000-\u001f]+/g, ' ').replace(/\s+/g, ' ').trim().replace(/[ .]+$/, '');
+    return t.length > 100 ? t.slice(0, t.lastIndexOf(' ', 100) > 50 ? t.lastIndexOf(' ', 100) : 100).trim() : t; };
+  const c = f(IP && IP.cls), t = f(ipTitle()) || 'Questions pour des champions';
+  return (c ? c + ' - ' : '') + t + '.pdf';
+}
+async function pdxSave(){                                   // fabrique le PDF, puis la fenêtre « Enregistrer sous » (Chrome, Edge) ; sans elle : ipPrint (n° 140)
+  if (!IP || !IP.L || pdxSave.go) return;
+  if (!pdxOn()){ ipPrint(); return; }
+  pdxSave.go = true; const btn = $('ipPrint'); btn.classList.add('pdxbusy');
+  try {
+    const name = pdxName(), sig = $('ipPrev').innerHTML, ok = pdxSave.ok; pdxSave.ok = null;
+    const again = !!ok && ok.sig === sig && Date.now() - ok.t < 3e5;     // 2e clic : le PDF déjà prêt
+    const blob = again ? ok.b : await pdxBuild();
+    let h = null;
+    try { h = await window.showSaveFilePicker({id: 'qpcpdf', suggestedName: name, types: [{description: 'PDF', accept: {'application/pdf': ['.pdf']}}]}); }
+    catch (e){ if (e.name === 'AbortError') return;        // « Annuler » : rien
+      if (!again && (e.name === 'SecurityError' || e.name === 'NotAllowedError')){        // le clic est trop loin (PDF très long à faire) : un 2e clic
+        pdxSave.ok = {sig, b: blob, t: Date.now()}; prjMsg('PDF prêt : clique encore sur « Enregistrer PDF » pour choisir où l’enregistrer.'); return; }
+      throw e; }
+    const w = await h.createWritable(); await w.write(blob); await w.close(); prjMsg('PDF enregistré : ' + h.name);
+  } catch (e){ console.error('pdf', e);
+    prjMsg('Le PDF n’a pas pu être fait dans la page : la fenêtre d’impression s’ouvre (choisis « Enregistrer au format PDF »).'); ipPrint();
+  } finally { pdxSave.go = false; btn.classList.remove('pdxbusy'); }
+}
+
 function newQuestions(){ prjOff(); PICK = false; LASTG = null; seqEnd(); QS = buildQuestions(); cur = 0; SNC_PEND = true; render(); }   // n° 51 : SNC_PEND, brouillon à la 1re question
 function newOrSettings(){ if (objectives(S).length) newQuestions(); else openSet(); }
 
@@ -31910,7 +32348,7 @@ var QR = (function(){
    jour tu rajoutes 1 ? (un peu comme sur excel je crois) » ; « oui passe au compteur de jours ») : le dossier d'une version en ligne est le numéro
    du jour de sa mise en ligne, 17.11.2026 = 1 (verDay), et non plus sa date : lien plus court de 6 à 9 caractères (code QR d'un palier plus
    petit pour environ un lien sur trois). Les dossiers datés (2026-11-07/ à 2026-11-17/) restent en ligne pour leurs liens : verDay lit les deux formes. */
-const QPC_VERSION = '1';    // dossier de cette version sur le site (…/qpc/1/) : numéro du jour de la mise en ligne (17.11.2026 = 1), à changer à chaque version mise en ligne
+const QPC_VERSION = '2';    // dossier de cette version sur le site (…/qpc/1/) : numéro du jour de la mise en ligne (17.11.2026 = 1), à changer à chaque version mise en ligne
 const QPC_BASE = 'https://outils-maths.github.io/qpc/';    // compte GitHub « outils-maths » (avec un s)
 const QPC_ONLINE = /(^|\.)github\.io$/i.test(location.hostname);    // ouverte depuis le site : seulement le mode élève (sans lien : un message)
 var STU = null;                       // mode élève (page ouverte par un lien élèves) ; null : page de l'enseignant
@@ -32424,7 +32862,8 @@ function ipInit(){ IP = {sig: '', S: null, E: null, O: [], U: [], mix: {}, ord: 
 const IP_KEY = 'qpc-feuille';
 function ipLoad(){ try { const o = JSON.parse(localStorage.getItem(IP_KEY) || 'null'); if (!o || o.v !== 1) return;
     if (IP_FMT[o.fmt]) IP.fmt = o.fmt; ['ans', 'up', 'qr', 'stars'].forEach(k => { if (typeof o[k] === 'boolean') IP[k] = o[k]; });
-    if (typeof o.cls === 'string') IP.cls = o.cls.slice(0, 24);
+    // n° 142 : ni classe ni titre gardés (l'enseignant, 18.11.2026 : « ne garde pas en mémoire du navigateur la classe ni le titre, pour le pdf ») ;
+    // une classe gardée par une version d'avant est ignorée, puis effacée au prochain enregistrement (ipSave)
     if (o.pages >= 1) IP.pages = Math.min(ipPgMax(), Math.round(o.pages));
     Object.entries(o.w || {}).forEach(([id, w]) => { if (w >= -2 && w <= 2) ipEx(id).w = Math.round(w); });
     Object.entries(o.mix || {}).forEach(([bl, m]) => { if (m) IP.mix[bl] = true; });
@@ -32432,7 +32871,7 @@ function ipLoad(){ try { const o = JSON.parse(localStorage.getItem(IP_KEY) || 'n
 function ipSave(){ if (!IP || STU) return;
   try { const w = {}; Object.entries(IP.ex).forEach(([id, x]) => { if (x.w) w[id] = x.w; });
     const mix = {}; Object.entries(IP.mix).forEach(([bl, m]) => { if (m) mix[bl] = 1; });
-    localStorage.setItem(IP_KEY, JSON.stringify({v: 1, fmt: IP.fmt, pages: IP.pages, cls: IP.cls, ans: IP.ans, up: IP.up, qr: IP.qr, stars: IP.stars, w, mix})); } catch (e) {} }
+    localStorage.setItem(IP_KEY, JSON.stringify({v: 1, fmt: IP.fmt, pages: IP.pages, ans: IP.ans, up: IP.up, qr: IP.qr, stars: IP.stars, w, mix})); } catch (e) {} }
 function ipReset(){ IP.pool = {}; IP.keys = new Set(); IP.ses = ipSes0(); IP.ac = new Map(); }      // « Nouvelles questions »
 const ipEsc = s => String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'})[c]);
 const ipLetter = i => i < 26 ? String.fromCharCode(97 + i) : String.fromCharCode(97 + Math.floor(i / 26) - 1) + String.fromCharCode(97 + i % 26);
@@ -33020,7 +33459,8 @@ $('ipSec').addEventListener('click', e => {
   const mo = t.closest('button[data-ipo]'); if (mo){ e.preventDefault(); if (!mo.disabled) ipOrdMove(mo.dataset.ipo, Number(mo.dataset.d)); return; }   // n° 37 : ▲ ▼
   if (t.closest('.ipdg')){ e.preventDefault(); return; }                // la poignée (dans l'étiquette « mélanger » : ne coche rien)
   if (t.closest('#ipNew')){ ipReset(); ipSync(true); return; }
-  if (t.closest('#ipPrint')){ ipSync(true); ipPrint(); return; }
+  if (t.closest('#ipPrint')){ ipSync(true); pdxSave(); return; }        // n° 138 : l'exportateur de la page (prototype) ; n° 140 : sans « Enregistrer sous », ipPrint
+  if (t.closest('#pdxPrn')){ ipSync(true); ipPrint(); return; }         // n° 138 : l'impression d'avant, « ou imprimer »
   if (t.closest('.ip-ql')){ e.preventDefault(); tryLink(); return; }        // n° 119 : le code QR de l'aperçu, comme « Essayer »
   const rl = t.closest('.ip-rl'); if (rl){ e.preventDefault(); ipReload(Number(rl.dataset.ipr)); return; }     // n° 117 : avant le clic qui agrandit la page
   if (t.closest('.ip-pw')){ $('ipPrev').classList.toggle('ipbig'); ipScale(); }

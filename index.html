@@ -1390,6 +1390,7 @@ body.prj header.hc2 .title{flex:1 1 14em}   /* ronds sur leur ligne : le titre r
 .pdxob{position:relative;display:inline-flex}
 .pdxprn{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:.15em;font:inherit;font-size:.72em;color:var(--muted);background:none;border:0;padding:0;white-space:nowrap;cursor:pointer;text-decoration:underline dotted;text-underline-offset:.15em}
 .pdxprn:hover{color:var(--sel)}
+.prjtoast .prjtact{font:inherit;color:#c25b00;background:none;border:0;padding:0;margin-left:.3em;text-decoration:underline;cursor:pointer}
 #ipPrint.pdxbusy{cursor:progress;opacity:.7}
 html.pdxno #pdxPrn,html.pdxno .pdxy,html:not(.pdxno) .pdxn{display:none}   /* n° 140 : sans « Enregistrer sous » (Firefox…), la fenêtre d'impression */
 @media (max-width:700px){.pdxob{flex-direction:column;align-items:center;gap:.1em}.pdxprn{position:static;transform:none;margin-top:0}}   /* téléphone : les boutons passent à la ligne, le lien reste dessous */
@@ -30975,17 +30976,20 @@ function prjDes(o){                                         // objet du fichier 
 function prjSheet(){                                        // la feuille de l'aperçu → ses données (cachées dans le PDF, n° 128 ; avant : le fichier .qpc) ; null sans feuille
   if (!IP || !IP.L || !IP.L.pages) return null;
   const L = IP.L, items = [], seen = new Set();
-  L.pages.forEach(P => (P || []).forEach(x => { if (x.t === 'h' || !x.row) return;
-    x.row.xs.forEach((c, j) => { if (!c.p || seen.has(c.p)) return; seen.add(c.p); items.push({p: c.p, e: x.b.num || 1, i: x.row.i + j, name: prjTxt(ipUName(x.b.u))}); }); }));
+  L.pages.forEach(P => (P || []).forEach(x => { if (x.t !== 'p') return;      // n° 145 : colonne par colonne = l'ordre des lettres
+    x.cols.forEach(col => col.forEach(i => { const c = x.b.X[i]; if (!c.p || seen.has(c.p)) return; seen.add(c.p); items.push({p: c.p, e: x.b.num || 1, i, name: prjTxt(ipUName(x.b.u))}); })); }));
   if (!items.length) return null;
   const solo = new Set(items.map(x => x.e)).size < 2, ex = [];
   items.forEach(x => { if (!ex.some(y => y.n === x.e)) ex.push({n: x.e, name: x.name}); });
   const qs = ipRun(() => items.map((x, k) => ({e: x.e, k: k + 1, lab: (solo ? '' : x.e + ') ') + ipLetter(x.i) + ')', oid: x.p._o ? x.p._o.id : '', bl: x.p._o ? x.p._o.bl : '', p: prjSer(x.p)})));
   return {qpc: 1, v: QPC_VERSION, d: new Date().toISOString().slice(0, 10), t: ipTitle() || 'Feuille', P: JSON.parse(JSON.stringify(IP.E || LNK.E)), solo, ex, qs};
 }
-function prjMsg(t){                                         // petit message en haut de la page (fichier illisible…)
+function prjMsg(t, a){                                      // petit message en haut de la page (fichier illisible…)
   let b = $('prjToast'); if (!b){ b = document.createElement('div'); b.id = 'prjToast'; b.className = 'prjtoast'; b.setAttribute('role', 'status'); document.body.appendChild(b); }
-  b.textContent = t; b.hidden = false; clearTimeout(b._t); b._t = setTimeout(() => b.hidden = true, 4500);
+  b.textContent = t;
+  if (a){ const k = document.createElement('button'); k.type = 'button'; k.className = 'prjtact'; k.textContent = a.t;   // n° 144 : un bouton dans le message (« Ouvrir le PDF »), 15 s
+    k.onclick = () => { b.hidden = true; a.f(); }; b.append(' ', k); }
+  b.hidden = false; clearTimeout(b._t); b._t = setTimeout(() => b.hidden = true, a ? 15000 : 4500);
 }
 function prjStart(D){                                       // la présentation : les questions de la feuille, une à la fois
   if (!D || D.qpc !== 1 || !Array.isArray(D.qs) || !D.qs.length){ prjMsg('Ce fichier n’est pas une feuille de « Questions pour des champions ».'); return; }
@@ -31246,7 +31250,13 @@ function prjBufOpen(buf){                                   // un fichier gliss�
    de queryLocalFonts (accord de Chrome) ni de police de l'ordinateur dans le PDF (de la n° 138 à la n° 140 : Cambria Math et Century Gothic
    réduites aux glyphes employés) : lettres des formules dessinées par le navigateur (n° 139), titres en Helvetica gras. Pagella ou masques :
    décidé pour toute la feuille (X.PMok), d'après la largeur d'un texte de ces lettres à l'écran, pour ne jamais mélanger les deux dessins.
-   Pour enlever le prototype : ce bloc, la CSS « n° 138 », le bouton « ou imprimer » (#pdxPrn), les deux lignes d'aide .pdxy et .pdxn (garder
+   n° 143 (18.11.2026 : « sur chrome tu peux pas faire en sorte que ça s'enregistre dans téléchargements par défaut, pas sur documents ? ») :
+   la fenêtre « Enregistrer sous » s'ouvre toujours dans Téléchargements (startIn: 'downloads', sans id : avec un id, le dernier dossier
+   choisi l'emporterait sur startIn ; pour qu'elle reparte du dernier dossier choisi, remettre un id).
+   n° 144 (« c'est dommage que ça n'ouvre pas de nouvel onglet avec le pdf quand on le télécharge ») : le PDF enregistré s'ouvre dans un
+   nouvel onglet (window.open d'une adresse blob:). Chrome ne l'ouvre tout seul que juste après le clic (environ 5 s, fenêtre « Enregistrer
+   sous » comprise) ou si les fenêtres pop-up sont autorisées pour la page ; sinon (window.open → null) : « Ouvrir le PDF » dans le message.
+   Pour enlever le prototype : ce bloc, la CSS « n° 138 » (et .prjtact, n° 144 ; le 2e argument de prjMsg peut rester), le bouton « ou imprimer » (#pdxPrn), les deux lignes d'aide .pdxy et .pdxn (garder
    le texte de .pdxn) et la ligne du clic de #ipPrint (ipPrint). */
 const pdxOn = () => typeof window.showSaveFilePicker === 'function';   // n° 140 : l'exportateur seulement avec la fenêtre « Enregistrer sous »
 if (!pdxOn()){ document.documentElement.classList.add('pdxno');
@@ -31640,12 +31650,18 @@ async function pdxSave(){                                   // fabrique le PDF, 
     const again = !!ok && ok.sig === sig && Date.now() - ok.t < 3e5;     // 2e clic : le PDF déjà prêt
     const blob = again ? ok.b : await pdxBuild();
     let h = null;
-    try { h = await window.showSaveFilePicker({id: 'qpcpdf', suggestedName: name, types: [{description: 'PDF', accept: {'application/pdf': ['.pdf']}}]}); }
+    // n° 143 : toujours dans Téléchargements (pas d'id, voir plus haut)
+    try { h = await window.showSaveFilePicker({startIn: 'downloads', suggestedName: name, types: [{description: 'PDF', accept: {'application/pdf': ['.pdf']}}]}); }
     catch (e){ if (e.name === 'AbortError') return;        // « Annuler » : rien
       if (!again && (e.name === 'SecurityError' || e.name === 'NotAllowedError')){        // le clic est trop loin (PDF très long à faire) : un 2e clic
         pdxSave.ok = {sig, b: blob, t: Date.now()}; prjMsg('PDF prêt : clique encore sur « Enregistrer PDF » pour choisir où l’enregistrer.'); return; }
       throw e; }
-    const w = await h.createWritable(); await w.write(blob); await w.close(); prjMsg('PDF enregistré : ' + h.name);
+    const w = await h.createWritable(); await w.write(blob); await w.close();
+    // n° 144 : le PDF enregistré s’ouvre dans un nouvel onglet ; bloqué par Chrome (clic trop loin) : « Ouvrir le PDF » dans le message
+    const url = URL.createObjectURL(blob); let tab = null;
+    try { tab = window.open(url, '_blank'); } catch (e){}
+    if (tab) prjMsg('PDF enregistré : ' + h.name);
+    else prjMsg('PDF enregistré : ' + h.name + '.', {t: 'Ouvrir le PDF', f: () => window.open(url, '_blank')});
   } catch (e){ console.error('pdf', e);
     prjMsg('Le PDF n’a pas pu être fait dans la page : la fenêtre d’impression s’ouvre (choisis « Enregistrer au format PDF »).'); ipPrint();
   } finally { pdxSave.go = false; btn.classList.remove('pdxbusy'); }
@@ -33070,14 +33086,30 @@ function ipQsU(u, n){         // les n questions d'un exercice de la feuille ; b
 const ipSideOf = (u, p, cw, lw) => p.fig && cw - lw - p._ip.fw - 4 >= Math.max(30, p._ip.rw) ? (u.bl === 'don' ? 2 : 1) : 0;
 /* n° 131 (l'enseignant, 17.11.2026, image d'une feuille en ¼ sans « Réponses à la fin » : « Quand on ne met pas les réponses […], il peut y avoir plus de
    questions dans la colonne de droite au verso ») : petits formats, code QR seul en bas de la dernière face (sans l'encadré des réponses) : le dernier
-   exercice de cette face continue, sous ses lignes, dans les colonnes à côté du code QR (au verso : à droite, le code QR étant à gauche ; au recto
-   d'une feuille d'une page : à gauche), jusqu'au bas du contenu (IP_BOT). Lignes de queue (row.tail) : fc questions, décalées de row.off colonnes ;
-   lettres à la suite ; ipTail (dans ipFit) en essaie le plus possible, une fois toutes les lignes entières posées. */
-function ipTailFc(c, tl){     // colonnes libres à côté du code QR (tl : {qs : sa largeur, left : à gauche}) : leur nombre (à droite si left, à gauche sinon)
-  const cw = (IP_CW - (c - 1) * IP_GC) / c; let n = 0;
-  for (let j = 0; j < c; j++){ const x0 = j * (cw + IP_GC), x1 = x0 + cw; if (tl.left ? x0 >= tl.qs + 3 - .01 : x1 <= IP_CW - tl.qs - 3 + .01) n++; }
-  return n; }
-function ipBlock(u, idx, rows, tl){   // un exercice : ses questions (rows lignes), colonnes, hauteurs ; tl (n° 131) : {T lignes de queue, qs, left}
+   exercice de cette face continue jusqu'au bas du contenu (IP_BOT) dans les colonnes à côté du code QR (au verso : à droite, le code QR étant à
+   gauche ; au recto d'une feuille d'une page : à gauche) ; les autres colonnes s'arrêtent au-dessus du code QR. Depuis la n° 145 (colonnes) : la
+   place de chaque colonne (ipLay, capsOf), plus de lignes de queue ; les questions en plus : une à une (ipFit). */
+function ipFreeCols(c, left, qs){   // n° 145 : les colonnes libres à côté du code QR (left : code QR à gauche ; qs : sa largeur) ; une colonne seule : aucune
+  const cw = (IP_CW - (c - 1) * IP_GC) / c, F = [];
+  for (let j = 0; j < c; j++){ const x0 = j * (cw + IP_GC), x1 = x0 + cw; F.push(c > 1 && (left ? x0 >= qs + 3 - .01 : x1 <= IP_CW - qs - 3 + .01)); }
+  return F; }
+/* n° 145 (l'enseignant, 18.11.2026 : « quand tu as plusieurs colonnes, fais l'ordre colonne par colonne (b en dessous de a). Comme ça tu pourras
+   mieux gérer l'espace des questions. ») : sur chaque page, le morceau d'un exercice = ses c colonnes, remplies dans l'ordre (a, b, c… dans la 1re,
+   puis la 2e…), chaque question à sa propre hauteur (plus de lignes alignées). hs : hauteur de chaque question, avec l'écart dessous (IP_GR). */
+function ipPack(hs, s, caps){     // les questions s, s + 1… dans des colonnes de hauteurs au plus caps[j] (mm), chacune remplie avant la suivante : le plus possible
+  const cols = []; let i = s;
+  for (let j = 0; j < caps.length && i < hs.length; j++){ const col = []; let y = 0;
+    while (i < hs.length && y + hs[i] <= caps[j] + .01){ col.push(i); y += hs[i]; i++; }
+    cols.push(col); }
+  return {cols, n: i - s};
+}
+function ipPackBal(hs, s, caps){  // toutes les questions s… (la fin de l'exercice) : colonnes les plus basses possible ; null si elles ne tiennent pas
+  const ok = H => ipPack(hs, s, caps.map(c => Math.min(c, H))).n === hs.length - s;
+  let lo = Math.max(...hs.slice(s)) - .02, hi = Math.max(...caps); if (!ok(hi)) return null;
+  for (let t = 0; t < 26; t++){ const m = (lo + hi) / 2; if (ok(m)) hi = m; else lo = m; }
+  return ipPack(hs, s, caps.map(c => Math.min(c, hi)));
+}
+function ipBlock(u, idx, rows, ex){   // un exercice : ses questions (rows lignes de c questions et ex questions de plus, n° 145), colonnes, hauteurs
   u.os.forEach(o => { const P = ipPool(o.id); if ([1, 2, 3, 4].reduce((n, l) => n + P[l].length, 0) < 4) ipQs(o, 4); });     // un échantillon pour choisir les colonnes
   const all = u.os.flatMap(o => [1, 2, 3, 4].flatMap(l => ipPool(o.id)[l])); all.forEach(ipPrep);
   const lwOf = n => n > 26 ? 9 : IP_LET;      // colonne de la lettre : plus large dès aa) ; n° 117 : les étoiles dans la marge, à gauche (la colonne ne s'élargit plus)
@@ -33091,7 +33123,7 @@ function ipBlock(u, idx, rows, tl){   // un exercice : ses questions (rows ligne
       const XS = all.map(p => ({p, w: cw0, con: true, work: ipWork(p._o || u.o, p), side: ipSideOf(u, p, cw0, lw0), lw: lw0})); ipMeasCells(XS);
       const d = cc / (Math.max(...XS.map(x => x.p._ip.h[ipCK(x)])) + IP_GR); if (!best || d > best.d + 1e-9) best = {cc, d}; }
     c = best.cc; }
-  const nQ = cc => rows * cc + (tl ? tl.T * ipTailFc(cc, tl) : 0);      // n° 131 : avec les lignes de queue
+  const nQ = cc => rows * cc + (ex || 0);      // n° 145 : et les questions en plus, une à une (ipFit)
   let Q = ipQsU(u, nQ(c)); Q.forEach(ipPrep);
   for (let t = 0; t < 4 && c > 1; t++){        // une question tirée à l'instant est plus large : moins de colonnes
     const nd = Math.max(...Q.map(p => p._ip.need)) + lwOf(Q.length) + 1.5; if ((IP_CW - (c - 1) * IP_GC) / c >= nd) break;
@@ -33100,12 +33132,10 @@ function ipBlock(u, idx, rows, tl){   // un exercice : ses questions (rows ligne
   const lw = lwOf(Q.length), cw = (IP_CW - (c - 1) * IP_GC) / c;
   const AQ = all.concat(Q.filter(p => !all.includes(p))), side = AQ.some(p => p.fig) && AQ.every(p => !p.fig || cw - lw - p._ip.fw - 4 >= Math.max(30, p._ip.rw)) ? (u.bl === 'don' ? 2 : 1) : 0;
   const X = Q.map(p => ({p, w: cw, con: !common, work: ipWork(p._o || u.o, p), side: IP_F === 'a4' ? side : ipSideOf(u, p, cw, lw), lw})); ipMeasCells(X);
-  const nf = Math.min(Q.length, rows * c), fc = tl ? ipTailFc(c, tl) : 0;      // n° 131 : après les lignes entières, les lignes de queue (fc questions)
-  const R = []; for (let i = 0; i < Q.length;){ const tail = i >= nf, n = tail ? fc : c; if (!n) break; const xs = X.slice(i, i + n);
-    R.push({qs: xs.map(x => x.p), xs, i, work: Math.max(...xs.map(x => x.work)), h: Math.max(...xs.map(x => x.p._ip.h[ipCK(x)])) + IP_GR, tail, off: tail && tl.left ? c - fc : 0}); i += n; }
+  const hs = X.map(x => x.p._ip.h[ipCK(x)] + IP_GR);      // n° 145 : hauteur de chaque question, l'écart dessous compris (colonnes : ipLay)
   const name = '<span class="ip-hn">' + (idx + 1) + ')</span> ' + ipUName(u), con = common ? ipNb(common) + (/[.?!:…]\s*$/.test(common.replace(/<[^>]+>/g, '')) ? '' : '.') : '';
   const wide = IP_F !== 'a4' && Q.length > 0 && Math.max(...Q.map(p => p._ip.need)) + lw + 1.5 > IP_CW + .5;     // n° 116 : plus large que le morceau (figure jamais réduite)
-  return {u, o: u.o, id: u.id, os: u.os, mix: u.mix, idx, Q, c, cw, side, rows: R, name, con, hh: ipTxtH(name, IP_CW, 'ip-h'), hc: con ? ipTxtH(con, IP_CW, 'ip-cc') : 0, short: Q.length < nQ(c), wide};
+  return {u, o: u.o, id: u.id, os: u.os, mix: u.mix, idx, Q, c, cw, side, X, hs, name, con, hh: ipTxtH(name, IP_CW, 'ip-h'), hc: con ? ipTxtH(con, IP_CW, 'ip-cc') : 0, short: Q.length < nQ(c), wide};
 }
 function ipAnsPrep(B, aw){    // l'encadré « Réponses » (comme ses fiches : les réponses seulement, en rangées alignées par exercice) : colonnes, rangées,
   // hauteurs (mm) ; cols1 : en un seul morceau, colonnes de même hauteur ; h : sa hauteur mesurée ; oh : titre, cadre et marges ;
@@ -33169,8 +33199,8 @@ function ipHead(){            // en-tête de la 1re page : classe, titre entre d
   const tb = Math.max(th, qr ? qs : 0);
   return {qr, qs, cls, y, tw, tb, top: y + Math.max(tb, qr ? qs + 6.5 : 0) + 5};
 }
-function ipLay(X, r, tq){     // exercices X avec r[i] lignes : pages, place de chaque exercice, tout tient-il ? tq (n° 131) : {i, T} lignes de queue de l'exercice i
-  const N = IP.pages, Hd = ipHead(), B = X.map((x, i) => ipBlock(x.u, i, r[i], tq && tq.i === i ? {T: tq.T, qs: Hd.qs, left: (N - 1) % 2 === 1} : null)); let nb = 0;
+function ipLay(X, r, e){      // exercices X avec r[i] lignes de questions et e[i] questions de plus (n° 145) : pages, place de chaque exercice, tout tient-il ?
+  const N = IP.pages, Hd = ipHead(), B = X.map((x, i) => ipBlock(x.u, i, r[i], e ? e[i] : 0)); let nb = 0;
   B.forEach(b => { if (b.Q.length) b.num = ++nb; b.name = '<span class="ip-hn">' + (b.num || 0) + ')</span> ' + ipUName(b.u); });   // 1), 2)… sans trou (un exercice sans question)
   // n° 117 (l'enseignant, 16.11.2026 : « Quand il y a un seul exercice ça ne sert à rien d'avoir la ligne 1) Multiplication de monômes. Après le
   // titre, dans ce cas, on peut donc directement passer aux items a), b), ... » ; QCM : tous les formats) : la consigne commune reste
@@ -33180,15 +33210,26 @@ function ipLay(X, r, tq){     // exercices X avec r[i] lignes : pages, place de 
   const hb = A ? Math.max(A.h, qb) : qb;                               // le bas de la dernière page : réponses (et code QR)
   const one = !A || hb + IP_GA <= IP_BOT - top(N - 1) + .01;          // l'encadré tient en bas de la dernière page (sinon : sur plusieurs pages)
   const bq = k => one && hb && k === N - 1 ? IP_BOT - hb - IP_GA : IP_BOT;
-  const pages = [[]], H = B.map(() => 0), tall = new Set(); let k = 0, y = top(0), fits = true;     // tall (n° 116) : exercices dont une ligne dépasse
-  B.forEach((b, i) => b.rows.forEach((row, j) => {
-    if (!j && i && IP.brk && IP.brk[b.id] && y > top(k) + .01){ pages[k].end = y; k++; pages.push([]); y = top(k); }     // n° 118 : l'exercice commence une page
-    const head = j ? 0 : (y > top(k) + .01 ? IP_GX : 0) + b.hh + b.hc, lim = row.tail ? IP_BOT : bq(k);     // n° 131 : une ligne de queue va jusqu'en bas
-    if (y + head + row.h > lim + .01 && y > top(k) + .01){ pages[k].end = y; k++; pages.push([]); y = top(k); }
-    if (!j){ if (y > top(k) + .01) y += IP_GX; pages[k].push({t: 'h', b, y}); y += b.hh + b.hc; H[i] += b.hh + b.hc; }
-    pages[k].push({t: 'r', b, row, y}); y += row.h; H[i] += row.h;
-    if (row.tail && k !== N - 1) fits = false;                          // n° 131 : seulement sur la dernière face, à côté du code QR
-    if (y > (row.tail ? IP_BOT : bq(k)) + .01){ fits = false; if (!row.tail) tall.add(b.num); } }));
+  const pages = [[]], H = B.map(() => 0), tall = new Set(); let k = 0, y = top(0), fits = true;     // tall (n° 116) : exercices dont une question dépasse
+  // n° 145 : morceaux de colonnes (ipPack) ; le morceau qui finit l'exercice : colonnes les plus basses possible (ipPackBal) ; un morceau qui
+  // continue à la page suivante : colonnes remplies jusqu'en bas. n° 131 : sans les réponses, le dernier exercice de la dernière face va jusqu'en
+  // bas dans les colonnes libres à côté du code QR (capsOf) ; un titre d'exercice reste toujours au-dessus du code QR.
+  const qf = !A && qb, lastI = B.reduce((m, b, i) => b.hs.length ? i : m, -1);
+  const capsOf = (b, i, y0) => { const fr = qf && k === N - 1 && i === lastI ? ipFreeCols(b.c, k % 2 === 1, Hd.qs) : null;
+    return Array.from({length: b.c}, (_, j) => (fr && fr[j] ? IP_BOT : bq(k)) - y0); };
+  const newPage = () => { pages[k].end = y; k++; pages.push([]); y = top(k); };
+  B.forEach((b, i) => { const n = b.hs.length; if (!n) return;
+    if (i && IP.brk && IP.brk[b.id] && y > top(k) + .01) newPage();      // n° 118 : l'exercice commence une page
+    for (let s = 0; s < n;){
+      const gx = !s && y > top(k) + .01 ? IP_GX : 0, head = s ? 0 : gx + b.hh + b.hc, caps = capsOf(b, i, y + head);
+      let P = ipPack(b.hs, s, caps);
+      if ((!P.n || y + head > bq(k) + .01) && y > top(k) + .01){ newPage(); continue; }      // un titre reste avec sa première question
+      if (!s){ y += gx; pages[k].push({t: 'h', b, y}); y += b.hh + b.hc; H[i] += b.hh + b.hc; }
+      if (!P.n){ P = {cols: [[s]], n: 1}; fits = false; tall.add(b.num); }          // une question plus haute que la page
+      else if (s + P.n === n) P = ipPackBal(b.hs, s, caps) || P;
+      const ch = P.cols.map(col => col.reduce((a, j) => a + b.hs[j], 0)), hp = Math.max(...ch);
+      pages[k].push({t: 'p', b, cols: P.cols, ch, h: hp, y, caps}); y += hp; H[i] += hp; s += P.n;
+      if (s < n) newPage(); } });
   pages[k].end = y;
   let ans = A && one ? [{k: N - 1, y: IP_BOT - (qb ? hb : A.h), cols: A.cols1, title: 'Réponses', q: !!qb, hq: hb}] : null, np = Math.max(pages.length, (A || qb) && one ? N : 0);
   if (A && !one){ ans = ipAnsFlow(A, k, y, N, qb); if (!ans) fits = false; else np = Math.max(pages.length, ans[ans.length - 1].k + 1); }
@@ -33223,36 +33264,31 @@ function ipTicks(L){
 }
 function ipFit(){             // les lignes de chaque exercice : une de plus à l'exercice le plus en retard sur sa part, tant que tout tient
   ipGeo(IP.fmt);              // n° 116 : la page, ou le morceau de la feuille
-  const X = IP.U.filter(ipOn).map(u => ({u, s: Math.max(1, IP.share[u.id] || 1)})), r = X.map(() => 1), full = X.map(() => false);   // part 0 : pas sur la feuille (n° 32)
-  let L = ipLay(X, r);
-  for (let it = 0; it < 600 && L.fits; it++){
-    const ord = X.map((x, i) => i).filter(i => !full[i] && !L.B[i].short).sort((a, b) => L.H[a] / X[a].s - L.H[b] / X[b].s || a - b);
-    let ok = false;
-    for (const i of ord){ r[i]++; const L2 = ipLay(X, r);
-      if (L2.fits && L2.B[i].rows.length === r[i] && !L2.B[i].short){ L = L2; ok = true; break; }
-      r[i]--; full[i] = true; }
-    if (!ok) break;
-  }
-  if (L.fits) L = ipTail(X, r, L) || L;                                  // n° 131
-  return ipFill(L.fits ? L : ipLay(X, r));
+  const X = IP.U.filter(ipOn).map(u => ({u, s: Math.max(1, IP.share[u.id] || 1)})), r = X.map(() => 1), e = X.map(() => 0);   // part 0 : pas sur la feuille (n° 32)
+  let L = ipLay(X, r, e);
+  // une ligne de c questions de plus à l'exercice le plus en retard sur sa part, tant que tout tient ; puis (n° 145, colonnes) une question de
+  // plus à la fois, de la même façon (une colonne peut avoir une question de plus que les autres)
+  for (const one of [false, true]){ const full = X.map(() => false);
+    for (let it = 0; it < 600 && L.fits; it++){
+      const ord = X.map((x, i) => i).filter(i => !full[i] && !L.B[i].short).sort((a, b) => L.H[a] / X[a].s - L.H[b] / X[b].s || a - b);
+      let ok = false;
+      for (const i of ord){ if (one) e[i]++; else r[i]++; const L2 = ipLay(X, r, e);
+        if (L2.fits && !L2.B[i].short){ L = L2; ok = true; break; }
+        if (one) e[i]--; else r[i]--; full[i] = true; }
+      if (!ok) break;
+    } }
+  return ipFill(L.fits ? L : ipLay(X, r, e));
 }
-function ipTail(X, r, L){     // n° 131 : sans les réponses, le plus de lignes de queue possible à côté du code QR (dernière face) ; null : aucune
-  if (!L.qrb || L.np > L.N) return null;
-  const k = L.N - 1, P = L.pages[k], last = P && P[P.length - 1]; if (!last || last.t !== 'r') return null;
-  const i = L.B.indexOf(last.b); if (i < 0 || last.b.short || L.B.slice(i + 1).some(b => b.rows.length)) return null;
-  if (!ipTailFc(last.b.c, {qs: L.Hd.qs, left: k % 2 === 1})) return null;
-  const rh = Math.max(...last.b.rows.map(x => x.h)), T0 = Math.min(40, Math.floor((IP_BOT - P.end + .01) / rh) + 1);
-  for (let T = T0; T >= 1; T--){ const L2 = ipLay(X, r, {i, T}), b2 = L2.B[i];
-    if (L2.fits && !b2.short && b2.rows.filter(x => x.tail).length === T && b2.rows.filter(x => !x.tail).length === r[i]) return L2; }
-  return null;
-}
-function ipFill(L){           // la place libre de chaque page va à la place pour répondre de ses lignes (au plus 60 % de plus, ou 12 mm)
+function ipFill(L){           // la place libre de chaque page va à la place pour répondre de ses questions (au plus 60 % de plus, ou 12 mm, par question)
+  // n° 145 : par morceau de colonnes (x.ex : sa hauteur en plus) ; dans chaque colonne, ce qu'il reçoit va à ses questions selon leur place pour
+  // répondre (x.ce) : la colonne la plus chargée reçoit tout, les autres un peu moins (deux colonnes de questions pareilles restent alignées)
   L.pages.forEach((P, k) => {
-    const rows = P.filter(x => x.t === 'r'); if (!rows.length) return;
+    const ps = P.filter(x => x.t === 'p'); if (!ps.length) return;
     const free = L.bot(Math.min(k, L.N - 1)) - P.end; if (free <= .3 || k >= L.N) return;
-    const wt = rows.map(x => x.row.work + 3), tw = wt.reduce((a, b) => a + b, 0);
-    let left = free; rows.forEach((x, j) => { const e = Math.min(free * wt[j] / tw, Math.max(12, .6 * x.row.h)); x.ex = e; left -= e; });
-    let off = 0; P.forEach(x => { x.y += off; if (x.t === 'r') off += x.ex || 0; }); P.end += off;
+    const Wc = x => x.cols.map(col => col.reduce((a, i) => a + x.b.X[i].work + 3, 0)), wt = ps.map(x => Math.max(...Wc(x))), tw = wt.reduce((a, b) => a + b, 0);
+    ps.forEach((x, j) => { const cap = Math.max(...x.cols.map(col => col.reduce((a, i) => a + Math.max(12, .6 * x.b.hs[i]), 0)));
+      x.ex = Math.min(free * wt[j] / tw, cap); x.ce = {}; x.cols.forEach(col => col.forEach(i => x.ce[i] = x.ex * (x.b.X[i].work + 3) / wt[j])); });
+    let off = 0; P.forEach(x => { x.y += off; if (x.t === 'p') off += x.ex || 0; }); P.end += off;
   });
   return L;
 }
@@ -33270,11 +33306,11 @@ function ipPageIn(L, k, N){   // une page (A4) ou une face du morceau (n° 116 :
   }
   P.forEach(x => {
     if (x.t === 'h'){ if (x.b.name || x.b.con) h += '<div ' + a(x.y, 'ip-hb') + '">' + (x.b.name ? '<div class="ip-h">' + x.b.name + '</div>' : '') + (x.b.con ? '<div class="ip-cc">' + x.b.con + '</div>' : '') + '</div>'; return; }
-    const b = x.b, hh = x.row.h + (x.ex || 0) - IP_GR;
-    h += '<div ' + a(x.y, 'ip-row') + ';height:' + hh.toFixed(2) + 'mm">' + x.row.xs.map((c, j) => '<div class="ip-rc" style="width:' + b.cw.toFixed(2) + 'mm' +
-      (!j && x.row.off ? ';margin-left:' + (x.row.off * (b.cw + IP_GC)).toFixed(2) + 'mm' : '') + '">' +        // n° 131 : ligne de queue décalée (à droite du code QR)
+    const b = x.b, hh = x.h + (x.ex || 0) - IP_GR;              // n° 145 : les colonnes du morceau (une colonne vide garde sa place : code QR)
+    h += '<div ' + a(x.y, 'ip-row') + ';height:' + hh.toFixed(2) + 'mm">' + x.cols.map(col => '<div class="ip-col" style="width:' + b.cw.toFixed(2) + 'mm">' + col.map(i => { const c = b.X[i];
+      return '<div class="ip-rc" style="height:' + (b.hs[i] - IP_GR + (x.ce && x.ce[i] || 0)).toFixed(2) + 'mm;margin-bottom:' + IP_GR + 'mm">' +
       '<button type="button" class="ip-rl" data-ipr="' + (IP.rl.push(c.p) - 1) + '"' + (ipStW(c.p) ? ' style="margin-right:' + (ipStW(c.p) + .5).toFixed(2) + 'mm"' : '') + ' title="Une autre question à la place de celle-ci" aria-label="Une autre question">' + IP_RL + '</button>' +   // n° 117
-      ipCellHTML(c.p, ipLetter(x.row.i + j), c) + '</div>').join('') + '</div>';
+      ipCellHTML(c.p, ipLetter(i), c) + '</div>'; }).join('') + '</div>').join('') + '</div>';
   });
   const qrH = () => '<div class="ip-qr" style="width:' + Hd.qs.toFixed(2) + 'mm">' + ipQrA(Hd.qr) + '<div class="ip-qrc">Entraîne-toi<br>en ligne</div></div>';
   (L.ans || []).filter(c => c.k === k).forEach(c => { h += '<div ' + a(c.y, 'ip-answ' + (IP.up ? ' ip-up' : '') + (c.q ? ' ip-aq' : '')) + (c.q ? ';height:' + c.hq.toFixed(2) + 'mm' : '') + '">' +

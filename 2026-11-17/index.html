@@ -1343,6 +1343,12 @@ body.retpad .pane{padding-top:calc(var(--fs-ui) * 3.1)}
 /* n° 133 : confirmer « Projeter les questions de ce PDF » (#oPrjQ, comme la vidéo) ; 1★ … 4★ grisés sur une question de la feuille */
 #oPrjQ .vbox{max-width:none;width:min(94vw, 31em)}
 #lvBtns .btn:disabled{opacity:.35;cursor:default}
+/* n° 135 (l'enseignant, 17.11.2026 : « il manque le petit indicateur sur le bouton pour le raccourci P ») : « P » sur « Lien/impression élèves », comme les
+   autres touches ; le bouton ne coupe plus ce qui dépasse (sinon l'indicateur, au-dessus du coin, disparaissait) : son décor (codes QR, feuilles) est
+   coupé aux coins arrondis par clip-path */
+#bLink{overflow:visible}
+#bLink::before{clip-path:inset(0 round calc(.6em - 2px) 0 0 calc(.6em - 2px))}
+#bLink::after{clip-path:inset(0 round 0 calc(.6em - 2px) calc(.6em - 2px) 0)}
 /* n° 132 (l'enseignant, 17.11.2026 : « bouge le bouton "projeter les questions de cette feuille" juste à droite du bouton "nouvelles questions" (fais pareil
    que ce bouton, i.e. mange un petit morceau de l'aperçu.) et change le "de cette feuille" en "de ce pdf". Change le nom du bouton "ouvrir une feuille (PDF)"
    en "ouvrir un PDF" » ; puis « en dessous de copier l'image, écris "pour docs imprimés" » : 2e ligne du bouton, comme « ex. pour Classroom ») : « ↻ Nouvelles questions » et « ▶ Projeter les questions de ce PDF » côte à côte en haut à gauche de l'aperçu (.ipvbt), même style
@@ -1513,7 +1519,7 @@ body.prj header.hc2 .title{flex:1 1 14em}   /* ronds sur leur ligne : le titre r
     <div class="boxfoot">
       <span class="warn" id="setWarn"></span>
       <button class="btn" id="bSnc" title="Séances personnalisées : enregistrer les exercices cochés, lancer une séance enregistrée"><span class="sncPl sncPlB" aria-hidden="true"><svg class="tri" viewBox="0 0 10 10"><path d="M10 5L0 0V10Z"/></svg></span>Séances<span class="lbx3"> personnalisées</span></button>
-      <button class="btn" id="bLink" title="Lien/impression élèves : un lien et un QR code pour que tes élèves s'entraînent sur les exercices cochés, et une feuille à imprimer (touche P)">Lien/impression<span class="lbx"> élèves</span></button>
+      <button class="btn" id="bLink" title="Lien/impression élèves : un lien et un QR code pour que tes élèves s'entraînent sur les exercices cochés, et une feuille à imprimer (touche P)">Lien/impression<span class="lbx"> élèves</span><span class="kh">P</span></button>
       
 <button class="btn" id="bProp" title="La proportion de chaque exercice quand on joue (la même dans le lien élèves et sur la feuille à imprimer)">Proportions</button>
       <button class="btn" id="bNone" title="Décocher toutes les questions, dans tous les onglets (touche ⟵ effacer)">Tout décocher<span class="kh kbs">⟵</span></button>
@@ -1535,7 +1541,7 @@ body.prj header.hc2 .title{flex:1 1 14em}   /* ronds sur leur ligne : le titre r
         <label class="lfr lfr2"><input type="checkbox" id="lFr"> <span>Bouton <b>FR</b> pour les élèves (le calcul lu en français)</span></label>
         <div class="lpaste"><span class="lab2">Reprendre un lien</span><input type="text" id="lPaste" placeholder="Colle ici un lien élèves ou l'image de son code QR" autocomplete="off" spellcheck="false"><span class="lpw" id="lPw"></span></div>
         <p class="lnote" id="lNote"></p>
-        <div class="prje0"><span class="prjob"><button type="button" class="btn on prjopen" title="Choisir le PDF d’une feuille (enregistré avec « Enregistrer PDF ») et projeter ses questions">Projeter un PDF</button><span class="prjhint">ou glisse le PDF sur la page</span></span><button type="button" class="prjinf" title="Projeter un PDF : comment ça marche" aria-label="Projeter un PDF : comment ça marche"><svg class="pisvg" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.9" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="4.75" r="1.05" fill="currentColor"/><path d="M8 7.2v4.6" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg></button></div>
+        <div class="prje0"><span class="prjob"><button type="button" class="btn on prjopen" title="Choisir le PDF d’une feuille (enregistré avec « Enregistrer PDF ») et projeter ses questions">Projeter les questions d’un PDF</button><span class="prjhint">ou glisse le PDF sur la page</span></span><button type="button" class="prjinf" title="Projeter un PDF : comment ça marche" aria-label="Projeter un PDF : comment ça marche"><svg class="pisvg" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.9" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="4.75" r="1.05" fill="currentColor"/><path d="M8 7.2v4.6" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg></button></div>
       </div>
       <div class="lright">
         <div class="lqr" id="lQr"></div>
@@ -1545,7 +1551,7 @@ body.prj header.hc2 .title{flex:1 1 14em}   /* ronds sur leur ligne : le titre r
         <div class="lmsg" id="lMsg"></div>
       </div>
       <section class="ipsec" id="ipSec" aria-label="Feuille à imprimer">
-        <div class="ipt"><h3>Feuille à imprimer</h3><span class="iptr"><button type="button" class="btn on" id="ipPrint" title="La fenêtre d'impression : choisis « Enregistrer au format PDF » (le PDF garde les questions, pour les projeter), ou ton imprimante">Enregistrer PDF</button><span class="prjg"><span class="prjob"><button type="button" class="btn on prjopen" title="Choisir le PDF d’une feuille (enregistré avec « Enregistrer PDF ») et projeter ses questions">Projeter un PDF</button><span class="prjhint">ou glisse le PDF sur la page</span></span><button type="button" class="prjinf" title="Projeter un PDF : comment ça marche" aria-label="Projeter un PDF : comment ça marche"><svg class="pisvg" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.9" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="4.75" r="1.05" fill="currentColor"/><path d="M8 7.2v4.6" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg></button></span></span></div>
+        <div class="ipt"><h3>Feuille à imprimer</h3><span class="iptr"><button type="button" class="btn on" id="ipPrint" title="La fenêtre d'impression : choisis « Enregistrer au format PDF » (le PDF garde les questions, pour les projeter), ou ton imprimante">Enregistrer PDF</button><span class="prjg"><span class="prjob"><button type="button" class="btn on prjopen" title="Choisir le PDF d’une feuille (enregistré avec « Enregistrer PDF ») et projeter ses questions">Projeter les questions d’un PDF</button><span class="prjhint">ou glisse le PDF sur la page</span></span><button type="button" class="prjinf" title="Projeter un PDF : comment ça marche" aria-label="Projeter un PDF : comment ça marche"><svg class="pisvg" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.9" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="4.75" r="1.05" fill="currentColor"/><path d="M8 7.2v4.6" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg></button></span></span></div>
         <div class="ipbody">
           <div class="ipo">
             <span class="ipf">Format <span class="ipfmt" role="group" aria-label="Format de la feuille"><button type="button" data-ipf="a4" class="on" aria-pressed="true" title="Une feuille A4 par élève">A4</button><button type="button" data-ipf="2" aria-pressed="false" title="Moitié de A4 : les mêmes questions en haut et en bas de la feuille">½</button><button type="button" data-ipf="3" aria-pressed="false" title="Tiers de A4 : trois fois les mêmes questions sur la feuille">⅓</button><button type="button" data-ipf="4" aria-pressed="false" title="Quart de A4 : quatre fois les mêmes questions sur la feuille">¼</button></span></span>
@@ -31111,7 +31117,7 @@ $('prjFile').addEventListener('change', e => prjRead(e.target.files && e.target.
 // des séances, le contenu décide (une feuille .qpc s'ouvre) ; sinon un message, jamais rien.
 const prjDT = e => e.dataTransfer && [...(e.dataTransfer.types || [])];
 const prjFiles = e => { const T = prjDT(e); return !!T && T.some(t => t === 'Files' || t === 'text/uri-list' || t === 'DownloadURL'); };
-const PRJ_NO = 'Je n’arrive pas à ouvrir ce fichier ici : glisse-le depuis ton dossier (Téléchargements), ou clique « Projeter un PDF » (fenêtre Lien/impression élèves).';
+const PRJ_NO = 'Je n’arrive pas à ouvrir ce fichier ici : glisse-le depuis ton dossier (Téléchargements), ou clique « Projeter les questions d’un PDF » (fenêtre Lien/impression élèves).';
 function prjTryText(t, quiet){ let D = null; try { D = JSON.parse(t); } catch (x) {} if (D && D.qpc === 1){ prjStart(D); return true; } if (!quiet) prjMsg('Ce n’est pas une feuille de « Questions pour des champions » : glisse le PDF d’une feuille (enregistré avec « Enregistrer PDF »).'); return false; }
 document.addEventListener('dragover', e => { if (!prjFiles(e) || STU || TRY) return; e.preventDefault(); }, true);
 document.addEventListener('drop', e => { if (!prjFiles(e) || STU || TRY) return; e.preventDefault();
@@ -32358,15 +32364,16 @@ function ipGeo(f){            // la page (A4) ou le morceau (½, ⅓, ¼) : dime
 }
 const ipPgMax = () => IP && IP.fmt !== 'a4' ? 2 : 8;               // petits formats : recto, ou recto verso
 const ipPcPos = f => f === '2' ? [[0, 0], [0, 148.5]] : f === '3' ? [[0, 0], [0, 99], [0, 198]] : [[0, 0], [105, 0], [0, 148.5], [105, 148.5]];   // copies (mm)
-function ipCuts(f){           // traits de coupe : très fins, 1 cm depuis le bord gauche ; n° 124 : aucun en ¼ (« la découpeuse a déjà des marques pour ce format »)
-  const hz = y => '<div class="ip-cut" style="left:0;top:' + y + 'mm;width:10mm;border-top:.25pt solid #000"></div>';
-  const vt = x => '<div class="ip-cut" style="left:' + x + 'mm;top:' + (IP_SH - 10) + 'mm;height:10mm;border-left:.25pt solid #000"></div>';
-  return f === '2' ? hz(148.5) : f === '3' ? hz(99) + hz(198) : ''; }
+function ipCuts(f){           // traits de coupe : très fins, 1 cm ; n° 124 : aucun en ¼ (« la découpeuse a déjà des marques pour ce format »)
+  // n° 137 : ½ sans traits, ⅓ à droite (l'enseignant, 17.11.2026 : « pour le format 1/2 tu peux aussi enlever les marques de découpage. Pour le format
+  // 1/3, mets plutot les marques à droite que à gauche ») ; au recto et au verso, comme avant
+  const hz = y => '<div class="ip-cut" style="left:' + (IP_SW - 10) + 'mm;top:' + y + 'mm;width:10mm;border-top:.25pt solid #000"></div>';
+  return f === '3' ? hz(99) + hz(198) : ''; }
 function ipHintF(){           // la ligne d'aide d'un petit format
   if (!IP || IP.fmt === 'a4') return '';
   const n = IP_FMT[IP.fmt].n;
   return '1 feuille A4 = ' + n + ' élèves : pour 24 élèves, imprime ' + Math.ceil(24 / n) + ' exemplaires' + (IP.pages > 1 ? ', en recto verso' : '') +
-    ', puis coupe ' + (n === 2 ? 'au petit trait à gauche' : n === 3 ? 'aux petits traits à gauche' : 'en quatre') + '.'; }
+    ', puis coupe ' + (n === 2 ? 'en deux' : n === 3 ? 'aux petits traits à droite' : 'en quatre') + '.'; }     // n° 137
 let IP_GX = 5, IP_GR = 2.5, IP_GC = 6, IP_GA = 5;                 // écarts (mm) : avant un exercice, sous une ligne de questions, entre deux colonnes, au-dessus des réponses (n° 116 : plus serrés dans un petit format, ipGeo)
 const IP_LET = 6.5, IP_STW = 1.75;                                 // colonne de la lettre a) (mm) ; n° 37 : largeur d'une étoile (6 pt), à gauche de la lettre
 const IP_WL = ['aucune', 'petite', 'normale', 'grande', 'très grande'];   // place pour répondre, − / + (−2 à 2)

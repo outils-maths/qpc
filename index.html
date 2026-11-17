@@ -11862,12 +11862,17 @@ function genOne(sub, lv, fl, mode){
   const sv = [TC_FORCE, TC_KIND]; TC_FORCE = TC_FORCE || (chance(.5) ? OUI : NON); TC_KIND = TC_KIND || (chance(TC_LEN) ? 'len' : 'ang');
   try { return genOne0(sub, lv, fl, mode); } finally { [TC_FORCE, TC_KIND] = sv; }
 }
+// n° 123 (16.11.2026) : heure limite d'un tirage (Date.now()), posée par « Réessayer » (retGen) ; 0 : sans limite (tous les autres tirages, inchangés).
+// Le test de « Réessayer » a trouvé un tirage de 2,6 s : Volumes, problème de la tente imposé, toutes ses questions déjà posées (80 essais de
+// genOne0 × 60 essais de pbGen, chacun redonnant une question déjà posée). Avec la limite, on garde la question déjà posée et retGen continue.
+let GEN_DL = 0;
 function genOne0(sub, lv, fl, mode){
   const L = GEN[sub] && GEN[sub][lv]; if (!L || !L.length) return null;
   setFlags(fl);
   const geo = isGeo(sub); if (geo && !mode) mode = GEO_STRICT ? 'new' : 'old';
   let p = null, any = null; const old = new Map();
   for (let t = 0, nt = geo ? 300 : 80; t < nt; t++){       // géométrie : plus d'essais (générateurs rapides), pour trouver aussi la dernière question pas encore posée
+    if (t && GEN_DL && Date.now() > GEN_DL) break;                     // n° 123
     let q = null; try { const gf = GEN_ONLY !== null && L[GEN_ONLY] ? L[GEN_ONLY] : pick(L); q = gf(); if (q && typeof q === 'object') GEN_IDX.set(q, L.indexOf(gf)); } catch (e) { console.error(sub, lv, e); }   // n° 91 : GEN_ONLY, GEN_IDX
     if (!q) continue; any = any || q; if (!USED.has(q.key) || q.reuse){ p = q; break; }      // reuse : reprise voulue (vocabulaire du calcul littéral, 07.11.2026)
     if (!old.has(q.key)) old.set(q.key, q);
@@ -16285,8 +16290,9 @@ function pbGen(bl, lv, main){
       if (L === lt && !old) return pbOut(bl, m, c, lv, pts);
       if (L === lt){ dup = dup || [m, c, pts]; continue; }
       if (!old && Math.abs(L - lt) < bd){ bd = Math.abs(L - lt); best = [m, c, pts]; }
+      if (GEN_DL && Date.now() > GEN_DL) break;                       // n° 123 (« Réessayer » seulement)
     }
-    if (Date.now() - t0 > 120) break;
+    if (Date.now() - t0 > 120 || GEN_DL && Date.now() > GEN_DL) break;
   }
   const z = best || dup; return z ? pbOut(bl, z[0], z[1], lv, z[2]) : null;
 }
@@ -30504,68 +30510,269 @@ function retList(){                  // les questions manquées (paires de QS) q
    déjà vu (consigne, question, ligne et figure identiques), sauf s'il n'y a rien d'autre ; la même clé avec autre chose à l'écran est permise, un peu
    moins bien notée (géométrie : mêmes consigne et réponse, autres lettres et autre figure, une notation de demi-droite reste une notation de
    demi-droite ; vocabulaire : « Dans la formule P = 2πr, la lettre r est une … » et « Dans la formule V = c³, … » ont la même clé). Les questions tirées pour rien ne comptent pas dans la séance (état remis, puis seule la question gardée
-   est inscrite comme dans genOne0). */
-const retTxt = h => String(h || '').replace(/<[^>]*>/g, ' ').replace(/&[#\w]+;/g, ' ').replace(/[   ]/g, ' ');
-const retNorm = h => retTxt(h).replace(/\s+/g, ' ').replace(/[−-]?\d[\d ,.]*/g, '#').replace(/\b[A-Z]{1,4}\b/g, 'P').trim();
-const retWords = h => (retTxt(h).match(/[A-Za-zÀ-ÖØ-öø-ÿœŒ'’-]{3,}/g) || []).map(w => w.toLowerCase()).join(' ');
-function retKind(p){                 // la sorte d'après chk : ses clés, et dans chacune les mots courts (pas les nombres, ni les vrai / faux, ni la réponse)
-  const c = p.chk || {}, out = [], A = retTxt(p.a).trim(), ANS = /^(yes|yn|ans|a|r|res|sol|rep|ok|good|v|val)$/;
-  // un code qui dit la réponse (« iso » pour isocèle, « ri » pour rectangle et isocèle, « tra » pour trapèze) n'est pas une sorte : sinon la
-  // question semblable aurait toujours la même réponse
-  const da = x => x.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(), AW = da(A).split(/[^a-z]+/).filter(Boolean),
-    ini = AW.filter(w => w.length > 2).map(w => w[0]).join(''), leak = x => { const v = da(x); return AW.some(w => w.startsWith(v)) || (v.length >= 2 && v === ini); };
-  const ok = (j, x) => typeof x === 'string' && x.length >= 1 && x.length <= 14 && !/\d/.test(x) && !ANS.test(j) && !/^(oui|non|vrai|faux)$/i.test(x) &&
-    !/^[A-Z]{1,3}$/.test(x) && x !== A && !leak(x);
-  Object.keys(c).sort().forEach(k => { const v = c[k]; out.push(k);
-    if (v && typeof v === 'object' && !Array.isArray(v)) Object.keys(v).sort().forEach(j => { if (ok(j, v[j])) out.push(k + '.' + j + '=' + v[j]); });
-    else if (ok(k, v)) out.push(k + '=' + v); });
+   est inscrite comme dans genOne0). 
+   (n° 122 : remplacé par la signature rsSig et le retGen ci-dessous, qui gardent ce que faisait la n° 91.) */
+/* n° 122 (l'enseignant, 16.11.2026 : « Le système de "réessayer une question manquée" pourrait mieux marcher. Par exemple, dans critères de
+   divisibilité, si je rate une question sur le critère de 3, ça devrait redonner une question avec le critère de 3. Peut être tire plus de
+   questions […] et renforce ton système de détection de question similaire ; le but n'est pas d'avoir exactement la même question mais ça doit
+   quand même tester la même chose ») ; QCM : la même sorte (ce qui est demandé : critère de 3, arrondi au dixième, km → m, même propriété…) ET les
+   mêmes sortes de nombres et la même forme de calcul ((−7) + 3 → (−4) + 9 ; décimaux → décimaux), nombres, lettres et figures qui changent ; un
+   piège qui fixe la réponse (divisible par 3 mais pas par 9 : « non ») : le même piège une fois sur deux, sinon une question ordinaire ; tous les
+   exercices.
+   Signature d'une question (rsSig) :
+   - e, l'essentiel : la sorte écrite pour l'exercice (RS_SIG), les sortes de nombres de la question (rsTy : virgule, négatif, fraction, périodique,
+     puissance, racine, π, lettre), la consigne courte sans nombres ni noms de points ni unités (rsCon), la forme d'un calcul court (rsSh : (−n) + n) ;
+   - s, le secondaire : ce que RS_SIG range là, les sortes que le générateur range dans chk (rsKind) ;
+   - t, le piège (RS_SIG) : demandé une fois sur deux par retGen ;
+   - le reste départage (fonction du générateur, forme d'un long calcul, unités, mots, case de réponse).
+   Rien de la signature ne dit la réponse (sauf le piège, une fois sur deux, choisi par l'enseignant). */
+const rsT = h => String(h || '').replace(/<[^>]*>/g, ' ').replace(/&nbsp;|&#160;|&#8239;|&thinsp;/g, ' ').replace(/&[#\w]+;/g, ' ').replace(/[   ]/g, ' ');
+const rsT0 = h => String(h || '').replace(/<[^>]*>/g, '').replace(/&nbsp;|&#160;|&#8239;|&thinsp;/g, ' ').replace(/&[#\w]+;/g, ' ').replace(/[   ]/g, ' ');
+const RS_C = new WeakMap();           // ce qu'on a déjà calculé pour une question (rien n'est écrit dans la question)
+const rsMem = (p, k, f) => { let m = RS_C.get(p); if (!m) RS_C.set(p, m = {}); return k in m ? m[k] : (m[k] = f()); };
+function rsVis(p){                    // ce que l'élève voit de la question (sans la réponse ni ce qu'il a tapé) : consigne, figure, données, question
+  return rsMem(p, 'v', () => { let ln = ''; try { ln = typeof p.line === 'function' ? p.line(false) : ''; } catch (e) {}
+    return [p.con, typeof p.fig === 'string' ? p.fig : '', typeof p.dat === 'string' ? p.dat : '', typeof p.q === 'string' ? p.q : '', ln, p.pre, ln ? '' : p.post]
+      .filter(x => typeof x === 'string' && x).join(' '); });
+}
+// les unités (km, m², ℓ, km/h…) : remplacées par ¤ dans la consigne, gardées à part (rsUn)
+const RS_UN = '(?:(?:k|h|da|d|c|m|µ)?(?:m|g|ℓ|l|L)[²³]?|t|h|min|s|ms|ha|a|fr\\.|CHF|€|°C|°|%|Mo|Go|ko)(?:\\/(?:s|min|h|j|m[²³]?|dm[²³]|cm[²³]|ℓ|l))?';
+const RS_UNRX = new RegExp('(\\d\\s?|\\ben\\s)(' + RS_UN + ')(?=$|[\\s).,;:?!])', 'g');   // une unité : après un nombre ou « en » (pas le « a » de « a toujours »)
+function rsCon(p){                    // la consigne sans nombres, noms de points, unités ni « Valeur exacte, puis arrondie au … »
+  return rsT(p.con).replace(/Valeur exacte, puis arrondie (?:au|à l')\s*\S+/g, 'VX').replace(/\s+/g, ' ').replace(RS_UNRX, '$1¤')
+    .replace(/[−-]?\d[\d ,.']*/g, '#').replace(/\b[A-Z]{1,4}[′']?\b/g, 'P').replace(/\s+/g, ' ').trim();
+}
+function rsUn(p){                     // unités écrites dans la question (après un nombre ou « en »), puis après la case (post)
+  const t = rsT(rsVis(p)).replace(/\s+/g, ' '), u = [];
+  t.replace(RS_UNRX, (m, a, b) => { u.push(b); return m; });
+  if (typeof p.post === 'string' && p.post.trim()) u.push('>' + rsT(p.post).trim());
+  return u.join(' ');
+}
+function rsTy(p){                     // sortes de nombres et d'écritures de la question
+  const h = rsVis(p), o = new Set(), t = rsT0(h);
+  if (/class="frac/.test(h)) o.add('F');
+  if (/class="pdec|class="ovl/.test(h)) o.add('p');
+  if (/<sup/.test(h)) o.add('pw');
+  if (/class="rad cub/.test(h)) o.add('R3'); else if (/class="rad/.test(h)) o.add('R');
+  if (/π/.test(t)) o.add('π');
+  if (/<i>[A-Za-zα-ω]<\/i>|font-style="italic"/.test(h)) o.add('x');
+  if (/\d,\d/.test(t)) o.add('d');
+  if (/(^|[\s(\[{=:;∙+−])−\s?\d|(^|[\s(\[{=:;∙+])−(?=\S)/.test(t.replace(/(\d)\s?−\s(?=\d)/g, '$1 − '))) o.add('−');   // signe d'un nombre (pas une soustraction « a − b »)
+  return [...o].sort().join('');
+}
+let RS_DIV = null;
+function rsShH(html){                 // forme d'un calcul écrit en HTML : n (entier), d (décimal), F, p, R, ^, x, opérations (pas les unités)
+  const d = RS_DIV || (RS_DIV = document.createElement('div')); d.innerHTML = html; let out = '';
+  const nb = s => s.replace(/\d[\d   ]*(?:,\d+)?/g, m => /,/.test(m) ? 'd' : 'n');
+  const walk = n => {
+    if (n.nodeType === 3){ out += nb(n.nodeValue.replace(/[A-Za-zÀ-ÿ]+/g, ' ')).replace(/[^ndFpRx^()+−∙:=?;\[\]|<>≤≥{}]/g, ''); return; }
+    if (n.nodeType !== 1) return;
+    const c = n.classList, tg = n.tagName.toLowerCase();
+    if (tg === 'svg' || c.contains('un')) return;
+    if (c.contains('frac')){ out += 'F'; return; }
+    if (c.contains('pdec')){ out += 'p'; return; }
+    if (c.contains('rad')){ out += (c.contains('cub') ? 'R3' : 'R') + '('; const rc = n.querySelector('.rc'); if (rc) walk(rc); out += ')'; return; }
+    if (tg === 'sup'){ const s = n.textContent.trim(); out += '^' + (/^[−-]/.test(s) ? '−' : '') + (/\d/.test(s) ? 'n' : 'x'); return; }
+    if (tg === 'i'){ out += 'x'; return; }
+    n.childNodes.forEach(walk);
+  };
+  d.childNodes.forEach(walk); d.innerHTML = '';
+  return out.replace(/\?+/g, '?');
+}
+const rsTok = t => {                  // un jeton de mk (toks) : la forme de sa valeur
+  if (typeof t === 'string') return t.trim();
+  if (!t || typeof t !== 'object') return '';
+  let s;
+  switch (t.k){
+    case 'i': s = 'n'; break;
+    case 'd': s = 'd'; break;
+    case 'f': s = t.d === 1 ? 'n' : 'F'; break;
+    case 'x': s = t.fr ? 'F' : /pdec|ovl/.test(t.h || '') ? 'p' : 'd'; break;
+    case 'pw': s = '(' + rsTok(t.b) + ')^n'; break;
+    case 'rt': s = (t.n === 3 ? 'R3' : 'R') + '(' + rsTok(t.b) + ')'; break;
+    default: s = '?';
+  }
+  if (neg(t)) s = '−' + s;
+  return t.p ? '(' + s + ')' : s;
+};
+function rsSh(p){ return rsMem(p, 's', () => rsSh0(p)); }
+function rsSh0(p){                    // forme du calcul de la question (null s'il n'y a pas de calcul)
+  let s = null;
+  try {
+    if (Array.isArray(p.toks)) s = p.toks.map(rsTok).join('');
+    else { let ln = ''; try { ln = typeof p.line === 'function' ? p.line(false) : ''; } catch (e) {}
+      const h = typeof p.q === 'string' && p.q ? p.q : ln, w = rsT(String(h).replace(/<i>[^<]*<\/i>/g, ' ')).replace(/\b(?:de|et|ou|en)\b/g, ' ');
+      if (h && /<span|\d/.test(h) && !/[A-Za-zÀ-ÿ]{3,}/.test(w)) s = rsShH(h); }               // une phrase (« Le degré de … est ? ») n'a pas de forme
+  } catch (e) { s = null; }
+  return s || null;
+}
+// sortes que le générateur range dans chk : codes courts (lettres, puis chiffres permis : « x10 », « p2f »), jusqu'à 3 niveaux, listes de codes
+// (triées) ; jamais un nombre, un vrai / faux, un nom de point, ni ce qui dit la réponse (« iso » pour isocèle)
+function rsKind(p, skip){
+  const c = p.chk || {}, out = [], A = rsT(p.a).trim(), ANS = /^(yes|yn|ans|a|r|res|sol|rep|ok|good|v|val|rpl|real)$/;
+  const da = x => String(x).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase(), AW = da(A).split(/[^a-z0-9]+/).filter(Boolean),
+    ini = AW.filter(w => w.length > 2).map(w => w[0]).join(''), leak = x => { const v = da(x); return AW.some(w => w.startsWith(v) || v === w) || (v.length >= 2 && v === ini); };
+  const code = x => typeof x === 'string' && x.length >= 1 && x.length <= 14 && /^[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ0-9]*$/.test(x) && !/^(oui|non|vrai|faux|null|undefined)$/i.test(x) && !/^[A-Z]+[0-9]?$/.test(x) && x !== A && !leak(x);   // pas un nom de points (LNKM)
+  const sk = k => skip && skip.some(s => k === s || k.startsWith(s + '.'));
+  const walk = (v, k, dep) => {
+    if (sk(k) || ANS.test(k.split('.').pop())) return;
+    if (Array.isArray(v)){ if (v.length && v.length <= 6 && v.every(code)) out.push(k + '=[' + v.slice().sort().join(',') + ']'); return; }
+    if (v && typeof v === 'object'){ if (dep >= 3) return; Object.keys(v).sort().forEach(j => walk(v[j], k + '.' + j, dep + 1)); return; }
+    if (code(v)) out.push(k + '=' + v);
+  };
+  Object.keys(c).sort().forEach(k => { if (sk(k)) return; out.push(k); walk(c[k], k, 1); });
   return out;
 }
-function retFeat(p){
-  let ln = ''; try { ln = typeof p.line === 'function' ? p.line(false) : ''; } catch (e) {}
-  let sp = null; try { sp = inpSpec(p); } catch (e) {}
-  const qs = typeof p.q === 'string' ? p.q : '';
-  return {gi: GEN_IDX.get(p), con: retNorm(p.con), w: retWords(qs + ' ' + ln), k: retKind(p),
-    look: [retTxt(p.con), retTxt(qs), retTxt(ln), typeof p.fig === 'string' ? p.fig : ''].join('¦').replace(/\s+/g, ' '),   // ce que l'élève voit
-    t: sp ? [sp.t, sp.form || '', sp.mode || '', (sp.opts || []).slice().sort().join('/')].join('|') : ''};
+/* RS_SIG : pour un exercice, ce qui fait la sorte de la question (e), ce qu'on préfère garder (s), le piège qui fixe la réponse (t), les champs de
+   chk à ne pas prendre pour une sorte (x : ils disent la réponse). p : la question (p.level, p.chk = c). */
+const rsDen = T => { const D = T.map(t => Math.abs(t[1])), L = D.reduce(lcm, 1);   // dénominateurs de fractions à additionner
+  return D.every(d => d === D[0]) ? 'mêmes' : D.includes(L) ? 'multiple' : L === D.reduce((a, b) => a * b, 1) ? 'premiers' : 'facteur'; };
+const rsInts = p => (rsT0(typeof p.q === 'string' ? p.q : '').match(/\d[\d   ]*(?:,\d+)?/g) || []).map(x => Number(x.replace(/[^\d,]/g, '').replace(',', '.')));
+const RS_SIG = {
+  // Nombres et opérations
+  rcmp: (p, c) => ({e: [(c.rcmp[0] < 0) === (c.rcmp[1] < 0) ? 'mêmes signes' : 'signes différents'], nsh: true}),   // pas la forme : « −n ? n » donne toujours <
+  dvb: (p, c) => { const [n, k, y] = c.dvb; return {e: ['par ' + k], t: !y && ((k === 9 && n % 3 === 0) || (k === 25 && n % 5 === 0) || (k === 4 && n % 2 === 0) || (k === 100 && n % 10 === 0)) ? 'presque' : null}; },
+  prm: (p, c) => { const [n, y] = c.prm; return {t: !y && n % 2 && n % 5 && n % 3 ? 'impair' : null}; },
+  pgdc: (p, c) => ({e: [c.pgw ? 'problème' : 'calcul']}),
+  ppmc: (p, c) => ({e: [c.pgw ? 'problème' : 'calcul']}),
+  m10: p => { const t = p.toks || [], m = t[2] || {}; return {e: [t[1], m.k === 'd' ? 'par 0,1…' : 'par 10…']}; },
+  m10x: (p, c) => ({e: [c.m10x.op, c.m10x.k > 0 ? 'grand' : 'petit']}),
+  mdis: p => { const t = (p.toks || []).filter(x => typeof x === 'object'); if (t.length > 2) return {e: ['facteur commun', p.toks[3]]};
+    const a = Math.max(...t.map(x => Math.abs(num(x)))), u = a % 10; return {e: ['distributivité', u >= 8 ? 'moins' : 'plus']}; },
+  'Pnat:': (p, c) => ({e: [c.div && c.div.mode]}),
+  'Pdec:': (p, c) => ({e: [c.div && c.div.mode]}),
+  sci: (p, c) => ({e: [c.sci[0] < 1 ? 'exposant négatif' : 'exposant positif']}),
+  // fractions
+  fs: (p, c) => ({e: [c.fs[2] ? 'num. > dén.' : 'num. < dén.']}),
+  fa: p => ({e: [/>\?\//.test(p.key) ? 'numérateur' : 'dénominateur'], s: [(c => gcd(c.fa[0], c.fa[1]) > 1 ? 'pas simplifiée' : 'simplifiée')(p.chk)]}),
+  fd: (p, c) => c.srt === 'per' ? {t: 'périodique', x: ['srt']} : {e: [c.srt], x: ['srt']},
+  fcmp: (p, c) => { const [a, b, x, d, s] = c.fcmp; if (s === '=') return {t: 'égales'};
+    return {e: [c.bm ? 'à ' + c.bm : b === d ? 'même dén.' : Math.abs(a) === Math.abs(x) ? 'même num.' : (b % d === 0 || d % b === 0) ? 'multiple' : gcd(b, d) > 1 ? 'facteur' : 'premiers']}; },
+  fax: (p, c) => ({s: [c.fax.noZ ? 'sans 0' : 'avec 0']}),
+  'Mfra+': (p, c) => ({e: [rsDen(c.fas.T)]}),
+  'Mfra−': (p, c) => ({e: [rsDen(c.fas.T)]}),
+  'Mfra∙': (p, c) => ({e: [c.fm.mode]}),
+  'Mfra:': (p, c) => ({e: [c.fm.mode]}),
+  fq: (p, c) => ({e: [c.fqr ? 'le reste' : 'fraction de']}),
+  pwfra: (p, c) => ({s: [c.pwf.want && c.pwf.want.simp ? 'simplifier' : 'direct']}),
+  pc_ecr: (p, c) => ({e: [c.pce.sort]}),
+  pp5: (p, c) => ({e: [c.pp5.props.join('+')]}),
+  rp4: (p, c) => ({e: [c.rcomb.props.slice().sort().join('+')]}),
+  pb_1: (p, c) => ({e: [c.pbinv ? 'à l\'envers' : 'à l\'endroit']}),
+  pb_den: p => ({e: [rsCon(p).split(/[.:] /).pop().replace(/#/g, '')]}),   // la question posée (résultats, menus, podiums, matchs…), pas la situation
+  // Grandeurs et mesures
+  cv_lon: p => rsConv(p, 'lon'), cv_mas: p => rsConv(p, 'mas'), cv_cap: p => rsConv(p, 'cap'), cv_air: p => rsConv(p, 'air'), cv_vol: p => rsConv(p, 'vol'),
+  cv_tem: p => ({e: [rsUn(p)]}), cv_vit: p => ({e: [rsUn(p)]}), cv_mv: p => ({e: [rsUn(p)]}), cv_deb: p => ({e: [rsUn(p)]}),
+  // Grandeurs : Pythagore (hypoténuse ou cathète), Thalès (côté parallèle ou côté sur une droite)
+  py_calc: (p, c) => ({e: c.py && typeof c.py[3] === 'string' ? [c.py[3]] : []}),
+  th_calc: (p, c) => ({e: c.thd && c.thd.ask ? [/^(BC|MN)$/.test(c.thd.ask) ? 'côté parallèle' : 'côté sur une droite'] : []}),
+  // Fonctions et algèbre
+  fn_gx: (p, c) => ({e: [c.fn.F.ty]}), fn_xg: (p, c) => ({e: [c.fn.F.ty]}), fn_lim: (p, c) => ({e: [c.fn.F.ty]}), fn_im: (p, c) => ({e: [c.fn.F.ty]}),
+  fn_lpi: (p, c) => ({e: [c.fn.F.ty]}), fn_pi: (p, c) => ({e: [c.fn.F.ty]}), fn_tab: (p, c) => ({e: [c.fntab.F.ty]}),
+  e2_5: (p, c) => ({t: c.vie2 && c.vie2.kind === 'vide' ? 'pas de solution' : null, x: ['vie2.kind'], nty: true}),   // les signes des coefficients disent s'il y a des solutions
+  // vocabulaire : un cas qui fixe la réponse (coefficient caché 1 ou −1, degré d'un nombre seul : 0) est un piège
+  l_voc: (p, c) => { const v = c.voc || {}, t = (v.k === 'c' && (v.f === 'cm1' || v.f === 'c1')) || (v.k === 'd' && v.f === 'seul') ? 'cas ' + v.f : null;
+    return {t, s: !t && v.f ? ['forme ' + v.f] : [], x: ['voc.f']}; },
+  // Géométrie
+  g_ins: (p, c) => ({e: c.ins && typeof c.ins[0] === 'string' ? [c.ins[0]] : []}),
+  g_pol: () => ({nc: true}),
+  // droites et cercles du triangle, « vérifier » : une fausse droite (décalée, penchée…) donne « non » : un piège
+  g_mtr: (p, c) => rsDrt(c), g_bis: (p, c) => rsDrt(c), g_mdn: (p, c) => rsDrt(c), g_hau: (p, c) => rsDrt(c), g_cci: (p, c) => rsDrt(c), g_cin: (p, c) => rsDrt(c),
+  // priorités : la forme grossière (sortes d'opérations, parenthèses), jamais le calcul exact
+  prio: () => ({co: true}), fprio: () => ({co: true}), rprio: () => ({co: true})
+};
+const rsDrt = c => c.drt && c.drt.fake && c.drt.fake !== 'null' ? {t: 'fausse droite', x: ['drt.fake']} : {x: ['drt.fake']};
+function rsConv(p, k){                // conversions : sens et nombre de colonnes du tableau (pas les unités exactes)
+  const K = CONV[k], m = /class="un">([^<]+)</.exec(p.q || ''), from = m && m[1].replace('ℓ', 'l'), to = String(p.post || '').replace('ℓ', 'l');
+  if (!K || !(from in K.u) || !(to in K.u)) return {};
+  const dl = K.u[from] - K.u[to]; return {e: [dl > 0 ? 'vers plus petit' : 'vers plus grand', 'écart ' + Math.abs(dl)]};
 }
-const RET_MAX = 22;
-function retScore(a, b){             // a : la question manquée, b : une question tirée (RET_MAX : toutes les deux pareilles)
-  const K = new Set(a.k), n = b.k.filter(x => K.has(x)).length, u = new Set(a.k.concat(b.k)).size;
-  return (a.gi !== undefined && a.gi === b.gi ? 8 : 0) + 4 * n / Math.max(1, u) + (n === u ? 2 : 0) + (a.con === b.con ? 3 : 0) + (a.w === b.w ? 3 : 0) + (a.t === b.t ? 2 : 0);
+function rsShO(sh){                  // opérations d'un calcul (pas le signe d'un nombre) et profondeur des parenthèses (pas celles d'un nombre négatif)
+  const t = sh.replace(/\((−?[ndFpx])\)/g, '$1'), ops = []; let dep = 0, mx = 0;
+  for (let i = 0; i < t.length; i++){ const ch = t[i];
+    if (ch === '(') mx = Math.max(mx, ++dep); else if (ch === ')') dep--;
+    else if ('+∙:='.includes(ch) || (ch === '−' && i && /[ndFpx)\]^]/.test(t[i - 1]))) ops.push(ch); }
+  return {ops, mx};
 }
-function retSnap(){                  // l'état de la séance que le tirage change (pour l'enlever ensuite)
-  return {T: TALLY, U: new Set(USED), A: new Map(USEDAT), C: new Map(USECNT), N: USEDN, E: new Set(EXH), L: Object.assign({}, PB_LAST)}; }
+const rsShC = sh => { const o = rsShO(sh), c = new Set(o.ops.map(x => '+−'.includes(x) ? '+' : '∙:'.includes(x) ? '∙' : x));   // forme grossière : sortes d'opérations
+  return [...c].sort().join('') + '|' + o.mx; };                                                                                   // présentes (+ − ; ∙ :), parenthèses
+function rsSig(p){ return rsMem(p, 'g', () => rsSig0(p)); }
+function rsSig0(p){
+  let x = {}; const f = RS_SIG[p.sub];
+  if (f) try { x = f(p, p.chk || {}) || {}; } catch (e) { x = {}; }
+  const sh = rsSh(p), con = rsCon(p), e = (x.e || []).map(v => 'g:' + v);
+  if (!x.nty) e.push('ty:' + rsTy(p));
+  if (con.length <= 60 && !x.nc) e.push('c:' + con);                     // nc : la consigne dit la réponse (« Hexagone régulier » : 60°)
+  if (sh && !x.nsh) e.push(!x.co && rsShO(sh).ops.length <= 1 && sh.length <= 12 && !/x/.test(sh) ? 'sh:' + sh : 'shc:' + rsShC(sh));   // une seule opération, sans lettres : la forme
+                                                                      // exacte ((−n) + n) ; sinon la forme grossière (opérations, parenthèses)
+  const sx = (x.x || []).concat(p.chk && (p.chk.eqS || p.chk.eq) ? ['eqS', 'all', 'eq', 'sol'] : []);   // une équation spéciale a d'autres champs : pas une sorte
+  const s = (x.s || []).map(v => 'g:' + v).concat(rsKind(p, sx).map(v => 'k:' + v));
+  const t = x.t || (p.chk && p.chk.eqS ? 'S = ℝ ou ∅' : null);          // équations : solution « tous les nombres » ou « aucun » (piège)
+  return {e, s, t, sh: x.nsh ? null : sh, con, un: rsUn(p)};
+}
+/* retGen (n° 122, remplace celui des n° 89 à 91) : une question semblable à x.L, même sous-genre et mêmes étoiles. On tire jusqu'à RS_N questions
+   (au plus RS_MS ms, au moins RS_MIN) et on garde la plus ressemblante : d'abord tout l'essentiel de rsSig (e), le piège quand on le demande (une
+   fois sur deux), puis le secondaire (s), puis le reste ; on s'arrête dès qu'une question a l'essentiel et le secondaire (encore RS_MORE essais pour
+   le reste). Quand le générateur a plusieurs fonctions à ce niveau, la même fonction (GEN_ONLY) compte dans l'essentiel et est imposée pendant les
+   trois quarts des essais. Jamais exactement ce que l'élève a déjà vu s'il y a autre chose ; la même clé avec autre chose à l'écran est permise, moins
+   bien notée. Les questions tirées pour rien ne comptent pas dans la séance (retSnap, retBack). */
+const RS_N = 400, RS_MS = 700, RS_MIN = 6, RS_MORE = 6, RS_DL = 200;   // n° 123 : RS_DL
+function rsLook(p){ return rsMem(p, 'l', () => (rsT(rsVis(p)) + '¦' + (typeof p.fig === 'string' ? p.fig : '')).replace(/\s+/g, ' ')); }   // avec les données (p.dat) et la figure
+function rsInp(p){ return rsMem(p, 'i', () => { let sp = null; try { sp = inpSpec(p); } catch (e) {} return sp ? [sp.t, sp.form || '', sp.mode || ''].join('|') : ''; }); }
+// note d'une question tirée b pour la question manquée a (signature A, piège voulu tw) ; ok : l'essentiel, le piège et le secondaire y sont
+function rsScore(a, A, b, tw, gi){
+  const B = rsSig(b), E = new Set(B.e), S = new Set(B.s);
+  const ne = A.e.filter(v => E.has(v)).length + (gi !== undefined ? (GEN_IDX.get(b) === gi ? 1 : 0) : 0), te = A.e.length + (gi !== undefined ? 1 : 0);
+  const tr = tw ? (B.t === A.t ? 1 : 0) : 1, ns = A.s.filter(v => S.has(v)).length, u = new Set(A.s.concat(B.s)).size;
+  // pas les mots de la question : ils nomment parfois ce qui fait la réponse (la figure qui a un centre de symétrie)
+  let soft = (A.sh && A.sh === B.sh ? 6 : A.sh && B.sh && rsShO(A.sh).ops.length === rsShO(B.sh).ops.length ? 3 : 0) + (A.un === B.un ? 3 : 0) + (A.con === B.con ? 3 : 0) + (rsInp(a) === rsInp(b) ? 2 : 0);
+  const sk = b.key === a.key;                                         // la même clé (souvent la même réponse) : seulement s'il n'y a rien d'autre
+  return {v: 1000 * (ne + tr) + 100 * (A.s.length ? ns / Math.max(1, u) + (ns === A.s.length ? 1 : 0) : 2) + soft - (sk ? 50 : 0), ok: !sk && ne === te && tr === 1 && ns === A.s.length};
+}
+function retSnap(){                  // l'état de la séance que le tirage change (pour l'enlever ensuite) ; n° 122 : aussi les tours (KC), les sacs (BAGS, LIVD_BAG)
+  return {T: TALLY, U: new Set(USED), A: new Map(USEDAT), C: new Map(USECNT), N: USEDN, E: new Set(EXH), L: Object.assign({}, PB_LAST), K: Object.assign({}, KC),
+    B: Object.fromEntries(Object.entries(BAGS).map(([k, b]) => [k, {k: b.k, v: b.v.slice()}])), LB: LIVD_BAG.slice()}; }
+const rsSet = (o, z) => { Object.keys(o).forEach(k => delete o[k]); Object.assign(o, z); };
 function retBack(z){
   TALLY = z.T; USED.clear(); z.U.forEach(k => USED.add(k)); USEDAT.clear(); z.A.forEach((v, k) => USEDAT.set(k, v)); USECNT.clear(); z.C.forEach((v, k) => USECNT.set(k, v));
-  USEDN = z.N; EXH.clear(); z.E.forEach(k => EXH.add(k)); Object.keys(PB_LAST).forEach(k => delete PB_LAST[k]); Object.assign(PB_LAST, z.L); }
-function retGen(x){                  // une question semblable à x.L : même sous-genre, mêmes étoiles, la même sorte de question si possible, autre que x.L
-  const p = x.L, lv = p.level, fl = p.fl, geo = isGeo(p.sub), c = p.chk && p.chk.pb, pm = c && c.m && PB_M[c.bl] ? c.m : null, F0 = retFeat(p);
-  const one = force => {
-    const sv = [TH_FORCE, TC_KIND, PB_ONLY, GEN_ONLY];
+  USEDN = z.N; EXH.clear(); z.E.forEach(k => EXH.add(k)); rsSet(PB_LAST, z.L); rsSet(KC, z.K); rsSet(BAGS, z.B); LIVD_BAG = z.LB; }
+function retGen(x){                  // une question semblable à x.L : même sous-genre, mêmes étoiles, la même chose demandée, autre que x.L
+  const p = x.L, lv = p.level, fl = p.fl, geo = isGeo(p.sub), c = p.chk && p.chk.pb, pm = c && c.m && PB_M[c.bl] ? c.m : null, A = rsSig(p);
+  const nf = GEN[p.sub] && GEN[p.sub][lv] ? GEN[p.sub][lv].length : 1, gi0 = GEN_IDX.get(p), gi = nf > 1 && gi0 !== undefined ? gi0 : undefined;
+  const tw = !!A.t && chance(.5);                                     // le piège : une fois sur deux (l'enseignant, QCM du 16.11.2026)
+  const pc = p.chk || {}, tq = ITEM_BLOCK[p.sub] === 'tq' && p.sub !== 'q_con' ? (pc.tqvoc ? 'voc' : pc.tqnom ? 'nom' : pc.quad && pc.quad.isa ? 'isa' : 'base') : null;
+  const one = (force, relax) => {
+    const sv = [TH_FORCE, TC_KIND, PB_ONLY, GEN_ONLY, TQ_FIX, NO_RARE, GEN_DL];
+    GEN_DL = Date.now() + RS_DL;                                       // n° 123 : un tirage d'au plus RS_DL ms (environ ; un seul essai n'est pas coupé)
     if (p.thc) TH_FORCE = p.thc;
     if (p.sub === 'q_con') TC_KIND = tcKind(p);
-    PB_ONLY = force ? pm : null; GEN_ONLY = force && F0.gi !== undefined ? F0.gi : null;
-    USED.delete(p.key);                                               // genOne refuse une clé déjà posée : ici, la même clé avec autre chose à l'écran est permise
+    PB_ONLY = force ? pm : null; GEN_ONLY = force && gi0 !== undefined ? gi0 : null;
+    TQ_FIX = tq; NO_RARE = new Set();                                 // la même famille (vocabulaire, nom, « Tous les … ? ») ; une figure rare peut revenir
+    // 1re moitié : les questions déjà posées dans la séance sont évitées, la question manquée aussi (avant : sa clé était libérée, et quand tout
+    // était posé, genOne redonnait toujours la même question) ; 2e moitié sans rien de bon : plus rien n'est évité (un générateur qui tourne entre
+    // ses sortes, ou dont la clé est la réponse, en évitait une), la question identique reste écartée plus bas
+    if (relax){ USED.clear(); EXH.clear(); } else USED.add(p.key);     // (la même clé : moins bien notée, rsScore)
     try {
       if (geo){ for (const m of ['new', 'round', 'old']){ const q = genOne(p.sub, lv, fl, m); if (q) return q; } return null; }
       return genOne(p.sub, lv, fl);
-    } finally { [TH_FORCE, TC_KIND, PB_ONLY, GEN_ONLY] = sv; }
+    } finally { [TH_FORCE, TC_KIND, PB_ONLY, GEN_ONLY, TQ_FIX, NO_RARE, GEN_DL] = sv; }
   };
-  const z = retSnap(), TB = Date.now(); TALLY = Object.assign({}, z.T);
-  let best = null, bs = -1, same = null;
+  const z = retSnap(), TB = Date.now(), L0 = rsLook(p); TALLY = Object.assign({}, z.T);
+  let best = [], bs = -Infinity, same = null, okAt = -1, slow = 0;
   try {
-    for (let t = 0; t < 30; t++){
-      if (t >= 4 && Date.now() - TB > 350) break;
-      const q = one(t < 20); if (!q) continue;
-      const Fq = retFeat(q);
-      if (Fq.look === F0.look){ same = same || q; continue; }         // exactement ce que l'élève a déjà vu : seulement s'il n'y a rien d'autre
-      const s = retScore(F0, Fq) - (q.key === p.key ? 3.5 : 0); if (s > bs){ bs = s; best = q; }   // la même clé, autre chose à l'écran (autres lettres,
-                                                                     // autre figure, autre formule) : permise, un peu moins bien notée
-      if (bs >= RET_MAX - 1e-9) break;
+    for (let t = 0; t < RS_N; t++){
+      const dt = Date.now() - TB; if (dt > RS_MS && (t >= RS_MIN || best.length || dt > 2 * RS_MS)) break;   // un tirage lent (problèmes) : pas 6 tirages forcés
+      if (okAt >= 0 && (t - okAt > RS_MORE || dt > 150 || slow > 40 || pm)) break;   // une question qui convient : encore quelques tirages rapides pour départager
+      const t1 = Date.now(), q = one(dt < .75 * RS_MS && t < .75 * RS_N, okAt < 0 && (dt > RS_MS / 2 || t > RS_N / 2)); slow = Math.max(slow, Date.now() - t1);  // (pas pour
+      if (!q) continue;                                               // les problèmes : un modèle imposé pouvait chercher longtemps, jusqu'à 3 s ; n° 123 : GEN_DL)
+      if (rsLook(q) === L0){ same = same || q; continue; }             // exactement ce que l'élève a déjà vu : seulement s'il n'y a rien d'autre
+      const s = rsScore(p, A, q, tw, gi);
+      if (s.v > bs + 1e-9){ bs = s.v; best = [q]; } else if (s.v > bs - 1e-9) best.push(q);   // à égalité : au hasard (sinon le premier tiré,
+                                                                      // qui suit souvent les tours du générateur : toujours l'autre réponse, ou la même)
+      if (s.ok && okAt < 0) okAt = t;
     }
   } finally { retBack(z); }
-  const q = best || same; if (!q) return null;
+  const q = best.length ? pick(best) : same; if (!q) return null;
   USED.add(q.key); USEDAT.set(q.key, ++USEDN); USECNT.set(q.key, (USECNT.get(q.key) || 0) + 1);      // comme genOne0, pour la seule question gardée
   if (q.cnt) [].concat(q.cnt).forEach(bump);
   if (p.nostar) q.nostar = true;
@@ -31285,7 +31492,7 @@ var QR = (function(){
    « dans lien élèves si on clique dessus, ça pourrait permettre de coller un lien d'élève aussi » : champ « Reprendre un lien » (ses exercices
    cochés dans les réglages, son titre, ses étoiles, sa case FR) ; la fenêtre s'ouvre aussi sans exercice coché (pour coller un lien).
    Note du projet : QPC_PROJET_LIENS_ELEVES.md. */
-const QPC_VERSION = '2026-11-16';    // dossier de cette version sur le site (…/qpc/2026-11-07/) : à changer à chaque version mise en ligne
+const QPC_VERSION = '2026-11-17';    // dossier de cette version sur le site (…/qpc/2026-11-07/) : à changer à chaque version mise en ligne
 const QPC_BASE = 'https://outils-maths.github.io/qpc/';    // compte GitHub « outils-maths » (avec un s)
 const QPC_ONLINE = /(^|\.)github\.io$/i.test(location.hostname);    // ouverte depuis le site : seulement le mode élève (sans lien : un message)
 var STU = null;                       // mode élève (page ouverte par un lien élèves) ; null : page de l'enseignant

@@ -10,3 +10,7 @@ Sans lien, la page affiche : « Demande le lien à ton enseignant. »
 - `AAAA-MM-JJ/` : les versions d'avant, nommées par leur date (jusqu'au 17.11.2026) ; les anciens liens continuent de marcher ;
 - `404.html` : un lien vers une version supprimée ouvre la dernière version.
 - `videos/` : les vidéos ouvertes depuis la page (une seule fois pour toutes les versions ; leurs noms ne changent jamais).
+
+## Autres pages
+
+- `escape-pythagore/` : escape game « L’atelier de Pythagore » (théorème de Pythagore, 11e) ; chaque élève reçoit sa propre version (numéro en bas à droite).

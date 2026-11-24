@@ -251,7 +251,7 @@ h1.win .crown{width:1.3em;height:1.3em}
 <header id="top"><span class="ttl">Castle defense<small id="mapName"></small></span>
 <div class="mid"><span class="wv" id="wv"></span><span class="nx" id="nx"></span><span class="hp"><span id="hpi"></span><span class="hpb" id="hpb"><i></i></span><span id="hpt"></span></span>
 <span class="pill" id="gold" title="Or : pour construire pendant la partie"><b>0</b></span><span id="stk"></span></div>
-<div class="btns"><button class="ib" id="bSnd" title="Son"></button><button class="ib" id="bPause" title="Pause (Échap)"></button><button class="ib" id="bFull" title="Plein écran"></button><button class="ib" id="bMenu" title="Pause"></button></div></header>
+<div class="btns"><button class="ib" id="bSnd" title="Son"></button><button class="ib" id="bFull" title="Plein écran"></button><button class="ib" id="bMenu"></button></div></header>
 <aside id="qpane"></aside>
 <div id="stage"><canvas id="cv"></canvas><div id="radial" hidden></div><div id="banner"></div></div>
 <aside id="shop"></aside>
@@ -1038,8 +1038,15 @@ const CD_KINDS = {
   cmp: {lab: 'L’intrus, la plus grande', short: '<', calc: false, breath: true}
 };
 // or d'une bonne réponse, par niveau (plus difficile = plus d'or) ; l'enseignant, 21.11.2026 : « il faut que les questions donnent plus d'or en
-// général. Augmente le nombre et la vie des ennemis pour compenser » (avant : 14, 20, 28, 38)
-const CD_GOLD = {1: 20, 2: 30, 3: 42, 4: 56};
+// général. Augmente le nombre et la vie des ennemis pour compenser » (avant : 14, 20, 28, 38) ; puis 24.11.2026 : « le jeu est trop difficile,
+// réduis le bonus gagné en faisant des séries de bonnes réponses et augmente la quantité d'or gagnée […] même si on fait des séries » ; puis
+// (même matin) « augmente l'or gagné de 50 % par rapport à la version qu'on avait » : bonus de série divisé par deux, or de base tel qu'une
+// longue série rapporte 50 % de plus qu'avant (avant : 20, 30, 42, 56 + 10 de bonus = 30, 40, 52, 66 ; maintenant 40, 55, 73, 94 + 5 = 45, 60,
+// 78, 99) ; sans série : de 68 à 100 % de plus
+const CD_GOLD = {1: 40, 2: 55, 3: 73, 4: 94};
+// bonus de série : CD_STK.step par bonne réponse de suite dès la 3e, CD_STK.max au plus (avant : 2 et 10), × « Série en or », arrondi
+const CD_STK = {step: 1, max: 5};
+const cdStreak = (n, mul) => Math.round(Math.min(CD_STK.max, CD_STK.step * Math.max(0, n - 2)) * (mul || 1));
 
 /* ---------- nombres rationnels [n, d] ---------- */
 const rH = v => v[1] === 1 ? fmtInt(v[0]) : (v[0] < 0 ? '−' : '') + fracH(fmtInt(Math.abs(v[0])), fmtInt(v[1]));
@@ -2383,8 +2390,6 @@ const ICON = {
   arm: '<svg class="ic" viewBox="0 0 24 24"><path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5z" fill="#8c9bab" stroke="#3b4654" stroke-width="1.4"/><path d="M12 4.5v15" stroke="#dfe6ec" stroke-width="1.6"/></svg>'
 };
 const SVGI = {
-  pause: '<svg viewBox="0 0 24 24"><rect x="5" y="4" width="5" height="16" rx="1" fill="currentColor"/><rect x="14" y="4" width="5" height="16" rx="1" fill="currentColor"/></svg>',
-  play: '<svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z" fill="currentColor"/></svg>',
   snd: '<svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 8a5 5 0 0 1 0 8M18.5 5.5a8.5 8.5 0 0 1 0 13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>',
   mute: '<svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 9l6 6M22 9l-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
   full: '<svg viewBox="0 0 24 24"><path d="M3.5 9V3.5H9M15 3.5h5.5V9M20.5 15v5.5H15M9 20.5H3.5V15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
@@ -2475,7 +2480,7 @@ function startGame(snap){
   APP.G = G; APP.u = {st: 'q', q: null, waitT: 0, streak: 0, okT: 0, pick: null};
   $('#mapName').textContent = SIM.MAPS[APP.mapIdx].name + ' · niveau ' + tier;
   layout(); rdResize(G); TIMG.key = ''; nextQ(); radialRender(); shopRender(); save();
-  if (snap) pauseGame(true, 'Partie reprise');
+  if (snap) toast('Partie reprise');
 }
 
 /* ---------- questions (à gauche), tout à la souris ---------- */
@@ -2492,8 +2497,8 @@ function answer(k){
   else { u.streak = 0; u.st = 'ko'; u.waitT = G.m.wait; u.wait0 = G.m.wait; u.fb = {ms: q.ui === 'qcm' || q.ui === 'vf' ? cdWhy(q, k) : null}; SND.ko(); }
   qRender(); shopRender(); radialRender(); save();
 }
-// or d'une bonne réponse : selon la difficulté de la question, « Savant », bonus de série (2 par bonne réponse de suite dès la 3e, 10 au plus)
-const streakBonus = n => Math.min(5, Math.max(0, n - 2)) * 2 * APP.G.m.streakMul;
+// or d'une bonne réponse : selon la difficulté de la question, « Savant », bonus de série (cdStreak : 1 par bonne réponse de suite dès la 3e, 5 au plus)
+const streakBonus = n => cdStreak(n, APP.G.m.streakMul);
 const goldFor = q => Math.round(q.gold * APP.G.m.goldMul) + streakBonus(APP.u.streak + 1);
 function showAnswer(){                              // « Voir la réponse » : pas de pénalité, mais on ne répond plus ; la sorte de question reviendra
   const u = APP.u, p = APP.pl, q = u.q; if (u.st !== 'q' || !q) return;
@@ -2647,24 +2652,29 @@ function slotAt(e){ const r = RD.cv.getBoundingClientRect(), [mx, my] = UNISO(e.
 function onCanvas(e){ if (APP.state !== 'play' || APP.paused) return; const s = slotAt(e); APP.sel = s && s.id !== APP.sel ? s.id : null; APP.rhover = null; APP.bmsg = ''; radialRender(); shopRender(); }
 function onCanvasMove(e){ if (APP.state !== 'play') return; const s = slotAt(e); APP.hover = s ? s.id : null; RD.cv.style.cursor = s ? 'pointer' : 'default'; }
 
-/* ---------- clavier : seulement Échap (fermer, pause) et le mot « prof » ---------- */
+/* ---------- clavier : seulement Échap (fermer un menu ou l'espace enseignant ; plus de pause) et le mot « prof » ---------- */
 function onKey(e){
   if (e.target && /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
   if (e.ctrlKey || e.metaKey || e.altKey) return;
   if (/^[a-z]$/i.test(e.key)){ APP.profBuf = (APP.profBuf + e.key.toLowerCase()).slice(-4); if (APP.profBuf === 'prof'){ APP.profBuf = ''; openProf(); return; } }
-  if (e.key === 'Escape'){ if (!$('#ovProf').hidden){ closeProf(); return; } if (APP.state === 'play'){ if (APP.sel != null){ APP.sel = null; APP.rhover = null; radialRender(); shopRender(); return; } pauseGame(!APP.paused); } }
+  if (e.key === 'Escape'){ if (!$('#ovProf').hidden){ closeProf(); return; } if (APP.state === 'play' && APP.sel != null){ APP.sel = null; APP.rhover = null; radialRender(); shopRender(); } }
 }
 
 /* ---------- boucle ---------- */
 let LAST = 0, TOPT = 0, SAVET = 0;
+// pas de pause (l'enseignant, 24.11.2026 : « Enlève la possibilité de mettre en pause en changeant d'onglet ou en cliquant sur pause ») : un onglet
+// caché ou une fenêtre réduite ne reçoit plus d'images ; au retour, le jeu rattrape tout le temps passé (par pas de 1/12 s, comme le robot)
 function loop(ts){
   requestAnimationFrame(loop);
-  const dt = Math.min(.1, (ts - LAST) / 1000 || 0); LAST = ts;
+  const dt = LAST ? Math.min(3600, Math.max(0, (ts - LAST) / 1000)) : 0; LAST = ts;
   const G = APP.G; if (!G || APP.state === 'start') return;
   if (APP.state === 'play' && !APP.paused){
-    for (let s = dt; s > 1e-6; s -= 1 / 30) SIM.step(G, Math.min(1 / 30, s));
-    G.ev.forEach(ev => { if (ev.e === 'wave'){ waveBanner(ev.n); shopRender(); } else if (ev.e === 'open'){ openBanner(ev.g); bumpEl('#gold'); } else if (ev.e === 'leak') SND.leak(); });
+    const h = dt > .25 ? 1 / 12 : 1 / 30;
+    for (let s = dt; s > 1e-6 && !G.over; s -= h) SIM.step(G, Math.min(h, s));
+    let wv = 0, og = 0, lk = false;           // après un rattrapage : une seule annonce de vague, un seul son
+    G.ev.forEach(ev => { if (ev.e === 'wave') wv = ev.n; else if (ev.e === 'open') og = ev.g; else if (ev.e === 'leak') lk = true; });
     G.ev.length = 0;
+    if (wv){ waveBanner(wv); shopRender(); } if (og){ openBanner(og); bumpEl('#gold'); } if (lk) SND.leak();
     const u = APP.u;
     if (u.st === 'ok'){ u.okT -= dt; if (u.okT <= 0) nextQ(); }
     if (u.waitT > 0){ u.waitT -= dt; if (u.waitT <= 0){ u.waitT = 0; qRender(); } }
@@ -2697,11 +2707,10 @@ function openBanner(g){ setTimeout(() => { const b = $('#banner'); b.innerHTML =
 let TT = 0;
 function toast(t){ const e = $('#toast'); e.textContent = t; e.classList.add('show'); clearTimeout(TT); TT = setTimeout(() => e.classList.remove('show'), 1800); }
 
-/* ---------- pause, fin de partie (victoire ou défaite) ---------- */
+/* ---------- pause (seulement pendant l'espace enseignant), fin de partie (victoire ou défaite) ---------- */
 function pauseGame(on, msg){
   if (APP.state !== 'play') return; APP.paused = on; const ov = $('#ovPause');
   ov.hidden = !on; if (on) ov.innerHTML = '<div class="card" style="text-align:center"><h2>' + (msg || 'Pause') + '</h2><div class="go"><button class="btn pri" data-resume="1">Reprendre</button></div></div>';
-  $('#bPause').innerHTML = on ? SVGI.play : SVGI.pause;
 }
 function gameOver(won){
   const G = APP.G, p = APP.pl, M = SIM.MAPS[APP.mapIdx]; APP.state = 'over'; APP.sel = null; radialRender();
@@ -2792,7 +2801,7 @@ function fullscreen(){ const d = document, el = d.documentElement; if (!d.fullsc
 function init(){
   if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r){ r = Math.min(r, w / 2, h / 2); this.moveTo(x + r, y); this.arcTo(x + w, y, x + w, y + h, r); this.arcTo(x + w, y + h, x, y + h, r); this.arcTo(x, y + h, x, y, r); this.arcTo(x, y, x + w, y, r); this.closePath(); return this; };
   RD.cv = $('#cv'); RD.cx = RD.cv.getContext('2d');
-  $('#bPause').innerHTML = SVGI.pause; $('#bSnd').innerHTML = SVGI.mute; $('#bFull').innerHTML = SVGI.full; $('#bMenu').innerHTML = SVGI.menu; $('#hpi').innerHTML = SVGI.heart;
+  $('#bSnd').innerHTML = SVGI.mute; $('#bFull').innerHTML = SVGI.full; $('#bMenu').innerHTML = SVGI.menu; $('#hpi').innerHTML = SVGI.heart;
   $('#gold').insertAdjacentHTML('afterbegin', COIN);
   OLD_KEYS.forEach(k => ls.del(k));
   const C = ls.get(KEY_CFG); if (C){ APP.cfg = C.cfg; APP.speed = C.speed || 1; if (!C.v) APP.cfg.kinds = ALLK.filter(k => APP.cfg.kinds.includes(k) || NEWK.includes(k)); }   // réglages d'avant le 21.11.2026 : nouvelles questions cochées
@@ -2815,14 +2824,13 @@ function init(){
   $('#ovPause').addEventListener('click', e => { if (e.target.closest('[data-resume]')) pauseGame(false); });
   $('#ovProf').addEventListener('click', e => { if (e.target.id === 'ovProf') closeProf(); else { const b = e.target.closest('button'); if (b) onProf(b); } });
   $('#ovProf').addEventListener('change', e => onProf(e.target));
-  $('#bPause').onclick = () => pauseGame(!APP.paused);
   $('#bSnd').onclick = () => { APP.sound = !APP.sound; $('#bSnd').innerHTML = APP.sound ? SVGI.snd : SVGI.mute; $('#bSnd').classList.toggle('on', APP.sound); };
   $('#bFull').onclick = fullscreen;
   let lp = 0; const bm = $('#bMenu');
   bm.addEventListener('pointerdown', () => { lp = setTimeout(() => { lp = -1; openProf(); }, 1200); });
-  bm.addEventListener('pointerup', () => { if (lp > 0){ clearTimeout(lp); pauseGame(!APP.paused); } lp = 0; });
+  bm.addEventListener('pointerup', () => { if (lp > 0) clearTimeout(lp); lp = 0; });      // ☰ : seulement l'appui long (espace enseignant), plus de pause
   bm.addEventListener('pointerleave', () => { if (lp > 0) clearTimeout(lp); lp = 0; });
-  document.addEventListener('visibilitychange', () => { if (document.hidden){ save(); if (APP.state === 'play' && !APP.paused) pauseGame(true); } });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });      // pas de pause : au retour, le jeu rattrape le temps passé (loop)
   addEventListener('beforeunload', () => { if (APP.G) save(); });
   layout(); requestAnimationFrame(loop);
 }

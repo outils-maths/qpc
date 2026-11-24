@@ -15,3 +15,4 @@ Sans lien, la page affiche : « Demande le lien à ton enseignant. »
 
 - `escape-pythagore/` : escape game « L’atelier de Pythagore » (théorème de Pythagore, 11e) ; chaque élève reçoit sa propre version (numéro en bas à droite).
 - `castle-defense/` : jeu de défense de château (opérations sur les fractions) ; un joueur, sur ordinateur, à la souris.
+- `bataille-de-maths/` : jeu « Bataille de maths » façon Age of War (opérations sur les fractions) ; un joueur, sur ordinateur, à la souris.

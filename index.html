@@ -1491,6 +1491,60 @@ html.pdxno #pdxPrn,html.pdxno .pdxy,html:not(.pdxno) .pdxn{display:none}   /* n�
 .ip-wb .ipcl{display:inline-block;width:1.1em;text-align:center;padding:0}
 .ip-sheet .ip-cs{position:absolute;width:0;border-left:.5pt solid #bfbfbf;pointer-events:none}
 @media print{ .ip-wb{display:none !important} }
+/* n° 173 : la ligne « nom = ? » ou « AB = ? » cachée sur la feuille de l'élève, à sa place ; montrée (réponse en rouge) dans la version « Réponses » */
+.ip-hl{visibility:hidden}
+.ipcor .ip-hl{visibility:visible}
+/* n° 174 : − auto + (part des questions avec des décimaux, des relatifs, des fractions) : réglages, fenêtre du lien, aperçu de la feuille */
+.ndst{display:inline-flex;align-items:center;gap:.06em;white-space:nowrap}
+.ndst[hidden],.ndinf[hidden]{display:none}
+.nd{display:contents}
+.ndg{display:inline-flex;align-items:center;gap:.2em;font-size:.86em;color:var(--tk)}
+.blk.noit .ndg,.blk.nond .ndg{opacity:.65}
+.ndst button{width:1.1em;height:1.1em;border-radius:.3em;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-weight:700;padding:0;line-height:1;cursor:pointer}
+.ndst button:disabled{opacity:.35;cursor:default}
+.ndst output{min-width:2.55em;text-align:center;font-weight:700;color:var(--tk, var(--ink));font-variant-numeric:tabular-nums;cursor:pointer}
+.ndst output.ndauto{font-weight:400;color:var(--muted);cursor:default}
+.bhr .pbinf.ndinf{margin:0 0 0 -.45em}
+.lex.lexd{grid-template-columns:minmax(0, 1fr) auto auto}
+.lex.lexd.lexv{grid-template-columns:minmax(0, 1fr) auto auto auto}
+.lnd{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:.1em .7em;font-size:.82em}
+.lndk{display:inline-flex;align-items:center;gap:.3em}
+.lndl{color:var(--muted)}
+.lndk,.lndk *{white-space:nowrap;overflow-wrap:normal}
+.lnd.loff{opacity:.42}
+.lndh{display:inline-flex;align-items:center;gap:.4em}
+.lndh .pbinf{margin:0}
+.ip-wb .ipng .ipnl{display:inline-block;width:2.9em;text-align:center;padding:0;cursor:pointer}
+/* n° 174 : en-tête d'un bloc qui va à la ligne : les cases et « Tout » « Rien » se suivent, alignés à droite (une ligne : comme avant) */
+.bh{justify-content:flex-end}
+.bh > .bn{margin-right:auto}
+.bhr{display:contents}
+/* fenêtre du lien étroite (écran partagé, téléphone) : « Nombres » sous le nom de l'exercice (.lndi), pas dans sa colonne */
+.lndi{display:none}
+@media (max-width:1200px){ .lex.lexd{grid-template-columns:minmax(0, 1fr) auto} .lex.lexd.lexv{grid-template-columns:minmax(0, 1fr) auto auto}
+  .lex.lexd > .lnd,.lex.lexd > .lndh{display:none} .lnd.lndi{display:flex;justify-content:flex-start;margin:.1em 0 .1em}
+  .lnd.lndi.loff{opacity:1} }
+/* n° 175 : fenêtre du lien, « Nombres » sur deux lignes serrées (décimaux, puis relatifs dessous), plus petit : la ligne de l'exercice ne grandit pas */
+@media (min-width:1201px){ .lex.lexd > .lnd{display:grid;grid-template-columns:auto auto;justify-content:end;align-items:center;column-gap:.3em;row-gap:0;font-size:.7em;line-height:1}
+  .lex.lexd > .lnd .lndk{display:contents}
+  .lex.lexd > .lnd .lndl{text-align:right} }
+.lnd .ndst button{width:1.05em;height:1.05em}
+.lnd .ndst output{min-width:2.5em}
+.blk.ndoff .ndst,.blk.ndoff .ndinf{display:none !important}
+/* n° 175 (l'enseignant : « réduire la taille horizontale des boutons ici (et du lien) pour gagner de la place à gauche ») */
+.lright{max-width:18em}
+.lright .lbtns .btn{font-size:.84em;padding:.32em .55em}
+.lurl{font-size:.64em}
+/* n° 175 : « Imprimer » à droite des trois « Enregistrer », sur leur ligne */
+.ipvprn{display:inline-flex;align-self:flex-end;margin-left:.5em}
+.ipvprn .pdxprn{position:static;transform:none;margin:0 0 .1em;font-size:.82em}
+/* n° 176 : « − auto + » sous le mot quand la ligne ne suffit pas (ndFit), serré : le titre du bloc ne grandit pas */
+.blk.ndstk .ndg{flex-direction:column;align-items:center;gap:0;line-height:.9}
+.blk.ndstk .ndg label{line-height:.9}
+.blk.ndstk .ndg .ndst{font-size:.9em;margin-top:-.1em}
+.blk.ndstk .ndg .ndst button{width:1em;height:1em;line-height:.9}
+.blk.ndstk .ndg .ndst output{min-width:2.4em}
+.blk.ndstk .bh{padding-top:.04em;padding-bottom:.04em}
 </style>
 </head>
 <body>
@@ -1660,7 +1714,7 @@ html.pdxno #pdxPrn,html.pdxno .pdxy,html:not(.pdxno) .pdxn{display:none}   /* n�
         <div class="lmsg" id="lMsg"></div>
       </div>
       <section class="ipsec" id="ipSec" aria-label="Feuille à imprimer">
-        <div class="ipt"><h3>Feuille à imprimer</h3><span class="iptr"><span class="pdxob"><button type="button" class="pdxprn" id="pdxPrn" title="La version élève, dans la fenêtre d'impression du navigateur (ton imprimante)">Imprimer</button></span><span class="prjg"><span class="prjob"><button type="button" class="btn on prjopen" title="Choisir le PDF d’une feuille (enregistré avec « Enregistrer », sous l’aperçu) et projeter ses questions">Projeter les questions d’un PDF</button><span class="prjhint">ou glisse le PDF sur la page</span></span><button type="button" class="prjinf" title="Projeter un PDF : comment ça marche" aria-label="Projeter un PDF : comment ça marche"><svg class="pisvg" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.9" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="4.75" r="1.05" fill="currentColor"/><path d="M8 7.2v4.6" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg></button></span></span></div>
+        <div class="ipt"><h3>Feuille à imprimer</h3><span class="iptr"><span class="prjg"><span class="prjob"><button type="button" class="btn on prjopen" title="Choisir le PDF d’une feuille (enregistré avec « Enregistrer », sous l’aperçu) et projeter ses questions">Projeter les questions d’un PDF</button><span class="prjhint">ou glisse le PDF sur la page</span></span><button type="button" class="prjinf" title="Projeter un PDF : comment ça marche" aria-label="Projeter un PDF : comment ça marche"><svg class="pisvg" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.9" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="4.75" r="1.05" fill="currentColor"/><path d="M8 7.2v4.6" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg></button></span></span></div>
         <div class="ipbody">
           <div class="ipo">
             <span class="ipf">Format <span class="ipfmt" role="group" aria-label="Format de la feuille"><button type="button" data-ipf="a4" class="on" aria-pressed="true" title="Une feuille A4 par élève">A4</button><button type="button" data-ipf="2" aria-pressed="false" title="Moitié de A4 : les mêmes questions en haut et en bas de la feuille">½</button><button type="button" data-ipf="3" aria-pressed="false" title="Tiers de A4 : trois fois les mêmes questions sur la feuille">⅓</button><button type="button" data-ipf="4" aria-pressed="false" title="Quart de A4 : quatre fois les mêmes questions sur la feuille">¼</button></span></span>
@@ -1676,7 +1730,7 @@ html.pdxno #pdxPrn,html.pdxno .pdxy,html:not(.pdxno) .pdxn{display:none}   /* n�
           <div id="ipShare"></div>
           <div class="ipx" id="ipEx"></div>
           <div class="ipmsg" id="ipMsg"></div>
-          <div class="ipvb"><div class="ipvbt"><button type="button" class="ipnew" id="ipNew" title="D'autres questions sur toute la feuille (↻ à gauche d'une question : seulement elle)"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.2 8.6A5.2 5.2 0 1 1 11.6 4.3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M12.6 1.6v3.6H9" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Nouvelles questions</span></button><button type="button" class="ipnew prjgo" id="prjGo" title="Présenter les questions de cette feuille au beamer, une à la fois, comme quand on joue"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1.5 .5L9.5 5L1.5 9.5Z" fill="currentColor"/></svg><span>Projeter les questions de ce PDF</span></button><span class="ipvsel" role="group" aria-label="Version de l’aperçu"><span class="ipvc"><button type="button" data-ipv="0" class="on" aria-pressed="true" title="L’aperçu de la version élève">Élève</button><button type="button" data-ips="0" title="Enregistrer la version élève (comme « Enregistrer PDF »)">Enregistrer</button></span><span class="ipvc"><button type="button" data-ipv="1" aria-pressed="false" title="L’aperçu avec les réponses en rouge et le coin « CORRIGÉ »">Réponses</button><button type="button" data-ips="1" title="Enregistrer la version avec les réponses (« classe Corrigé - titre »)">Enregistrer</button></span><span class="ipvc"><button type="button" data-ipv="2" aria-pressed="false" title="L’aperçu avec les réponses et le détail de chaque question, réduit dans sa place pour répondre">Détails</button><button type="button" data-ips="2" title="Enregistrer la version avec les détails (« classe Corrigé détaillé - titre »)">Enregistrer</button></span></span></div>
+          <div class="ipvb"><div class="ipvbt"><button type="button" class="ipnew" id="ipNew" title="D'autres questions sur toute la feuille (↻ à gauche d'une question : seulement elle)"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.2 8.6A5.2 5.2 0 1 1 11.6 4.3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M12.6 1.6v3.6H9" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Nouvelles questions</span></button><button type="button" class="ipnew prjgo" id="prjGo" title="Présenter les questions de cette feuille au beamer, une à la fois, comme quand on joue"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1.5 .5L9.5 5L1.5 9.5Z" fill="currentColor"/></svg><span>Projeter les questions de ce PDF</span></button><span class="ipvsel" role="group" aria-label="Version de l’aperçu"><span class="ipvc"><button type="button" data-ipv="0" class="on" aria-pressed="true" title="L’aperçu de la version élève">Élève</button><button type="button" data-ips="0" title="Enregistrer la version élève (comme « Enregistrer PDF »)">Enregistrer</button></span><span class="ipvc"><button type="button" data-ipv="1" aria-pressed="false" title="L’aperçu avec les réponses en rouge et le coin « CORRIGÉ »">Réponses</button><button type="button" data-ips="1" title="Enregistrer la version avec les réponses (« classe Corrigé - titre »)">Enregistrer</button></span><span class="ipvc"><button type="button" data-ipv="2" aria-pressed="false" title="L’aperçu avec les réponses et le détail de chaque question, réduit dans sa place pour répondre">Détails</button><button type="button" data-ips="2" title="Enregistrer la version avec les détails (« classe Corrigé détaillé - titre »)">Enregistrer</button></span></span><span class="ipvprn"><button type="button" class="pdxprn" id="pdxPrn" title="La version élève, dans la fenêtre d'impression du navigateur (ton imprimante)">Imprimer</button></span></div>
           <div class="ipv" id="ipPrev" title="Clic : une page en grand"></div></div>
           <div class="iphint" id="ipHintF"></div>
           <div class="iphint"><span class="pdxy">« Enregistrer » (sous Élève, Réponses ou Détails, en haut de l'aperçu) fait le PDF de cette version : tu choisis où l'enregistrer. « Imprimer » ouvre la fenêtre d'impression (version élève).</span><span class="pdxn">« Enregistrer » (sous Élève, Réponses ou Détails, en haut de l'aperçu) ouvre la fenêtre d'impression : choisis « Enregistrer au format PDF » (ou ton imprimante).</span></div>
@@ -11896,9 +11950,14 @@ Object.values(BLOCKS).forEach(b => b.items.forEach(([id]) => DEFAULTS.it[id] = f
 Object.values(BLOCK_OPTS).forEach(ks => ks.forEach(k => DEFAULTS.opt[k] = false));
 const numFrom = g => { const o = {}; Object.values(BLOCKS).forEach(b => { if (b.nd) o[b.id] = {dec: !!g.dec, rel: !!g.rel, fra: b.id === 'rac'}; }); return o; };
 DEFAULTS.num = numFrom(DEFAULTS.gnum);
+DEFAULTS.ndp = {};                   // n° 174 : % de décimaux, relatifs, fractions par exercice (absent : auto)
 const KEY = 'questions-champions-v5', KEY4 = 'questions-champions-v4', KEY3 = 'questions-champions-v3', KEY2 = 'questions-champions-v2', KEY1 = 'questions-champions-v1', SKEY = 'questions-champions-seance';
 const GEN_KEYS = ['two', 'twoSame', 'hideStars', 'starsDet', 'bg', 'gnum'];   // plus de nombre de questions, de % ni d'ordre (05.11.2026, 11e conversation)   // onglet Général (le bouton « FR » n'est pas gardé : désactivé à chaque ouverture, l'enseignant, 27.10.2026) : gardé d'une ouverture à l'autre (navigateur)
-const SES_KEYS = ['on', 'it', 'num', 'opt', 'share'];                                 // objectifs : gardés seulement si on recharge la page
+const SES_KEYS = ['on', 'it', 'num', 'opt', 'share', 'ndp'];   // n° 174 : ndp, les % de décimaux, relatifs, fractions
+// n° 174 : exercice → cases (décimaux, relatifs, fractions) qui changent ses questions, et niveaux où il en met (mesurés sur la n° 173 ; « Respecter les étoiles »)
+var ND_LV = {'m+': {dec: '1234', rel: '1234'}, 'm−': {dec: '1234', rel: '1234'}, 'm∙': {dec: '1234', rel: '1234'}, 'm:': {dec: '1234', rel: '1234'}, 'm10': {dec: '234'}, 'm10x': {dec: '234'}, 'mcom': {dec: '34', rel: '4'}, 'mdis': {dec: '4'}, 'p+': {dec: '1234'}, 'p−': {dec: '1234'}, 'p∙': {dec: '1234'}, 'p:': {dec: '1234'}, 'p_pb': {dec: '1234'}, 'radd': {dec: '4'}, 'rsub': {dec: '4'}, 'rsum': {dec: '4'}, 'rmul': {dec: '4'}, 'rdiv': {dec: '4'}, 'r_pb': {dec: '1234'}, 'pri': {dec: '1234', rel: '1234', fra: '1234'}, 'fs': {rel: '234'}, 'fa': {rel: '34'}, 'fax': {rel: '234'}, 'fd': {rel: '34'}, 'f+': {rel: '234'}, 'f∙': {dec: '2', rel: '1234'}, 'f:': {dec: '2', rel: '1234'}, 'fpow': {rel: '234'}, 'fprio': {rel: '1234'}, 'pc_ecr': {dec: '1234'}, 'fp': {dec: '12'}, 'pc_init': {dec: '1234'}, 'pc_var': {dec: '34'}, 'pc_taux': {dec: '23'}, 'pwc': {dec: '1234', rel: '1234', fra: '1234'}, 'pp1': {dec: '34', rel: '34', fra: '4'}, 'pp2': {dec: '34', rel: '34'}, 'pp3': {dec: '34', rel: '34', fra: '4'}, 'pp4': {rel: '3'}, 'pp5': {dec: '4', rel: '34'}, 'r2': {dec: '1234', fra: '234'}, 'r3': {dec: '1234', rel: '234', fra: '234'}, 'renc3': {rel: '34'}, 'rp1': {rel: '34'}, 'rp2': {rel: '34'}, 'rp3': {rel: '234'}, 'rp4': {rel: '34'}, 'rc_pb': {dec: '2'}, 'q4': {dec: '34'}, 'pagr': {dec: '1234'}, 'pech': {dec: '234'}, 'ppen': {dec: '234', rel: '1234'}, 'pvit': {dec: '24'}, 'pdeb': {dec: '24'}, 'pmv': {dec: '1234'}, 'pro_pb': {dec: '1234'}, 'e1_1': {dec: '4', rel: '234'}, 'e1_2': {rel: '34'}, 'e1_3': {dec: '4', rel: '34'}, 'e1_4': {rel: '34'}, 'e1_5': {rel: '34'}, 'e1_6': {rel: '34'}, 'e1_7': {rel: '34'}, 'e1_8': {dec: '4', rel: '34'}, 'e1_pb': {dec: '234', rel: '123'}, 'e2_1': {dec: '3'}, 'e2_2': {rel: '234'}, 'e2_3': {rel: '234'}, 'e2_4': {rel: '234'}, 'e2_5': {rel: '1234'}, 'sy_sub': {rel: '234'}, 'sy_com': {rel: '1234'}, 'fn_gx': {rel: '1234'}, 'fn_xg': {dec: '34', rel: '1234'}, 'fn_lim': {rel: '1234'}, 'fn_im': {dec: '34', rel: '1234'}, 'fn_lpi': {rel: '1234'}, 'fn_pi': {dec: '34', rel: '1234'}, 'fn_tab': {dec: '34', rel: '1234'}, 'fn_pb': {dec: '1234'}, 'd_car': {rel: '34'}, 'cv_lon': {dec: '234'}, 'cv_mas': {dec: '234'}, 'cv_cap': {dec: '234'}, 'cv_air': {dec: '234'}, 'cv_vol': {dec: '234'}, 'cv_tem': {dec: '34'}, 'cv_vit': {dec: '34'}, 'cv_mv': {dec: '123'}, 'cv_deb': {dec: '34'}, 'aro': {dec: '1234'}, 'f_car': {dec: '1234'}, 'f_rec': {dec: '1234'}, 'f_tri': {dec: '1234'}, 'f_par': {dec: '1234'}, 'f_los': {dec: '1234'}, 'f_tra': {dec: '1234'}, 'f_dis': {dec: '1234'}, 'pa_pb': {dec: '1234'}, 'v_cub': {dec: '1234'}, 'v_pav': {dec: '1234'}, 'v_pri': {dec: '1234'}, 'v_cyl': {dec: '1234'}, 'v_pyr': {dec: '1234'}, 'v_con': {dec: '1234'}, 'v_bou': {dec: '1234'}, 'v_pb': {dec: '1234'}, 'at_cub': {dec: '1234'}, 'at_pav': {dec: '1234'}, 'at_pri': {dec: '1234'}, 'at_cyl': {dec: '1234'}, 'at_pyr': {dec: '1234'}, 'at_bou': {dec: '1234'}, 'at_pb': {dec: '1234'}, 'py_calc': {dec: '4'}, 'py_rec': {dec: '34'}, 'py_con': {dec: '34'}, 'py_esp': {dec: '4'}, 'py_pb': {dec: '1234'}, 'th_calc': {dec: '234'}, 'th_rec': {dec: '234'}, 'th_con': {dec: '234'}, 'th_pb': {dec: '1234'}, 'g_tri': {dec: '4'}, 'g_tan': {dec: '34'}, 'g_rep2': {dec: '4', rel: '1234'}, 'g_rep3': {rel: '1234'}, 'l_sub': {dec: '3', rel: '1234'}, 'l_voc': {rel: '234'}, 'l_mulm': {dec: '234', rel: '1234'}, 'l_addm': {dec: '234', rel: '1234'}, 'l_vocp': {dec: '4', rel: '1234'}, 'l_addp': {rel: '234'}, 'l_subp': {rel: '1234'}, 'l_dev': {dec: '234', rel: '1234'}, 'l_dev2': {rel: '234'}, 'l_ir1': {dec: '234', rel: '34'}, 'l_ir2': {dec: '234', rel: '34'}, 'l_ir3': {dec: '234', rel: '34'}, 'l_ir4': {rel: '34'}, 'l_fme': {rel: '4'}, 'l_fir1': {dec: '4', rel: '4'}, 'l_fir2': {dec: '4', rel: '234'}, 'l_fir3': {dec: '4', rel: '234'}, 'l_fir4': {rel: '234'}, 'l_pb': {dec: '234'}};
+var ND_K = ['dec', 'rel', 'fra'], ND_LAB = {dec: 'décimaux', rel: 'relatifs', fra: 'fractions'}, ND_CTX = null, ND_FLC = new WeakMap(), ND_LAST = false, ND_ROT = 0;   // n° 174 : code avant newQuestions
+                                 // objectifs : gardés seulement si on recharge la page
 let S = clone(DEFAULTS);
 const PRIO_ING = {rprio: ['radd', 'rsub', 'rsum', 'rmul', 'rdiv', 'rpow'], fprio: ['f+', 'f∙', 'f:', 'fpow']};      // cases qui deviennent les ingrédients des priorités
 /* n° 36 (10.11.2026) : des calculs seuls à côté des priorités. L'enseignant : « Quand on coche des exercices du bloc nombres relatifs ou du bloc
@@ -11948,7 +12007,7 @@ try {
   const t = JSON.parse(sessionStorage.getItem(SKEY) || 'null');
   if (t){ S.on = Object.assign({}, t.on); if (S.on.trf){ S.on.sym = true; delete S.on.trf; }     // ancien bloc « Transformations du plan » (fusionné le 24.10.2026)
     S.it = Object.assign({}, DEFAULTS.it, t.it); Object.keys(t.num || {}).forEach(b => { if (S.num[b]) Object.assign(S.num[b], t.num[b]); });
-    S.opt = Object.assign({}, DEFAULTS.opt, t.opt); S.share = t.pv ? Object.assign({}, t.share) : prioMig(S.it, t.share); }     // n° 163
+    S.opt = Object.assign({}, DEFAULTS.opt, t.opt); S.ndp = ndClean(t.ndp); S.share = t.pv ? Object.assign({}, t.share) : prioMig(S.it, t.share); }     // n° 163
 } catch (e) {}
 function save(){
   if (STU) return;                   // mode élève : rien n'est gardé (les réglages de l'enseignant dans ce navigateur restent intacts)
@@ -12005,9 +12064,9 @@ const flagsOf = (bl, s) => { const n = (s || S).num[bl] || {}; return {dec: !!n.
 const THW = {nat: [4, 2, 1, 1], dec: [1, 2, 2, 2], rel: [1, 2, 2, 2], fra: [1, 1, 2, 2]};      // décimaux, relatifs, fractions : plutôt avec plus d'étoiles
 function pickTheme(list, lv, key){ const t = wpick(list, x => THW[x][lv - 1] / (1 + .6 * (TALLY[key + x] || 0))); bump(key + t); return t; }
 function subOf(o, lv, fl){ // sous-genre : naturels, décimaux, relatifs… pour le calcul mental, les calculs en colonne et les puissances
-  if (o.bl === 'men' && ['m+', 'm−', 'm∙', 'm:'].includes(o.id)) return 'M' + pickTheme(['nat'].concat(fl.dec ? ['dec'] : [], fl.rel ? ['rel'] : []), lv, 't:' + o.id + ':') + o.id.slice(1);
+  if (o.bl === 'men' && ['m+', 'm−', 'm∙', 'm:'].includes(o.id)) return 'M' + pickTheme(ndTh(['nat'].concat(fl.dec ? ['dec'] : [], fl.rel ? ['rel'] : [])), lv, 't:' + o.id + ':') + o.id.slice(1);
   if (o.bl === 'col' && o.id !== 'p_pb') return 'P' + (fl.dec ? 'dec' : 'nat') + o.id.slice(1);      // n° 115 : sauf les problèmes      // « décimaux » cochée : toujours un nombre à virgule (04.11.2026 ; avant, des naturels aussi)
-  if (o.id === 'pwc') return 'pw' + pickTheme(['nat'].concat(fl.dec ? ['dec'] : [], fl.rel ? ['rel'] : [], fl.fra ? ['fra'] : []), lv, 't:pwc:');
+  if (o.id === 'pwc') return 'pw' + pickTheme(ndTh(['nat'].concat(fl.dec ? ['dec'] : [], fl.rel ? ['rel'] : [], fl.fra ? ['fra'] : [])), lv, 't:pwc:');   // n° 174 : ndTh
   if (o.id === 'f+'){ const s = leastUsed(['Mfra+', 'Mfra−'], 's:'); bump('s:' + s); return s; }
   if (o.id === 'f∙' || o.id === 'f:') return 'Mfra' + o.id.slice(1);
   if (o.id === 'fpow') return 'pwfra';                    // puissances d'une fraction (bloc des fractions)
@@ -12103,12 +12162,17 @@ function genOne0(sub, lv, fl, mode){
   setFlags(fl);
   const geo = isGeo(sub); if (geo && !mode) mode = GEO_STRICT ? 'new' : 'old';
   let p = null, any = null; const old = new Map();
+  const ndC = ND_CTX || ND_FLC.get(fl) || null, ndW = ndC ? ND_K.filter(k => ndC.need[k]) : []; let ndB = null; const ndT0 = ndW.length ? Date.now() : 0;   // n° 174 : « oui » : la question doit en contenir (150 ms au plus)
   for (let t = 0, nt = geo ? 300 : 80; t < nt; t++){       // géométrie : plus d'essais (générateurs rapides), pour trouver aussi la dernière question pas encore posée
     if (t && GEN_DL && Date.now() > GEN_DL) break;                     // n° 123
-    let q = null; try { const gf = GEN_ONLY !== null && L[GEN_ONLY] ? L[GEN_ONLY] : pick(L); q = gf(); if (q && typeof q === 'object') GEN_IDX.set(q, L.indexOf(gf)); } catch (e) { console.error(sub, lv, e); }   // n° 91 : GEN_ONLY, GEN_IDX
-    if (!q) continue; any = any || q; if (!USED.has(q.key) || q.reuse){ p = q; break; }      // reuse : reprise voulue (vocabulaire du calcul littéral, 07.11.2026)
+    if (ndT0 && t && Date.now() - ndT0 > 150) break;
+    ND_ROT = ndW.length ? t : 0; let q = null; try { const gf = GEN_ONLY !== null && L[GEN_ONLY] ? L[GEN_ONLY] : pick(L); q = gf(); if (q && typeof q === 'object') GEN_IDX.set(q, L.indexOf(gf)); } catch (e) { console.error(sub, lv, e); }   // n° 91 : GEN_ONLY, GEN_IDX
+    if (!q) continue;
+    if (ndW.length){ const sc = ndW.filter(k => ndHas(q, k)).length; if (sc < ndW.length){ if ((!USED.has(q.key) || q.reuse) && (!ndB || sc > ndB.sc)) ndB = {q, sc}; continue; } }   // n° 174
+    any = any || q; if (!USED.has(q.key) || q.reuse){ p = q; break; }      // reuse : reprise voulue (vocabulaire du calcul littéral, 07.11.2026)
     if (!old.has(q.key)) old.set(q.key, q);
   }
+  ND_ROT = 0; if (!p && ndB && (geo || !any)) p = ndB.q;                         // n° 174 : la plus proche, nouvelle
   if (!p && geo){ if (mode === 'new') return null;
     p = roundPick(old);
     if (!p && mode === 'old') p = [...old.values()].sort((a, b) => (USEDAT.get(a.key) || 0) - (USEDAT.get(b.key) || 0))[0];
@@ -12118,13 +12182,14 @@ function genOne0(sub, lv, fl, mode){
   if (p.cnt) [].concat(p.cnt).forEach(bump);      // limites par séance (écriture décimale : 1/3, 1/9, autres tiers et neuvièmes ; 03.11.2026) ; une liste : puissance d'une fraction (04.11.2026)
   p.level = lv; p.sub = sub; p.fl = fl; p.shown = {ans: false, det: false};
   precPost(p);                                                         // n° 46, 4e version : valeur exacte, puis arrondie au dixième ou au centième
-  return litP(p);                                                      // n° 84 : ℓ
+  return ndTally(litP(p), ndC);                                       // n° 84 : ℓ ; n° 174 : compteurs des %
 }
 function makePairFor(o, lv, kind){ // lv : nombre d'étoiles ; objectif sans étoiles : une sorte de question (kind : la sorte lv, touches 1 à 4), et la suivante à droite
   if (isGeo(o.id)) return geoPair(o, lv, kind, null);
-  const fl = flagsOf(o.bl), ns = isNoStar(o), k = ns ? (kind ? lv : nsKind(o.id)) : lv, sub = subOf(o, k, fl), L = genOne(sub, k, fl);
+  const ns = isNoStar(o), k = ns ? (kind ? lv : nsKind(o.id)) : lv; let L = null, R = null;
+  ndGen(o, k, fl => { const sub = subOf(o, k, fl); L = genOne(sub, k, fl);      // n° 174 : la décision « décimaux, relatifs, fractions » de la question (ndGen)
+    if (L && S.two) R = genOne(sub, S.twoSame ? k : Math.min(4, k + 1), fl); });     // à droite : une étoile de plus, ou la même difficulté (S.twoSame)
   if (!L) return null;
-  const R = S.two ? genOne(sub, S.twoSame ? k : Math.min(4, k + 1), fl) : null;     // à droite : une étoile de plus, ou la même difficulté (S.twoSame)
   if (ns){ L.nostar = true; if (R) R.nostar = true; }
   return {L, R, bl: o.bl, srt: ns ? NSORT[k] : lv, o};
 }
@@ -12138,11 +12203,11 @@ const gsig = x => JSON.stringify(flagsOf(x.bl)) + (x.bl === 'sol' ? SOLK.map(k =
 function geoOne(g0, tiers, side, late){
   const alts = tiers.flat();
   const fam = (() => { const r = Math.random(); return r >= TQX_P ? (r < TQX_P + isaP() ? 'isa' : 'base') : r < TQX_P / 2 ? 'voc' : 'nom'; })();   // vocabulaire, nom, « Tous les … ? » (isa) : tirés une fois par question
-  const gen = ([x, l], mode, free) => { const fx = fam === 'isa' && !QUADS.has(x.id) ? 'base' : (fam === 'voc' || fam === 'nom') && x.id !== 'q_tri' ? 'base' : fam;     // n° 163 : vocabulaire d'office seulement pour les triangles TQ_FIX = x.bl === 'tq' && !free ? fx : null;      // isa : seulement les quadrilatères
+  const gen = ([x, l], mode, free) => { const fx = fam === 'isa' && !QUADS.has(x.id) ? 'base' : (fam === 'voc' || fam === 'nom') && x.id !== 'q_tri' ? 'base' : fam; TQ_FIX = x.bl === 'tq' && !free ? fx : null;     // n° 163 : vocabulaire d'office seulement pour les triangles ; isa : seulement les quadrilatères ; n° 175 : TQ_FIX sorti du commentaire
     const e = gkey(x, l) + gsig(x) + (x.bl === 'tq' ? (free ? 'free' : fx) : '');
     if (mode === 'new' && EXH.has(e)) return null;
-    const p = genOne(subOf(x, l, flagsOf(x.bl)), l, flagsOf(x.bl), mode); TQ_FIX = null;
-    if (!p && mode === 'new') EXH.add(e); return p; };
+    const p = ndGen(x, l, fl => genOne(subOf(x, l, fl), l, fl, mode)); TQ_FIX = null;      // n° 174 : ndGen
+    if (!p && mode === 'new' && !ND_LAST) EXH.add(e); return p; };
   const gk = ([x, l]) => side + gkey(x, l), cap = g => (SERV[gk(g)] || 0) < GEO_CAP * (REQ[gk(g)] || 0) + 1;
   REQ[gk(g0)] = (REQ[gk(g0)] || 0) + 1;
   // groupes de repli sous leur limite : par rang (tiers), le moins rempli d'abord (31.10.2026 : sinon le premier, ★★ par exemple, prenait tout)
@@ -16557,19 +16622,23 @@ function pbGen(bl, lv, main){
   // remettre l'équerre ») : compteur par modèle ET par étoiles (pbm:id:lv) d'abord ; à égalité, le moins sorti de la séance (tous niveaux), puis le hasard
   const E = all.filter(m => dist(m) === d0), gm = 1 + Math.max(...E.map(m => TALLY['pbm:' + m.id] || 0));
   const C = E.map(m => [((TALLY['pbm:' + m.id + ':' + lv] || 0) + .5 + .45 * (TALLY['pbm:' + m.id] || 0) / gm + .45 * Math.random()) / m.w, m]).sort((a, b) => a[0] - b[0]).map(x => x[1]);
-  if (C.length > 1 && C[0].id === PB_LAST[bl + (main || '') + lv]) C.push(C.shift());          // n° 81 : à ce niveau, jamais deux fois de suite la même sorte (si une autre est possible)
+  if (C.length > 1 && C[0].id === PB_LAST[bl + (main || '') + lv]) C.push(C.shift()); if (ND_ROT && C.length > 1){ const r = ND_ROT % C.length; C.push(...C.splice(0, r)); }          // n° 81 : à ce niveau, jamais deux fois de suite la même sorte (si une autre est possible)
   let best = null, bd = 1e9, dup = null; const t0 = Date.now();
   for (const m of C){
     const lt = d0 ? Math.min(Math.max(lv, pbR0(m.lo)), pbR0(m.hi)) : lv;          // n° 73 : pas de modèle à ce niveau : chacun à son niveau le plus proche (rotation gardée)
+    const zk = 'pbz:' + bl + m.id + ':' + lt; if (TALLY[zk] && PB_ONLY !== m.id && C.length > 1) continue;     // n° 175 : un modèle qui n'a rien donné à ce niveau dans la séance
+    let got = false;
     for (let t = 0; t < 60; t++){
+      if (t && Date.now() - t0 > 120) break;                           // n° 175 : 120 ms aussi pendant les essais d'un modèle
       let c = null; try { c = m.gen(lt); } catch (e) { console.error('problème', bl, m.id, e); break; }
-      if (!c) continue;
+      if (!c) continue; got = true;
       const pts = pbPts(bl, c.f), L = pbLv(bl, pts), old = USED.has(pbKey(m, c));     // n° 73 : une question déjà posée : on cherche encore (un autre modèle s'il le faut)
       if (L === lt && !old) return pbOut(bl, m, c, lv, pts);
       if (L === lt){ dup = dup || [m, c, pts]; continue; }
       if (!old && Math.abs(L - lt) < bd){ bd = Math.abs(L - lt); best = [m, c, pts]; }
       if (GEN_DL && Date.now() > GEN_DL) break;                       // n° 123 (« Réessayer » seulement)
     }
+    if (!got) TALLY[zk] = 1;                                           // n° 175 : plus cherché dans la séance (l_pb ★★★ : le carré magique prenait tout le temps et la page se bloquait)
     if (Date.now() - t0 > 120 || GEN_DL && Date.now() > GEN_DL) break;
   }
   const z = best || dup; return z ? pbOut(bl, z[0], z[1], lv, z[2]) : null;
@@ -34789,7 +34858,7 @@ function ipWbHTML(b){         // les boutons d'un exercice (bloc mélangé : tou
   const W = ids.map(id => ipEx(id).w), w0 = W.every(v => v === W[0]) ? W[0] : null, L = w0 === null ? 'différentes' : IP_WL[w0 + 2], d = ids.join(',');
   return '<span class="ip-wb' + (b.name ? ' ipwt' : '') + '"><span class="ipwg"><span class="ipwc">place pour répondre</span><button type="button" title="Place pour répondre de cet exercice (pas imprimé)" data-ipw="' + d + '" data-d="-1"' +
     (W.every(v => v <= -2) ? ' disabled' : '') + ' aria-label="Moins de place pour répondre">−</button><span class="ipwl">' + L + '</span><button type="button" data-ipw="' + d + '" data-d="1"' +
-    (W.every(v => v >= 2) ? ' disabled' : '') + ' aria-label="Plus de place pour répondre">+</button></span>' + ipCbHTML(b, d) + '</span>';
+    (W.every(v => v >= 2) ? ' disabled' : '') + ' aria-label="Plus de place pour répondre">+</button></span>' + ipCbHTML(b, d) + ndIpHTML(ids) + '</span>';   // n° 174 : − auto +
 }
 function ipCbHTML(b, d){      // n° 161 : − colonnes + (le nombre de colonnes de l'exercice ; forcé, il revient au nombre de la page à la prochaine ouverture de la fenêtre)
   const c = b.c || 1, m = Math.max(c, b.cm || c);
@@ -34839,6 +34908,154 @@ function ipWbPos(v){          // à droite du texte du titre (1,5 mm après), ce
     Object.assign(wb.style, {left: left.toFixed(1) + 'px', bottom: 'auto', top: ((last.top - H.top) / k + ((last.bottom - last.top) / k - wb.offsetHeight) / 2).toFixed(1) + 'px'}); capChk(wb);
   });
 }
+
+/* ---------- n° 174 : part des questions avec des décimaux, des relatifs, des fractions (− auto +) ----------
+   L'enseignant (26.11.2026) : « Dans QPC, pour les blocs où on a les options "décimaux" et "relatifs", il faudrait pouvoir choisir le % de questions
+   qui en contiennent. Il faut que ça ne surcharge pas trop visuellement, mais j'aimerais que le réglage de ça soit accessible au niveau des blocs (il
+   apparait quand on coche au moins un exo du bloc), et dans la page de génération de PDF. » ; maquettes : version 3, « − 30 % + » à côté de chaque
+   case cochée (pas de 10 %) ; « dans la fenêtre de liens/impression, mets le plutot : à gauche des étoiles permises » et « dans le preview de PDF, à
+   côté des boutons qui changent le nombre de colonnes et la place » ; « dans les blocs il faut marquer auto aussi » ; « un petit "i" d'information
+   qui explique brièvement ce que veut dire auto, et ce que fait le réglage ».
+   QCM : un réglage par exercice (celui du bloc les change tous) ; « auto » par défaut (le dosage de chaque exercice, comme avant) ; aussi pour la case
+   « fractions » ; puis (mesure : beaucoup d'exercices n'en mettent qu'à partir de ★★, ★★★ ou ★★★★) : « Respecter les étoiles » : le % ne vaut qu'aux
+   niveaux où l'exercice en met déjà (ND_LV, mesuré sur la n° 173 : 60 tirages par exercice, niveau et case, un niveau compte dès 2 questions).
+   Choix de Claude (dits à l'enseignant) : depuis « auto », − donne 40 % et + 60 % ; un clic sur le nombre revient à « auto » ; « mixte » quand les
+   exercices cochés du bloc n'ont pas le même réglage (un clic les met tous au même) ; un exercice sur lequel la case ne change rien n'a pas de réglage.
+   Tirage : pour chaque question d'un exercice réglé (à un niveau de ND_LV), « oui » ou « non » d'après le % et le retard sur la séance (correcteur
+   d'après la séance : chance = part + 0,25 ∙ retard, entre 5 et 95 %) ; « non » : la case est décochée pour cette question ; « oui » : la question doit
+   en contenir (ndHas, jusqu'à 80 essais de genOne0 ; sinon la plus proche). Le contexte (ND_CTX) suit les drapeaux de la question (ND_FLC) : une
+   question refaite (rareSpace, « Réessayer », droite) garde la même décision. Lien : &d= (ndFrag, ndParse) ; séances : P.nd ; session : S.ndp. */
+function ndRel(id, k){ return !!(ND_LV[id] && ND_LV[id][k]); }                           // la case change-t-elle les questions de cet exercice ?
+function ndIds(b){ return b.items.map(([id]) => id).concat(!b.items.length || b.base ? [b.id] : []); }
+function ndChk(d, b, id){ return id === b.id ? blkHas(b, d) : !!d.it[id]; }
+function ndVal(s, id, k){ const v = (((s && s.ndp) || {})[id] || {})[k]; return typeof v === 'number' ? v : null; }
+function ndBl(id){ return ITEM_BLOCK[id] || id; }
+function ndClean(o){ const r = {};
+  Object.entries(o && typeof o === 'object' ? o : {}).forEach(([id, x]) => { if (!x || typeof x !== 'object') return; const y = {};
+    ND_K.forEach(k => { const v = x[k]; if (typeof v === 'number' && isFinite(v) && ndRel(id, k)) y[k] = Math.max(0, Math.min(100, Math.round(v / 10) * 10)); });
+    if (Object.keys(y).length) r[id] = y; });
+  return r; }
+function ndSet(s, id, k, v){ s.ndp = Object.assign({}, s.ndp); const o = Object.assign({}, s.ndp[id]); if (v === null) delete o[k]; else o[k] = v;
+  if (Object.keys(o).length) s.ndp[id] = o; else delete s.ndp[id]; }
+function ndOfState(d, ids){ const r = {};           // les % des exercices ids (cases cochées seulement), pour un lien ou une séance
+  ids.forEach(id => { const o = (d.ndp || {})[id]; if (!o || !BLOCKS[ndBl(id)]) return; const fl = flagsOf(ndBl(id), d), y = {};
+    ND_K.forEach(k => { if (typeof o[k] === 'number' && fl[k] && ndRel(id, k)) y[k] = o[k]; }); if (Object.keys(y).length) r[id] = y; });
+  return r; }
+function ndToDraft(s, d){ d.ndp = Object.assign({}, d.ndp);      // « Reprendre un lien » : les % de ses exercices
+  objectives(s).forEach(o => { if (s.ndp && s.ndp[o.id]) d.ndp[o.id] = clone(s.ndp[o.id]); else delete d.ndp[o.id]; }); }
+function ndFrag(P, ids){             // &d=d3r5,,f10 : dans l'ordre de x, d (décimaux), r (relatifs), f (fractions) et le % en dizaines ; rien = auto
+  const nd = P.nd || {}, v = ids.map(id => ND_K.filter(k => typeof (nd[id] || {})[k] === 'number').map(k => k[0] + Math.round(nd[id][k] / 10)).join(''));
+  return v.some(Boolean) ? '&d=' + v.join(',').replace(/,+$/, '') : ''; }
+function ndParse(P, f, dId){ P.nd = {}; if (!f.d) return;
+  const X = (f.x || '').split(','), K = {d: 'dec', r: 'rel', f: 'fra'};
+  f.d.split(',').forEach((e, i) => { if (!e || !X[i]) return; const m = /^(.*?)(?:\*[1-3])?$/.exec(X[i]); let id = m && dId(m[1]); id = id && (LINK_ALIAS[id] || id); if (!id) return;
+    if (id[0] === '@') id = id.slice(1); const o = {}; e.replace(/([drf])(\d{1,2})/g, (z, c, n) => { o[K[c]] = Math.min(100, Number(n) * 10); return z; });
+    const c = ndClean({[id]: o})[id]; if (c) P.nd[id] = c; }); }
+// ---- tirage
+function ndPlan(o, lv){
+  const P = S && S.ndp && S.ndp[o.id]; if (!P || isNoStar(o)) return null;
+  const fl = flagsOf(o.bl), need = {}; let n = 0;
+  ND_K.forEach(k => { const v = P[k]; if (typeof v !== 'number' || !fl[k] || !ndRel(o.id, k) || !ND_LV[o.id][k].includes(String(lv))) return;   // « Respecter les étoiles »
+    const p = v / 100, t = TALLY['ndn:' + o.id + k] || 0, y = TALLY['ndy:' + o.id + k] || 0;
+    const c = p <= 0 ? 0 : p >= 1 ? 1 : Math.min(.95, Math.max(.05, p + .25 * (p * t - y)));
+    need[k] = c >= 1 || (c > 0 && chance(c)); n++; });
+  return n ? {id: o.id, need} : null; }
+function ndFl(fl, C){ const f = Object.assign({}, fl); ND_K.forEach(k => { if (k in C.need) f[k] = C.need[k]; }); ND_FLC.set(f, C); return f; }
+function ndGen(o, lv, g){           // g(drapeaux) avec la décision de cette question (ND_CTX), pour subOf et genOne0
+  const C = ndPlan(o, lv), fl0 = flagsOf(o.bl), fl = C ? ndFl(fl0, C) : fl0, sv = ND_CTX; ND_CTX = C; ND_LAST = !!(C && ND_K.some(k => C.need[k]));
+  try { return g(fl); } finally { ND_CTX = sv; } }
+function ndTh(L){ const C = ND_CTX; if (!C) return L;     // thèmes du calcul mental et des puissances : « oui » = seulement ces thèmes
+  const y = L.filter(t => C.need[t] === true); return y.length ? y : L.filter(t => t === 'nat' || C.need[t] !== false); }
+function ndTxt(p, ans){ const s = x => typeof x === 'string' ? x : '', tx = [];       // le texte de la question (ans : avec la réponse)
+  s(p.fig).replace(/<text[^>]*>([\s\S]*?)<\/text>/g, (m, t) => { tx.push(t); return m; });
+  return [p.con, p.q, p.line, ans ? p.a : '', p.dat, p.ex].map(s).concat(tx).join(' | ').replace(/<span class="op">([\s\S]*?)<\/span>/g, ' $1 ').replace(/<br\s*\/?>/g, ' ')
+    .replace(/<[^>]+>/g, '').replace(/&nbsp;|\u00a0|\u202f|\u2009/g, ' ').replace(/&minus;/g, '\u2212'); }
+function ndHas(p, k){                // la question contient-elle des décimaux (énoncé, figure), des relatifs (aussi la réponse : 3 − 5 = −2), des fractions (énoncé, figure) ?
+  if (k === 'fra') return [p.con, p.q, p.line, p.fig].some(x => typeof x === 'string' && /class="frac"/.test(x));
+  return k === 'dec' ? /\d,\d/.test(ndTxt(p, false)) : /\u2212(?=[\d(\p{L}\u221a\u221b])/u.test(ndTxt(p, true).replace(/ \u2212 /g, ' ~ ')); }
+function ndTally(p, C){ if (!p || !C) return p; p.ndw = C;
+  ND_K.forEach(k => { if (k in C.need){ bump('ndn:' + C.id + k); if (ndHas(p, k)) bump('ndy:' + C.id + k); } }); return p; }
+// ---- affichage : − auto + (réglages, fenêtre du lien, aperçu de la feuille)
+function ndNext(vs, d){ const n = vs.filter(v => v !== null);
+  if (!n.length) return d < 0 ? 40 : 60;                                                      // depuis « auto »
+  if (!vs.every(v => v === vs[0])) return Math.round(n.reduce((a, b) => a + b, 0) / n.length / 10) * 10;   // « mixte » : tous au même
+  return Math.max(0, Math.min(100, vs[0] + 10 * d)); }
+function ndTit(k){ return 'Part des questions avec des ' + ND_LAB[k] + ' (auto : comme d’habitude, selon les étoiles ; clic sur le nombre : revenir à auto)'; }
+function ndStepIn(vs, k){ const same = vs.every(v => v === vs[0]), v = same ? vs[0] : undefined;
+  return '<button type="button" data-nds="-1" aria-label="Moins de questions avec des ' + ND_LAB[k] + '"' + (same && v === 0 ? ' disabled' : '') + '>−</button>' +
+    '<output data-nds="0" class="' + (same && v === null ? 'ndauto' : '') + '">' + (!same ? 'mixte' : v === null ? 'auto' : v + ' %') + '</output>' +
+    '<button type="button" data-nds="1" aria-label="Plus de questions avec des ' + ND_LAB[k] + '"' + (same && v === 100 ? ' disabled' : '') + '>+</button>'; }
+function ndInfHTML(){ return '<button type="button" class="pbinf ndinf" data-pbi="nd" title="Décimaux, relatifs, fractions : auto ou %" aria-label="Décimaux, relatifs, fractions : auto ou %">' + PBI_SVG + '</button>'; }
+function ndPhHTML(b, k){ return '<span class="ndst" data-ndst data-ndb="' + b + '" data-k="' + k + '" title="' + ndTit(k) + '" hidden></span>'; }
+function ndBlockUI(d){               // réglages : visible à côté d'une case cochée, quand un exercice du bloc sur lequel elle joue est coché
+  document.querySelectorAll('#oSet .blk').forEach(f => { const b = BLOCKS[f.dataset.bl]; if (!b || !b.nd) return; let any = false;
+    f.querySelectorAll('.ndst[data-ndb]').forEach(el => { const k = el.dataset.k, ids = (d.num[b.id] || {})[k] ? ndIds(b).filter(id => ndRel(id, k) && ndChk(d, b, id)) : [];
+      el.hidden = !ids.length; if (ids.length){ any = true; el.innerHTML = ndStepIn(ids.map(id => ndVal(d, id, k)), k); } });
+    const i = f.querySelector('.ndinf'); if (i) i.hidden = !any; });
+  requestAnimationFrame(ndFit); }
+/* n° 175 (l'enseignant, 26.11.2026 : « Dans les blocs, fais tenir sur une ligne (il ne faut pas que ça crée de nouvelle ligne quand on coche un exo),
+   quitte à réduire la police quand on coche un exo ») : le titre du bloc garde la hauteur qu'il a sans les − auto + ; sinon les cases (libellés et
+   − auto +) et le « i » rapetissent, jusqu'à 0,5 em */
+function ndFit(){
+  // n° 176 (l'enseignant : « C'est effectivement un peu petit. Peut être dans ce cas mettre les - et + en dessous du mot décimaux, serrer un peu pour ne
+  // pas prendre plus d'espace ») : sur la ligne si ça tient ; sinon « − auto + » sous le mot (classe ndstk), serré, puis plus petit s'il le faut
+  document.querySelectorAll('#oSet .blk').forEach(f => { const g = f.querySelectorAll('.ndg, .ndinf'); if (!g.length) return; g.forEach(x => { x.style.fontSize = ''; }); f.classList.remove('ndstk');
+    if (!f.offsetParent || ![...f.querySelectorAll('.ndst[data-ndb]')].some(x => !x.hidden)) return;
+    const bh = f.querySelector('.bh'); f.classList.add('ndoff'); const h0 = bh.offsetHeight; f.classList.remove('ndoff');
+    if (bh.offsetHeight <= h0 + 1) return;
+    f.classList.add('ndstk');
+    for (let z = .86; bh.offsetHeight > h0 + 1 && z >= .5 - 1e-9; z -= .02) g.forEach(x => { x.style.fontSize = (x.classList.contains('ndg') ? z : z / .86).toFixed(3) + 'em'; }); }); }
+function ndLinkOn(P, O){ const s = stateFromP(P); return O.some(o => ND_K.some(k => ndRel(o.id, k) && flagsOf(o.bl, s)[k])) ? s : null; }
+function ndLinkCell(s, o, off){       // fenêtre du lien : à gauche des étoiles permises
+  const h = ND_K.filter(k => ndRel(o.id, k) && flagsOf(o.bl, s)[k]).map(k => '<span class="lndk"><span class="lndl">' + ND_LAB[k] + '</span><span class="ndst" data-ndst data-ndi="' + o.id +
+    '" data-k="' + k + '" title="' + ndTit(k) + '">' + ndStepIn([ndVal(s, o.id, k)], k) + '</span></span>').join('');
+  return '<div class="lnd' + (off ? ' loff' : '') + '">' + h + '</div>'; }
+function ndLinkAll(s, O, inner){     // n° 175 : ligne « Tous » (« une option qui change les décimaux/relatifs pour tous les exos d'un coup ») ; une case seulement si au moins deux exercices
+  const off = (LNK && LNK.off) || new Set();
+  const h = ND_K.map(k => { const ids = O.filter(o => !off.has(o.id) && ndRel(o.id, k) && flagsOf(o.bl, s)[k]).map(o => o.id); if (ids.length < 2) return '';
+    return '<span class="lndk"><span class="lndl">' + ND_LAB[k] + '</span><span class="ndst" data-ndst data-ndi="' + ids.join(',') + '" data-k="' + k + '" title="' + ndTit(k) + ' : tous les exercices">' +
+      ndStepIn(ids.map(id => ndVal(s, id, k)), k) + '</span></span>'; }).join('');
+  return '<div class="lnd' + (inner ? ' lndi' : '') + '">' + h + '</div>'; }
+const ndLinkIn = (s, o, off) => ndLinkCell(s, o, off).replace('class="lnd', 'class="lnd lndi');   // écran étroit : sous le nom (CSS)
+function ndIpHTML(ids){              // aperçu de la feuille : à droite de − colonnes + (bloc mélangé : ses exercices ensemble)
+  const s = IP && IP.S; if (!s) return '';
+  return ND_K.map(k => { const R = ids.filter(id => ndRel(id, k) && BLOCKS[ndBl(id)] && flagsOf(ndBl(id), s)[k]); if (!R.length) return '';
+    const vs = R.map(id => ndVal(s, id, k)), same = vs.every(v => v === vs[0]), v = same ? vs[0] : undefined;
+    return '<span class="ipcg ipng" data-ndst data-ndi="' + R.join(',') + '" data-k="' + k + '" title="' + ndTit(k) + ' (pas imprimé)"><span class="ipwc">' + ND_LAB[k] + '</span>' +
+      '<button type="button" data-nds="-1"' + (same && v === 0 ? ' disabled' : '') + ' aria-label="Moins de questions avec des ' + ND_LAB[k] + '">−</button><span class="ipnl" data-nds="0">' +
+      (!same ? 'mixte' : v === null ? 'auto' : v + ' %') + '</span><button type="button" data-nds="1"' + (same && v === 100 ? ' disabled' : '') + ' aria-label="Plus de questions avec des ' + ND_LAB[k] + '">+</button></span>'; }).join(''); }
+function ndIpCheck(E){               // feuille : les questions d'un exercice dont le % a changé sont refaites (les autres restent)
+  IP.nd = IP.nd || {}; const N = E.nd || {};
+  new Set(Object.keys(N).concat(Object.keys(IP.nd))).forEach(id => { const a = JSON.stringify(N[id] || null); if ((IP.nd[id] || 'null') === a) return;
+    const P = IP.pool[id]; if (P){ [1, 2, 3, 4].forEach(l => (P[l] || []).forEach(p => { if (p && p.key != null) IP.keys.delete(p.key); })); delete IP.pool[id]; }
+    const T = IP.ses && IP.ses.TALLY; if (T) ND_K.forEach(k => { delete T['ndn:' + id + k]; delete T['ndy:' + id + k]; });   // les compteurs repartent de zéro
+    if (a === 'null') delete IP.nd[id]; else IP.nd[id] = a; }); }
+function ndClick(el){
+  const c = el.closest('[data-ndst]'), dir = Number(el.dataset.nds), k = c.dataset.k; if (!k) return;
+  const kp = el.closest('#ipPrev') && typeof ipKeep === 'function' ? ipKeep() : null;
+  let ids, vs;
+  if (c.dataset.ndb){ const b = BLOCKS[c.dataset.ndb]; ids = ndIds(b).filter(id => ndRel(id, k)); vs = ids.filter(id => ndChk(draft, b, id)).map(id => ndVal(draft, id, k)); }
+  else { ids = c.dataset.ndi.split(','); vs = ids.map(id => ndVal(draft, id, k)); }
+  if (!dir && vs.every(v => v === null)) return;
+  const v = dir ? ndNext(vs, dir) : null; ids.forEach(id => ndSet(draft, id, k, v));
+  syncUI();
+  if (LNK && LNK.P && $('oLink').classList.contains('open')){
+    const nd = Object.assign({}, LNK.P.nd), now = ndOfState(draft, ids); ids.forEach(id => { if (now[id]) nd[id] = now[id]; else delete nd[id]; }); LNK.P.nd = nd;
+    linkRows(); linkUrlDraw(); ipSync(true); if (kp) kp(); }
+}
+document.addEventListener('click', e => {                          // − auto + : sans cocher ni décocher la case ou l'exercice
+  const el = e.target.closest && e.target.closest('[data-ndst] [data-nds]'); if (!el) return;
+  e.preventDefault(); e.stopPropagation(); if (el.disabled) return; ndClick(el);
+}, true);
+function ndInfo(){                   // le petit « i » (réglages, fenêtre du lien) ; concis (n° 103)
+  $('piTit').textContent = 'Décimaux, relatifs, fractions : auto ou %';
+  $('piBody').innerHTML = '<p>Ce réglage choisit la part des questions d’un exercice qui contiennent des décimaux (ou des relatifs, des fractions), quand la case est cochée.</p>' +
+    '<ul class="piy"><li><b>auto</b> : comme d’habitude ; chaque exercice en met selon les étoiles, de plus en plus souvent.</li>' +
+    '<li><b>30 %</b> : environ 3 questions sur 10 en contiennent, les autres pas. 0 % : jamais ; 100 % : toujours.</li>' +
+    '<li>Seulement aux étoiles où l’exercice en met déjà (par exemple des décimaux dans les équations seulement à ★★★★).</li>' +
+    '<li>Dans le bloc, le réglage change tous ses exercices (<b>mixte</b> : ils ne sont pas tous pareils) ; chacun a le sien dans la fenêtre Lien/impression.</li>' +
+    '<li>Un clic sur le pourcentage : retour à <b>auto</b>.</li></ul>';
+  $('piBody').scrollTop = 0; $('oPbi').classList.add('open'); }
 
 function newQuestions(){ prjOff(); PICK = false; LASTG = null; seqEnd(); QS = buildQuestions(); cur = 0; SNC_PEND = true; render(); }   // n° 51 : SNC_PEND, brouillon à la 1re question
 function newOrSettings(){ if (objectives(S).length) newQuestions(); else openSet(); }
@@ -34890,7 +35107,7 @@ function rowsHTML(b){
 }
 function blockHTML(b){
   return '<section class="blk" data-bl="' + b.id + '"><div class="bh"><label class="bn"><input type="checkbox" data-bl="' + b.id + '"> <span>' + b.name + '</span></label>' +
-    '<span class="bhr">' + (b.nd ? '<span class="nd">' + b.nd.map(k => '<label title="' + ((b.ndt || {})[k] || 'Nombres ' + NDL[k] + ' dans ce bloc') + '"><input type="checkbox" data-nd="' + b.id + '" data-k="' + k + '"> ' + ((b.ndl || {})[k] || NDL[k]) + '</label>').join('') + '</span>' : '') +
+    '<span class="bhr">' + (b.nd ? '<span class="nd">' + b.nd.map(k => '<span class="ndg"><label title="' + ((b.ndt || {})[k] || 'Nombres ' + NDL[k] + ' dans ce bloc') + '"><input type="checkbox" data-nd="' + b.id + '" data-k="' + k + '"> ' + ((b.ndl || {})[k] || NDL[k]) + '</label>' + ndPhHTML(b.id, k) + '</span>').join('') + ndInfHTML() + '</span>' : '')   /* n° 174 : − auto + et le « i » */ +
     '<span class="trb"><button class="mini" data-tr="all" data-b="' + b.id + '" title="Tout cocher dans ce bloc">Tout</button><button class="mini" data-tr="none" data-b="' + b.id + '" title="Tout décocher dans ce bloc">Rien</button></span></span></div>' +
     '<div class="bb">' + (b.opts ? optHTML(b.opts) : '') + rowsHTML(b) +
     (b.hint ? '<div class="hint">' + b.hint + '</div>' : '') + '</div></section>';
@@ -34953,6 +35170,7 @@ function syncUI(){
   if ($('oSet').classList.contains('open')) psUI();
   if ($('oSnc').classList.contains('open')) sncUI();                           // n° 49 et 50 : fenêtre « Séances » ouverte
   if (typeof pbUI === 'function') pbUI();   // n° 71 : mini réglettes des problèmes
+  ndBlockUI(d);                             // n° 174 : − auto +
 }
 // pourcentages (l'enseignant, 25.10.2026, 6e conversation) : le premier % touché reste bloqué quand on en touche un autre juste après ;
 // seul le troisième compense. Débloqué en retouchant le premier, en changeant d'onglet ou en rouvrant les réglages.
@@ -35012,13 +35230,14 @@ function fitTab(){
   const P = $('panes'); if (!P) return;
   P.querySelectorAll('.tp').forEach(tp => { if (tp.dataset.t === 'gen') return; tp.style.paddingTop = tp.style.paddingBottom = tp.style.fontSize = '';
     tp.querySelectorAll('.blk').forEach(b => { b.style.marginBottom = ''; }); });
+  ndFit();                                                             // n° 175 : les titres des blocs d'abord
   if (!$('oSet').classList.contains('open') || $('sbody').classList.contains('searching') || innerWidth <= 700) return;
   const tp = P.querySelector('.tp.on'); if (!tp || tp.dataset.t === 'gen') return;
   const over = () => P.scrollHeight - P.clientHeight, o = over();
-  if (o <= 0 || o > .35 * P.clientHeight) return;   // n° 166 : 35 %, pour la ligne des problèmes de Racines (Nombres et opérations en 1680 × 1050 : 30,2 % de trop) ; n° 165 : 30 %, pour la ligne des problèmes de Divisibilité (Nombres et opérations en 1366 × 768 : 152 px de trop, 25 % ; resserré à 0,9 em comme avant)   // n° 110 : 18 % (avant 12 %), pour la ligne des problèmes du calcul littéral ; n° 115 : 25 %, pour la ligne des problèmes des calculs en colonne (Nombres et opérations en 1366 × 768 : 123 px de trop, maintenant 0,92 em comme avant)
+  if (o <= 0 || o > .4 * P.clientHeight) return;   // n° 174 : 40 % et jusqu'à 0,8 em, pour les − auto + (Nombres et opérations en 1680 × 1050, un exercice par bloc : 37,8 % de trop)   // n° 166 : 35 %, pour la ligne des problèmes de Racines (Nombres et opérations en 1680 × 1050 : 30,2 % de trop) ; n° 165 : 30 %, pour la ligne des problèmes de Divisibilité (Nombres et opérations en 1366 × 768 : 152 px de trop, 25 % ; resserré à 0,9 em comme avant)   // n° 110 : 18 % (avant 12 %), pour la ligne des problèmes du calcul littéral ; n° 115 : 25 %, pour la ligne des problèmes des calculs en colonne (Nombres et opérations en 1366 × 768 : 123 px de trop, maintenant 0,92 em comme avant)
   tp.style.paddingTop = tp.style.paddingBottom = '.3em'; if (over() <= 0) return;
   for (const m of ['.24em', '.14em']){ tp.querySelectorAll('.blk').forEach(b => { b.style.marginBottom = m; }); if (over() <= 0) return; }
-  for (let f = .98; f >= .84 - 1e-9; f -= .02){ tp.style.fontSize = f.toFixed(2) + 'em'; if (over() <= 0) return; }   // n° 167 : jusqu'à 0,84 em (Nombres et opérations en 1366 × 768 : 6 px de trop à 0,86 em, ligne des problèmes d'écriture scientifique) ; n° 166 : jusqu'à 0,86 em (Nombres et opérations en 1680 × 1050 : 6 px de trop à 0,88 em) ; n° 165 : jusqu'à 0,88 em (Nombres et opérations en 1536 × 864 : 9 px de trop à 0,9 em)
+  for (let f = .98; f >= .8 - 1e-9; f -= .02){ tp.style.fontSize = f.toFixed(2) + 'em'; ndFit(); if (over() <= 0) return; }   // n° 175 : ndFit à chaque taille   // n° 167 : jusqu'à 0,84 em (Nombres et opérations en 1366 × 768 : 6 px de trop à 0,86 em, ligne des problèmes d'écriture scientifique) ; n° 166 : jusqu'à 0,86 em (Nombres et opérations en 1680 × 1050 : 6 px de trop à 0,88 em) ; n° 165 : jusqu'à 0,88 em (Nombres et opérations en 1536 × 864 : 9 px de trop à 0,9 em)
 }
 function fitTwo(){
   fpnFit(); requestAnimationFrame(fitGen); requestAnimationFrame(fitTab);
@@ -35540,7 +35759,7 @@ var QR = (function(){
    jour tu rajoutes 1 ? (un peu comme sur excel je crois) » ; « oui passe au compteur de jours ») : le dossier d'une version en ligne est le numéro
    du jour de sa mise en ligne, 17.11.2026 = 1 (verDay), et non plus sa date : lien plus court de 6 à 9 caractères (code QR d'un palier plus
    petit pour environ un lien sur trois). Les dossiers datés (2026-11-07/ à 2026-11-17/) restent en ligne pour leurs liens : verDay lit les deux formes. */
-const QPC_VERSION = '4';    // dossier de cette version sur le site (…/qpc/1/) : numéro du jour de la mise en ligne (17.11.2026 = 1), à changer à chaque version mise en ligne
+const QPC_VERSION = '10';    // dossier de cette version sur le site (…/qpc/1/) : numéro du jour de la mise en ligne (17.11.2026 = 1), à changer à chaque version mise en ligne
 const QPC_BASE = 'https://outils-maths.github.io/qpc/';    // compte GitHub « outils-maths » (avec un s)
 const QPC_ONLINE = /(^|\.)github\.io$/i.test(location.hostname);    // ouverte depuis le site : seulement le mode élève (sans lien : un message)
 var STU = null;                       // mode élève (page ouverte par un lien élèves) ; null : page de l'enseignant
@@ -35571,6 +35790,7 @@ function stateFromP(P){              // réglages (comme S) d'après un lien ou 
   (P.it || []).forEach(id => { const b = ITEM_BLOCK[id]; if (b){ s.it[id] = true; s.on[b] = true; } });
   (P.blk || []).forEach(b => { if (BLOCKS[b] && (!BLOCKS[b].items.length || BLOCKS[b].base)) s.on[b] = true; });
   Object.keys(s.on).forEach(b => { const f = (P.num || {})[b]; if (BLOCKS[b].nd && typeof f === 'string') s.num[b] = {dec: f.includes('d'), rel: f.includes('r'), fra: f.includes('f')}; });
+  s.ndp = ndClean(P.nd);                                             // n° 174
   Object.entries(P.opt || {}).forEach(([k, v]) => { if (!(k in DEFAULTS.opt)) return;
     s.opt[k] = typeof DEFAULTS.opt[k] === 'number' ? Math.min(6, Math.max(2, Number(v) || DEFAULTS.opt[k])) : !!Number(v); });
   if (P.sh) s.share = P.sh;                                          // n° 36 : les parts du brouillon (fenêtre du lien)
@@ -35585,7 +35805,7 @@ function pFromState(d, t, cap){      // lien ou séance d'après des réglages (
     if (b.nd){ const n = d.num[b.id] || {}; num[b.id] = (n.dec ? 'd' : '') + (n.rel ? 'r' : '') + (n.fra ? 'f' : ''); }
     (BLOCK_OPTS[b.id] || []).concat(NUM_OPT[b.id] || []).forEach(k => { const v = d.opt[k]; if (v !== undefined && v !== DEFAULTS.opt[k]) opt[k] = typeof v === 'boolean' ? (v ? 1 : 0) : v; }); });
   const c = {}; objectives(stateFromP({it, blk, num, opt, sh: d.share})).forEach(o => { const v = (cap || {})[o.id]; if (v >= 1 && v <= 3 && !isNoStar(o)) c[o.id] = v; });
-  return {t: String(t || '').trim(), it, blk, num, opt, cap: c, sh: d.share};     // sh : les parts (n° 36 : un calcul seul à côté des priorités)
+  return {t: String(t || '').trim(), it, blk, num, opt, cap: c, sh: d.share, nd: ndOfState(d, it.concat(blk))};     // n° 174 : nd     // sh : les parts (n° 36 : un calcul seul à côté des priorités)
 }
 const lnkIdW = id => encodeURIComponent(id.replace(/\u2212/g, '-').replace(/\u2219/g, '.')).replace(/%2B/gi, '+').replace(/%3A/gi, ':');   // q2 : identifiant
 const lnkEncT = t => Array.from(t).map(c => { const k = c.charCodeAt(0);                                                       // q2 : titre
@@ -35605,7 +35825,7 @@ function linkFrag(P){                // n° 44 : forme q2 (liens courts : commen
   const sv = P.rnd && P.sd ? ids.map(id => { const d = P.sd[id] || [], c = (P.cap || {})[id] || 4, df = c >= 2 ? lnkSd0(c).slice(0, c) : [];
       return d.length && d.join('.') !== df.join('.') ? d.join('.') : ''; }) : [],
     ss = sv.some(Boolean) ? '&s=' + sv.join(',').replace(/,+$/, '') : '';                                                         // % d'étoiles (étoiles cachées) ; n° 44 : vide = par défaut
-  return 'q2' + (P.t ? '&t=' + lnkEncT(P.t) : '') + '&x=' + x.join(',') + (n.length ? '&n=' + n.join(',') : '') + (o.length ? '&o=' + o.join(',') : '') + (P.fr ? '&f=1' : '') + (P.rnd ? '&h=1' : '') + pp + ss + vidFrag(P, ids);
+  return 'q2' + (P.t ? '&t=' + lnkEncT(P.t) : '') + '&x=' + x.join(',') + (n.length ? '&n=' + n.join(',') : '') + (o.length ? '&o=' + o.join(',') : '') + (P.fr ? '&f=1' : '') + (P.rnd ? '&h=1' : '') + pp + ss + ndFrag(P, ids) + vidFrag(P, ids);   // n° 174 : &d=
 }
 const linkURL = P => QPC_BASE + QPC_VERSION + '/#' + linkFrag(P);
 // n° 121 : un lien sans &s= (étoiles cachées) veut dire l'ancien défaut 40 / 35 / 20 / 5, pas celui de ipDef : les liens déjà donnés gardent leur
@@ -35621,7 +35841,7 @@ function linkParse(str){             // un lien entier, ou seulement ce qui suit
   (f.x || '').split(',').forEach((e, i) => { const r = /^(.*?)(?:\*([1-3]))?$/.exec(e), id0 = r && dId(r[1]), id = id0 && (LINK_ALIAS[id0] || id0); if (!id) return;
     if (id[0] === '@'){ const b = id.slice(1); if (BLOCKS[b] && (!BLOCKS[b].items.length || BLOCKS[b].base)){ if (!P.blk.includes(b)){ P.blk.push(b); if (r[2]) P.cap[b] = Number(r[2]); lnkWS(P, f, b, i); } } else P.lost++; }
     else if (ITEM_BLOCK[id]){ if (!P.it.includes(id)){ P.it.push(id); if (r[2]) P.cap[id] = Number(r[2]); lnkWS(P, f, id, i); } } else P.lost++; });
-  lnkWEnd(P);
+  lnkWEnd(P); ndParse(P, f, dId);                                   // n° 174 : &d=
   if (f.p === undefined){ const z = prioOld(P.it); if (z.length) P.w0 = z; }     // n° 163 : ancien lien (sans &p=) avec des priorités et leurs opérations
   (f.n || '').split(',').forEach(e => { const i = e.indexOf('.'), b = e.slice(0, i), fl = e.slice(i + 1); if (i > 0 && BLOCKS[b] && /^[drf]*$/.test(fl)) P.num[b] = fl; });
   (f.o || '').split(',').forEach(e => { const i = e.indexOf(':'), k = e.slice(0, i), v = e.slice(i + 1); if (i > 0 && k in DEFAULTS.opt && /^\d+$/.test(v)) P.opt[k] = Number(v); });
@@ -35740,6 +35960,7 @@ function pToDraft(P){                // les exercices d'un lien dans le brouillo
   Object.values(BLOCKS).forEach(b => { const on = !!s.on[b.id]; d.on[b.id] = on; b.items.forEach(([j]) => d.it[j] = !!s.it[j]); if (b.id === 'sci') d.opt.sciSel = on;
     (BLOCK_OPTS[b.id] || []).forEach(k => d.opt[k] = on ? s.opt[k] : false);
     if (on){ if (b.nd) d.num[b.id] = clone(s.num[b.id]); (NUM_OPT[b.id] || []).forEach(k => d.opt[k] = s.opt[k]); } });
+  ndToDraft(s, d);                   // n° 174
 }
 function linkPaste(){                // « Reprendre un lien » : un lien élèves collé
   const v = $('lPaste').value.trim(); if (!v){ $('lPw').textContent = ''; return; }
@@ -35793,11 +36014,11 @@ const rateHTML = (v, id) => '<span class="lrate" data-o="' + id + '">' + [1, 2, 
 function linkRows(){
   const P = LNK.P, O = pObjs(P), st = O.filter(o => !isNoStar(o)), cv = o => P.cap[o.id] || 4, same = st.length && st.every(o => cv(o) === cv(st[0]));
   const EO = LNK.EO = pObjs(linkEff()), v = shView(draft, EO), zero = o => EO.length > 1 && !(v[o.id] > 0);      // n° 33 : part de chaque exercice (0 % : pas dans le lien)
-  const hv = O.some(o => VID_OF[o.id]); $('lEx').classList.toggle('lexv', hv);       // n° 34 : colonne « Vidéo » (cochée par défaut)
-  $('lEx').innerHTML = '<div class="lexh">Exercices</div><div class="lexh">Étoiles permises</div>' + (hv ? '<div class="lexh lvh">Vidéo</div>' : '') +
-    (st.length > 1 ? '<div class="lexa">Tous</div><div>' + rateHTML(same ? cv(st[0]) : 0, '*') + '</div>' + (hv ? '<div></div>' : '') : '') +
+  const hv = O.some(o => VID_OF[o.id]); $('lEx').classList.toggle('lexv', hv); const nd = ndLinkOn(P, O); $('lEx').classList.toggle('lexd', !!nd);   // n° 174 : colonne « Nombres »       // n° 34 : colonne « Vidéo » (cochée par défaut)
+  $('lEx').innerHTML = '<div class="lexh">Exercices</div>' + (nd ? '<div class="lexh lndh">Nombres' + ndInfHTML() + '</div>' : '') + '<div class="lexh">Étoiles permises</div>' + (hv ? '<div class="lexh lvh">Vidéo</div>' : '') +
+    (st.length > 1 ? '<div class="lexa">Tous' + (nd ? ndLinkAll(nd, O, true) : '') + '</div>' + (nd ? ndLinkAll(nd, O) : '') + '<div>' + rateHTML(same ? cv(st[0]) : 0, '*') + '</div>' + (hv ? '<div></div>' : '') : '') +
     O.map(o => { const off = LNK.off.has(o.id) ? ' loff' : '';           // case : l'exercice dans le lien ou non (l'enseignant, 07.11.2026)
-      return '<label class="lexn' + off + (!off && zero(o) ? ' lzero' : '') + '"><input type="checkbox" data-x="' + o.id + '"' + (off ? '' : ' checked') + '><span>' + stuLabel(o, true) + '</span></label><div class="lexr' + off + '">' +
+      return '<label class="lexn' + off + (!off && zero(o) ? ' lzero' : '') + '"><input type="checkbox" data-x="' + o.id + '"' + (off ? '' : ' checked') + '><span>' + stuLabel(o, true) + (nd ? ndLinkIn(nd, o, !!off || zero(o)) : '') + '</span></label>' + (nd ? ndLinkCell(nd, o, !!off || zero(o)) : '') + '<div class="lexr' + off + '">' +
         (isNoStar(o) ? '<span class="lns">sans étoiles</span>' : rateHTML(cv(o), o.id)) + '</div>' + (hv ? lvidHTML(o, !!off || zero(o)) : '') +
         (P.rnd && !off && !zero(o) && !isNoStar(o) && cv(o) >= 2 ? '<div class="lsd"><span class="lsdl">Étoiles :</span>' + ipBarHTML('st:' + o.id, lnkDist(o.id, cv(o)), 0) + '</div>' : ''); }).join('') +
     (EO.length > 1 ? '<div class="lshw"><div class="lshl">Part de chaque exercice <span class="iphint">(glisse les séparations ; la même en classe et sur la feuille)</span></div>' +
@@ -36045,7 +36266,35 @@ const IP_FIGQ = .7, ipQuadF = p => !!p && (QUADS.has(p.sub) || p.sub === 'q_voc'
 const ipFZ = (p, z) => ipQuadF(p) ? 1 : (z || 1);       // la réduction « colonnes forcées » d'une figure (n° 161), sauf quadrilatères
 // consigne de la feuille : sans « Complète » (l'enseignant, 09.11.2026 : « quand la consigne est "complète", ça me parait moins utile
 // de le mettre dans le pdf (c'est assez clair qu'il faut compléter) ») ; « Complète le tableau » et les autres consignes restent
-const ipCon = p => p.con && !/^\s*Complète\s*\.?\s*$/.test(String(p.con).replace(/<[^>]+>/g, '')) ? p.con : '';
+const ipCon = p => { const c = p.con && !/^\s*Complète\s*\.?\s*$/.test(String(p.con).replace(/<[^>]+>/g, '')) ? p.con : '';
+  return c && IP_CALC.has(p.sub) && !p.line && !p.pbd ? String(c).replace(/<span class="cprec">[\s\S]*?<\/span>/g, '').replace(/(<br\s*\/?>)?\s*Donne la réponse en [^<.]+\.?/g, '').trim() : c; };   // n° 173 : dans « Calcule AB … » (ipHL)
+/* n° 173 (l'enseignant, 26.11.2026 : « Dans les PDF générés dans qpc, en particulier dans les problèmes, il ne faut pas mettre le "fraction =" après la
+   consigne. dans les calculs de longueurs avec pythagore, il ne faut pas écrire "AB=" par exemple mais plutot "Calcule AB." » ; QCM : « Problèmes + phrases »,
+   « Pythagore et Thalès », « Feuille seulement », corrigé « AB = 15 m en rouge ») : sur la feuille seulement (l'écran garde « AB = ? » pour la saisie),
+   - la ligne « nom en mots = ? » (« fraction = », « distance qui reste = ») est cachée : cases « problèmes » (PB_IDS), et autres questions en phrase dont la
+     consigne pose la question (« ? » : fraction d'un nombre, pourcentages) ; pas « P = », « x = », « p(4) = », ni les questions sans nom (« ? » seul) ;
+     pente : la consigne « Pente d'une route » ne dit pas quoi chercher, la ligne reste ;
+   - Pythagore (calcul d'une longueur, dans l'espace) et Thalès (calcul d'une longueur) : « Calcule AB. » (avec la précision : « Calcule AG : valeur exacte,
+     puis arrondie au dixième. » ; avec l'unité : « Calcule ED. Donne la réponse en m. »), au-dessus de la ligne « AB = ? », cachée.
+   La ligne cachée garde sa place (visibility) : la version « Réponses » la montre au même endroit, réponse en rouge (« AB = 15 m ») ; rien ne bouge entre
+   les versions, et l'élève a une ligne de plus dans sa place pour répondre. */
+const IP_CALC = new Set(['py_calc', 'py_esp', 'th_calc']);
+const ipPT = s => String(s == null ? '' : s).replace(/<[^>]+>/g, ' ').replace(/[\s\u00a0\u202f]+/g, ' ').trim();
+function ipHL(p){             // {hide : la ligne du calcul cachée (version élève), ca : la consigne « Calcule AB. » (HTML) ou ''}
+  if (p._iphl) return p._iphl;
+  const r = {hide: false, ca: ''};
+  if (!p.line && !p.pbd){
+    if (IP_CALC.has(p.sub)){
+      const c = String(p.con || ''), pr = /<span class="cprec">Valeur exacte, puis arrondie ([^<]*)<\/span>/.exec(c), un = /Donne la réponse en ([^<.]+)/.exec(c);
+      r.hide = true; r.ca = '<span class="nw">Calcule ' + p.q + (pr ? '</span>\u00a0: valeur exacte, puis arrondie ' + pr[1].trim() + '.' : '.</span>') +
+        (un ? ' Donne la réponse en\u00a0' + un[1].trim() + '.' : '');
+    } else {
+      const lab = ipPT(p.q), word = /[a-zà-ÿ]{3,}/.test(lab) && !/[()=<>+∙:−\-]/.test(lab);
+      if (word && (PB_IDS.includes(p.sub) || /\?/.test(ipPT(ipCon(p))))) r.hide = true;
+    }
+  }
+  return p._iphl = r;
+}
 // pointillés : une largeur d'un nombre impair de px (Chromium dessine sinon deux points collés, un tiret, au début du pointillé : mesuré
 // sur le PDF à 600 dpi) ; le signe qui suit les pointillés reste avec eux (« cercle ……… . » : le point seul en début de ligne)
 const ipQb = (mm, nd) => '<span class="qbox' + (nd ? ' ipnd' : '') + '" style="width:' + (2 * Math.max(4, Math.round((mm * IP_PX - 1) / 2)) + 1) + 'px;min-width:0">?</span>';   // nd : sans pointillés (n° 124)
@@ -36118,7 +36367,7 @@ function ipDraw(o, lv, tries){   // n° 117 : une question de l'exercice o, à l
     const fl = flagsOf(o.bl);
     for (let t = 0; t < (tries || 4); t++){
       let q = null;
-      try { q = geo ? geoOne([o, lv], [], 'P', null)[0] : genOne(subOf(o, lv, fl), lv, fl); } catch (e) { console.error('feuille', o.id, lv, e); return null; }
+      try { q = geo ? geoOne([o, lv], [], 'P', null)[0] : ndGen(o, lv, f2 => genOne(subOf(o, lv, f2), lv, f2)); } catch (e) { console.error('feuille', o.id, lv, e); return null; }   // n° 174 : ndGen
       if (!q) return null;
       if (q.key == null || !IP.keys.has(q.key)) return q;
       if (geo) return null;                    // géométrie : rien de nouveau à ce niveau (geoOne reprend une question déjà sur la feuille)
@@ -36184,7 +36433,7 @@ function ipQaHTML(p, line, con, work, side, fz){  // la question : consigne (si 
   const fk = (IP_FIGK[ITEM_BLOCK[p.sub]] || 1) * (ipQuadF(p) ? IP_FIGQ : 1), c = con && ipCon(p) ? '<div class="con">' + ipNb(ipCon(p)) + '</div>' : '',
     z = ipFZ(p, fz && fz < 1 ? fz : 1),          // n° 161 : figure et ses étiquettes réduites (au plus 20 %) quand on force les colonnes (n° 168 : pas les quadrilatères)
     f = p.fig ? '<div class="fig"' + (fk !== 1 || z < 1 ? ' style="font-size:' + (26 * fk * z).toFixed(z < 1 || ipQuadF(p) ? 2 : 1) + 'pt"' : '') + '>' + p.fig + '</div>' : '', d = p.dat ? '<div class="dat">' + ipNb(p.dat) + '</div>' : '',
-    r = '<div class="calc">' + line + '</div>' + (work > .05 ? '<div class="ip-wk" style="height:' + work.toFixed(2) + 'mm"></div>' : '');
+    H = ipHL(p), r = (H.ca ? '<div class="con ip-ca">' + H.ca + '</div>' : '') + '<div class="calc' + (H.hide ? ' ip-hl' : '') + '">' + line + '</div>' + (work > .05 ? '<div class="ip-wk" style="height:' + work.toFixed(2) + 'mm"></div>' : '');
   return '<div class="qa">' + c + (side && f ? '<div class="ip-sd">' + (side === 2 ? '<div class="ip-sl">' + f + d + '</div>' : f) + '<div class="ip-sr">' + (side === 2 ? '' : d) + r + '</div></div>' : f + d + r) + '</div>';
 }
 function ipPrep(p){           // une fois par question : pointillés de la largeur de la réponse, largeur nécessaire, réponse de l'encadré
@@ -36212,6 +36461,7 @@ function ipPrep(p){           // une fois par question : pointillés de la large
   const lineC = line.replace(IP_QBRX, (x, a, q) => a + '<span class="ipbm"></span>' + q + '<span class="ipcr"><span class="ipci"><span class="ipbm"></span>' + (CR[ck++] || '') + '</span></span></span>');
   const I = {line, lineC, key, fw: wd('.fig'), rw: Math.max(wd('.calc'), Math.min(45, wd('.dat'))), cl: ipCon(p).replace(/<[^>]+>/g, '').length, h: {}};
   I.need = Math.max(I.fw, wd('.calc'), Math.min(50, wd('.dat'))); I.nf = Math.max(wd('.calc'), Math.min(50, wd('.dat')));   // n° 161 : nf, la largeur sans la figure
+  const ca = ipHL(p).ca; if (ca && ipPT(ca).length <= 32){ m.innerHTML = '<div class="qa"><div class="con ip-ca">' + ca + '</div></div>'; mathify(m); const cw = wd('.con'); I.need = Math.max(I.need, cw); I.nf = Math.max(I.nf, cw); }   // n° 173
   if (ipCon(p) && I.cl <= 32){ m.innerHTML = '<div class="qa"><div class="con">' + ipNb(ipCon(p)) + '</div></div>'; mathify(m); const cw = wd('.con'); I.need = Math.max(I.need, cw); I.nf = Math.max(I.nf, cw); }   // une consigne courte tient sur sa ligne
   m.innerHTML = '<div class="ip-ans"><span class="ip-ai"><b>mm)</b> ' + key + '</span></div>'; mathify(m);
   const r = m.querySelector('.ip-ai').getBoundingClientRect(); I.kw = r.width / IP_PX; I.kh = r.height / IP_PX;
@@ -36608,8 +36858,20 @@ function ipScale(){           // l'aperçu : deux pages côte à côte quand ell
     if (need > 0) v.style.paddingTop = (12 + Math.ceil(need)) + 'px'; }
   ipWbPos(v);       // n° 159 : la taille du − place + suit l'échelle de l'aperçu (--iprl)
 }
-function ipShow(L){ ipUnprint(); const v = $('ipPrev'), h = ipPagesHTML(L); v.innerHTML = h; v._cor = false; IP.hsig = h; ipSvUI();   // n° 150 : IP.hsig, la feuille affichée
-  v._det = false; mathify(v); ipLetAlign(v); ipColSep(v); ipWbPos(v); if (IP.cor) ipCorPrep(v); if (IP.cor === 2) ipDetPrep(v); ipScale();
+/* n° 173 (l'enseignant, 26.11.2026 : « quand on clique dans le preview du PDF sur les boutons qui changent la place pour répondre, en particulier quand on est
+   zoomé j'ai remarqué que ça peut nous ramener plus haut dans la page (vers la part d'étoiles). ça ne semble pas le faire à chaque fois ») : entre le
+   remplacement des pages et ipScale, les .ip-pw n'avaient pas encore de taille (aperçu de 68 px) : la fenêtre, défilée plus bas que ce qui restait, remontait
+   d'un coup (seulement quand on était assez bas : souvent avec l'aperçu agrandi). L'aperçu garde sa hauteur jusqu'à ipScale (min-height) ; et après un clic
+   dans l'aperçu (− place +, − colonnes +, ↻), l'aperçu reste au même endroit de l'écran, même si la liste des exercices au-dessus change de hauteur (ipKeep). */
+function ipKeep(){            // à appeler avant un changement ; rend la fonction qui remet l'aperçu au même endroit de l'écran
+  const v = $('ipPrev'); let sc = v && v.parentElement;
+  while (sc && !(sc.scrollHeight > sc.clientHeight + 1 && /auto|scroll/.test(getComputedStyle(sc).overflowY))) sc = sc.parentElement;
+  if (!sc) return () => {};
+  const y0 = v.getBoundingClientRect().top;
+  return () => { const dy = v.getBoundingClientRect().top - y0; if (Math.abs(dy) >= 1) sc.scrollTop += dy; };
+}
+function ipShow(L){ ipUnprint(); const v = $('ipPrev'), h = ipPagesHTML(L), mh = v.offsetHeight; if (mh) v.style.minHeight = mh + 'px'; v.innerHTML = h; v._cor = false; IP.hsig = h; ipSvUI();   // n° 150 : IP.hsig, la feuille affichée
+  v._det = false; mathify(v); ipLetAlign(v); ipColSep(v); ipWbPos(v); if (IP.cor) ipCorPrep(v); if (IP.cor === 2) ipDetPrep(v); ipScale(); v.style.minHeight = '';      // n° 173
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (v.contains(v.querySelector('.ip-cell'))){ ipLetAlign(v); ipColSep(v); ipWbPos(v); if (v._cor){ v._cor = false; ipCorPrep(v); } if (v._det){ v._det = false; ipDetPrep(v); } } }); }
 /* n° 124 (l'enseignant, 17.11.2026 : « les lettres des items sont trop haut par rapport aux calculs (je crois que c'est à cause des fractions) ») :
    quand la question commence par son calcul (ni consigne, ni figure, ni données), la lettre a) est centrée sur la hauteur du calcul (sa ligne,
@@ -36759,6 +37021,7 @@ function ipRefresh(live){     // après chaque changement de la fenêtre : régl
   if (!IP){ ipInit(); ipLoad(); }       // n° 117 : réglages gardés dans le navigateur
   const sig = JSON.stringify([E.num, E.opt]);
   if (IP.sig !== sig){ IP.sig = sig; ipReset(); }
+  ndIpCheck(E);                      // n° 174 : un exercice dont le % a changé : ses questions refaites
   IP.E = E; IP.O = O; IP.U = ipUnits(); IP.S = Object.assign(stateFromP(E), {two: false, twoSame: false});
   ipShares(); ipBrkCheck(); if (!live) ipUI();
   let L = null;
@@ -36790,9 +37053,10 @@ $('ipSec').addEventListener('click', e => {
   const t = e.target; if (!IP) return;
   const pg = t.closest('button[data-ipp]'); if (pg){ IP.pages = Math.max(1, Math.min(ipPgMax(), IP.pages + Number(pg.dataset.ipp))); $('ipPg').textContent = IP.pages; ipSync(); return; }
   const fm = t.closest('button[data-ipf]'); if (fm){ if (IP.fmt !== fm.dataset.ipf){ IP.fmt = fm.dataset.ipf; IP.pages = Math.min(IP.pages, ipPgMax()); ipSync(true); } return; }   // n° 116
+  const kp = t.closest('#ipPrev') ? ipKeep() : null;                  // n° 173 : un clic dans l'aperçu ne fait pas sauter la fenêtre
   const w = t.closest('button[data-ipw]'); if (w){ (w.dataset.ipw === '*' ? IP.O.map(o => o.id) : w.dataset.ipw.split(',')).forEach(id => { const x = ipEx(id); x.w = Math.max(-2, Math.min(2, x.w + Number(w.dataset.d))); });   // n° 117 : « * » = tous
-    ipSync(true); return; }
-  const cb = t.closest('button[data-ipc]'); if (cb){ cb.dataset.ipc.split(',').forEach(id => { ipEx(id).c = Math.max(1, Math.min(IP_CMAX, Number(cb.dataset.c))); }); ipSync(true); return; }   // n° 161
+    ipSync(true); if (kp) kp(); return; }
+  const cb = t.closest('button[data-ipc]'); if (cb){ cb.dataset.ipc.split(',').forEach(id => { ipEx(id).c = Math.max(1, Math.min(IP_CMAX, Number(cb.dataset.c))); }); ipSync(true); if (kp) kp(); return; }   // n° 161
   const mo = t.closest('button[data-ipo]'); if (mo){ e.preventDefault(); if (!mo.disabled) ipOrdMove(mo.dataset.ipo, Number(mo.dataset.d)); return; }   // n° 37 : ▲ ▼
   if (t.closest('.ipdg')){ e.preventDefault(); return; }                // la poignée (dans l'étiquette « mélanger » : ne coche rien)
   if (t.closest('#ipNew')){ ipReset(); ipSync(true); return; }
@@ -36801,7 +37065,7 @@ $('ipSec').addEventListener('click', e => {
   // n° 152 : plus de bouton « Enregistrer aussi une version enseignant » (#ipSvT) ni « Enregistrer PDF » (#ipPrint)
   if (t.closest('#pdxPrn')){ ipSync(true); ipPrint(); return; }         // n° 138 : l'impression d'avant, « ou imprimer »
   if (t.closest('.ip-ql')){ e.preventDefault(); tryLink(); return; }        // n° 119 : le code QR de l'aperçu, comme « Essayer »
-  const rl = t.closest('.ip-rl'); if (rl){ e.preventDefault(); ipReload(Number(rl.dataset.ipr)); return; }     // n° 117 : avant le clic qui agrandit la page
+  const rl = t.closest('.ip-rl'); if (rl){ e.preventDefault(); ipReload(Number(rl.dataset.ipr)); if (kp) kp(); return; }     // n° 117 : avant le clic qui agrandit la page
   if (t.closest('.ip-wb')) return;                                     // n° 154 : pas d'agrandissement en cliquant à côté des boutons
   if (t.closest('.ip-pw')){ $('ipPrev').classList.toggle('ipbig'); ipScale(); }
 });
@@ -36922,7 +37186,8 @@ function pbiHTML(id){
   const t = {pa_pb: 'Figures composées : quelles figures les problèmes utilisent', v_pb: 'Solides composés : quels solides les problèmes utilisent', at_pb: 'Solides composés : quels solides les problèmes utilisent'}[id];
   return t ? '<button type="button" class="pbinf" data-pbi="' + id + '" title="' + t + '" aria-label="' + t + '">' + PBI_SVG + '</button>' : '';
 }
-function pbiOpen(id){                // n° 103 (l'enseignant, 15.11.2026 : « sois concis, ne donne pas d'exemple d'exercice, juste les figures qui sont admises ») : la règle, les années, « coché → admis »
+function pbiOpen(id){
+  if (id === 'nd'){ ndInfo(); return; }      // n° 174                // n° 103 (l'enseignant, 15.11.2026 : « sois concis, ne donne pas d'exemple d'exercice, juste les figures qui sont admises ») : la règle, les années, « coché → admis »
   const fig = id === 'pa_pb';
   const pbiTab = R => '<table class="pitab"><tr><th>Coché</th><th>Admis</th></tr>' + R.map(([a, b]) => '<tr><td>' + a + '</td><td>' + b + '</td></tr>').join('') + '</table>';
   $('piTit').textContent = fig ? 'Problèmes : les figures composées' : 'Problèmes : les solides composés';
@@ -37123,15 +37388,15 @@ function sncMsg(m){ const el = $('sncMsg'); if (el) el.textContent = m || ''; }
 function sncSnap(d){                 // la séance d'après des réglages : comme un lien, avec les parts exactes ; aucune case décochée
   const P = pFromState(d, '', null), ks = new Set(objectives(stateFromP(Object.assign({}, P, {sh: d.share || {}})), true).map(shK)), sh = {};
   Object.keys(d.share || {}).sort().forEach(k => { const v = d.share[k]; if (ks.has(k) && shHas(v)) sh[k] = Math.round(v * 1e4) / 1e4; });
-  return {it: P.it.slice(), blk: P.blk.slice(), num: Object.assign({}, P.num), opt: Object.assign({}, P.opt), sh, off: []};
+  return {it: P.it.slice(), blk: P.blk.slice(), num: Object.assign({}, P.num), opt: Object.assign({}, P.opt), sh, nd: clone(P.nd || {}), off: []};   // n° 174 : nd
 }
 const SNC_AL = id => LINK_ALIAS[id] || id;
 function sncEff(se){ const t = se.id && SNC_TMP[se.id]; return t ? Object.assign({}, se.P, t) : se.P; }   // n° 51 : avec les changements pour cette fois
 function sncState(se, base, all){    // les réglages de la séance (exercices, cases, parts) sur ceux de base ; all : aussi les exercices décochés dans la séance
   const P = sncEff(se), sh = {};
   Object.entries(sncObj(P.sh)).forEach(([k, v]) => { sh[k[0] === '~' ? '~' + SNC_AL(k.slice(1)) : SNC_AL(k)] = v; });
-  const r = stateFromP({it: P.it.map(SNC_AL), blk: P.blk, num: sncObj(P.num), opt: sncObj(P.opt), sh}), st = clone(base);
-  st.on = r.on; st.it = r.it; st.opt = r.opt; st.share = clone(r.share || {});
+  const r = stateFromP({it: P.it.map(SNC_AL), blk: P.blk, num: sncObj(P.num), opt: sncObj(P.opt), sh, nd: sncObj(P.nd)}), st = clone(base);   // n° 174 : nd
+  st.on = r.on; st.it = r.it; st.opt = r.opt; st.share = clone(r.share || {}); st.ndp = clone(r.ndp || {});   // n° 174
   st.num = clone(base.num || {}); Object.keys(r.on).forEach(b => { if (BLOCKS[b] && BLOCKS[b].nd && typeof sncObj(P.num)[b] === 'string') st.num[b] = clone(r.num[b]); });
   if (!all) (Array.isArray(P.off) ? P.off : []).forEach(k => {          // les exercices décochés dans la séance
     if (k[0] === '~'){ delete st.share['~' + SNC_AL(k.slice(1))]; return; }       // calculs seuls à côté des priorités : plus posés

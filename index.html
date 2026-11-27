@@ -683,7 +683,7 @@ body.stumsg .stuM{display:flex;flex:1;align-items:center;justify-content:center;
 .ltit input{flex:1;min-width:0;font:inherit;padding:.4em .6em;border:1px solid var(--line);border-radius:.45em}
 .lex{display:grid;grid-template-columns:minmax(0, 1fr) auto;gap:.18em 1em;align-items:center}
 .lexh{font-weight:700;color:var(--muted);font-size:.85em;border-bottom:1px solid var(--line);padding-bottom:.15em}
-.lexa{font-weight:700}
+.lexa{font-weight:700;font-size:1.08em}
 .lexn{min-width:0;overflow-wrap:anywhere}
 .lns{color:var(--muted);font-size:.85em}
 .lopth{margin-top:.9em;padding-top:.6em;border-top:1px solid var(--line);font-weight:700;color:var(--muted);font-size:.85em}
@@ -696,11 +696,22 @@ body.stumsg .stuM{display:flex;flex:1;align-items:center;justify-content:center;
 .lnone{color:var(--muted);margin:.2em 0 .4em}
 .lempty .ltit,.lempty .lopth,.lempty .lfr,.lempty .lright{display:none}
 .lempty .lbody{grid-template-columns:1fr}
-.lrate{display:inline-flex;white-space:nowrap}
-.lrate button{background:none;border:0;padding:0 .07em;font-size:1.3em;line-height:1.05;color:#d3d8de;cursor:pointer}
-.lrate button.f{color:var(--gold)}
-.lrate:hover button{color:var(--gold)}
-.lrate button:hover~button{color:#d3d8de}
+.lrate{display:inline-flex;gap:.22em;white-space:nowrap}   /* n° 177 : quatre petits boutons 1★ 2★ 3★ 4★ (avant : quatre étoiles « jusqu'à ») */
+.lrate button{font:inherit;font-size:.74em;font-weight:700;line-height:1;padding:.28em .38em;border-radius:.4em;border:1.5px solid #d9d6cc;color:#b3bac2;background:#fff;cursor:pointer}
+.lrate button .lrs{color:#c9ced4}
+.lrate button.f{background:#fff3d2;border-color:var(--gold);color:#6b4d00}
+.lrate button.f .lrs{color:var(--gold)}
+.lrate button.mx{border-style:dashed;border-color:var(--gold);color:#9a7a2a}
+.lrate button.mx .lrs{color:var(--gold);opacity:.55}
+.lrate button:hover{border-color:var(--gold)}
+.lrate button.one{cursor:default}
+.lexa,.lexat,.lex > .lnd.lnda{padding:.3em 0 .55em}   /* n° 177 : ligne « Tous » plus aérée et un peu plus grosse */
+.lexat{display:flex;align-items:center}
+.lexat .lrate{font-size:1.12em}
+.lsd.lsda{margin:-.3em 0 .5em}
+.lex > label.lexn,.lex > .lexr,.lex > .lnd:not(.lnda),.lex > .lvid{padding-top:.32em}   /* n° 177 (l'enseignant : « espace un peu plus verticalement entre chaque exo ») */
+@media (min-width:1201px){ .lex.lexd > .lnd.lnda{font-size:.78em} }
+@media (max-width:1200px){ .lrate{gap:.15em} .lrate button{padding:.26em .3em} }   /* n° 177 : écran étroit, boutons un peu plus serrés (le nom de l'exercice garde sa place) */
 .lright{display:flex;flex-direction:column;align-items:center;gap:.6em;max-width:21em}
 .lqr svg{display:block;width:min(8.5em, 50vw);height:auto;border:1px solid var(--line)}   /* n° 32 : 8,5 em (avant 13 em) ; copie et PNG inchangés */
 .lbtns{display:flex;flex-wrap:wrap;justify-content:center;gap:.45em}
@@ -7335,10 +7346,67 @@ GL('rsum', [1, 2, 3, 4], lv => {
   // avec parenthèses : le calcul de départ sur sa propre ligne (sinon le détail devient trop large)
   return {q: '<span>' + qh + '</span>', key: 'rs' + qh, a: fmtNum(tot), r: DV(tot), chk: {rsum: [C, tot]}, det: () => paren ? DIV(qh, 'nw') + steps('', rows) : steps(qh, rows)};
 });
+/* ---------- nombres relatifs : plusieurs facteurs (n° 177) ----------
+   L'enseignant, 27.11.2026 : « dans le bloc nombres relatifs, on a déjà un "plusieurs termes" : il en faudrait un aussi pour "plusieurs facteurs", juste
+   à droite des multiplications. » QCM : seulement des multiplications (les divisions restent dans « division ») ; les règles proposées, « mais possibilité
+   d'avoir 5 facteurs dès 2 étoiles ». Tout se fait de tête (bornes comme le calcul mental) :
+   ★ 3 facteurs de 2 à 5, un ou deux négatifs, produit ≤ 60 ; ★★ 3, 4 ou 5 facteurs de 1 à 6 (« 1 » moins souvent, deux au plus), produit ≤ 120 ;
+   ★★★ 4 ou 5 facteurs, une paire à regrouper (2 et 5, 4 et 25, 2 et 50, 5 et 20 ; jamais côte à côte), les autres au plus 30 ensemble ;
+   ★★★★ 5 ou 6 facteurs, une paire (les autres au plus 60) ou, avec 6 facteurs, deux paires (10 ∙ 10 ou 10 ∙ 100 ; les autres au plus 6) ; environ 1 fois sur 8 un facteur 0
+   (le produit vaut 0) ; avec « décimaux », une fois sur deux la paire a un nombre à virgule (0,5 et 4, 0,2 et 5, 2,5 et 4, 0,25 et 4, 0,5 et 2).
+   Nombre de négatifs : pair ou impair une fois sur deux (le signe de la réponse) ; au moins deux dès ★★★ ; nombre de facteurs : le moins sorti de la
+   séance (TALLY rxn…). Détail : les signes (comme la multiplication), « k facteurs négatifs : pair ⟹ + », le produit sans les signes (paires
+   regroupées et fléchées, comme la commutativité du calcul mental), puis la réponse. Priorités et problèmes : comptée comme une multiplication. */
+const RX_PAIRS = [[2, 5], [4, 25], [2, 50], [5, 20]], RX_DPAIRS = [[.5, 4], [.2, 5], [2.5, 4], [.25, 4], [.5, 2]];
+function rxPlace(n, np){ // places des np paires parmi n facteurs, jamais côte à côte : [[i, j], …] (i < j) ou null
+  for (let t = 0; t < 60; t++){ const pos = shuffle([...Array(n).keys()]), R = [];
+    for (let p = 0; p < np; p++){ const i = pos[2 * p], j = pos[2 * p + 1]; if (Math.abs(i - j) < 2) break; R.push(i < j ? [i, j] : [j, i]); }
+    if (R.length === np) return R; }
+  return null;
+}
+function rxCom(vals, pairs){ // le produit sans les signes : paires regroupées (flèches et couleurs comme comQ), sans réponse en rouge (le signe vient après)
+  const op = '∙', toks = join(vals, op), used = pairs.flat(), rest = vals.map((v, i) => i).filter(i => !used.includes(i)), COLS = [GREEN, PINK], CL = ['cC', 'cD'];   // vert, rose : le bleu et l'orange sont ceux des signes (une couleur = un sens)
+  const r = vals.reduce((p, v) => mulV(p, v)), at = {}, T = [], idx = {}; pairs.forEach(([i, j], n) => { at[i] = n; at[j] = n; });
+  vals.forEach((v, i) => { if (i) T.push({t: ' ' + op + ' '}); idx[i] = T.length; T.push({t: stripTags(fmtV(v)), c: at[i] !== undefined ? COLS[at[i]] : null}); });
+  const part = pairs.map(([i, j]) => mulV(vals[i], vals[j]));
+  const rows = [pairs.map(([i, j], n) => H(CL[n], '(' + valHTML(vals[i]) + ' ' + op + ' ' + valHTML(vals[j]) + ')')).concat(rest.map(i => valHTML(vals[i]))).join(' ' + op + ' '),
+    part.map((v, n) => H(CL[n], valHTML(v))).concat(rest.map(i => valHTML(vals[i]))).join(' ' + op + ' ')];
+  if (part.length > 1 && rest.length) rows.push(valHTML(part.reduce((p, v) => mulV(p, v))) + ' ' + op + ' ' + rest.map(i => valHTML(vals[i])).join(' ' + op + ' '));
+  rows.push(valHTML(r));
+  return arcExpr(T, pairs.map(([i, j], n) => [idx[j], idx[i], COLS[n]])) + steps(qOf(toks), rows);
+}
+GL('rprod', [1, 2, 3, 4], lv => {
+  const NS = [0, [3], [3, 4, 5], [4, 5], [5, 6]][lv], cN = x => TALLY['rxn' + lv + x] || 0, mn = Math.min(...NS.map(cN)), n = pick(NS.filter(x => cN(x) === mn));
+  const zero = lv === 4 && chance(.125), odd = chance(.5), lo = lv === 1 ? 2 : 1, hi = [0, 5, 6, 9, 9][lv];
+  for (let t = 0; t < 400; t++){
+    const a = Array(n).fill(0); let pairs = [], dec = false;
+    if (lv >= 3){ pairs = rxPlace(n, lv === 4 && n === 6 && chance(.6) ? 2 : 1); if (!pairs) continue;
+      pairs.forEach(([i, j], q) => { let p = q === 0 && lv === 4 && DEC && chance(.5) ? (dec = true, pick(RX_DPAIRS)) : pick(RX_PAIRS); if (chance(.5)) p = [p[1], p[0]]; a[i] = p[0]; a[j] = p[1]; }); }
+    if (pairs.length === 2 && pairs.reduce((p, [i, j]) => p * a[i] * a[j], 1) > 1000) continue;           // deux paires : 10 ∙ 10 ou 10 ∙ 100 (pas 100 ∙ 100)
+    const free = a.map((v, i) => v ? -1 : i).filter(i => i >= 0); free.forEach(i => { a[i] = lo === 1 && chance(.6) ? ri(2, hi) : ri(lo, hi); });   // un « 1 » (ou −1) moins souvent
+    if (free.filter(i => a[i] === 1).length > (lv === 2 ? 2 : 1)) continue;                    // « 1 » : deux au plus à ★★, un ensuite (aucun à ★)
+    const rest = free.reduce((p, i) => p * a[i], 1);
+    if (rest > [0, 60, 120, 30, pairs.length === 2 ? 6 : 60][lv]) continue;
+    if (lv >= 3 && free.length > 1 && free.every(i => a[i] === 1)) continue;
+    let z = -1; if (zero){ if (!free.length) continue; z = pick(free); a[z] = 0; }
+    const cand = a.map((v, i) => v ? i : -1).filter(i => i >= 0), ks = [];
+    for (let k = lv >= 3 ? 2 : 1; k <= Math.min(cand.length, lv === 1 ? 2 : lv === 2 ? 3 : 6); k++) if ((k % 2 === 1) === odd) ks.push(k);
+    if (!ks.length) continue;
+    const k = pick(ks), NI = new Set(shuffle(cand.slice()).slice(0, k)), vals = a.map((v, i) => DV(NI.has(i) ? -v : v)), toks = join(vals, '∙');
+    const r = z >= 0 ? I(0) : vals.reduce((p, v) => mulV(p, v));
+    return mk(toks, r, () => {
+      if (z >= 0) return DIV(toks.map(t => typeof t === 'string' ? t : num(t) === 0 ? H('cC', '0') : valHTML(t, t.p)).join(' ') + ' = ' + ANS('0')) + DIV('un facteur vaut 0 ⟹ le produit vaut 0', 'gr');
+      const sg = signs(vals.map(v => neg(v) ? '−' : '+'), '∙', neg(r) ? '−' : '+'), cnt = DIV(k + ' facteur' + (k > 1 ? 's' : '') + ' négatif' + (k > 1 ? 's' : '') + ' : ' + (k % 2 ? 'impair' : 'pair') + ' ⟹ ' + (k % 2 ? '−' : '+'), 'gr');
+      const AV = vals.map(absV), body = pairs.length ? rxCom(AV, pairs) : steps(AV.map(valHTML).join(' ∙ '), [valHTML(absV(r))]);
+      return sg + cnt + body + DIV('⟹ ' + ANS(valHTML(r)), 'fin');
+    }, {cnt: 'rxn' + lv + n, chk: {rprod: {lv, n, k, zero: z >= 0, np: pairs.length, dec, A: a.slice(), r: num(r)}}});
+  }
+  return null;
+});
 // priorités des opérations avec des nombres relatifs (au moins un négatif ; deux dès ★★)
 // « priorités » cochée dans un bloc : toutes les questions de calcul de ce bloc sont des calculs avec priorités, faits avec les opérations
 // cochées (toutes si aucune) ; dans le bloc des relatifs, des puissances si « puissances » est cochée (objectives() retire ces cases)
-const RPRIO_OPS = {radd: ['+'], rsub: ['−'], rsum: ['+', '−'], rmul: ['∙'], rdiv: [':']}, FPRIO_OPS = {'f+': ['+', '−'], 'f∙': ['∙'], 'f:': [':']};
+const RPRIO_OPS = {radd: ['+'], rsub: ['−'], rsum: ['+', '−'], rmul: ['∙'], rprod: ['∙'], rdiv: [':']}, FPRIO_OPS = {'f+': ['+', '−'], 'f∙': ['∙'], 'f:': [':']};
 const checkedOps = map => { const o = new Set(); Object.entries(map).forEach(([id, ops]) => { if (S.it[id]) ops.forEach(x => o.add(x)); }); return o.size ? ALLOPS.filter(x => o.has(x)) : ALLOPS.slice(); };
 // nombre d'opérations : limiteur du bloc (S.opt.rnmin, S.opt.rnmax, 2 à 3 au départ ; l'enseignant, 04.11.2026, 4e conversation : « fais pareil
 // pour les autres limiteurs ») : au hasard dans la plage à tous les niveaux, comme les fractions (le moins sorti de la séance, TALLY rpn…) ;
@@ -11839,8 +11907,8 @@ const TABS = [
       rows: [[null, [['m+', 'addition'], ['m−', 'soustraction'], ['m∙', 'multiplication'], ['m:', 'division'], ['liv', 'livrets (2 à 12)'], ['livd', 'livrets (divisions)']]],
         [null, [['m10', 'multiplier, diviser par 10, 100, 0,1…'], ['m10x', 'multiplier, diviser par 600, 0,3…'], ['mcom', 'commutativité (4 ∙ 7 ∙ 25)'], ['mdis', 'distributivité (99 ∙ 6)']]]]},
     {id: 'col', name: 'Calculs à poser en colonne', nd: ['dec'], kw: 'papier poses retenues potence problemes situations courses argent monnaie', rows: [[null, [['p+', 'addition'], ['p−', 'soustraction'], ['p∙', 'multiplication'], ['p:', 'division']]], [null, [['p_pb', 'problèmes', 'pbx']]]]},          // n° 115 : problèmes, sur leur ligne (l'enseignant, 16.11.2026)
-    {id: 'rel', name: 'Nombres relatifs', nd: ['dec'], kw: 'negatifs positifs signes regle des signes comparer ecriture simplifiee somme algebrique problemes situations temperatures altitudes',
-      rows: [[null, [['rcmp', 'comparer'], ['radd', 'addition'], ['rsub', 'soustraction'], ['rsum', 'plusieurs termes']]], [null, [['rmul', 'multiplication'], ['rdiv', 'division'], ['rpow', 'puissances']]], [null, [['rprio', 'priorités des opérations', 'prx'], ['r_pb', 'problèmes', 'pbx']]]],          // n° 88 : problèmes, sur leur ligne (l'enseignant, 14.11.2026)
+    {id: 'rel', name: 'Nombres relatifs', nd: ['dec'], kw: 'negatifs positifs signes regle des signes comparer ecriture simplifiee somme algebrique plusieurs facteurs produit problemes situations temperatures altitudes',
+      rows: [[null, [['rcmp', 'comparer'], ['radd', 'addition'], ['rsub', 'soustraction'], ['rsum', 'plusieurs termes']]], [null, [['rmul', 'multiplication'], ['rprod', 'plusieurs facteurs'], ['rdiv', 'division'], ['rpow', 'puissances']]], [null, [['rprio', 'priorités des opérations', 'prx'], ['r_pb', 'problèmes', 'pbx']]]],          // n° 88 : problèmes, sur leur ligne (l'enseignant, 14.11.2026)
       },          // n° 165 : plus d'explication « Priorités cochées : chaque calcul mélange les opérations cochées. » (elle redisait « (sur les opérations cochées) ») : place pour « problèmes » de Divisibilité
     {id: 'pri', name: 'Priorités des opérations', nd: ['dec', 'rel', 'fra'], opts: 'prio', kw: 'parentheses puissances racines carrees barre de fraction'},
     {id: 'ari', name: 'Divisibilité et nombres premiers', kw: 'diviseurs multiples criteres facteurs premiers problemes situations bouquets bus engrenages',
@@ -11955,11 +12023,11 @@ const KEY = 'questions-champions-v5', KEY4 = 'questions-champions-v4', KEY3 = 'q
 const GEN_KEYS = ['two', 'twoSame', 'hideStars', 'starsDet', 'bg', 'gnum'];   // plus de nombre de questions, de % ni d'ordre (05.11.2026, 11e conversation)   // onglet Général (le bouton « FR » n'est pas gardé : désactivé à chaque ouverture, l'enseignant, 27.10.2026) : gardé d'une ouverture à l'autre (navigateur)
 const SES_KEYS = ['on', 'it', 'num', 'opt', 'share', 'ndp'];   // n° 174 : ndp, les % de décimaux, relatifs, fractions
 // n° 174 : exercice → cases (décimaux, relatifs, fractions) qui changent ses questions, et niveaux où il en met (mesurés sur la n° 173 ; « Respecter les étoiles »)
-var ND_LV = {'m+': {dec: '1234', rel: '1234'}, 'm−': {dec: '1234', rel: '1234'}, 'm∙': {dec: '1234', rel: '1234'}, 'm:': {dec: '1234', rel: '1234'}, 'm10': {dec: '234'}, 'm10x': {dec: '234'}, 'mcom': {dec: '34', rel: '4'}, 'mdis': {dec: '4'}, 'p+': {dec: '1234'}, 'p−': {dec: '1234'}, 'p∙': {dec: '1234'}, 'p:': {dec: '1234'}, 'p_pb': {dec: '1234'}, 'radd': {dec: '4'}, 'rsub': {dec: '4'}, 'rsum': {dec: '4'}, 'rmul': {dec: '4'}, 'rdiv': {dec: '4'}, 'r_pb': {dec: '1234'}, 'pri': {dec: '1234', rel: '1234', fra: '1234'}, 'fs': {rel: '234'}, 'fa': {rel: '34'}, 'fax': {rel: '234'}, 'fd': {rel: '34'}, 'f+': {rel: '234'}, 'f∙': {dec: '2', rel: '1234'}, 'f:': {dec: '2', rel: '1234'}, 'fpow': {rel: '234'}, 'fprio': {rel: '1234'}, 'pc_ecr': {dec: '1234'}, 'fp': {dec: '12'}, 'pc_init': {dec: '1234'}, 'pc_var': {dec: '34'}, 'pc_taux': {dec: '23'}, 'pwc': {dec: '1234', rel: '1234', fra: '1234'}, 'pp1': {dec: '34', rel: '34', fra: '4'}, 'pp2': {dec: '34', rel: '34'}, 'pp3': {dec: '34', rel: '34', fra: '4'}, 'pp4': {rel: '3'}, 'pp5': {dec: '4', rel: '34'}, 'r2': {dec: '1234', fra: '234'}, 'r3': {dec: '1234', rel: '234', fra: '234'}, 'renc3': {rel: '34'}, 'rp1': {rel: '34'}, 'rp2': {rel: '34'}, 'rp3': {rel: '234'}, 'rp4': {rel: '34'}, 'rc_pb': {dec: '2'}, 'q4': {dec: '34'}, 'pagr': {dec: '1234'}, 'pech': {dec: '234'}, 'ppen': {dec: '234', rel: '1234'}, 'pvit': {dec: '24'}, 'pdeb': {dec: '24'}, 'pmv': {dec: '1234'}, 'pro_pb': {dec: '1234'}, 'e1_1': {dec: '4', rel: '234'}, 'e1_2': {rel: '34'}, 'e1_3': {dec: '4', rel: '34'}, 'e1_4': {rel: '34'}, 'e1_5': {rel: '34'}, 'e1_6': {rel: '34'}, 'e1_7': {rel: '34'}, 'e1_8': {dec: '4', rel: '34'}, 'e1_pb': {dec: '234', rel: '123'}, 'e2_1': {dec: '3'}, 'e2_2': {rel: '234'}, 'e2_3': {rel: '234'}, 'e2_4': {rel: '234'}, 'e2_5': {rel: '1234'}, 'sy_sub': {rel: '234'}, 'sy_com': {rel: '1234'}, 'fn_gx': {rel: '1234'}, 'fn_xg': {dec: '34', rel: '1234'}, 'fn_lim': {rel: '1234'}, 'fn_im': {dec: '34', rel: '1234'}, 'fn_lpi': {rel: '1234'}, 'fn_pi': {dec: '34', rel: '1234'}, 'fn_tab': {dec: '34', rel: '1234'}, 'fn_pb': {dec: '1234'}, 'd_car': {rel: '34'}, 'cv_lon': {dec: '234'}, 'cv_mas': {dec: '234'}, 'cv_cap': {dec: '234'}, 'cv_air': {dec: '234'}, 'cv_vol': {dec: '234'}, 'cv_tem': {dec: '34'}, 'cv_vit': {dec: '34'}, 'cv_mv': {dec: '123'}, 'cv_deb': {dec: '34'}, 'aro': {dec: '1234'}, 'f_car': {dec: '1234'}, 'f_rec': {dec: '1234'}, 'f_tri': {dec: '1234'}, 'f_par': {dec: '1234'}, 'f_los': {dec: '1234'}, 'f_tra': {dec: '1234'}, 'f_dis': {dec: '1234'}, 'pa_pb': {dec: '1234'}, 'v_cub': {dec: '1234'}, 'v_pav': {dec: '1234'}, 'v_pri': {dec: '1234'}, 'v_cyl': {dec: '1234'}, 'v_pyr': {dec: '1234'}, 'v_con': {dec: '1234'}, 'v_bou': {dec: '1234'}, 'v_pb': {dec: '1234'}, 'at_cub': {dec: '1234'}, 'at_pav': {dec: '1234'}, 'at_pri': {dec: '1234'}, 'at_cyl': {dec: '1234'}, 'at_pyr': {dec: '1234'}, 'at_bou': {dec: '1234'}, 'at_pb': {dec: '1234'}, 'py_calc': {dec: '4'}, 'py_rec': {dec: '34'}, 'py_con': {dec: '34'}, 'py_esp': {dec: '4'}, 'py_pb': {dec: '1234'}, 'th_calc': {dec: '234'}, 'th_rec': {dec: '234'}, 'th_con': {dec: '234'}, 'th_pb': {dec: '1234'}, 'g_tri': {dec: '4'}, 'g_tan': {dec: '34'}, 'g_rep2': {dec: '4', rel: '1234'}, 'g_rep3': {rel: '1234'}, 'l_sub': {dec: '3', rel: '1234'}, 'l_voc': {rel: '234'}, 'l_mulm': {dec: '234', rel: '1234'}, 'l_addm': {dec: '234', rel: '1234'}, 'l_vocp': {dec: '4', rel: '1234'}, 'l_addp': {rel: '234'}, 'l_subp': {rel: '1234'}, 'l_dev': {dec: '234', rel: '1234'}, 'l_dev2': {rel: '234'}, 'l_ir1': {dec: '234', rel: '34'}, 'l_ir2': {dec: '234', rel: '34'}, 'l_ir3': {dec: '234', rel: '34'}, 'l_ir4': {rel: '34'}, 'l_fme': {rel: '4'}, 'l_fir1': {dec: '4', rel: '4'}, 'l_fir2': {dec: '4', rel: '234'}, 'l_fir3': {dec: '4', rel: '234'}, 'l_fir4': {rel: '234'}, 'l_pb': {dec: '234'}};
+var ND_LV = {'m+': {dec: '1234', rel: '1234'}, 'm−': {dec: '1234', rel: '1234'}, 'm∙': {dec: '1234', rel: '1234'}, 'm:': {dec: '1234', rel: '1234'}, 'm10': {dec: '234'}, 'm10x': {dec: '234'}, 'mcom': {dec: '34', rel: '4'}, 'mdis': {dec: '4'}, 'p+': {dec: '1234'}, 'p−': {dec: '1234'}, 'p∙': {dec: '1234'}, 'p:': {dec: '1234'}, 'p_pb': {dec: '1234'}, 'radd': {dec: '4'}, 'rsub': {dec: '4'}, 'rsum': {dec: '4'}, 'rmul': {dec: '4'}, 'rprod': {dec: '4'}, 'rdiv': {dec: '4'}, 'r_pb': {dec: '1234'}, 'pri': {dec: '1234', rel: '1234', fra: '1234'}, 'fs': {rel: '234'}, 'fa': {rel: '34'}, 'fax': {rel: '234'}, 'fd': {rel: '34'}, 'f+': {rel: '234'}, 'f∙': {dec: '2', rel: '1234'}, 'f:': {dec: '2', rel: '1234'}, 'fpow': {rel: '234'}, 'fprio': {rel: '1234'}, 'pc_ecr': {dec: '1234'}, 'fp': {dec: '12'}, 'pc_init': {dec: '1234'}, 'pc_var': {dec: '34'}, 'pc_taux': {dec: '23'}, 'pwc': {dec: '1234', rel: '1234', fra: '1234'}, 'pp1': {dec: '34', rel: '34', fra: '4'}, 'pp2': {dec: '34', rel: '34'}, 'pp3': {dec: '34', rel: '34', fra: '4'}, 'pp4': {rel: '3'}, 'pp5': {dec: '4', rel: '34'}, 'r2': {dec: '1234', fra: '234'}, 'r3': {dec: '1234', rel: '234', fra: '234'}, 'renc3': {rel: '34'}, 'rp1': {rel: '34'}, 'rp2': {rel: '34'}, 'rp3': {rel: '234'}, 'rp4': {rel: '34'}, 'rc_pb': {dec: '2'}, 'q4': {dec: '34'}, 'pagr': {dec: '1234'}, 'pech': {dec: '234'}, 'ppen': {dec: '234', rel: '1234'}, 'pvit': {dec: '24'}, 'pdeb': {dec: '24'}, 'pmv': {dec: '1234'}, 'pro_pb': {dec: '1234'}, 'e1_1': {dec: '4', rel: '234'}, 'e1_2': {rel: '34'}, 'e1_3': {dec: '4', rel: '34'}, 'e1_4': {rel: '34'}, 'e1_5': {rel: '34'}, 'e1_6': {rel: '34'}, 'e1_7': {rel: '34'}, 'e1_8': {dec: '4', rel: '34'}, 'e1_pb': {dec: '234', rel: '123'}, 'e2_1': {dec: '3'}, 'e2_2': {rel: '234'}, 'e2_3': {rel: '234'}, 'e2_4': {rel: '234'}, 'e2_5': {rel: '1234'}, 'sy_sub': {rel: '234'}, 'sy_com': {rel: '1234'}, 'fn_gx': {rel: '1234'}, 'fn_xg': {dec: '34', rel: '1234'}, 'fn_lim': {rel: '1234'}, 'fn_im': {dec: '34', rel: '1234'}, 'fn_lpi': {rel: '1234'}, 'fn_pi': {dec: '34', rel: '1234'}, 'fn_tab': {dec: '34', rel: '1234'}, 'fn_pb': {dec: '1234'}, 'd_car': {rel: '34'}, 'cv_lon': {dec: '234'}, 'cv_mas': {dec: '234'}, 'cv_cap': {dec: '234'}, 'cv_air': {dec: '234'}, 'cv_vol': {dec: '234'}, 'cv_tem': {dec: '34'}, 'cv_vit': {dec: '34'}, 'cv_mv': {dec: '123'}, 'cv_deb': {dec: '34'}, 'aro': {dec: '1234'}, 'f_car': {dec: '1234'}, 'f_rec': {dec: '1234'}, 'f_tri': {dec: '1234'}, 'f_par': {dec: '1234'}, 'f_los': {dec: '1234'}, 'f_tra': {dec: '1234'}, 'f_dis': {dec: '1234'}, 'pa_pb': {dec: '1234'}, 'v_cub': {dec: '1234'}, 'v_pav': {dec: '1234'}, 'v_pri': {dec: '1234'}, 'v_cyl': {dec: '1234'}, 'v_pyr': {dec: '1234'}, 'v_con': {dec: '1234'}, 'v_bou': {dec: '1234'}, 'v_pb': {dec: '1234'}, 'at_cub': {dec: '1234'}, 'at_pav': {dec: '1234'}, 'at_pri': {dec: '1234'}, 'at_cyl': {dec: '1234'}, 'at_pyr': {dec: '1234'}, 'at_bou': {dec: '1234'}, 'at_pb': {dec: '1234'}, 'py_calc': {dec: '4'}, 'py_rec': {dec: '34'}, 'py_con': {dec: '34'}, 'py_esp': {dec: '4'}, 'py_pb': {dec: '1234'}, 'th_calc': {dec: '234'}, 'th_rec': {dec: '234'}, 'th_con': {dec: '234'}, 'th_pb': {dec: '1234'}, 'g_tri': {dec: '4'}, 'g_tan': {dec: '34'}, 'g_rep2': {dec: '4', rel: '1234'}, 'g_rep3': {rel: '1234'}, 'l_sub': {dec: '3', rel: '1234'}, 'l_voc': {rel: '234'}, 'l_mulm': {dec: '234', rel: '1234'}, 'l_addm': {dec: '234', rel: '1234'}, 'l_vocp': {dec: '4', rel: '1234'}, 'l_addp': {rel: '234'}, 'l_subp': {rel: '1234'}, 'l_dev': {dec: '234', rel: '1234'}, 'l_dev2': {rel: '234'}, 'l_ir1': {dec: '234', rel: '34'}, 'l_ir2': {dec: '234', rel: '34'}, 'l_ir3': {dec: '234', rel: '34'}, 'l_ir4': {rel: '34'}, 'l_fme': {rel: '4'}, 'l_fir1': {dec: '4', rel: '4'}, 'l_fir2': {dec: '4', rel: '234'}, 'l_fir3': {dec: '4', rel: '234'}, 'l_fir4': {rel: '234'}, 'l_pb': {dec: '234'}};
 var ND_K = ['dec', 'rel', 'fra'], ND_LAB = {dec: 'décimaux', rel: 'relatifs', fra: 'fractions'}, ND_CTX = null, ND_FLC = new WeakMap(), ND_LAST = false, ND_ROT = 0;   // n° 174 : code avant newQuestions
                                  // objectifs : gardés seulement si on recharge la page
 let S = clone(DEFAULTS);
-const PRIO_ING = {rprio: ['radd', 'rsub', 'rsum', 'rmul', 'rdiv', 'rpow'], fprio: ['f+', 'f∙', 'f:', 'fpow']};      // cases qui deviennent les ingrédients des priorités
+const PRIO_ING = {rprio: ['radd', 'rsub', 'rsum', 'rmul', 'rprod', 'rdiv', 'rpow'], fprio: ['f+', 'f∙', 'f:', 'fpow']};      // cases qui deviennent les ingrédients des priorités
 /* n° 36 (10.11.2026) : des calculs seuls à côté des priorités. L'enseignant : « Quand on coche des exercices du bloc nombres relatifs ou du bloc
    fractions, et qu'on coche priorités des opérations, [...] ça forçait d'avoir des calculs de priorités des opérations ; donc [...] ça ne met pas de
    réglette pour juste multiplication, par exemple. C'est très bien de n'avoir que des questions de priorité par défaut quand on coche ça, mais
@@ -12259,7 +12327,7 @@ const futAll = () => [1, 2, 3, 4].flatMap(l => FUT[l]);
 function futFill(){
   if (!objectives(S).length) return;
   for (let r = 0; r < FUT_N * 2; r++){ let todo = false;
-    [1, 2, 3, 4].forEach(lv => { if (FUT[lv].length >= FUT_N || (STU && lv > (STU.rnd ? 1 : stuMax()))) return; todo = true;
+    [1, 2, 3, 4].forEach(lv => { if (FUT[lv].length >= FUT_N || (STU && (STU.rnd ? lv > 1 : !stuLvs().includes(lv)))) return; todo = true;
       const q = STU ? stuNewPair(lv, null) : newPair(pickObjective(), lv, true, null, () => lv, 11); if (q) FUT[lv].push(q); });
     if (!todo) break; }
 }
@@ -13294,9 +13362,9 @@ function shW(O){                     // parts (%) des exercices O pour le tirage
   const v = shView(S, O); return O.map(o => v[o.id]);
 }
 function sdPick(o){                  // étoiles cachées : un niveau selon les % d'étoiles de l'exercice (lien &s=), avec un correcteur d'après la séance
-  const cap = stuCap(o), d0 = STU.sd && STU.sd[o.id]; if (!d0) return 1 + Math.floor(Math.random() * cap);
-  const d = [0, 1, 2, 3].map(i => i < cap ? d0[i] || 0 : 0); for (let i = cap; i < 4; i++) d[cap - 1] += d0[i] || 0;
-  const t = d.reduce((a, b) => a + b, 0); if (!(t > 0)) return 1 + Math.floor(Math.random() * cap);
+  const L = stuLv(o), d0 = STU.sd && STU.sd[o.id]; if (!d0) return pick(L);
+  const d = lvFold(d0, L);                                          // n° 177 : les % d'un niveau pas permis au niveau permis le plus proche
+  const t = d.reduce((a, b) => a + b, 0); if (!(t > 0)) return pick(L);
   const c = d.map((x, i) => TALLY['sl:' + o.id + (i + 1)] || 0), n = c.reduce((a, b) => a + b, 0);
   const l = wpick([1, 2, 3, 4].filter(x => d[x - 1] > 0), x => d[x - 1] * Math.max(.15, 1 + d[x - 1] / t * (n + 1) - c[x - 1]));
   bump('sl:' + o.id + l); return l;
@@ -13315,16 +13383,30 @@ function lnkTakeWS(P){               // « Reprendre un lien » : ses parts et s
   if (P.sd){ if (!IP) ipInit(); Object.entries(P.sd).forEach(([id, d]) => { const x = [0, 0, 0, 0]; d.slice(0, 4).forEach((v, i) => x[i] = v); ipEx(id).d = x; }); }
   psUI();
 }
-function lnkDist(id, cap){           // % d'étoiles d'un exercice (la barre de la feuille), dans ses étoiles permises
-  const d = ((IP && IP.ex[id] && IP.ex[id].d) || ipDef(cap)).slice(0, 4); while (d.length < 4) d.push(0);
-  for (let l = cap; l < 4; l++){ d[cap - 1] += d[l]; d[l] = 0; } return d.slice(0, cap);
+// n° 177 (l'enseignant, 27.11.2026, pendant le travail : « quand on clique sur étoiles cachées il faut aussi une réglette pour le "tous les exercices",
+// comme c'est déjà le cas pour les exos individuels ») : réglette « Étoiles : » sur la ligne « Tous » (kind 'st:*'), dès que deux exercices ont la leur ;
+// ses niveaux : ceux de ces exercices ; elle montre la moyenne de leurs % ; glissée, chaque exercice prend ces % sur ses niveaux permis (mêmes rapports)
+function stD4(id){ const L = capL(LNK.P.cap[id]), f = lnkDist(id, L), a = [0, 0, 0, 0]; L.forEach((l, i) => a[l - 1] = f[i]); return a; }
+function stAllDist(ids, UL){ const S0 = LNK && LNK.ST, t0 = S0 ? UL.reduce((a, l) => a + S0[l - 1], 0) : 0; if (t0 > 0) return UL.map(l => S0[l - 1] * 100 / t0);   // ses % tant qu'aucune autre réglette ni aucun niveau n'a changé
+  const m = [0, 0, 0, 0]; ids.forEach(id => stD4(id).forEach((v, i) => m[i] += v / ids.length)); const t = UL.reduce((a, l) => a + m[l - 1], 0) || 1; return UL.map(l => m[l - 1] * 100 / t); }
+function stAllHTML(P, O, zero){
+  const SB = O.filter(o => P.rnd && !LNK.off.has(o.id) && !zero(o) && !isNoStar(o) && capL(P.cap[o.id]).length >= 2).map(o => o.id); LNK.SB = SB;
+  if (SB.length < 2) return ''; const UL = LV4.filter(l => SB.some(id => capL(P.cap[id]).includes(l)));
+  return '<div class="lsd lsda"><span class="lsdl">Étoiles :</span>' + ipBarHTML('st:*', stAllDist(SB, UL), 0, null, UL) + '</div>'; }
+function stAllKeep(T){ if (LNK) LNK.ST = T.slice(); (LNK && LNK.SB || []).forEach(id => { const L = capL(LNK.P.cap[id]), t = L.reduce((a, l) => a + (T[l - 1] || 0), 0), d = [0, 0, 0, 0];
+  if (!(t > 0)){ ipEx(id).d = null; return; } L.forEach(l => d[l - 1] = (T[l - 1] || 0) * 100 / t); ipEx(id).d = d; }); }
+function lnkDist(id, L){             // % d'étoiles d'un exercice (la barre de la feuille), un par niveau permis (n° 177 : L, les niveaux ; un nombre n : de ★ à n)
+  L = Array.isArray(L) ? L : LV4.slice(0, L);
+  const d = ((IP && IP.ex[id] && IP.ex[id].d) || ipDefL(L)).slice(0, 4); while (d.length < 4) d.push(0);
+  const f = lvFold(d, L); return L.map(l => f[l - 1]);
 }
 function ipBarFill(bar){             // une barre jumelle mise à jour d'après l'état
   const k = bar.dataset.k, n = bar.querySelectorAll('.ipseg').length; let V = null;
   if (k === 'lsh' && LNK && LNK.E){ const O = LNK.EO || pObjs(LNK.E), v = shView(draft, O); V = O.map(o => v[o.id]); }
   else if (k === 'share' && IP) V = IP.U.map(u => IP.share[u.id]);
   else if (k.startsWith('mx:') && IP){ const u = IP.U.find(x => x.mix && x.bl === k.slice(3)); if (u) V = ipMixV(u); }   // n° 146 : un bloc mélangé de la feuille
-  else if (k.startsWith('st:') && IP) V = lnkDist(k.slice(3), n);
+  else if (k === 'st:*' && IP) V = LNK && LNK.SB && LNK.SB.length ? stAllDist(LNK.SB, [...bar.dataset.lv].map(Number)) : null;   // n° 177 : la réglette « Tous »
+  else if (k.startsWith('st:') && IP) V = lnkDist(k.slice(3), bar.dataset.lv ? [...bar.dataset.lv].map(Number) : n);   // n° 177
   if (V && V.length === n) ipBarSet(bar, V);
 }
 function ipBarAfter(D, live){        // après (ou pendant) un glissement : le lien et son QR code, les barres jumelles, la feuille
@@ -13333,7 +13415,8 @@ function ipBarAfter(D, live){        // après (ou pendant) un glissement : le l
   const lk = $('oLink').classList.contains('open') && LNK && LNK.P;
   if (lk) linkUrlDraw();
   if (IP && IP.O.length) ipShares();
-  document.querySelectorAll('#oLink .ipbar').forEach(b => { if (b !== D.bar && (b.dataset.k === k || (ipIsSh(b.dataset.k) && ipIsSh(k)))) ipBarFill(b); });
+  const st = x => x.startsWith('st:');                                  // n° 177 : la réglette « Tous » et celles des exercices se suivent
+  document.querySelectorAll('#oLink .ipbar').forEach(b => { if (b !== D.bar && (b.dataset.k === k || (ipIsSh(b.dataset.k) && ipIsSh(k)) || (st(k) && st(b.dataset.k) && (k === 'st:*' || b.dataset.k === 'st:*')))) ipBarFill(b); });
   if (live){ if (IP && lk) ipRefresh(true); return; }
   if (lk){ linkRows(); ipSync(true); }
   psUI();
@@ -13442,7 +13525,7 @@ function inpParse(b){
 // ---------- description de la réponse attendue (null : exercice pas encore branché) ----------
 // {t: 'num', v: [n, d], form: 'dec' (nombre décimal ou entier), 'frac' (fraction irréductible ou entier), 'eq' (toute écriture de la valeur),
 //  kb: {neg, dec, fra, per} (touches en plus des chiffres), R: règles des erreurs fréquentes} ; {t: 'ch', v: symbole, opts: [symboles]}
-const INP_ARITH = /^(?:[MP](?:nat|dec|rel)[+−∙:]|liv|livd|m10|m10x|mcom|mdis|rsum|pw(?:nat|dec|rel)|rprio)$/;
+const INP_ARITH = /^(?:[MP](?:nat|dec|rel)[+−∙:]|liv|livd|m10|m10x|mcom|mdis|rsum|rprod|pw(?:nat|dec|rel)|rprio)$/;
 function inpSpec(p){
   if (!p) return null;
   if (p.chk && p.chk.pb && p.chk.pb.bl){ try { return pbSpecOf(p); } catch (e) { console.error(e); return null; } }   // n° 72 : problèmes (un nombre, puis oui / non)
@@ -13453,7 +13536,7 @@ function inpSpec0(p){
   const s = p.sub || '', fl = p.fl || {}, ch = p.chk || {};
   if (INP_ARITH.test(s)){
     const v = qVal(p.r); if (!v) return null;
-    const neg = /rel/.test(s) || ['rsum', 'pwrel', 'rprio'].includes(s);
+    const neg = /rel/.test(s) || ['rsum', 'rprod', 'pwrel', 'rprio'].includes(s);
     const dec = /dec/.test(s) || (!!fl.dec && !/nat/.test(s) && !['liv', 'livd', 'pwrel'].includes(s)) || !qIsInt(v);
     return {t: 'num', v, form: 'dec', kb: {neg, dec, per: /^Pdec:$/.test(s)}, R: /^pw/.test(s) ? rPow : s === 'rprio' ? rPrio : s === 'liv' && ch.mf ? rMf : rArith};
   }
@@ -13852,7 +13935,7 @@ function inpKeyDown(e){                                               // touches
   // permises) ; la case revient sur la nouvelle question (KB_ON). Une touche sans effet (élève : étoiles cachées ou pas permises) ne ferme rien.
   if (sp.t === 'ch'){ const d = /^[1-4]$/.test(k) ? k : (/^(?:Digit|Numpad)([1-4])$/.exec(e.code) || [])[1];
     if (d && !sp.opts.includes(d)){ e.preventDefault(); const lv = Number(d);
-      if (!STU){ INP = null; forceLevel(lv); } else if (!STU.rnd && !STU.start && lv <= stuMax()){ INP = null; stuLevel(lv); }
+      if (!STU){ INP = null; forceLevel(lv); } else if (!STU.rnd && !STU.start && stuLvs().includes(lv)){ INP = null; stuLevel(lv); }
       return true; } }
   if (inpFree(k, sp)){ if (/^m$/i.test(k)){ inpClose(); if (!inpTouch()) KB_ON = false; } return false; }   // n° 59 : M, J, R, F gardent leur rôle (M : comme un clic sur le bouton)
   if (/^(Shift|CapsLock|NumLock|Dead|Alt|AltGraph|Control|Meta|Tab|F\d+)$/.test(k)) return k !== 'Tab' && !/^F\d+$/.test(k);
@@ -21769,8 +21852,8 @@ PB_M.eq1.forEach(m => { const lo = m.lo, hi = m.hi, ok = m.ok; m.lo0 = 1; m.hi0 
 // n° 89 (l'enseignant, 14.11.2026 : « diviser par 2 le poids qu'a les "affirmations" pour les problèmes » ; « actuellement on peut avoir des questions à 3 étoiles avec des affirmations et pas grand chose d'autre de compliqué ») : aff divisé par 2 (avant 1)
 PB_CFG.rel = {W: {txt: .3, sub: .4, nn: .2, many: .3, tab: .3, inv: .6, e2: .6, e3: .5, ded: .5, use: .5, cmp: .3, dec: .6, aff: .5, rsn: .8, dd: .2, big: .15},
   B: [.5, 1.1, 1.9]};
-const RP_OPS = ['radd', 'rsub', 'rsum', 'rmul', 'rdiv', 'rpow'];
-PB_TX.rel = s => { if (s.has('rprio') && !RP_OPS.some(x => s.has(x))) RP_OPS.forEach(x => s.add(x)); return s; };
+const RP_OPS = ['radd', 'rsub', 'rsum', 'rmul', 'rprod', 'rdiv', 'rpow'];
+PB_TX.rel = s => { if (s.has('rprod')) s.add('rmul'); if (s.has('rprio') && !RP_OPS.some(x => s.has(x))) RP_OPS.forEach(x => s.add(x)); return s; };
 const RP = {C: 'rcmp', A: 'radd', S: 'rsub', M: 'rsum', X: 'rmul', D: 'rdiv', P: 'rpow', R: 'rprio'};
 const rpT = () => pbTools('rel');
 const rpHas = (...k) => { const T = rpT(); return k.some(x => T.has(RP[x])); };      // une de ces cases est cochée
@@ -35759,7 +35842,7 @@ var QR = (function(){
    jour tu rajoutes 1 ? (un peu comme sur excel je crois) » ; « oui passe au compteur de jours ») : le dossier d'une version en ligne est le numéro
    du jour de sa mise en ligne, 17.11.2026 = 1 (verDay), et non plus sa date : lien plus court de 6 à 9 caractères (code QR d'un palier plus
    petit pour environ un lien sur trois). Les dossiers datés (2026-11-07/ à 2026-11-17/) restent en ligne pour leurs liens : verDay lit les deux formes. */
-const QPC_VERSION = '10';    // dossier de cette version sur le site (…/qpc/1/) : numéro du jour de la mise en ligne (17.11.2026 = 1), à changer à chaque version mise en ligne
+const QPC_VERSION = '11';    // dossier de cette version sur le site (…/qpc/1/) : numéro du jour de la mise en ligne (17.11.2026 = 1), à changer à chaque version mise en ligne
 const QPC_BASE = 'https://outils-maths.github.io/qpc/';    // compte GitHub « outils-maths » (avec un s)
 const QPC_ONLINE = /(^|\.)github\.io$/i.test(location.hostname);    // ouverte depuis le site : seulement le mode élève (sans lien : un message)
 var STU = null;                       // mode élève (page ouverte par un lien élèves) ; null : page de l'enseignant
@@ -35783,7 +35866,7 @@ const lnkDecT = s => { try { return String(s).replace(/~(7e|[a-f][0-9a-f])|['+]|
 function lnkV2End(P, f){             // q2 : parts, vidéos et % d'étoiles par défaut quand le lien ne les donne pas
   P.v2 = true; if (f.p === undefined && P.it.length + P.blk.length > 1) P.wd = true;
   const O = pObjs(P); if (f.v === undefined) P.vid = O.filter(o => VID_OF[o.id]).map(o => o.id);
-  if (P.rnd) O.forEach(o => { if ((P.sd && P.sd[o.id]) || isNoStar(o)) return; const c = P.cap[o.id] || 4; if (c >= 2) (P.sd = P.sd || {})[o.id] = lnkSd0(c).slice(0, c); });
+  if (P.rnd) O.forEach(o => { if ((P.sd && P.sd[o.id]) || isNoStar(o)) return; const L = capL(P.cap[o.id]); if (L.length >= 2) (P.sd = P.sd || {})[o.id] = lnkSd0L(L).slice(0, Math.max(...L)); });   // n° 177
 }
 function stateFromP(P){              // réglages (comme S) d'après un lien ou une séance
   const s = clone(DEFAULTS); s.on = {};
@@ -35804,7 +35887,7 @@ function pFromState(d, t, cap){      // lien ou séance d'après des réglages (
     if (b.items.length){ const ids = b.items.map(([id]) => id).filter(id => d.it[id]); if (!ids.length && !b.base) return; it.push(...ids); } if (!b.items.length || b.base) blk.push(b.id);     // n° 167 : b.base
     if (b.nd){ const n = d.num[b.id] || {}; num[b.id] = (n.dec ? 'd' : '') + (n.rel ? 'r' : '') + (n.fra ? 'f' : ''); }
     (BLOCK_OPTS[b.id] || []).concat(NUM_OPT[b.id] || []).forEach(k => { const v = d.opt[k]; if (v !== undefined && v !== DEFAULTS.opt[k]) opt[k] = typeof v === 'boolean' ? (v ? 1 : 0) : v; }); });
-  const c = {}; objectives(stateFromP({it, blk, num, opt, sh: d.share})).forEach(o => { const v = (cap || {})[o.id]; if (v >= 1 && v <= 3 && !isNoStar(o)) c[o.id] = v; });
+  const c = {}; objectives(stateFromP({it, blk, num, opt, sh: d.share})).forEach(o => { const v = (cap || {})[o.id], t = v == null ? '' : capS(capL(v)); if (t && !isNoStar(o)) c[o.id] = t; });   // n° 177 : les niveaux permis
   return {t: String(t || '').trim(), it, blk, num, opt, cap: c, sh: d.share, nd: ndOfState(d, it.concat(blk))};     // n° 174 : nd     // sh : les parts (n° 36 : un calcul seul à côté des priorités)
 }
 const lnkIdW = id => encodeURIComponent(id.replace(/\u2212/g, '-').replace(/\u2219/g, '.')).replace(/%2B/gi, '+').replace(/%3A/gi, ':');   // q2 : identifiant
@@ -35817,12 +35900,12 @@ function lnkWDef(P){                 // les parts (&p=) qu'aurait ce lien sans r
 const lnkNumDef = (b, fl) => { const B = BLOCKS[b], d = DEFAULTS.num[b];       // cases « nombres » par défaut (celles du bloc et fractions : les autres ne
   return !!(B && d) && (B.nd || []).concat('fra').every(k => fl.includes(k[0]) === !!d[k]); };   // changent pas les questions, contrôlé à graine fixe)
 function linkFrag(P){                // n° 44 : forme q2 (liens courts : commentaire avant stateFromP)
-  const cp = id => P.cap && P.cap[id] >= 1 && P.cap[id] <= 3 ? '*' + P.cap[id] : '';
+  const cp = id => { const t = P.cap && P.cap[id] != null ? capS(capL(P.cap[id])) : '', L = capL(t); return !t ? '' : capPre(L) ? '*' + L.length : '!' + t; };   // n° 177 : *n comme avant, sinon !niveaux
   const x = P.it.map(id => lnkIdW(id) + cp(id)).concat(P.blk.map(b => '@' + b + cp(b)));
   const n = Object.entries(P.num || {}).filter(([b, f]) => !lnkNumDef(b, f)).map(([b, f]) => b + '.' + f), o = Object.entries(P.opt || {}).map(([k, v]) => k + ':' + v);
   const ids = P.it.concat(P.blk), wv = P.w && ids.length > 1 ? ids.map(id => Math.round(P.w[id] || 0)) : null, wd = wv && lnkWDef(P),
     pp = wv && (prioOld(P.it).length || !(wd && ids.every((id, i) => Math.round(wd[id] || 0) === wv[i]))) ? '&p=' + wv.join(',') : '';     // n° 163 : toujours &p= avec des priorités et leurs opérations      // n° 33 : part de chaque exercice (ordre de x) ; n° 44 : rien si ce sont les parts par défaut
-  const sv = P.rnd && P.sd ? ids.map(id => { const d = P.sd[id] || [], c = (P.cap || {})[id] || 4, df = c >= 2 ? lnkSd0(c).slice(0, c) : [];
+  const sv = P.rnd && P.sd ? ids.map(id => { const d = P.sd[id] || [], L = capL((P.cap || {})[id]), df = L.length >= 2 ? lnkSd0L(L).slice(0, Math.max(...L)) : [];
       return d.length && d.join('.') !== df.join('.') ? d.join('.') : ''; }) : [],
     ss = sv.some(Boolean) ? '&s=' + sv.join(',').replace(/,+$/, '') : '';                                                         // % d'étoiles (étoiles cachées) ; n° 44 : vide = par défaut
   return 'q2' + (P.t ? '&t=' + lnkEncT(P.t) : '') + '&x=' + x.join(',') + (n.length ? '&n=' + n.join(',') : '') + (o.length ? '&o=' + o.join(',') : '') + (P.fr ? '&f=1' : '') + (P.rnd ? '&h=1' : '') + pp + ss + ndFrag(P, ids) + vidFrag(P, ids);   // n° 174 : &d=
@@ -35831,6 +35914,20 @@ const linkURL = P => QPC_BASE + QPC_VERSION + '/#' + linkFrag(P);
 // n° 121 : un lien sans &s= (étoiles cachées) veut dire l'ancien défaut 40 / 35 / 20 / 5, pas celui de ipDef : les liens déjà donnés gardent leur
 // sens, et un nouveau lien écrit ses % (33.28.23.16) en entier, lus pareil par la version en ligne
 function lnkSd0(cap){ return cap <= 1 ? [100, 0, 0, 0] : cap === 2 ? [50, 50, 0, 0] : cap === 3 ? [40, 35, 25, 0] : [40, 35, 20, 5]; }
+/* n° 177 (l'enseignant, 27.11.2026 : « Dans les "étoiles permises", il faudrait pouvoir choisir exactement les nombres d'étoiles qu'on veut pour chaque
+   exercice (et un qui les fait tous d'un coup) » ; maquettes : version 2, boutons 1★ 2★ 3★ 4★ ; QCM : côté élève, « la plus proche permise »).
+   P.cap[id] : les niveaux permis, en texte ('23', '3', '34') ; absent : les quatre ; un ancien nombre n (« jusqu'à n ») se lit '1…n'.
+   Lien : *n (de ★ à n étoiles, comme avant) ; les autres choix : !niveaux (!23, !3, !34). Les % d'un niveau pas permis vont au niveau permis le plus
+   proche (à égalité : le plus facile), comme avant au-delà de la limite. */
+const LV4 = [1, 2, 3, 4];
+const capL = c => { if (typeof c === 'number') return c >= 1 && c <= 4 ? LV4.slice(0, c) : LV4.slice(); const L = LV4.filter(l => String(c || '').includes(l)); return L.length ? L : LV4.slice(); };
+const capS = L => { const t = LV4.filter(l => L.includes(l)).join(''); return t === '1234' ? '' : t; };     // '' : les quatre
+const capPre = L => L.every((l, i) => l === i + 1);                                                       // de ★ à n étoiles
+const lvNear = (L, lv) => L.reduce((b, l) => Math.abs(l - lv) < Math.abs(b - lv) ? l : b, L[0]);        // L croissant : à égalité, le plus facile
+const lvFold = (d, L) => { const o = [0, 0, 0, 0]; LV4.forEach(l => { o[lvNear(L, l) - 1] += d[l - 1] || 0; }); return o; };
+const lvPart = (L, B) => { const o = [0, 0, 0, 0], n = shLR(L.map(l => B[l - 1]), 100); L.forEach((l, i) => o[l - 1] = n[i]); return o; };   // B restreint à L
+const lnkSd0L = L => capPre(L) ? lnkSd0(L.length) : lvPart(L, [40, 35, 20, 5]);                         // lien sans &s= (ancien défaut)
+const lnkCp = r => r[2] || r[3] ? capS(capL(r[2] ? Number(r[2]) : r[3])) : '';                            // linkParse : *n ou !niveaux
 const LINK_ALIAS = {l_mono: 'l_mulm', l_subm: 'l_addm'};      // cases fondues dans une autre (07.11.2026) : un ancien lien garde ses exercices
 function linkParse(str){             // un lien entier, ou seulement ce qui suit # ; null s'il n'y a aucun exercice connu de cette version
   const m = /(?:^|#)(q[12](?:&[^#\s]*)?)\s*$/.exec(String(str || '').trim()); if (!m) return null;
@@ -35838,9 +35935,9 @@ function linkParse(str){             // un lien entier, ou seulement ce qui suit
   const f = {}; m[1].split('&').slice(1).forEach(kv => { const i = kv.indexOf('='); if (i > 0) f[kv.slice(0, i)] = kv.slice(i + 1); });
   const vm = /\/qpc\/(\d{4}-\d{2}-\d{2}|\d{1,5})\/(?:index\.html)?#/.exec(String(str || ''));     // la version de la page qui a fait le lien (lien entier seulement)
   const P = {t: f.t ? ((v2 ? lnkDecT : lnkDec)(f.t) || '').trim().slice(0, 120) : '', it: [], blk: [], num: {}, opt: {}, cap: {}, fr: f.f === '1', rnd: f.h === '1', ver: vm ? vm[1] : '', lost: 0};
-  (f.x || '').split(',').forEach((e, i) => { const r = /^(.*?)(?:\*([1-3]))?$/.exec(e), id0 = r && dId(r[1]), id = id0 && (LINK_ALIAS[id0] || id0); if (!id) return;
-    if (id[0] === '@'){ const b = id.slice(1); if (BLOCKS[b] && (!BLOCKS[b].items.length || BLOCKS[b].base)){ if (!P.blk.includes(b)){ P.blk.push(b); if (r[2]) P.cap[b] = Number(r[2]); lnkWS(P, f, b, i); } } else P.lost++; }
-    else if (ITEM_BLOCK[id]){ if (!P.it.includes(id)){ P.it.push(id); if (r[2]) P.cap[id] = Number(r[2]); lnkWS(P, f, id, i); } } else P.lost++; });
+  (f.x || '').split(',').forEach((e, i) => { const r = /^(.*?)(?:\*([1-3])|!([1-4]{1,4}))?$/.exec(e), id0 = r && dId(r[1]), id = id0 && (LINK_ALIAS[id0] || id0); if (!id) return;
+    if (id[0] === '@'){ const b = id.slice(1); if (BLOCKS[b] && (!BLOCKS[b].items.length || BLOCKS[b].base)){ if (!P.blk.includes(b)){ P.blk.push(b); if (lnkCp(r)) P.cap[b] = lnkCp(r); lnkWS(P, f, b, i); } } else P.lost++; }
+    else if (ITEM_BLOCK[id]){ if (!P.it.includes(id)){ P.it.push(id); if (lnkCp(r)) P.cap[id] = lnkCp(r); lnkWS(P, f, id, i); } } else P.lost++; });
   lnkWEnd(P); ndParse(P, f, dId);                                   // n° 174 : &d=
   if (f.p === undefined){ const z = prioOld(P.it); if (z.length) P.w0 = z; }     // n° 163 : ancien lien (sans &p=) avec des priorités et leurs opérations
   (f.n || '').split(',').forEach(e => { const i = e.indexOf('.'), b = e.slice(0, i), fl = e.slice(i + 1); if (i > 0 && BLOCKS[b] && /^[drf]*$/.test(fl)) P.num[b] = fl; });
@@ -35874,10 +35971,10 @@ function stuBoot(){                  // au chargement : true si la page est en m
 }
 window.addEventListener('hashchange', () => { if (/^#q\d/.test(location.hash) || STU) location.reload(); });   // lien collé dans un onglet déjà ouvert : la page repart
 function stuMsg(t){ document.body.classList.add('stu', 'stumsg'); $('stuMsg').textContent = t; }
-const stuCap = o => STU.cap[o.id] || 4;
-function stuMax(){                   // la plus haute difficulté permise parmi les exercices cochés ; seulement des exercices sans étoiles : 1 (« Commencer »)
+const stuLv = o => capL(STU.cap[o.id]);          // n° 177 : les niveaux permis de l'exercice (avant : stuCap, le plus haut)
+function stuLvs(){                   // les niveaux permis parmi les exercices cochés (boutons ★ de l'élève) ; seulement des exercices sans étoiles : [1] (« Commencer »)
   const O = objectives(S), st = O.filter(o => !isNoStar(o));
-  return st.length ? Math.max(...st.map(stuCap)) : O.length ? 1 : 0; }
+  return st.length ? LV4.filter(l => st.some(o => stuLv(o).includes(l))) : O.length ? [1] : []; }
 const stuNoStar = () => objectives(S).every(isNoStar);
 function stuBuild(){                 // liste des exercices (au départ, et ☰ Exercices) : ceux du lien, groupés par bloc, tous cochés au départ
   const g = {}; STU.all.forEach(o => (g[o.bl] = g[o.bl] || []).push(o));
@@ -35900,26 +35997,26 @@ function stuRender(){
 }
 function stuGo(lv){                  // au départ (lv = 1), ou retour de la liste (« Continuer ») : la réserve avec les exercices cochés, puis une question
   if (!objectives(S).length) return;                                // à lv étoiles (au plus la plus haute permise des exercices cochés)
-  lv = Math.max(1, Math.min(lv || 1, stuMax()));
+  { const L = stuLvs(); lv = STU.rnd || !L.length ? 1 : lvNear(L, lv || 1); }     // n° 177 : la difficulté permise la plus proche
   STU.start = false; document.body.classList.remove('stu0');
   if (!QS.length){ PICK = false; LASTG = null; seqEnd(); QS = buildQuestions(); cur = 0; }
   else { futAll().forEach(x => [x.L, x.R, x.Rh].forEach(p => freeKey(p, QS))); FUT = {1: [], 2: [], 3: [], 4: []}; futFill(); cur = QS.length - 1; PICK = false; }
   stuLevel(lv);
 }
 function stuLevel(lv){               // boutons ★ (et touches 1 à 4) de l'élève : la difficulté des questions suivantes
-  if (!STU || STU.start || lv < 1 || lv > stuMax()) return;
+  if (!STU || STU.start || lv < 1 || lv > 4 || (!STU.rnd && !stuLvs().includes(lv))) return;
   STU.lv = lv; forceLevel(lv);
 }
 function stuNewPair(lv, only){       // une question à lv étoiles, au plus la limite de son exercice (l'exercice reste, à son maximum) ;
   const o = pickObjective(only); if (!o || !o.id) return null;     // un exercice sans étoiles : toutes ses sortes de questions (les étoiles ne s'y appliquent pas)
   if (isNoStar(o)) return newPair(o, lv, false, x => (!only || only(x)) && isNoStar(x), () => lv, 11);
-  const l = STU.rnd ? (STU.sd ? sdPick(o) : 1 + Math.floor(Math.random() * stuCap(o))) : Math.min(lv, stuCap(o));   // étoiles cachées (l'enseignant, 07.11.2026) : une difficulté au hasard parmi celles que l'exercice permet
-  return newPair(o, l, true, x => (!only || only(x)) && !isNoStar(x) && stuCap(x) >= l, () => l, 11);
+  const L = stuLv(o), l = STU.rnd ? (STU.sd ? sdPick(o) : pick(L)) : lvNear(L, lv);      // n° 177 : la difficulté permise la plus proche (l'enseignant, QCM)   // étoiles cachées (l'enseignant, 07.11.2026) : une difficulté au hasard parmi celles que l'exercice permet
+  return newPair(o, l, true, x => (!only || only(x)) && !isNoStar(x) && stuLv(x).includes(l), () => l, 11);
 }
 function stuUI(){                    // après chaque affichage d'une question : boutons ★ permis, difficulté choisie
   document.body.classList.remove('stu0');
-  const mx = stuNoStar() || STU.rnd ? 0 : stuMax();                             // seulement des exercices sans étoiles : pas de boutons ★
-  document.querySelectorAll('#lvBtns button[data-lv]').forEach(b => { const l = Number(b.dataset.lv); b.hidden = l > mx; b.classList.toggle('on', l === STU.lv); });
+  const LV = stuNoStar() || STU.rnd ? [] : stuLvs();                             // seulement des exercices sans étoiles : pas de boutons ★ ; n° 177 : les niveaux permis
+  document.querySelectorAll('#lvBtns button[data-lv]').forEach(b => { const l = Number(b.dataset.lv); b.hidden = !LV.includes(l); b.classList.toggle('on', l === STU.lv); });
 }
 function stuStart(){ if (!STU) return; STU.start = true; render(); }
 function stuKey(e){                  // clavier du mode élève : 1 à 4 (étoiles permises), Entrée, ← →, F ; rien d'autre (pas de réglages ni de M, J, R, 7, 8, 9)
@@ -35994,7 +36091,7 @@ function linkNote(P){
 // titre proposé dans « Lien élèves » (l'enseignant, 07.11.2026 ; n° 118 : sans « Renfort ») : un seul exercice d'un bloc : le nom de l'exercice ;
 // plusieurs exercices d'un bloc : le bloc ; deux blocs : « x et y » (chacun : le bloc ou l'exercice) ; plus de deux : « Révisions ». Majuscule au début.
 // Un nom par exercice (TNAME, par identifiant) ; un exercice ajouté plus tard sans nom : son nom affiché, sans les formules.
-const TNAME = {"m+": "addition en calcul mental", "m−": "soustraction en calcul mental", "m∙": "multiplication en calcul mental", "m:": "division en calcul mental", "liv": "livrets", "livd": "livrets : divisions", "m10": "multiplication et division par 10, 100, 0,1…", "m10x": "multiplication et division par 600, 0,3…", "mcom": "commutativité en calcul mental", "mdis": "distributivité en calcul mental", "p+": "addition en colonne", "p−": "soustraction en colonne", "p∙": "multiplication en colonne", "p:": "division en colonne", "rcmp": "comparaison de nombres relatifs", "radd": "addition de nombres relatifs", "rsub": "soustraction de nombres relatifs", "rsum": "sommes de plusieurs nombres relatifs", "rmul": "multiplication de nombres relatifs", "rdiv": "division de nombres relatifs", "rpow": "puissances de nombres relatifs", "rprio": "priorités des opérations avec les relatifs", "dvb": "critères de divisibilité", "prm": "nombres premiers", "dcp": "décomposition en facteurs premiers", "pgdc": "pgdc", "ppmc": "ppmc", "pb_1": "probabilités en une étape", "pb_2": "probabilités en plusieurs étapes", "pb_den": "dénombrement", "fs": "simplification de fractions", "fa": "amplification de fractions", "fcmp": "comparaison de fractions", "fax": "fractions sur un axe gradué", "fd": "écriture décimale d’une fraction", "f+": "addition et soustraction de fractions", "f∙": "multiplication de fractions", "f:": "division de fractions", "fpow": "puissances de fractions", "fprio": "priorités des opérations avec les fractions", "fq": "fraction d’un nombre", "fr": "fraction d’un nombre inconnu", "pc_ecr": "écritures d’un pourcentage", "fp": "problèmes : calculer une part en pourcentage", "pc_init": "problèmes : retrouver le total à partir d’un pourcentage", "pc_var": "problèmes : augmentations et diminutions en pourcentage", "pc_taux": "problèmes : trouver un pourcentage", "pwc": "calcul de puissances", "pp1": "produit de puissances de même base", "pp2": "quotient de puissances de même base", "pp3": "puissance d’une puissance", "pp4": "produit de puissances de même exposant", "pp5": "propriétés des puissances", "r2": "racines carrées", "r3": "racines cubiques", "renc2": "encadrement d’une racine carrée", "renc3": "encadrement d’une racine cubique", "rp1": "produit de racines", "rp2": "quotient de racines", "rp3": "extraction de racines", "rp4": "propriétés des racines", "q4": "prix, quantité, taux de change…", "pagr": "agrandissements et réductions", "pech": "échelles", "ppen": "pente", "pvit": "problèmes de vitesse", "pdeb": "problèmes de débit", "pmv": "problèmes de masse volumique", "l_tra": "traduction d’une phrase en expression littérale", "l_voc": "vocabulaire du calcul littéral", "l_sub": "substitution", "l_mulm": "multiplication de monômes", "l_addm": "addition et soustraction de monômes", "l_addp": "addition de polynômes", "l_subp": "soustraction de polynômes", "l_vocp": "vocabulaire des polynômes", "l_dev": "développement simple", "l_dev2": "développement double", "l_ir1": "développement de (a + b)²", "l_ir2": "développement de (a − b)²", "l_ir3": "développement de (a + b)(a − b)", "l_ir4": "développement de (x + a)(x + b)", "l_fme": "mise en évidence", "l_fir1": "factorisation de a² + 2ab + b²", "l_fir2": "factorisation de a² − 2ab + b²", "l_fir3": "factorisation de a² − b²", "l_fir4": "factorisation de x² + (a + b)x + ab", "l_fvi": "factorisation avec Viète", "l_pb": "problèmes de calcul littéral", "p_pb": "problèmes avec des calculs en colonne", "fn_pb": "problèmes avec des fonctions", "ar_pb": "problèmes de pgdc et de ppmc", "rc_pb": "problèmes avec des racines", "sci_pb": "problèmes avec l'écriture scientifique", "e1_1": "équations x + a = b", "e1_2": "équations ax = b", "e1_3": "équations x : a = b", "e1_4": "équations ax + b = c", "e1_5": "équations ax + b = cx + d", "e1_6": "équations a(x + b) = c", "e1_7": "équations a(x + b) = c(x + d)", "e1_8": "équations x : a + b = c", "e2_1": "équations x² = a", "e2_2": "équations (x + a)(x + b) = 0", "e2_3": "équations ax² + bx = 0", "e2_4": "équations x² + bx + c = 0", "e2_5": "équations ax² + bx + c = 0", "sy_sub": "systèmes par substitution", "sy_com": "systèmes par combinaison", "fn_gx": "expression d’une fonction d’après son graphique", "fn_xg": "graphique d’une fonction d’après son expression", "fn_lim": "lecture d’images", "fn_im": "calcul d’images", "fn_lpi": "lecture de préimages", "fn_pi": "calcul de préimages", "fn_tab": "tableaux de valeurs", "d_car": "diagrammes cartésiens", "d_col": "diagrammes en colonnes", "d_cir": "diagrammes circulaires", "d_bar": "diagrammes en barre", "cv_lon": "conversions de longueurs", "cv_mas": "conversions de masses", "cv_cap": "conversions de capacités", "cv_air": "conversions d’aires", "cv_vol": "conversions de volumes", "cv_tem": "conversions de temps", "cv_vit": "conversions de vitesses", "cv_mv": "conversions de masses volumiques", "cv_deb": "conversions de débits", "aro": "arrondis", "enc": "encadrements", "f_car": "périmètre et aire du carré", "f_rec": "périmètre et aire du rectangle", "f_tri": "périmètre et aire du triangle", "f_par": "périmètre et aire du parallélogramme", "f_los": "périmètre et aire du losange", "f_tra": "périmètre et aire du trapèze", "f_dis": "périmètre et aire du disque", "f_sec": "périmètre et aire d’un secteur", "v_cub": "volume du cube", "v_pav": "volume du pavé droit", "v_pri": "volume du prisme droit", "v_cyl": "volume du cylindre", "v_pyr": "volume de la pyramide", "v_con": "volume du cône", "v_bou": "volume de la boule", "at_cub": "aire totale du cube", "at_pav": "aire totale du pavé droit", "at_pri": "aire totale du prisme droit", "at_cyl": "aire totale du cylindre", "at_pyr": "aire totale de la pyramide", "at_bou": "aire de la sphère", "py_calc": "calcul d’une longueur avec Pythagore", "py_rec": "réciproque du théorème de Pythagore", "py_con": "contraposée du théorème de Pythagore", "py_esp": "Pythagore dans l’espace", "py_pb": "problèmes avec Pythagore", "th_pb": "problèmes avec Thalès", "f_pb": "problèmes avec les fractions", "pro_pb": "problèmes de proportionnalité", "e1_pb": "problèmes avec des équations", "r_pb": "problèmes avec les nombres relatifs", "pa_pb": "problèmes de périmètres et d'aires", "v_pb": "problèmes de volumes", "at_pb": "problèmes d'aires totales", "th_calc": "calcul d’une longueur avec Thalès", "th_rec": "réciproque du théorème de Thalès", "th_con": "contraposée du théorème de Thalès", "g_not": "notations et codage", "g_mtr": "médiatrices", "g_bis": "bissectrices", "g_mdn": "médianes", "g_hau": "hauteurs", "g_cci": "cercle circonscrit", "g_cin": "cercle inscrit", "q_tri": "triangles particuliers", "q_con": "triangles constructibles", "q_car": "propriétés du carré", "q_rec": "propriétés du rectangle", "q_los": "propriétés du losange", "q_par": "propriétés du parallélogramme", "q_tra": "propriétés du trapèze", "q_rho": "propriétés du rhomboïde", "q_voc": "nom et vocabulaire des quadrilatères", "g_type": "types d’angles", "g_tri": "somme des angles d’un triangle", "g_opp": "angles opposés par le sommet et adjacents", "g_par": "angles alternes-internes", "g_ins": "angle inscrit et angle au centre", "g_tan": "tangente au cercle", "g_tha": "cercle de Thalès", "g_pol": "angles des polygones réguliers", "g_sym": "axes de symétrie", "g_csym": "centre de symétrie", "t_ax": "symétrie axiale", "t_ce": "symétrie centrale", "t_tr": "translation", "t_ro": "rotation", "t_ho": "homothétie", "g_rep2": "repérage dans le plan", "g_rep3": "repérage dans l’espace", "g_nsol": "noms des solides", "g_sol": "faces, sommets et arêtes", "g_pat": "développements des solides"};
+const TNAME = {"m+": "addition en calcul mental", "m−": "soustraction en calcul mental", "m∙": "multiplication en calcul mental", "m:": "division en calcul mental", "liv": "livrets", "livd": "livrets : divisions", "m10": "multiplication et division par 10, 100, 0,1…", "m10x": "multiplication et division par 600, 0,3…", "mcom": "commutativité en calcul mental", "mdis": "distributivité en calcul mental", "p+": "addition en colonne", "p−": "soustraction en colonne", "p∙": "multiplication en colonne", "p:": "division en colonne", "rcmp": "comparaison de nombres relatifs", "radd": "addition de nombres relatifs", "rsub": "soustraction de nombres relatifs", "rsum": "sommes de plusieurs nombres relatifs", "rmul": "multiplication de nombres relatifs", "rprod": "produits de plusieurs nombres relatifs", "rdiv": "division de nombres relatifs", "rpow": "puissances de nombres relatifs", "rprio": "priorités des opérations avec les relatifs", "dvb": "critères de divisibilité", "prm": "nombres premiers", "dcp": "décomposition en facteurs premiers", "pgdc": "pgdc", "ppmc": "ppmc", "pb_1": "probabilités en une étape", "pb_2": "probabilités en plusieurs étapes", "pb_den": "dénombrement", "fs": "simplification de fractions", "fa": "amplification de fractions", "fcmp": "comparaison de fractions", "fax": "fractions sur un axe gradué", "fd": "écriture décimale d’une fraction", "f+": "addition et soustraction de fractions", "f∙": "multiplication de fractions", "f:": "division de fractions", "fpow": "puissances de fractions", "fprio": "priorités des opérations avec les fractions", "fq": "fraction d’un nombre", "fr": "fraction d’un nombre inconnu", "pc_ecr": "écritures d’un pourcentage", "fp": "problèmes : calculer une part en pourcentage", "pc_init": "problèmes : retrouver le total à partir d’un pourcentage", "pc_var": "problèmes : augmentations et diminutions en pourcentage", "pc_taux": "problèmes : trouver un pourcentage", "pwc": "calcul de puissances", "pp1": "produit de puissances de même base", "pp2": "quotient de puissances de même base", "pp3": "puissance d’une puissance", "pp4": "produit de puissances de même exposant", "pp5": "propriétés des puissances", "r2": "racines carrées", "r3": "racines cubiques", "renc2": "encadrement d’une racine carrée", "renc3": "encadrement d’une racine cubique", "rp1": "produit de racines", "rp2": "quotient de racines", "rp3": "extraction de racines", "rp4": "propriétés des racines", "q4": "prix, quantité, taux de change…", "pagr": "agrandissements et réductions", "pech": "échelles", "ppen": "pente", "pvit": "problèmes de vitesse", "pdeb": "problèmes de débit", "pmv": "problèmes de masse volumique", "l_tra": "traduction d’une phrase en expression littérale", "l_voc": "vocabulaire du calcul littéral", "l_sub": "substitution", "l_mulm": "multiplication de monômes", "l_addm": "addition et soustraction de monômes", "l_addp": "addition de polynômes", "l_subp": "soustraction de polynômes", "l_vocp": "vocabulaire des polynômes", "l_dev": "développement simple", "l_dev2": "développement double", "l_ir1": "développement de (a + b)²", "l_ir2": "développement de (a − b)²", "l_ir3": "développement de (a + b)(a − b)", "l_ir4": "développement de (x + a)(x + b)", "l_fme": "mise en évidence", "l_fir1": "factorisation de a² + 2ab + b²", "l_fir2": "factorisation de a² − 2ab + b²", "l_fir3": "factorisation de a² − b²", "l_fir4": "factorisation de x² + (a + b)x + ab", "l_fvi": "factorisation avec Viète", "l_pb": "problèmes de calcul littéral", "p_pb": "problèmes avec des calculs en colonne", "fn_pb": "problèmes avec des fonctions", "ar_pb": "problèmes de pgdc et de ppmc", "rc_pb": "problèmes avec des racines", "sci_pb": "problèmes avec l'écriture scientifique", "e1_1": "équations x + a = b", "e1_2": "équations ax = b", "e1_3": "équations x : a = b", "e1_4": "équations ax + b = c", "e1_5": "équations ax + b = cx + d", "e1_6": "équations a(x + b) = c", "e1_7": "équations a(x + b) = c(x + d)", "e1_8": "équations x : a + b = c", "e2_1": "équations x² = a", "e2_2": "équations (x + a)(x + b) = 0", "e2_3": "équations ax² + bx = 0", "e2_4": "équations x² + bx + c = 0", "e2_5": "équations ax² + bx + c = 0", "sy_sub": "systèmes par substitution", "sy_com": "systèmes par combinaison", "fn_gx": "expression d’une fonction d’après son graphique", "fn_xg": "graphique d’une fonction d’après son expression", "fn_lim": "lecture d’images", "fn_im": "calcul d’images", "fn_lpi": "lecture de préimages", "fn_pi": "calcul de préimages", "fn_tab": "tableaux de valeurs", "d_car": "diagrammes cartésiens", "d_col": "diagrammes en colonnes", "d_cir": "diagrammes circulaires", "d_bar": "diagrammes en barre", "cv_lon": "conversions de longueurs", "cv_mas": "conversions de masses", "cv_cap": "conversions de capacités", "cv_air": "conversions d’aires", "cv_vol": "conversions de volumes", "cv_tem": "conversions de temps", "cv_vit": "conversions de vitesses", "cv_mv": "conversions de masses volumiques", "cv_deb": "conversions de débits", "aro": "arrondis", "enc": "encadrements", "f_car": "périmètre et aire du carré", "f_rec": "périmètre et aire du rectangle", "f_tri": "périmètre et aire du triangle", "f_par": "périmètre et aire du parallélogramme", "f_los": "périmètre et aire du losange", "f_tra": "périmètre et aire du trapèze", "f_dis": "périmètre et aire du disque", "f_sec": "périmètre et aire d’un secteur", "v_cub": "volume du cube", "v_pav": "volume du pavé droit", "v_pri": "volume du prisme droit", "v_cyl": "volume du cylindre", "v_pyr": "volume de la pyramide", "v_con": "volume du cône", "v_bou": "volume de la boule", "at_cub": "aire totale du cube", "at_pav": "aire totale du pavé droit", "at_pri": "aire totale du prisme droit", "at_cyl": "aire totale du cylindre", "at_pyr": "aire totale de la pyramide", "at_bou": "aire de la sphère", "py_calc": "calcul d’une longueur avec Pythagore", "py_rec": "réciproque du théorème de Pythagore", "py_con": "contraposée du théorème de Pythagore", "py_esp": "Pythagore dans l’espace", "py_pb": "problèmes avec Pythagore", "th_pb": "problèmes avec Thalès", "f_pb": "problèmes avec les fractions", "pro_pb": "problèmes de proportionnalité", "e1_pb": "problèmes avec des équations", "r_pb": "problèmes avec les nombres relatifs", "pa_pb": "problèmes de périmètres et d'aires", "v_pb": "problèmes de volumes", "at_pb": "problèmes d'aires totales", "th_calc": "calcul d’une longueur avec Thalès", "th_rec": "réciproque du théorème de Thalès", "th_con": "contraposée du théorème de Thalès", "g_not": "notations et codage", "g_mtr": "médiatrices", "g_bis": "bissectrices", "g_mdn": "médianes", "g_hau": "hauteurs", "g_cci": "cercle circonscrit", "g_cin": "cercle inscrit", "q_tri": "triangles particuliers", "q_con": "triangles constructibles", "q_car": "propriétés du carré", "q_rec": "propriétés du rectangle", "q_los": "propriétés du losange", "q_par": "propriétés du parallélogramme", "q_tra": "propriétés du trapèze", "q_rho": "propriétés du rhomboïde", "q_voc": "nom et vocabulaire des quadrilatères", "g_type": "types d’angles", "g_tri": "somme des angles d’un triangle", "g_opp": "angles opposés par le sommet et adjacents", "g_par": "angles alternes-internes", "g_ins": "angle inscrit et angle au centre", "g_tan": "tangente au cercle", "g_tha": "cercle de Thalès", "g_pol": "angles des polygones réguliers", "g_sym": "axes de symétrie", "g_csym": "centre de symétrie", "t_ax": "symétrie axiale", "t_ce": "symétrie centrale", "t_tr": "translation", "t_ro": "rotation", "t_ho": "homothétie", "g_rep2": "repérage dans le plan", "g_rep3": "repérage dans l’espace", "g_nsol": "noms des solides", "g_sol": "faces, sommets et arêtes", "g_pat": "développements des solides"};
 const blTitle = bl => { const n = BLOCKS[bl].name.replace(/<[^>]+>/g, ''); return bl === 'pyt' || bl === 'tha' ? n : n.charAt(0).toLowerCase() + n.slice(1); };
 function linkSugT(){                // le titre proposé d'après les exercices cochés de la fenêtre
   if (!LNK || !LNK.P) return '';
@@ -36009,18 +36106,22 @@ function linkSug(){                 // en gris dans la case vide, avec le bouton
   $('lTitle').placeholder = s || 'Ex. Épreuve 4 : périmètres, aires, Pythagore';
   $('lSug').classList.toggle('lsoff', !s || !!$('lTitle').value.trim());
 }
-const rateHTML = (v, id) => '<span class="lrate" data-o="' + id + '">' + [1, 2, 3, 4].map(l => '<button type="button" data-v="' + l + '"' + (l <= v ? ' class="f"' : '') +
-  ' title="Jusqu\'à ' + '★'.repeat(l) + '" aria-label="Jusqu\'à ' + l + (l > 1 ? ' étoiles' : ' étoile') + '">★</button>').join('') + '</span>';
+// n° 177 : quatre petits boutons 1★ 2★ 3★ 4★, chacun s'allume ou s'éteint seul (au moins un reste allumé) ; ligne « Tous » (K) : allumé si tous les
+// exercices l'ont ('f'), pointillé si certains seulement ('mx')
+const rateHTML = (L, id, K) => '<span class="lrate" data-o="' + id + '">' + LV4.map(l => { const k = K ? K[l - 1] : L.includes(l) ? 'f' : '', one = !K && k && L.length === 1;
+  return '<button type="button" data-v="' + l + '"' + (k ? ' class="' + k + (one ? ' one' : '') + '"' : '') + ' aria-pressed="' + (k === 'f') + '" title="' + '★'.repeat(l) +
+    (K ? (k === 'f' ? ' : permises pour tous les exercices (clic : les enlever)' : k ? ' : permises pour certains exercices (clic : pour tous)' : ' : clic pour les permettre à tous les exercices')
+      : k ? (one ? ' : la seule difficulté permise' : ' : permises (clic : les enlever)') : ' : pas permises (clic : les permettre)') + '">' + l + '<span class="lrs">★</span></button>'; }).join('') + '</span>';
 function linkRows(){
-  const P = LNK.P, O = pObjs(P), st = O.filter(o => !isNoStar(o)), cv = o => P.cap[o.id] || 4, same = st.length && st.every(o => cv(o) === cv(st[0]));
+  const P = LNK.P, O = pObjs(P), st = O.filter(o => !isNoStar(o)), cv = o => capL(P.cap[o.id]), K = LV4.map(l => { const n = st.filter(o => cv(o).includes(l)).length; return n === st.length ? 'f' : n ? 'mx' : ''; });   // n° 177
   const EO = LNK.EO = pObjs(linkEff()), v = shView(draft, EO), zero = o => EO.length > 1 && !(v[o.id] > 0);      // n° 33 : part de chaque exercice (0 % : pas dans le lien)
   const hv = O.some(o => VID_OF[o.id]); $('lEx').classList.toggle('lexv', hv); const nd = ndLinkOn(P, O); $('lEx').classList.toggle('lexd', !!nd);   // n° 174 : colonne « Nombres »       // n° 34 : colonne « Vidéo » (cochée par défaut)
   $('lEx').innerHTML = '<div class="lexh">Exercices</div>' + (nd ? '<div class="lexh lndh">Nombres' + ndInfHTML() + '</div>' : '') + '<div class="lexh">Étoiles permises</div>' + (hv ? '<div class="lexh lvh">Vidéo</div>' : '') +
-    (st.length > 1 ? '<div class="lexa">Tous' + (nd ? ndLinkAll(nd, O, true) : '') + '</div>' + (nd ? ndLinkAll(nd, O) : '') + '<div>' + rateHTML(same ? cv(st[0]) : 0, '*') + '</div>' + (hv ? '<div></div>' : '') : '') +
+    (st.length > 1 ? '<div class="lexa">Tous' + (nd ? ndLinkAll(nd, O, true) : '') + '</div>' + (nd ? ndLinkAll(nd, O).replace('class="lnd', 'class="lnd lnda') : '') + '<div class="lexat">' + rateHTML(null, '*', K) + '</div>' + (hv ? '<div></div>' : '') + stAllHTML(P, O, zero) : '') +
     O.map(o => { const off = LNK.off.has(o.id) ? ' loff' : '';           // case : l'exercice dans le lien ou non (l'enseignant, 07.11.2026)
       return '<label class="lexn' + off + (!off && zero(o) ? ' lzero' : '') + '"><input type="checkbox" data-x="' + o.id + '"' + (off ? '' : ' checked') + '><span>' + stuLabel(o, true) + (nd ? ndLinkIn(nd, o, !!off || zero(o)) : '') + '</span></label>' + (nd ? ndLinkCell(nd, o, !!off || zero(o)) : '') + '<div class="lexr' + off + '">' +
         (isNoStar(o) ? '<span class="lns">sans étoiles</span>' : rateHTML(cv(o), o.id)) + '</div>' + (hv ? lvidHTML(o, !!off || zero(o)) : '') +
-        (P.rnd && !off && !zero(o) && !isNoStar(o) && cv(o) >= 2 ? '<div class="lsd"><span class="lsdl">Étoiles :</span>' + ipBarHTML('st:' + o.id, lnkDist(o.id, cv(o)), 0) + '</div>' : ''); }).join('') +
+        (P.rnd && !off && !zero(o) && !isNoStar(o) && cv(o).length >= 2 ? '<div class="lsd"><span class="lsdl">Étoiles :</span>' + ipBarHTML('st:' + o.id, lnkDist(o.id, cv(o)), 0, null, cv(o)) + '</div>' : ''); }).join('') +
     (EO.length > 1 ? '<div class="lshw"><div class="lshl">Part de chaque exercice <span class="iphint">(glisse les séparations ; la même en classe et sur la feuille)</span></div>' +
       ipBarHTML('lsh', EO.map(o => v[o.id]), 0, EO.map(shName)) + '</div>' : '');
   mathify($('lEx')); linkSug();
@@ -36049,7 +36150,8 @@ function linkUrlDraw(){             // le lien et son QR code (n° 33 : avec la 
   LNK.zero = new Set(Z);
   const Zd = Z.filter(id => !Z0.has(id)), U = LNK.U = Object.assign({}, Zd.length ? linkEff(new Set([...LNK.off, ...Zd])) : E), UO = pObjs(U);
   if (UO.length > 1){ const n = shLR(UO.map(o => Z0.has(o.id) ? 0 : v[o.id]), 100); U.w = {}; UO.forEach((o, i) => U.w[o.id] = Z0.has(o.id) ? 0 : Math.max(1, n[i])); }
-  if (U.rnd){ U.sd = {}; UO.forEach(o => { const cap = (U.cap || {})[o.id] || 4; if (!isNoStar(o) && cap >= 2 && !Z0.has(o.id)) U.sd[o.id] = shLR(lnkDist(o.id, cap), 100); }); }
+  if (U.rnd){ U.sd = {}; UO.forEach(o => { const L = capL((U.cap || {})[o.id]); if (!isNoStar(o) && L.length >= 2 && !Z0.has(o.id)){        // n° 177 : un % par niveau, 0 pour un niveau pas permis
+    const n = shLR(lnkDist(o.id, L), 100), a = Array(Math.max(...L)).fill(0); L.forEach((l, i) => a[l - 1] = n[i]); U.sd[o.id] = a; } }); }
   U.vid = UO.filter(o => VID_OF[o.id] && !LNK.voff.has(o.id) && !Z0.has(o.id)).map(o => o.id);      // n° 34 : vidéos sur la liste de l'élève
   LNK.url = linkURL(U); LNK.qr = QR.make(LNK.url, 'M'); $('lQr').innerHTML = qrSVG(LNK.qr); $('lQr').title = 'Clic : le mode élève, comme tes élèves le verront (comme « Essayer »)'; $('lUrl').textContent = LNK.url; linkSug(); }
 function linkCheck(){                // ce lien marche-t-il déjà ? (la version de cette page en ligne, sinon la dernière version en ligne) ; la place du
@@ -36086,8 +36188,13 @@ $('lEx').onchange = e => { const y = e.target.closest('input[data-v]'); if (y &&
   const x = e.target.closest('input[data-x]'); if (!x || !LNK) return;
   if (x.checked) LNK.off.delete(x.dataset.x); else LNK.off.add(x.dataset.x); linkRows(); linkDraw(); };
 $('lEx').onclick = e => { const b = e.target.closest('.lrate button'); if (!b || !LNK) return;
-  const id = b.parentNode.dataset.o, v = Number(b.dataset.v), P = LNK.P, set = oid => { if (v >= 4) delete P.cap[oid]; else P.cap[oid] = v; };
-  if (id === '*') pObjs(P).filter(o => !isNoStar(o)).forEach(o => set(o.id)); else set(id);
+  const id = b.parentNode.dataset.o, v = Number(b.dataset.v), P = LNK.P;
+  // n° 177 : un exercice : ce niveau allumé ou éteint (jamais le dernier) ; « Tous » : éteint pour tous s'ils l'ont tous (sauf là où c'est le seul),
+  // sinon allumé pour tous ; la barre « Étoiles : » d'un exercice changé revient à ses % par défaut (sinon un niveau ajouté y serait à 0 %)
+  const put = (oid, L) => { const t = capS(L); if (t === capS(capL(P.cap[oid]))) return; if (t) P.cap[oid] = t; else delete P.cap[oid]; if (IP && IP.ex[oid]) IP.ex[oid].d = null; LNK.ST = null; };
+  const tog = (oid, on) => { const L = capL(P.cap[oid]); if (on && !L.includes(v)) put(oid, L.concat(v)); else if (!on && L.includes(v) && L.length > 1) put(oid, L.filter(l => l !== v)); };
+  if (id === '*'){ const st = pObjs(P).filter(o => !isNoStar(o)), all = st.every(o => capL(P.cap[o.id]).includes(v)); st.forEach(o => tog(o.id, !all)); }
+  else tog(id, !capL(P.cap[id]).includes(v));
   linkRows(); linkDraw(); };
 $('lFr').onchange = () => { if (!LNK) return; LNK.P.fr = $('lFr').checked; linkDraw(); };
 $('lRnd').onchange = () => { if (!LNK) return; LNK.P.rnd = $('lRnd').checked; linkRows(); linkDraw(); };   // n° 33 : les barres d'étoiles s'affichent
@@ -36240,7 +36347,7 @@ const IP_WLV = [.85, 1, 1.15, 1.3];                               // la place gr
 // moi même et te dirai plus tard s'il faut faire des modifs »)
 const IP_WORK = {
   'p+': 30, 'p−': 28, 'p∙': 36, 'p:': 42, p_pb: 34,                          // calculs à poser en colonne (n° 115 : problèmes)
-  rsum: 8, rprio: 20, pri: 20, prm: 4, dcp: 16, pgdc: 14, ppmc: 14, ar_pb: 22, pb_1: 6, pb_2: 14, pb_den: 10,
+  rsum: 8, rprod: 8, rprio: 20, pri: 20, prm: 4, dcp: 16, pgdc: 14, ppmc: 14, ar_pb: 22, pb_1: 6, pb_2: 14, pb_den: 10,
   fs: 6, fcmp: 8, fd: 14, 'f+': 14, 'f∙': 12, 'f:': 12, fpow: 8, fprio: 22, fq: 6, fr: 8, f_pb: 16, pro_pb: 18, e1_pb: 20, r_pb: 16, pa_pb: 18, v_pb: 18, at_pb: 18,
   pc_ecr: 6, fp: 14, pc_init: 16, pc_var: 16, pc_taux: 14,
   pwc: 4, pp1: 4, pp2: 4, pp3: 4, pp4: 4, pp5: 10, sci: 4, rp1: 6, rp2: 6, rp3: 8, rp4: 12, rc_pb: 16, sci_pb: 16,
@@ -36340,11 +36447,12 @@ function ipName(o){           // le thème d'un exercice (« 1) Addition et sous
 // n° 118 (l'enseignant, 16.11.2026 : « Bon en fait enlève l'option ticket de sortie, et enlève le mot renfort. Par défaut il y a juste le thème
 // des exercices. ») : la case « Ticket de sortie » de la n° 117 est enlevée (ne pas la remettre) ; le titre de la feuille = celui du lien
 const ipTitle = () => ((IP.E && IP.E.t) || linkSugT() || '').trim();
-const ipCap = o => isNoStar(o) ? 4 : ((IP.E && IP.E.cap) || {})[o.id] || 4;
+const ipLv = o => isNoStar(o) ? LV4.slice() : capL(((IP.E && IP.E.cap) || {})[o.id]);     // n° 177 : les niveaux permis (avant : ipCap, le plus haut)
 // % d'étoiles par défaut d'un exercice (la barre de la feuille, aussi celle du lien) ; n° 121 (l'enseignant, 16.11.2026 : « tu peux plutôt faire par
 // défaut cette proportion d'étoiles, pour les pdf ? », image : 33 / 28 / 23 / 16 ; QCM : « Lien aussi à 33/28/23/16 », « Mêmes rapports » quand
 // moins d'étoiles sont permises) ; avant : 40 / 35 / 20 / 5 (QCM du 09.11.2026), gardé pour lire les liens sans &s= (lnkSd0)
 const ipDef = cap => cap <= 1 ? [100, 0, 0, 0] : cap === 2 ? [54, 46, 0, 0] : cap === 3 ? [39, 33, 28, 0] : [33, 28, 23, 16];
+const ipDefL = L => capPre(L) ? ipDef(L.length) : lvPart(L, [33, 28, 23, 16]);          // n° 177 : mêmes rapports, seulement les niveaux permis
 const ipPool = id => IP.pool[id] || (IP.pool[id] = {1: [], 2: [], 3: [], 4: [], x: {}});
 const ipEx = id => IP.ex[id] || (IP.ex[id] = {d: null, w: 0});
 function ipMeas(){ let m = $('ipMeas'); if (!m){ m = document.createElement('div'); m.id = 'ipMeas'; m.className = 'ip-sheet'; document.body.appendChild(m); } return m; }
@@ -36396,9 +36504,7 @@ function ipReload(i){
 }
 function ipDist(o){           // parts (%) des niveaux 1 à 4 : la barre de l'exercice, dans ses étoiles permises ; sans étoiles : ses quatre sortes (NSW)
   if (isNoStar(o)) return [30, 30, 20, 20];
-  const cap = ipCap(o), d = (ipEx(o.id).d || ipDef(cap)).slice();
-  for (let l = cap; l < 4; l++){ d[cap - 1] += d[l]; d[l] = 0; }           // au-delà des étoiles permises : à la plus haute permise (comme le mode élève)
-  return d;
+  const L = ipLv(o); return lvFold((ipEx(o.id).d || ipDefL(L)).slice(), L);   // un niveau pas permis : au niveau permis le plus proche (comme le mode élève ; n° 177)
 }
 function ipCounts(d, n){      // n questions réparties selon les parts d (plus grands restes)
   const t = d.reduce((a, b) => a + b, 0) || 1, ex = d.map(v => v * n / t), c = ex.map(v => Math.floor(v + 1e-9));
@@ -36412,7 +36518,7 @@ function ipQs(o, n){          // les n questions de l'exercice (moins s'il n'y e
   let short = 0;
   for (let l = 1; l <= 4; l++) for (let k = 0; k < c[l - 1]; k++) if (!take(l)) short++;
   if (short){                 // un niveau épuisé (géométrie) : à un autre niveau permis, les plus demandés d'abord
-    const cap = ipCap(o); [1, 2, 3, 4].filter(l => l <= cap).sort((a, b) => d[b - 1] - d[a - 1] || a - b).forEach(l => { while (short && take(l)) short--; }); }
+    ipLv(o).sort((a, b) => d[b - 1] - d[a - 1] || a - b).forEach(l => { while (short && take(l)) short--; }); }
   const out = []; for (let l = 1; l <= 4; l++) out.push(...P[l].slice(0, use[l - 1]));
   return out;
 }
@@ -36942,26 +37048,26 @@ function ipUnprint(){         // après l'impression : les pages reviennent dans
 }
 
 /* ---------- réglages de la fenêtre ---------- */
-function ipBarHTML(kind, V, min, names){   // barre à glisser : un morceau par valeur (somme 100), séparations entre eux (n° 32 : plus de poignée ★★★★, l'enseignant :
+function ipBarHTML(kind, V, min, names, lv){   // n° 177 : lv, les niveaux d'une barre d'étoiles (un morceau par niveau permis)   // barre à glisser : un morceau par valeur (somme 100), séparations entre eux (n° 32 : plus de poignée ★★★★, l'enseignant :
   // « le truc que t'as fait pour 4 étoiles est vraiment pas bon .. fais 5% de 4 étoiles par défaut » ; ★★★★ ramené à 0 : sa séparation au bord droit,
   // et un clic près du bord la ramène)
   let x = 0; const segs = V.map((v, i) => { const s = '<span class="ipseg" data-i="' + i + '"' + (names ? ' data-n="' + ipEsc(names[i]) + '"' : '') + ' style="left:' + x + '%;width:' + v + '%;background:' +
-    (ipIsSh(kind) ? IP_SEGC[i % IP_SEGC.length] : IP_STC[i]) + '"></span>'; x += v; return s; }).join('');
+    (ipIsSh(kind) ? IP_SEGC[i % IP_SEGC.length] : IP_STC[(lv ? lv[i] : i + 1) - 1]) + '"></span>'; x += v; return s; }).join('');
   x = 0; const hs = V.slice(0, -1).map(v => '<span class="iph" style="left:' + (x += v) + '%"></span>').join('');
-  return '<div class="ipbar' + (ipIsSh(kind) ? '' : ' ipbs') + '" data-k="' + kind + '" data-min="' + (min || 0) + '" title="Glisse les séparations, ou clique dans un morceau">' + segs + hs + '</div>';
+  return '<div class="ipbar' + (ipIsSh(kind) ? '' : ' ipbs') + '" data-k="' + kind + '"' + (lv ? ' data-lv="' + lv.join('') + '"' : '') + ' data-min="' + (min || 0) + '" title="Glisse les séparations, ou clique dans un morceau">' + segs + hs + '</div>';
 }
 function ipBarLabels(bar){    // le texte de chaque morceau, d'après sa largeur à l'écran
   const W = bar.getBoundingClientRect().width, kind = bar.dataset.k, VV = ipBarVals(bar); let nn = 0; const NB = VV.map(v => v > 0 ? ++nn : 0);
   const RR = ipIsSh(kind) ? shLR(VV, 100) : null;      // n° 34 : parts arrondies qui font 100 % (comme les lignes de « Proportions » et &p=)
   bar.querySelectorAll('.ipseg').forEach(s => { const i = Number(s.dataset.i), v = parseFloat(s.style.width), px = W * v / 100, n = RR ? RR[i] : Math.round(v);
-    const st = '<span class="stars">' + '★'.repeat(i + 1) + '</span>';
+    const lvl = bar.dataset.lv ? Number(bar.dataset.lv[i]) : i + 1, st = '<span class="stars">' + '★'.repeat(lvl) + '</span>';   // n° 177
     if (kind === 'lsh' || kind === 'cls' || kind === 'snc' || kind.startsWith('mx:')){ const nm = (kind === 'cls' ? (i + 1) + ') ' : '') + (s.dataset.n || '');     // n° 33 : le nom de l'exercice, puis sa part ; n° 34 : son numéro (fenêtre « Proportions »)
       s.innerHTML = px >= 96 && nm ? '<span class="ipsn">' + ipEsc(nm) + '</span><span class="ipsp">' + n + ' %</span>' : kind === 'cls' ? (px >= 56 ? (i + 1) + ') ' + n + ' %' : px >= 24 ? (i + 1) + ')' : '') : px >= 40 ? n + ' %' : px >= 20 ? String(n) : '';
       s.title = nm + ' : ' + n + (kind.startsWith('mx:') ? ' % du bloc' : ' %'); return; }
     s.innerHTML = kind === 'share' ? (px >= 96 && s.dataset.n && NB[i] ? '<span class="ipsn">' + ipEsc(NB[i] + ') ' + s.dataset.n) + '</span><span class="ipsp">' + n + ' %</span>'   // n° 37 : comme la barre du lien
       : px >= 64 ? NB[i] + ') ' + n + ' %' : px >= 40 ? n + ' %' : px >= 20 ? String(n) : '')
-      : (px >= 38 + 9 * (i + 1) ? st + '<span>' + n + ' %</span>' : px >= 34 ? '<span>' + n + ' %</span>' : px >= 19 ? '<span>' + n + '</span>' : '');
-    s.title = (kind === 'share' ? (NB[i] ? 'Exercice ' + NB[i] + ' : ' : 'Pas sur la feuille : ') + (s.dataset.n ? s.dataset.n + ' : ' : '') : '★'.repeat(i + 1) + ' : ') + n + ' %'; });
+      : (px >= 38 + 9 * lvl ? st + '<span>' + n + ' %</span>' : px >= 34 ? '<span>' + n + ' %</span>' : px >= 19 ? '<span>' + n + '</span>' : '');
+    s.title = (kind === 'share' ? (NB[i] ? 'Exercice ' + NB[i] + ' : ' : 'Pas sur la feuille : ') + (s.dataset.n ? s.dataset.n + ' : ' : '') : '★'.repeat(lvl) + ' : ') + n + ' %'; });
 }
 const ipBarVals = bar => [...bar.querySelectorAll('.ipseg')].map(s => parseFloat(s.style.width));
 function ipBarSet(bar, V){
@@ -36987,9 +37093,9 @@ function ipUI(){              // la section de la fenêtre : options, barre des 
   $('ipShareL').hidden = one; $('ipShare').innerHTML = one ? '' : ipBarHTML('share', U.map(u => IP.share[u.id]), 0,
     U.map(u => u.mix ? ipBlName(u.bl).replace(/<[^>]+>/g, '') : shName(u.o)));   // 0 % permis (n° 32) ; n° 37 : le nom de chaque exercice
   const NUM = ipNums();
-  const row = (o, num, off, mv) => { const e = ipEx(o.id), cap = ipCap(o), d = ipDist(o).slice(0, cap);
+  const row = (o, num, off, mv) => { const e = ipEx(o.id), L = ipLv(o), dd = ipDist(o), d = L.map(l => dd[l - 1]);   // n° 177
     return '<div class="ipxr' + (num ? '' : ' ipxm') + (mv ? ' ipxt' : '') + (off ? ' ipoff' : '') + '"><div class="ipxn">' + (mv || '') + (num ? '<b>' + num + ')</b> ' : '') + ipName(o) + '<span class="ipxq" data-q="' + o.id + '"></span></div><div class="ipxs">' +
-      (isNoStar(o) ? '<span class="ipns">sans étoiles</span>' : cap < 2 ? '<span class="ipns">★ seulement</span>' : ipBarHTML('st:' + o.id, d, 0)) + '</div>' +
+      (isNoStar(o) ? '<span class="ipns">sans étoiles</span>' : L.length < 2 ? '<span class="ipns">' + '★'.repeat(L[0]) + ' seulement</span>' : ipBarHTML('st:' + o.id, d, 0, null, L)) + '</div>' +
       '<div class="ipw"><button type="button" data-ipw="' + o.id + '" data-d="-1"' + (e.w <= -2 ? ' disabled' : '') + ' aria-label="Moins de place">−</button><span>' + IP_WL[e.w + 2] +
       '</span><button type="button" data-ipw="' + o.id + '" data-d="1"' + (e.w >= 2 ? ' disabled' : '') + ' aria-label="Plus de place">+</button></div></div>'; };
   // n° 117 (l'enseignant, 16.11.2026 : « permets aussi de modifier la place pour répondre pour tous les exos d'un coup ») : une ligne « Tous les
@@ -37117,7 +37223,7 @@ function ipBarKeep(D){         // les valeurs d'une barre dans l'état : parts (
   else if (k.startsWith('mx:')){ const u = IP && IP.U.find(x => x.mix && x.bl === k.slice(3)); if (!u) return;     // n° 146 : la barre d'un bloc mélangé : ses exercices ; la part du bloc ne bouge pas
     const v = shView(draft, IP.O), t = u.os.reduce((a, o) => a + (v[o.id] || 0), 0), ids = u.os.map(o => o.id);
     shWrite(draft, IP.O, IP.O.map(o => { const j = ids.indexOf(o.id); return j < 0 ? v[o.id] : t * V[j] / 100; })); }
-  else { const id = k.slice(3), d = [0, 0, 0, 0]; V.forEach((v, i) => d[i] = v); ipEx(id).d = d; }   // étoiles : la même barre dans la feuille et dans le lien
+  else { const id = k.slice(3), d = [0, 0, 0, 0], lv = D.bar.dataset.lv; V.forEach((v, i) => d[(lv ? Number(lv[i]) : i + 1) - 1] = v); if (id === '*') stAllKeep(d); else { ipEx(id).d = d; if (LNK) LNK.ST = null; } }   // n° 177 : par niveau ; « Tous » : tous les exercices   // étoiles : la même barre dans la feuille et dans le lien
 }
 // pendant le glissement (n° 32, l'enseignant : « quand on fait glisser les réglettes (mais sans les lacher), tu pourrais actualiser en temps réel (ou presque
 // si c'est trop couteux en performance) ») : feuille et nombres recalculés sans refaire la liste (la barre qu'on tire reste) ; un calcul à la fois, le

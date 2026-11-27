@@ -1556,6 +1556,23 @@ html.pdxno #pdxPrn,html.pdxno .pdxy,html:not(.pdxno) .pdxn{display:none}   /* n�
 .blk.ndstk .ndg .ndst button{width:1em;height:1em;line-height:.9}
 .blk.ndstk .ndg .ndst output{min-width:2.4em}
 .blk.ndstk .bh{padding-top:.04em;padding-bottom:.04em}
+/* n° 178 : bouton des livrets (« 2 à 12 ») et sa mini fenêtre */
+.lvtb{font:inherit;font-size:.9em;line-height:1;padding:.08em .34em;margin:-.3em 0 -.3em .05em;border:1px solid #9aa6b2;border-radius:.6em;background:rgba(255,255,255,.75);color:inherit;cursor:pointer;vertical-align:baseline;white-space:nowrap}
+.lvtb:hover{background:var(--accent-soft);border-color:var(--accent)}
+.lvtb.lvon{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.lvtp{position:fixed;z-index:20;background:var(--panel);border:1px solid var(--line);border-radius:.7em;box-shadow:0 8px 30px rgba(0,0,0,.2);padding:.55em .8em .65em;font-size:var(--fs-ui);max-width:calc(100vw - 16px)}
+.lvtp[hidden]{display:none}
+.lvtp.lvtl{--accent:var(--sel);--accent-soft:var(--sel-soft)}
+.lvth{font-weight:700}
+.lvts{color:var(--muted);font-size:.8em;margin:.1em 0 .5em}
+.lvtg{display:grid;grid-template-columns:repeat(11, 2.1em);gap:.3em}
+.lvtg button{height:2.1em;padding:0;border:1px solid var(--line);border-radius:.45em;background:var(--panel);color:var(--ink);font:inherit;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer}
+.lvtg button:hover{border-color:var(--accent)}
+.lvtg button.lvk{background:var(--accent);border-color:var(--accent);color:#fff}
+.lvtf{display:flex;justify-content:space-between;align-items:center;gap:.8em;margin-top:.5em}
+.lvtm{color:var(--red);font-size:.82em}
+.lvtq{display:flex;gap:.4em}
+@media (max-width:560px){ .lvtg{grid-template-columns:repeat(6, 2.4em)} .lvtg button{height:2.4em} }
 </style>
 </head>
 <body>
@@ -7158,37 +7175,65 @@ const livDet = (a, b) => packets(a, b);          // a ∙ b : a paquets de b poi
 // 2 ≤ a ≤ b ≤ 12, tirées dans un sac mélangé (chaque livret aussi souvent) ; une paire déjà posée dans la séance, dans un ordre ou dans l'autre
 // (clé sans l'ordre), revient en dernier quand le sac est refait. « Niveaux » (sortes de questions, `NOSTAR`) : 1 à 3 le résultat, 4 le facteur
 // manquant (6 ∙ ? = 42) : environ une question sur trois, gauche et droite ensemble.
+/* n° 178 (l'enseignant, 27.11.2026 : « Pour les livrets, il faudrait un petit bouton à côté qui ouvre une mini fenêtre qui permet de choisir quelles
+   tables on travaille. ») ; QCM : « Toutes les multiplications qui contiennent du 7 et/ou du 8 » (au moins un facteur parmi les livrets choisis,
+   l'autre de 2 à 12 : les paires qui contiennent un livret choisi) ; « livrets (divisions) » : le même choix, diviseur ou quotient parmi les livrets
+   choisis ; le « 2 à 12 » de la case devient le bouton et affiche le choix ; aussi dans la fenêtre Lien/impression, le lien (&l=), la feuille et les
+   séances. S.liv : les livrets choisis, codés 2…9, a (10), b (11), c (12) ; '' : tous (tirage identique à la n° 177). Toutes les paires du choix déjà
+   posées dans la séance : la moitié la plus ancienne revient d'abord, mélangée (reprise voulue, q.reuse : jamais la paire qu'on vient de poser). */
+const LIV_ALL = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+const livC = n => n < 10 ? String(n) : 'abc'[n - 10];
+const livN = c => c >= '2' && c <= '9' ? Number(c) : c === 'a' ? 10 : c === 'b' ? 11 : c === 'c' ? 12 : 0;
+function livClean(v){                 // → '' (tous) ou les livrets choisis, dans l'ordre (« 78 », « 6789abc »)
+  const L = Array.isArray(v) ? v.map(Number) : String(v == null ? '' : v).toLowerCase().split('').map(livN), c = LIV_ALL.filter(n => L.includes(n));
+  return !c.length || c.length === LIV_ALL.length ? '' : c.map(livC).join(''); }
+const livL = v => { const c = livClean(v); return c ? c.split('').map(livN) : LIV_ALL.slice(); };
+const livHas = ids => ids.includes('liv') || ids.includes('livd');
+function livRuns(L){ const R = []; L.forEach(n => { const r = R[R.length - 1]; if (r && n === r[1] + 1) r[1] = n; else R.push([n, n]); }); return R; }
+function livTxt(v, de){               // bouton : « 2 à 12 », « 7, 8 », « 6 à 9 », « 2 à 5, 10 », plus de trois morceaux : « 6 livrets » ; de : « de 7 et 8 » ('' : tous)
+  const c = livClean(v); if (!c) return de ? '' : '2 à 12';
+  const L = livL(c), it = []; livRuns(L).forEach(([a, b]) => { if (b - a >= 2) it.push(a + ' à ' + b); else for (let n = a; n <= b; n++) it.push(String(n)); });
+  if (de) return 'de ' + (it.length > 1 ? it.slice(0, -1).join(', ') + ' et ' + it[it.length - 1] : it[0]);
+  return it.length > 3 ? L.length + ' livrets' : it.join(', '); }
+const livName = (id, v) => { const d = (id === 'liv' || id === 'livd') && livTxt(v, true); return !d ? '' : 'livrets ' + d + (id === 'livd' ? ' : divisions' : ''); };   // titres (lien, feuille, élève)
 const LIV_PAIRS = []; for (let a = 2; a <= 12; a++) for (let b = a; b <= 12; b++) LIV_PAIRS.push([a, b]);
 const livKey = (a, b) => 'liv' + Math.min(a, b) + 'x' + Math.max(a, b);
-let LIV_BAG = [];
+function livPool(){ const L = livL(S && S.liv); return L.length === LIV_ALL.length ? LIV_PAIRS : LIV_PAIRS.filter(([a, b]) => L.includes(a) || L.includes(b)); }   // les paires du choix
+const livUsed = (P, kf) => { const U = typeof USED !== 'undefined' ? USED : new Set(); return P.every(([a, b]) => U.has(kf(a, b))); };
+function livFill(kf){                 // le sac (pop) : les paires déjà posées en dernier ; toutes déjà posées : la moitié la plus ancienne d'abord, mélangée
+  const P = livPool(), U = typeof USED !== 'undefined' ? USED : new Set(), sh = shuffle(P.slice());
+  if (!livUsed(P, kf)) return sh.filter(([a, b]) => U.has(kf(a, b))).concat(sh.filter(([a, b]) => !U.has(kf(a, b))));
+  const A = typeof USEDAT !== 'undefined' ? USEDAT : new Map(), o = sh.sort((x, y) => (A.get(kf(x[0], x[1])) || 0) - (A.get(kf(y[0], y[1])) || 0)), h = Math.ceil(o.length / 2);
+  return shuffle(o.slice(h)).concat(shuffle(o.slice(0, h))); }
+let LIV_BAG = [], LIV_BK = '';
 function livPair(){
-  if (!LIV_BAG.length){ const U = typeof USED !== 'undefined' ? USED : new Set(), sh = shuffle(LIV_PAIRS.slice());
-    LIV_BAG = sh.filter(([a, b]) => U.has(livKey(a, b))).concat(sh.filter(([a, b]) => !U.has(livKey(a, b)))); }   // pop() : les paires déjà posées en dernier
+  const k = (S && S.liv) || ''; if (!LIV_BAG.length || LIV_BK !== k){ LIV_BAG = livFill(livKey); LIV_BK = k; }   // n° 178 : un autre choix de livrets : un autre sac
   return LIV_BAG.pop();
 }
 GL('liv', [1, 2, 3, 4], lv => {
   // multiplications seulement : le résultat ou le facteur manquant (l'enseignant, 27.10.2026 : « pour les livrets, enlève les divisions »)
   const kind = lv <= 3 ? 'mul' : 'mis';
-  const [a, b] = livPair(), [x, y] = chance(.5) ? [a, b] : [b, a], key = livKey(x, y);
-  if (kind === 'mul') return mk([I(x), '∙', I(y)], I(x * y), () => livDet(x, y), {key});
+  const [a, b] = livPair(), [x, y] = chance(.5) ? [a, b] : [b, a], key = livKey(x, y), re = USED.has(key) && livUsed(livPool(), livKey);   // n° 178 : tout est posé : reprise voulue
+  if (kind === 'mul'){ const q = mk([I(x), '∙', I(y)], I(x * y), () => livDet(x, y), {key}); if (re) q.reuse = true; return q; }
   const line = show => '<span>' + x + '</span><span class="op">∙</span>' + (show ? H('ansnum', y) : BOX) + '<span class="op">=</span><span>' + fmtInt(x * y) + '</span>';
-  return {line, key, a: String(y), r: I(y), chk: {mf: [x, y, x * y]}, det: () => DIV(fmtInt(x * y) + ' : ' + x + ' = ' + ANS(y), 'fin') + livDet(x, y)};
+  const q = {line, key, a: String(y), r: I(y), chk: {mf: [x, y, x * y]}, det: () => DIV(fmtInt(x * y) + ' : ' + x + ' = ' + ANS(y), 'fin') + livDet(x, y)}; if (re) q.reuse = true; return q;
 });
 
 // divisions des livrets (l'enseignant, 30.10.2026 : « à côté des livrets, mets une option pour les livrets mais juste des divisions (par exemple
 // 56 : 7) où les diviseurs et quotients sont entre 2 et 12 ») : case à part, sans étoiles comme les livrets ; même sac des 66 paires
 // (diviseur et quotient de 2 à 12, chaque nombre aussi souvent), le sien ; une paire déjà posée dans la séance (56 : 7 ou 56 : 8) ne revient
 // pas. Toujours « 56 : 7 = ? » (les « niveaux » ne changent rien) ; détail comme la division du calcul mental : 7 ∙ 8 = 56 et les paquets.
+// n° 178 : les paires du choix des livrets (diviseur ou quotient parmi les livrets choisis), comme les livrets.
 const livdKey = (a, b) => 'livd' + Math.min(a, b) + 'x' + Math.max(a, b);
-let LIVD_BAG = [];
+let LIVD_BAG = [], LIVD_BK = '';
 function livdPair(){
-  if (!LIVD_BAG.length){ const U = typeof USED !== 'undefined' ? USED : new Set(), sh = shuffle(LIV_PAIRS.slice());
-    LIVD_BAG = sh.filter(([a, b]) => U.has(livdKey(a, b))).concat(sh.filter(([a, b]) => !U.has(livdKey(a, b)))); }
+  const k = (S && S.liv) || ''; if (!LIVD_BAG.length || LIVD_BK !== k){ LIVD_BAG = livFill(livdKey); LIVD_BK = k; }
   return LIVD_BAG.pop();
 }
 GL('livd', [1, 2, 3, 4], () => {
-  const [a, b] = livdPair(), [d, q] = chance(.5) ? [a, b] : [b, a];
-  return mk([I(d * q), ':', I(d)], I(q), () => '<div class="fin">' + d + ' ∙ ' + ANS(q) + ' = ' + d * q + '</div>' + livDet(d, q), {key: livdKey(d, q)});
+  const [a, b] = livdPair(), [d, q] = chance(.5) ? [a, b] : [b, a], key = livdKey(d, q);
+  const p = mk([I(d * q), ':', I(d)], I(q), () => '<div class="fin">' + d + ' ∙ ' + ANS(q) + ' = ' + d * q + '</div>' + livDet(d, q), {key});
+  if (USED.has(key) && livUsed(livPool(), livdKey)) p.reuse = true; return p;
 });
 
 /* ---------- calcul mental : ∙ et : par 10, 100, 1000, 0,1, 0,01, 0,001 ---------- */
@@ -12019,9 +12064,10 @@ Object.values(BLOCK_OPTS).forEach(ks => ks.forEach(k => DEFAULTS.opt[k] = false)
 const numFrom = g => { const o = {}; Object.values(BLOCKS).forEach(b => { if (b.nd) o[b.id] = {dec: !!g.dec, rel: !!g.rel, fra: b.id === 'rac'}; }); return o; };
 DEFAULTS.num = numFrom(DEFAULTS.gnum);
 DEFAULTS.ndp = {};                   // n° 174 : % de décimaux, relatifs, fractions par exercice (absent : auto)
+DEFAULTS.liv = '';                   // n° 178 : les livrets choisis ('' : tous ; livClean)
 const KEY = 'questions-champions-v5', KEY4 = 'questions-champions-v4', KEY3 = 'questions-champions-v3', KEY2 = 'questions-champions-v2', KEY1 = 'questions-champions-v1', SKEY = 'questions-champions-seance';
 const GEN_KEYS = ['two', 'twoSame', 'hideStars', 'starsDet', 'bg', 'gnum'];   // plus de nombre de questions, de % ni d'ordre (05.11.2026, 11e conversation)   // onglet Général (le bouton « FR » n'est pas gardé : désactivé à chaque ouverture, l'enseignant, 27.10.2026) : gardé d'une ouverture à l'autre (navigateur)
-const SES_KEYS = ['on', 'it', 'num', 'opt', 'share', 'ndp'];   // n° 174 : ndp, les % de décimaux, relatifs, fractions
+const SES_KEYS = ['on', 'it', 'num', 'opt', 'share', 'ndp', 'liv'];   // n° 174 : ndp, les % de décimaux, relatifs, fractions ; n° 178 : liv, les livrets choisis
 // n° 174 : exercice → cases (décimaux, relatifs, fractions) qui changent ses questions, et niveaux où il en met (mesurés sur la n° 173 ; « Respecter les étoiles »)
 var ND_LV = {'m+': {dec: '1234', rel: '1234'}, 'm−': {dec: '1234', rel: '1234'}, 'm∙': {dec: '1234', rel: '1234'}, 'm:': {dec: '1234', rel: '1234'}, 'm10': {dec: '234'}, 'm10x': {dec: '234'}, 'mcom': {dec: '34', rel: '4'}, 'mdis': {dec: '4'}, 'p+': {dec: '1234'}, 'p−': {dec: '1234'}, 'p∙': {dec: '1234'}, 'p:': {dec: '1234'}, 'p_pb': {dec: '1234'}, 'radd': {dec: '4'}, 'rsub': {dec: '4'}, 'rsum': {dec: '4'}, 'rmul': {dec: '4'}, 'rprod': {dec: '4'}, 'rdiv': {dec: '4'}, 'r_pb': {dec: '1234'}, 'pri': {dec: '1234', rel: '1234', fra: '1234'}, 'fs': {rel: '234'}, 'fa': {rel: '34'}, 'fax': {rel: '234'}, 'fd': {rel: '34'}, 'f+': {rel: '234'}, 'f∙': {dec: '2', rel: '1234'}, 'f:': {dec: '2', rel: '1234'}, 'fpow': {rel: '234'}, 'fprio': {rel: '1234'}, 'pc_ecr': {dec: '1234'}, 'fp': {dec: '12'}, 'pc_init': {dec: '1234'}, 'pc_var': {dec: '34'}, 'pc_taux': {dec: '23'}, 'pwc': {dec: '1234', rel: '1234', fra: '1234'}, 'pp1': {dec: '34', rel: '34', fra: '4'}, 'pp2': {dec: '34', rel: '34'}, 'pp3': {dec: '34', rel: '34', fra: '4'}, 'pp4': {rel: '3'}, 'pp5': {dec: '4', rel: '34'}, 'r2': {dec: '1234', fra: '234'}, 'r3': {dec: '1234', rel: '234', fra: '234'}, 'renc3': {rel: '34'}, 'rp1': {rel: '34'}, 'rp2': {rel: '34'}, 'rp3': {rel: '234'}, 'rp4': {rel: '34'}, 'rc_pb': {dec: '2'}, 'q4': {dec: '34'}, 'pagr': {dec: '1234'}, 'pech': {dec: '234'}, 'ppen': {dec: '234', rel: '1234'}, 'pvit': {dec: '24'}, 'pdeb': {dec: '24'}, 'pmv': {dec: '1234'}, 'pro_pb': {dec: '1234'}, 'e1_1': {dec: '4', rel: '234'}, 'e1_2': {rel: '34'}, 'e1_3': {dec: '4', rel: '34'}, 'e1_4': {rel: '34'}, 'e1_5': {rel: '34'}, 'e1_6': {rel: '34'}, 'e1_7': {rel: '34'}, 'e1_8': {dec: '4', rel: '34'}, 'e1_pb': {dec: '234', rel: '123'}, 'e2_1': {dec: '3'}, 'e2_2': {rel: '234'}, 'e2_3': {rel: '234'}, 'e2_4': {rel: '234'}, 'e2_5': {rel: '1234'}, 'sy_sub': {rel: '234'}, 'sy_com': {rel: '1234'}, 'fn_gx': {rel: '1234'}, 'fn_xg': {dec: '34', rel: '1234'}, 'fn_lim': {rel: '1234'}, 'fn_im': {dec: '34', rel: '1234'}, 'fn_lpi': {rel: '1234'}, 'fn_pi': {dec: '34', rel: '1234'}, 'fn_tab': {dec: '34', rel: '1234'}, 'fn_pb': {dec: '1234'}, 'd_car': {rel: '34'}, 'cv_lon': {dec: '234'}, 'cv_mas': {dec: '234'}, 'cv_cap': {dec: '234'}, 'cv_air': {dec: '234'}, 'cv_vol': {dec: '234'}, 'cv_tem': {dec: '34'}, 'cv_vit': {dec: '34'}, 'cv_mv': {dec: '123'}, 'cv_deb': {dec: '34'}, 'aro': {dec: '1234'}, 'f_car': {dec: '1234'}, 'f_rec': {dec: '1234'}, 'f_tri': {dec: '1234'}, 'f_par': {dec: '1234'}, 'f_los': {dec: '1234'}, 'f_tra': {dec: '1234'}, 'f_dis': {dec: '1234'}, 'pa_pb': {dec: '1234'}, 'v_cub': {dec: '1234'}, 'v_pav': {dec: '1234'}, 'v_pri': {dec: '1234'}, 'v_cyl': {dec: '1234'}, 'v_pyr': {dec: '1234'}, 'v_con': {dec: '1234'}, 'v_bou': {dec: '1234'}, 'v_pb': {dec: '1234'}, 'at_cub': {dec: '1234'}, 'at_pav': {dec: '1234'}, 'at_pri': {dec: '1234'}, 'at_cyl': {dec: '1234'}, 'at_pyr': {dec: '1234'}, 'at_bou': {dec: '1234'}, 'at_pb': {dec: '1234'}, 'py_calc': {dec: '4'}, 'py_rec': {dec: '34'}, 'py_con': {dec: '34'}, 'py_esp': {dec: '4'}, 'py_pb': {dec: '1234'}, 'th_calc': {dec: '234'}, 'th_rec': {dec: '234'}, 'th_con': {dec: '234'}, 'th_pb': {dec: '1234'}, 'g_tri': {dec: '4'}, 'g_tan': {dec: '34'}, 'g_rep2': {dec: '4', rel: '1234'}, 'g_rep3': {rel: '1234'}, 'l_sub': {dec: '3', rel: '1234'}, 'l_voc': {rel: '234'}, 'l_mulm': {dec: '234', rel: '1234'}, 'l_addm': {dec: '234', rel: '1234'}, 'l_vocp': {dec: '4', rel: '1234'}, 'l_addp': {rel: '234'}, 'l_subp': {rel: '1234'}, 'l_dev': {dec: '234', rel: '1234'}, 'l_dev2': {rel: '234'}, 'l_ir1': {dec: '234', rel: '34'}, 'l_ir2': {dec: '234', rel: '34'}, 'l_ir3': {dec: '234', rel: '34'}, 'l_ir4': {rel: '34'}, 'l_fme': {rel: '4'}, 'l_fir1': {dec: '4', rel: '4'}, 'l_fir2': {dec: '4', rel: '234'}, 'l_fir3': {dec: '4', rel: '234'}, 'l_fir4': {rel: '234'}, 'l_pb': {dec: '234'}};
 var ND_K = ['dec', 'rel', 'fra'], ND_LAB = {dec: 'décimaux', rel: 'relatifs', fra: 'fractions'}, ND_CTX = null, ND_FLC = new WeakMap(), ND_LAST = false, ND_ROT = 0;   // n° 174 : code avant newQuestions
@@ -12075,7 +12121,7 @@ try {
   const t = JSON.parse(sessionStorage.getItem(SKEY) || 'null');
   if (t){ S.on = Object.assign({}, t.on); if (S.on.trf){ S.on.sym = true; delete S.on.trf; }     // ancien bloc « Transformations du plan » (fusionné le 24.10.2026)
     S.it = Object.assign({}, DEFAULTS.it, t.it); Object.keys(t.num || {}).forEach(b => { if (S.num[b]) Object.assign(S.num[b], t.num[b]); });
-    S.opt = Object.assign({}, DEFAULTS.opt, t.opt); S.ndp = ndClean(t.ndp); S.share = t.pv ? Object.assign({}, t.share) : prioMig(S.it, t.share); }     // n° 163
+    S.opt = Object.assign({}, DEFAULTS.opt, t.opt); S.ndp = ndClean(t.ndp); S.liv = livClean(t.liv); S.share = t.pv ? Object.assign({}, t.share) : prioMig(S.it, t.share); }     // n° 163
 } catch (e) {}
 function save(){
   if (STU) return;                   // mode élève : rien n'est gardé (les réglages de l'enseignant dans ce navigateur restent intacts)
@@ -33875,11 +33921,11 @@ function rsScore(a, A, b, tw, gi){
 }
 function retSnap(){                  // l'état de la séance que le tirage change (pour l'enlever ensuite) ; n° 122 : aussi les tours (KC), les sacs (BAGS, LIVD_BAG)
   return {T: TALLY, U: new Set(USED), A: new Map(USEDAT), C: new Map(USECNT), N: USEDN, E: new Set(EXH), L: Object.assign({}, PB_LAST), K: Object.assign({}, KC),
-    B: Object.fromEntries(Object.entries(BAGS).map(([k, b]) => [k, {k: b.k, v: b.v.slice()}])), LB: LIVD_BAG.slice()}; }
+    B: Object.fromEntries(Object.entries(BAGS).map(([k, b]) => [k, {k: b.k, v: b.v.slice()}])), LB: LIVD_BAG.slice(), LA: LIV_BAG.slice(), LK: [LIV_BK, LIVD_BK]}; }   // n° 178 : aussi LIV_BAG
 const rsSet = (o, z) => { Object.keys(o).forEach(k => delete o[k]); Object.assign(o, z); };
 function retBack(z){
   TALLY = z.T; USED.clear(); z.U.forEach(k => USED.add(k)); USEDAT.clear(); z.A.forEach((v, k) => USEDAT.set(k, v)); USECNT.clear(); z.C.forEach((v, k) => USECNT.set(k, v));
-  USEDN = z.N; EXH.clear(); z.E.forEach(k => EXH.add(k)); rsSet(PB_LAST, z.L); rsSet(KC, z.K); rsSet(BAGS, z.B); LIVD_BAG = z.LB; }
+  USEDN = z.N; EXH.clear(); z.E.forEach(k => EXH.add(k)); rsSet(PB_LAST, z.L); rsSet(KC, z.K); rsSet(BAGS, z.B); LIVD_BAG = z.LB; LIV_BAG = z.LA; [LIV_BK, LIVD_BK] = z.LK; }
 function retGen(x){                  // une question semblable à x.L : même sous-genre, mêmes étoiles, la même chose demandée, autre que x.L
   const p = x.L, lv = p.level, fl = p.fl, geo = isGeo(p.sub), c = p.chk && p.chk.pb, pm = c && c.m && PB_M[c.bl] ? c.m : null, A = rsSig(p);
   const nf = GEN[p.sub] && GEN[p.sub][lv] ? GEN[p.sub][lv].length : 1, gi0 = GEN_IDX.get(p), gi = nf > 1 && gi0 !== undefined ? gi0 : undefined;
@@ -35140,6 +35186,60 @@ function ndInfo(){                   // le petit « i » (réglages, fenêtre du
     '<li>Un clic sur le pourcentage : retour à <b>auto</b>.</li></ul>';
   $('piBody').scrollTop = 0; $('oPbi').classList.add('open'); }
 
+/* n° 178 : le bouton des livrets (réglages : le « 2 à 12 » de la case « livrets » ; fenêtre Lien/impression : à côté de « livrets » et de « livrets
+   (divisions) », un seul choix pour les deux) et sa mini fenêtre #livPop : 2 à 12 (allumés : choisis), « Tous », « Aucun » ; au moins un livret (sinon
+   le choix d'avant reste, avec un message) ; un clic change le brouillon (draft.liv) et, fenêtre du lien ouverte, son lien (LNK.P.liv) et la feuille
+   (questions des livrets refaites : livIpCheck). Le bouton ne coche ni ne décoche la case. Échap, un clic à côté, une autre touche ou un
+   redimensionnement ferment la mini fenêtre. */
+let LVP = null;                       // la mini fenêtre ouverte : {src : 's' réglages, 'l' fenêtre du lien ; btn ; sel : les livrets allumés}
+function livTit(c){ return 'Livrets travaillés' + (c ? ' : ' + livTxt(c, true).slice(3) : ' : tous, de 2 à 12') + ' (multiplications et divisions ; clic pour choisir)'; }
+function livBtnHTML(src, v, o){ const c = livClean(v);
+  return '<button type="button" class="lvtb' + (c ? ' lvon' : '') + '" data-lvt="' + src + '"' + (o ? ' data-lvo="' + o + '"' : '') + ' title="' + livTit(c) + '" aria-haspopup="dialog">' + livTxt(c) + '</button>'; }
+function livRowLab(o, P){             // fenêtre du lien : le nom de l'exercice, et le bouton pour les livrets
+  const L = stuLabel(o, true); if (o.id !== 'liv' && o.id !== 'livd') return L;
+  return (o.id === 'liv' ? L.replace(' (2 à 12)', '') : L) + ' ' + livBtnHTML('l', P.liv, o.id); }
+function livUI(){ const c = livClean(draft.liv);
+  document.querySelectorAll('#oSet [data-lvt]').forEach(b => { b.textContent = livTxt(c); b.title = livTit(c); b.classList.toggle('lvon', !!c); }); }
+function livIpCheck(E){              // feuille : un autre choix de livrets, les questions des livrets refaites (les autres restent)
+  const c = (E && E.liv) || ''; if ((IP.liv || '') === c) return;
+  ['liv', 'livd'].forEach(id => { const P = IP.pool[id]; if (!P) return; [1, 2, 3, 4].forEach(l => (P[l] || []).forEach(p => { if (p && p.key != null) IP.keys.delete(p.key); })); delete IP.pool[id]; });
+  IP.liv = c; }
+function livPopEl(){ let el = $('livPop'); if (el) return el;
+  el = document.createElement('div'); el.id = 'livPop'; el.className = 'lvtp'; el.hidden = true; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', 'Livrets travaillés');
+  document.body.appendChild(el);
+  el.addEventListener('click', e => { const b = e.target.closest('button'); if (!b || !LVP) return; e.preventDefault(); b.blur();
+    if (b.dataset.lvn) livPick(Number(b.dataset.lvn)); else if (b.dataset.lva) livSel(b.dataset.lva === '1' ? LIV_ALL.slice() : []); });
+  return el; }
+function livPopDraw(){ const el = livPopEl(), s = LVP.sel; el.classList.toggle('lvtl', LVP.src === 'l');
+  el.innerHTML = '<div class="lvth">Livrets travaillés</div><div class="lvts">Multiplications et divisions qui contiennent un des livrets choisis.</div>' +
+    '<div class="lvtg">' + LIV_ALL.map(n => '<button type="button" data-lvn="' + n + '"' + (s.includes(n) ? ' class="lvk"' : '') + ' aria-pressed="' + s.includes(n) + '">' + n + '</button>').join('') + '</div>' +
+    '<div class="lvtf"><span class="lvtm">' + (s.length ? '' : 'Choisis au moins un livret.') + '</span><span class="lvtq"><button type="button" class="tbtn" data-lva="1">Tous</button>' +
+    '<button type="button" class="tbtn" data-lva="0">Aucun</button></span></div>'; }
+function livPos(){ if (!LVP) return; const el = livPopEl(), b = LVP.btn; if (!b || !b.isConnected) return;
+  const r = b.getBoundingClientRect(), w = el.offsetWidth, h = el.offsetHeight, m = 8;
+  let y = r.bottom + 6; if (y + h > innerHeight - m && r.top - 6 - h >= m) y = r.top - 6 - h;
+  el.style.left = Math.max(m, Math.min(r.left, innerWidth - w - m)) + 'px'; el.style.top = Math.max(m, Math.min(y, innerHeight - h - m)) + 'px'; }
+function livOpenAt(b){ const src = b.dataset.lvt;
+  LVP = {src, btn: b, sel: livL(src === 'l' && LNK && LNK.P ? LNK.P.liv : draft.liv)}; livPopDraw();
+  const el = livPopEl(); el.style.fontSize = Math.max(14, parseFloat(getComputedStyle(b.parentElement).fontSize) || 16) + 'px';   // la taille du texte de la case
+  el.hidden = false; livPos(); }
+function livClose(){ if (!LVP) return; LVP = null; livPopEl().hidden = true; }
+function livPick(n){ const s = LVP.sel.slice(), i = s.indexOf(n); if (i >= 0) s.splice(i, 1); else { s.push(n); s.sort((a, b) => a - b); } livSel(s); }
+function livSel(s){ LVP.sel = s.slice(); livPopDraw(); if (s.length) livSet(livClean(s)); livPos(); }
+function livSet(c){                   // le choix dans le brouillon des réglages et, fenêtre du lien ouverte, dans son lien et sa feuille
+  draft.liv = c; syncUI();
+  if (LNK && LNK.P && $('oLink').classList.contains('open')){
+    LNK.P.liv = livHas(LNK.P.it) ? c : ''; linkRows(); linkUrlDraw(); ipSync(true);
+    const o = LVP && LVP.btn && LVP.btn.dataset.lvo, nb = o && document.querySelector('#lEx [data-lvt][data-lvo="' + o + '"]'); if (nb) LVP.btn = nb; }
+}
+document.addEventListener('click', e => {                          // le bouton : ouvre ou ferme la mini fenêtre, sans cocher ni décocher la case
+  const b = e.target.closest && e.target.closest('[data-lvt]'); if (!b) return;
+  e.preventDefault(); e.stopPropagation(); if (LVP) livClose(); else livOpenAt(b);
+}, true);
+document.addEventListener('pointerdown', e => { if (LVP && !(e.target.closest && e.target.closest('#livPop, [data-lvt]'))) livClose(); }, true);
+document.addEventListener('scroll', () => { if (LVP) livPos(); }, true);
+window.addEventListener('resize', livClose);
+
 function newQuestions(){ prjOff(); PICK = false; LASTG = null; seqEnd(); QS = buildQuestions(); cur = 0; SNC_PEND = true; render(); }   // n° 51 : SNC_PEND, brouillon à la 1re question
 function newOrSettings(){ if (objectives(S).length) newQuestions(); else openSet(); }
 
@@ -35180,7 +35280,7 @@ function optHTML(kind){
 // lignes d'un bloc ; deux lignes qui se suivent avec {col: 'L'} puis {col: 'R'} (5e élément) : côte à côte, en colonnes (.c2 ; une seule colonne sur téléphone)
 function rowsHTML(b){
   const row = ([t, its, sub, ex, o]) => '<div class="opts' + (sub ? ' sub' : '') + (o && o.col ? ' colv' : '') + '">' + (t ? '<span class="lab2">' + t + '</span>' : '') + (sub ? '<span class="lab3">' + sub + '</span>' : '') +
-    its.map(([id, lab, cls]) => { const L = '<label' + (cls ? ' class="' + (cls === 'prx' ? 'pbx' : cls) + '"' : '') + '><input type="checkbox" data-it="' + id + '"> <span' + (cls === 'pbx' || cls === 'prx' ? (PB_MEN[id] ? ' data-men="' + PB_MEN[id] + '"' : ' data-sur="' + (PB_SUR[id] || 'les exercices cochés') + '"') : '') + '>' + lab + '</span>' + vicoHTML(id) + (NOSTAR.has(id) && !b.hint ? '<span class="nost">(sans étoiles)</span>' : '') + '</label>';
+    its.map(([id, lab, cls]) => { const L = '<label' + (cls ? ' class="' + (cls === 'prx' ? 'pbx' : cls) + '"' : '') + '><input type="checkbox" data-it="' + id + '"> <span' + (cls === 'pbx' || cls === 'prx' ? (PB_MEN[id] ? ' data-men="' + PB_MEN[id] + '"' : ' data-sur="' + (PB_SUR[id] || 'les exercices cochés') + '"') : '') + '>' + (id === 'liv' ? 'livrets ' + livBtnHTML('s', draft.liv) : lab) + '</span>' + vicoHTML(id) + (NOSTAR.has(id) && !b.hint ? '<span class="nost">(sans étoiles)</span>' : '') + '</label>';
       return cls === 'pbx' ? '<div class="pbrow">' + L + pbiHTML(id) + '<span class="pbr" title="Part des problèmes dans les questions de ce bloc"><input type="range" min="0" max="100" step="1" value="50" data-pb="' + id + '" aria-label="Part des problèmes dans ce bloc"><output data-pbv="' + id + '">50\u00a0%</output></span></div>' :
         cls === 'prx' ? '<div class="pbrow">' + L + limUI(PRIO_LIM[id]) + '<span class="pbr" title="Part des priorités dans les questions de ce bloc"><input type="range" min="0" max="100" step="1" value="50" data-pb="' + id + '" aria-label="Part des priorités dans ce bloc"><output data-pbv="' + id + '">50\u00a0%</output></span></div>' : L; }).join('') + (ex || '') + '</div>';   // n° 71 : mini réglette ; n° 163 : ligne des priorités ; n° 165 : fin de ligne rendue
   const rs = b.rows || []; let h = '';
@@ -35254,6 +35354,7 @@ function syncUI(){
   if ($('oSnc').classList.contains('open')) sncUI();                           // n° 49 et 50 : fenêtre « Séances » ouverte
   if (typeof pbUI === 'function') pbUI();   // n° 71 : mini réglettes des problèmes
   ndBlockUI(d);                             // n° 174 : − auto +
+  livUI();                                  // n° 178 : le bouton des livrets
 }
 // pourcentages (l'enseignant, 25.10.2026, 6e conversation) : le premier % touché reste bloqué quand on en touche un autre juste après ;
 // seul le troisième compense. Débloqué en retouchant le premier, en changeant d'onglet ou en rouvrant les réglages.
@@ -35593,6 +35694,7 @@ document.querySelectorAll('[data-close]').forEach(b => b.onclick = () => b.close
 document.querySelectorAll('.over').forEach(o => o.addEventListener('click', e => { if (e.target === o && !FD_CLICK) o.classList.remove('open'); }));   // pas à la fin d'un glissement
 document.addEventListener('keydown', e => {
   if (TRY){ if (e.key === 'Escape') tryBack(); return; }                         // n° 114 : essai du mode élève par-dessus (tryOpen)
+  if (LVP && !['Tab', 'Shift', 'Control', 'Alt', 'Meta'].includes(e.key)){ livClose(); if (e.key === 'Escape'){ e.preventDefault(); return; } }   // n° 178 : mini fenêtre des livrets : Échap la ferme seule ; une autre touche la ferme et garde son rôle
   const open = [...document.querySelectorAll('.over.open')].pop();               // la fenêtre du dessus (« Lien élèves » sur les réglages)
   if (e.key === 'Escape' && !$('tPop').hidden){ timPop(false); return; }           // Échap ferme d'abord la fenêtre du minuteur
   if (e.key === 'Escape' && open && e.target === $('srch') && $('srch').value){ $('srch').value = ''; doSearch(); return; }
@@ -35874,6 +35976,7 @@ function stateFromP(P){              // réglages (comme S) d'après un lien ou 
   (P.blk || []).forEach(b => { if (BLOCKS[b] && (!BLOCKS[b].items.length || BLOCKS[b].base)) s.on[b] = true; });
   Object.keys(s.on).forEach(b => { const f = (P.num || {})[b]; if (BLOCKS[b].nd && typeof f === 'string') s.num[b] = {dec: f.includes('d'), rel: f.includes('r'), fra: f.includes('f')}; });
   s.ndp = ndClean(P.nd);                                             // n° 174
+  s.liv = livClean(P.liv);                                           // n° 178 : les livrets choisis
   Object.entries(P.opt || {}).forEach(([k, v]) => { if (!(k in DEFAULTS.opt)) return;
     s.opt[k] = typeof DEFAULTS.opt[k] === 'number' ? Math.min(6, Math.max(2, Number(v) || DEFAULTS.opt[k])) : !!Number(v); });
   if (P.sh) s.share = P.sh;                                          // n° 36 : les parts du brouillon (fenêtre du lien)
@@ -35888,7 +35991,7 @@ function pFromState(d, t, cap){      // lien ou séance d'après des réglages (
     if (b.nd){ const n = d.num[b.id] || {}; num[b.id] = (n.dec ? 'd' : '') + (n.rel ? 'r' : '') + (n.fra ? 'f' : ''); }
     (BLOCK_OPTS[b.id] || []).concat(NUM_OPT[b.id] || []).forEach(k => { const v = d.opt[k]; if (v !== undefined && v !== DEFAULTS.opt[k]) opt[k] = typeof v === 'boolean' ? (v ? 1 : 0) : v; }); });
   const c = {}; objectives(stateFromP({it, blk, num, opt, sh: d.share})).forEach(o => { const v = (cap || {})[o.id], t = v == null ? '' : capS(capL(v)); if (t && !isNoStar(o)) c[o.id] = t; });   // n° 177 : les niveaux permis
-  return {t: String(t || '').trim(), it, blk, num, opt, cap: c, sh: d.share, nd: ndOfState(d, it.concat(blk))};     // n° 174 : nd     // sh : les parts (n° 36 : un calcul seul à côté des priorités)
+  return {t: String(t || '').trim(), it, blk, num, opt, cap: c, sh: d.share, nd: ndOfState(d, it.concat(blk)), liv: livHas(it) ? livClean(d.liv) : ''};     // n° 174 : nd     // sh : les parts (n° 36 : un calcul seul à côté des priorités)
 }
 const lnkIdW = id => encodeURIComponent(id.replace(/\u2212/g, '-').replace(/\u2219/g, '.')).replace(/%2B/gi, '+').replace(/%3A/gi, ':');   // q2 : identifiant
 const lnkEncT = t => Array.from(t).map(c => { const k = c.charCodeAt(0);                                                       // q2 : titre
@@ -35908,7 +36011,7 @@ function linkFrag(P){                // n° 44 : forme q2 (liens courts : commen
   const sv = P.rnd && P.sd ? ids.map(id => { const d = P.sd[id] || [], L = capL((P.cap || {})[id]), df = L.length >= 2 ? lnkSd0L(L).slice(0, Math.max(...L)) : [];
       return d.length && d.join('.') !== df.join('.') ? d.join('.') : ''; }) : [],
     ss = sv.some(Boolean) ? '&s=' + sv.join(',').replace(/,+$/, '') : '';                                                         // % d'étoiles (étoiles cachées) ; n° 44 : vide = par défaut
-  return 'q2' + (P.t ? '&t=' + lnkEncT(P.t) : '') + '&x=' + x.join(',') + (n.length ? '&n=' + n.join(',') : '') + (o.length ? '&o=' + o.join(',') : '') + (P.fr ? '&f=1' : '') + (P.rnd ? '&h=1' : '') + pp + ss + ndFrag(P, ids) + vidFrag(P, ids);   // n° 174 : &d=
+  return 'q2' + (P.t ? '&t=' + lnkEncT(P.t) : '') + '&x=' + x.join(',') + (n.length ? '&n=' + n.join(',') : '') + (o.length ? '&o=' + o.join(',') : '') + (P.fr ? '&f=1' : '') + (P.rnd ? '&h=1' : '') + pp + ss + ndFrag(P, ids) + (P.liv && livHas(P.it) ? '&l=' + livClean(P.liv) : '') + vidFrag(P, ids);   // n° 174 : &d=
 }
 const linkURL = P => QPC_BASE + QPC_VERSION + '/#' + linkFrag(P);
 // n° 121 : un lien sans &s= (étoiles cachées) veut dire l'ancien défaut 40 / 35 / 20 / 5, pas celui de ipDef : les liens déjà donnés gardent leur
@@ -35939,6 +36042,7 @@ function linkParse(str){             // un lien entier, ou seulement ce qui suit
     if (id[0] === '@'){ const b = id.slice(1); if (BLOCKS[b] && (!BLOCKS[b].items.length || BLOCKS[b].base)){ if (!P.blk.includes(b)){ P.blk.push(b); if (lnkCp(r)) P.cap[b] = lnkCp(r); lnkWS(P, f, b, i); } } else P.lost++; }
     else if (ITEM_BLOCK[id]){ if (!P.it.includes(id)){ P.it.push(id); if (lnkCp(r)) P.cap[id] = lnkCp(r); lnkWS(P, f, id, i); } } else P.lost++; });
   lnkWEnd(P); ndParse(P, f, dId);                                   // n° 174 : &d=
+  P.liv = livHas(P.it) ? livClean(f.l) : '';                        // n° 178 : &l=, les livrets choisis (absent : tous)
   if (f.p === undefined){ const z = prioOld(P.it); if (z.length) P.w0 = z; }     // n° 163 : ancien lien (sans &p=) avec des priorités et leurs opérations
   (f.n || '').split(',').forEach(e => { const i = e.indexOf('.'), b = e.slice(0, i), fl = e.slice(i + 1); if (i > 0 && BLOCKS[b] && /^[drf]*$/.test(fl)) P.num[b] = fl; });
   (f.o || '').split(',').forEach(e => { const i = e.indexOf(':'), k = e.slice(0, i), v = e.slice(i + 1); if (i > 0 && k in DEFAULTS.opt && /^\d+$/.test(v)) P.opt[k] = Number(v); });
@@ -36058,6 +36162,7 @@ function pToDraft(P){                // les exercices d'un lien dans le brouillo
     (BLOCK_OPTS[b.id] || []).forEach(k => d.opt[k] = on ? s.opt[k] : false);
     if (on){ if (b.nd) d.num[b.id] = clone(s.num[b.id]); (NUM_OPT[b.id] || []).forEach(k => d.opt[k] = s.opt[k]); } });
   ndToDraft(s, d);                   // n° 174
+  if (livHas(P.it)) d.liv = s.liv;   // n° 178 : les livrets choisis du lien
 }
 function linkPaste(){                // « Reprendre un lien » : un lien élèves collé
   const v = $('lPaste').value.trim(); if (!v){ $('lPw').textContent = ''; return; }
@@ -36097,7 +36202,7 @@ function linkSugT(){                // le titre proposé d'après les exercices 
   if (!LNK || !LNK.P) return '';
   const g = new Map(); pObjs(LNK.P).filter(o => !LNK.off.has(o.id) && !(LNK.zero && LNK.zero.has(o.id))).forEach(o => { if (!g.has(o.bl)) g.set(o.bl, []); g.get(o.bl).push(o); });
   const ps = [...g].map(([bl, os]) => os.length > 1 || !BLOCKS[bl].items.length || isBase(os[0]) ? blTitle(bl)
-    : TNAME[os[0].id] || stuLabel(os[0], false).replace(/<svg.*?<\/svg>/g, '√').replace(/<[^>]+>/g, ''));
+    : livName(os[0].id, LNK.P.liv) || TNAME[os[0].id] || stuLabel(os[0], false).replace(/<svg.*?<\/svg>/g, '√').replace(/<[^>]+>/g, ''));   // n° 178 : livName
   const t = ps.join(' et ');           // n° 118 (QCM : « Partout ») : plus de « Renfort » devant, le thème seul, avec une majuscule
   return !ps.length ? '' : ps.length > 2 ? 'Révisions' : t.charAt(0).toUpperCase() + t.slice(1);
 }
@@ -36119,7 +36224,7 @@ function linkRows(){
   $('lEx').innerHTML = '<div class="lexh">Exercices</div>' + (nd ? '<div class="lexh lndh">Nombres' + ndInfHTML() + '</div>' : '') + '<div class="lexh">Étoiles permises</div>' + (hv ? '<div class="lexh lvh">Vidéo</div>' : '') +
     (st.length > 1 ? '<div class="lexa">Tous' + (nd ? ndLinkAll(nd, O, true) : '') + '</div>' + (nd ? ndLinkAll(nd, O).replace('class="lnd', 'class="lnd lnda') : '') + '<div class="lexat">' + rateHTML(null, '*', K) + '</div>' + (hv ? '<div></div>' : '') + stAllHTML(P, O, zero) : '') +
     O.map(o => { const off = LNK.off.has(o.id) ? ' loff' : '';           // case : l'exercice dans le lien ou non (l'enseignant, 07.11.2026)
-      return '<label class="lexn' + off + (!off && zero(o) ? ' lzero' : '') + '"><input type="checkbox" data-x="' + o.id + '"' + (off ? '' : ' checked') + '><span>' + stuLabel(o, true) + (nd ? ndLinkIn(nd, o, !!off || zero(o)) : '') + '</span></label>' + (nd ? ndLinkCell(nd, o, !!off || zero(o)) : '') + '<div class="lexr' + off + '">' +
+      return '<label class="lexn' + off + (!off && zero(o) ? ' lzero' : '') + '"><input type="checkbox" data-x="' + o.id + '"' + (off ? '' : ' checked') + '><span>' + livRowLab(o, P) + (nd ? ndLinkIn(nd, o, !!off || zero(o)) : '') + '</span></label>' + (nd ? ndLinkCell(nd, o, !!off || zero(o)) : '') + '<div class="lexr' + off + '">' +
         (isNoStar(o) ? '<span class="lns">sans étoiles</span>' : rateHTML(cv(o), o.id)) + '</div>' + (hv ? lvidHTML(o, !!off || zero(o)) : '') +
         (P.rnd && !off && !zero(o) && !isNoStar(o) && cv(o).length >= 2 ? '<div class="lsd"><span class="lsdl">Étoiles :</span>' + ipBarHTML('st:' + o.id, lnkDist(o.id, cv(o)), 0, null, cv(o)) + '</div>' : ''); }).join('') +
     (EO.length > 1 ? '<div class="lshw"><div class="lshl">Part de chaque exercice <span class="iphint">(glisse les séparations ; la même en classe et sur la feuille)</span></div>' +
@@ -36442,7 +36547,7 @@ const ipExName = (n, u) => IP.num ? '<span class="ip-hn">Exercice\u00a0' + n + '
 const ipLetter = i => i < 26 ? String.fromCharCode(97 + i) : String.fromCharCode(97 + Math.floor(i / 26) - 1) + String.fromCharCode(97 + i % 26);
 const ipItal = s => s.replace(/(^|[^A-Za-zÀ-ÿ’'])([abcdmnpqxy]{1,2})(?![A-Za-zÀ-ÿ’'])/g, (m, a, w) => a + [...w].map(c => '<i>' + c + '</i>').join(''));   // lettres des formules en italique
 function ipName(o){           // le thème d'un exercice (« 1) Addition et soustraction de fractions ») : son nom des liens (TNAME)
-  const b = BLOCKS[o.bl]; let t = IP_NAME[o.id] || (b.items.length && !isBase(o) ? TNAME[o.id] || stuLabel(o, false).replace(/<[^>]+>/g, '') : b.name.replace(/<[^>]+>/g, ''));
+  const b = BLOCKS[o.bl]; let t = IP_NAME[o.id] || livName(o.id, IP.E && IP.E.liv) || (b.items.length && !isBase(o) ? TNAME[o.id] || stuLabel(o, false).replace(/<[^>]+>/g, '') : b.name.replace(/<[^>]+>/g, ''));
   t = t.charAt(0).toUpperCase() + t.slice(1); return ipItal(t); }
 // n° 118 (l'enseignant, 16.11.2026 : « Bon en fait enlève l'option ticket de sortie, et enlève le mot renfort. Par défaut il y a juste le thème
 // des exercices. ») : la case « Ticket de sortie » de la n° 117 est enlevée (ne pas la remettre) ; le titre de la feuille = celui du lien
@@ -37128,6 +37233,7 @@ function ipRefresh(live){     // après chaque changement de la fenêtre : régl
   const sig = JSON.stringify([E.num, E.opt]);
   if (IP.sig !== sig){ IP.sig = sig; ipReset(); }
   ndIpCheck(E);                      // n° 174 : un exercice dont le % a changé : ses questions refaites
+  livIpCheck(E);                     // n° 178 : un autre choix de livrets : les questions des livrets refaites
   IP.E = E; IP.O = O; IP.U = ipUnits(); IP.S = Object.assign(stateFromP(E), {two: false, twoSame: false});
   ipShares(); ipBrkCheck(); if (!live) ipUI();
   let L = null;
@@ -37333,7 +37439,7 @@ function vidFrag(P, ids){            // &v= : un chiffre par exercice de x (vid�
 }
 const vidOff = P => new Set(P.vid ? pObjs(P).filter(o => VID_OF[o.id] && !P.vid.includes(o.id)).map(o => o.id) : []);   // « Reprendre un lien » : ses vidéos décochées
 function stuItem(o){                 // liste du mode élève : l'exercice, et le bouton « Vidéo » si le lien la donne
-  const lab = '<label><input type="checkbox" data-o="' + o.id + '"> <span>' + stuLabel(o, false) + '</span></label>', v = STU.vid.has(o.id) && VID_OF[o.id];
+  const lab = '<label><input type="checkbox" data-o="' + o.id + '"> <span>' + (livName(o.id, S.liv) || stuLabel(o, false)) + '</span></label>', v = STU.vid.has(o.id) && VID_OF[o.id];
   return v ? '<span class="stuIt">' + lab + '<button type="button" class="stuV" data-v="' + o.id + '" title="Vidéo : ' + v.t + ' (' + vidDur(v.d) + ')">' + VSVG + '<span>Vidéo</span></button></span>' : lab;
 }
 let VID = null;                      // la vidéo de la fenêtre
@@ -37494,15 +37600,16 @@ function sncMsg(m){ const el = $('sncMsg'); if (el) el.textContent = m || ''; }
 function sncSnap(d){                 // la séance d'après des réglages : comme un lien, avec les parts exactes ; aucune case décochée
   const P = pFromState(d, '', null), ks = new Set(objectives(stateFromP(Object.assign({}, P, {sh: d.share || {}})), true).map(shK)), sh = {};
   Object.keys(d.share || {}).sort().forEach(k => { const v = d.share[k]; if (ks.has(k) && shHas(v)) sh[k] = Math.round(v * 1e4) / 1e4; });
-  return {it: P.it.slice(), blk: P.blk.slice(), num: Object.assign({}, P.num), opt: Object.assign({}, P.opt), sh, nd: clone(P.nd || {}), off: []};   // n° 174 : nd
+  return {it: P.it.slice(), blk: P.blk.slice(), num: Object.assign({}, P.num), opt: Object.assign({}, P.opt), sh, nd: clone(P.nd || {}), liv: P.liv || '', off: []};   // n° 174 : nd ; n° 178 : liv
 }
 const SNC_AL = id => LINK_ALIAS[id] || id;
 function sncEff(se){ const t = se.id && SNC_TMP[se.id]; return t ? Object.assign({}, se.P, t) : se.P; }   // n° 51 : avec les changements pour cette fois
 function sncState(se, base, all){    // les réglages de la séance (exercices, cases, parts) sur ceux de base ; all : aussi les exercices décochés dans la séance
   const P = sncEff(se), sh = {};
   Object.entries(sncObj(P.sh)).forEach(([k, v]) => { sh[k[0] === '~' ? '~' + SNC_AL(k.slice(1)) : SNC_AL(k)] = v; });
-  const r = stateFromP({it: P.it.map(SNC_AL), blk: P.blk, num: sncObj(P.num), opt: sncObj(P.opt), sh, nd: sncObj(P.nd)}), st = clone(base);   // n° 174 : nd
+  const r = stateFromP({it: P.it.map(SNC_AL), blk: P.blk, num: sncObj(P.num), opt: sncObj(P.opt), sh, nd: sncObj(P.nd), liv: P.liv}), st = clone(base);   // n° 174 : nd ; n° 178 : liv
   st.on = r.on; st.it = r.it; st.opt = r.opt; st.share = clone(r.share || {}); st.ndp = clone(r.ndp || {});   // n° 174
+  if (r.it.liv || r.it.livd) st.liv = r.liv || '';                // n° 178 : les livrets de la séance (sans livrets : ceux d'avant)
   st.num = clone(base.num || {}); Object.keys(r.on).forEach(b => { if (BLOCKS[b] && BLOCKS[b].nd && typeof sncObj(P.num)[b] === 'string') st.num[b] = clone(r.num[b]); });
   if (!all) (Array.isArray(P.off) ? P.off : []).forEach(k => {          // les exercices décochés dans la séance
     if (k[0] === '~'){ delete st.share['~' + SNC_AL(k.slice(1))]; return; }       // calculs seuls à côté des priorités : plus posés
@@ -37526,7 +37633,7 @@ function sncShares(st){              // les exercices posés et leurs % arrondis
   return O.map((o, i) => ({o, n: n[i]}));
 }
 function sncKey(P){                 // ce qui sera posé : exercices et % arrondis, cases et options de leurs blocs (pas les exercices décochés)
-  const st = sncState({P}, S), Q = pFromState(st, '', null); return JSON.stringify(sncShares(st).map(x => [shK(x.o), x.n])) + JSON.stringify(Q.num) + JSON.stringify(Q.opt); }
+  const st = sncState({P}, S), Q = pFromState(st, '', null); return JSON.stringify(sncShares(st).map(x => [shK(x.o), x.n])) + JSON.stringify(Q.num) + JSON.stringify(Q.opt) + (Q.liv ? '&l' + Q.liv : ''); }
 function sncSame(a, b){ return sncKey(a) === sncKey(b); }
 function sncModified(se){ return !!SNC_TMP[se.id] && !sncSame(se.P, sncEff(se)); }
 function sncTmp(se){ return SNC_TMP[se.id] = SNC_TMP[se.id] || {off: (Array.isArray(se.P.off) ? se.P.off : []).slice(), sh: Object.assign({}, sncObj(se.P.sh))}; }
